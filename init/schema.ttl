@@ -1,0 +1,148 @@
+@prefix hhh: <http://example.com/hhh#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.w3.org/2002/07/owl#> .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://example.com/hhh#hasBehavior
+hhh:hasBehavior rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf owl:topObjectProperty ;
+                rdfs:domain hhh:Donor ;
+                rdfs:range hhh:Behavior .
+
+
+###  http://example.com/hhh#hasContext
+hhh:hasContext rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf owl:topObjectProperty ;
+               rdfs:domain hhh:Donor ;
+               rdfs:range hhh:Context .
+
+
+###  http://example.com/hhh#partOf
+<http://example.com/hhh#partOf> rdf:type owl:ObjectProperty ;
+                                                  rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.w3.org/2002/07/owl#topObjectProperty
+owl:topObjectProperty rdfs:domain hhh:Behavior ,
+                                  hhh:Context ,
+                                  hhh:Donor ;
+                      rdfs:range hhh:ExperimentalSetting .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://example.com/hhh#id
+hhh:id rdf:type owl:DatatypeProperty ;
+       rdfs:subPropertyOf owl:topDataProperty ;
+       rdfs:range xsd:token .
+
+
+###  http://example.com/hhh#language
+hhh:language rdf:type owl:DatatypeProperty ;
+             rdfs:subPropertyOf owl:topDataProperty ;
+             rdfs:range rdf:langString ;
+             rdfs:label "language" .
+
+
+###  http://example.com/hhh#timestamp
+hhh:timestamp rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf owl:topDataProperty ;
+              rdfs:range xsd:dateTime .
+
+
+###  http://example.com/hhh#source
+<http://example.com/hhh#source> rdf:type owl:DatatypeProperty ;
+                                                  rdfs:subPropertyOf owl:topDataProperty ;
+                                                  rdfs:range rdfs:Literal .
+
+
+###  http://example.com/hhh#value
+<http://example.com/hhh#value> rdf:type owl:DatatypeProperty ;
+                                                 rdfs:range xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://example.com/hhh#Behavior
+hhh:Behavior rdf:type owl:Class ;
+             rdfs:label "Behavior" .
+
+
+###  http://example.com/hhh#Context
+hhh:Context rdf:type owl:Class ;
+            rdfs:label "Context" .
+
+
+###  http://example.com/hhh#Donor
+hhh:Donor rdf:type owl:Class ;
+          rdfs:label "Donor" .
+
+
+###  http://example.com/hhh#ExperimentalSetting
+hhh:ExperimentalSetting rdf:type owl:Class ;
+                        rdfs:label "Experimental Setting" .
+
+
+###  http://example.com/hhh#Group1
+hhh:Group1 rdf:type owl:Class ;
+           rdfs:subClassOf hhh:ExperimentalSetting ;
+           rdfs:comment "Closed-Ended" .
+
+
+###  http://example.com/hhh#Group2
+hhh:Group2 rdf:type owl:Class ;
+           rdfs:subClassOf hhh:ExperimentalSetting ;
+           rdfs:comment "Closed-Ended Task, Opened-Ended General" .
+
+
+###  http://example.com/hhh#Group3
+hhh:Group3 rdf:type owl:Class ;
+           rdfs:subClassOf hhh:ExperimentalSetting ;
+           rdfs:comment "Opened-Ended Task, Closed-Ended General" .
+
+
+###  http://example.com/hhh#Group4
+hhh:Group4 rdf:type owl:Class ;
+           rdfs:subClassOf hhh:ExperimentalSetting ;
+           rdfs:comment "Opened-Ended" .
+
+
+###  http://example.com/hhh#InternalState
+hhh:InternalState rdf:type owl:Class ;
+                  rdfs:subClassOf hhh:Context ;
+                  rdfs:label "Internal State" .
+
+
+###  http://example.com/hhh#People
+hhh:People rdf:type owl:Class ;
+           rdfs:subClassOf hhh:Context ;
+           rdfs:label "People" .
+
+
+###  http://example.com/hhh#PhysicalSetting
+hhh:PhysicalSetting rdf:type owl:Class ;
+                    rdfs:subClassOf hhh:Context ;
+                    rdfs:label "Physical Setting" .
+
+
+###  http://example.com/hhh#RelatedBehavior
+hhh:RelatedBehavior rdf:type owl:Class ;
+                    rdfs:subClassOf hhh:Context ;
+                    rdfs:label "Related Behavior" .
+
+
+###  http://example.com/hhh#TimeReference
+hhh:TimeReference rdf:type owl:Class ;
+                  rdfs:subClassOf hhh:Context ;
+                  rdfs:label "Time Reference" .

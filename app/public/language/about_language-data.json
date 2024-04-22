@@ -1,0 +1,53 @@
+{
+  "en": {
+    "navbar": {
+      "home": "Donation",
+      "about": "About the donation",
+      "contact": "Contact"
+    },
+  "introduction": {
+    "header": "Introduction",
+    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Malesuada bibendum  arcu vitae elementum curabitur vitae nunc sed. Sed ullamcorper morbi  tincidunt ornare massa. Malesuada pellentesque elit eget gravida cum  sociis natoque penatibus et. Proin libero nunc consequat interdum varius  sit amet mattis. Eget arcu dictum varius duis at. Adipiscing elit duis  tristique sollicitudin nibh. Lorem ipsum dolor sit amet consectetur  adipiscing elit. Nullam ac tortor vitae purus faucibus ornare  suspendisse sed.",
+    "image": "pics/intro_pic.png"
+  },
+  "datadonation": {
+    
+  },
+  "Greybox":{
+    "about_text":" <h5> <strong> About the donation</strong> </h5>",
+    "step3":"Overall, the Habit donation opens up a promising future for data-driven research. By voluntarily providing habit data, people are actively contributing to scientific knowledge and shaping progress in areas such as health, psychology and social sciences. This innovative form of data donation could not only pave the way for new discoveries, but also raise awareness of the importance of data ethics and transparency. ",
+    "add":"+ add another habit",
+    "fhome": "Home",
+    "fabout": "About",
+    "fcontact": "Contact",
+    "fmore": "More"
+  },
+  "emptyFieldError": "The text field must not be empty!"
+
+
+ 
+
+},
+"de": {
+  "navbar": {
+    "home": "Spende",
+    "about": "Über die Spende",
+    "contact": "Kontakt",
+    "language":""
+  },
+  
+
+  "Greybox":{
+    "about_text":" <h5> <strong> Über die Spende </strong> </h5>",
+    "step3":"Insgesamt eröffnet die Habit-Spende eine vielversprechende Zukunft für datengetriebene Forschung. Durch die freiwillige Bereitstellung von Gewohnheitsdaten tragen Menschen aktiv zur wissenschaftlichen Erkenntnis bei und gestalten den Fortschritt in Bereichen wie Gesundheit, Psychologie und Sozialwissenschaften. Diese innovative Form der Datenspende könnte nicht nur den Weg für neue Entdeckungen ebnen, sondern auch das Bewusstsein für die Bedeutung von Datenethik und Transparenz stärken.    ",
+
+    "fhome": "Startseite",
+    "fabout": "Über uns",
+    "fcontact": "Kontakt",
+    "fmore":"Mehr"
+  }
+
+
+  
+}
+}

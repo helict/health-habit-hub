@@ -1,0 +1,87 @@
+version: "3"
+
+services:
+  proxy:
+    image: traefik:v3.0
+    container_name: proxy
+    command:
+      - --api.insecure=true
+      - --api.dashboard=true
+      - --api.debug=true
+      - --log.level=INFO
+      - --accesslog=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=proxy
+      - --entrypoints.web.address=:80
+    restart: always
+    ports:
+      - 80:80
+      - 8080:8080
+    networks:
+      - proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.proxy.rule=Host(`proxy.localhost`)
+      - traefik.http.routers.proxy.entrypoints=web
+      - traefik.http.routers.proxy.service=proxy
+      - traefik.http.services.proxy.loadbalancer.server.port=8080
+
+  app:
+    image: node
+    container_name: app
+    restart: on-failure:3
+    user: node
+    working_dir: /home/node/app
+    command: sh -c "npm install && node app.js"
+    ports:
+      - 3000:3000
+    networks:
+      - proxy
+    volumes:
+      - ./app:/home/node/app
+    depends_on:
+      - fuseki
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.app.rule=Host(`app.localhost`)
+      - traefik.http.routers.app.entrypoints=web
+      - traefik.http.routers.app.service=app
+      - traefik.http.services.app.loadbalancer.server.port=3000
+
+  fuseki:
+    image: hhh/fuseki
+    container_name: fuseki
+    build: .
+    restart: always
+    entrypoint: [ "/sbin/tini", "--", "/docker-entrypoint.sh" ]
+    command: sh -c "
+      /jena-fuseki/tdbloader2 --loc /fuseki/databases/hhh /init/data.ttl &&
+      /jena-fuseki/fuseki-server --loc /fuseki/databases/hhh --tdb2 --update --rdfs /init/schema.ttl /hhh"
+    environment:
+      - ADMIN_PASSWORD=admin
+    ports:
+      - 3030:3030
+    networks:
+      - proxy
+    volumes:
+      - fuseki-data:/fuseki
+    depends_on:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.fuseki.rule=Host(`fuseki.localhost`)
+      - traefik.http.routers.fuseki.entrypoints=web
+      - traefik.http.routers.fuseki.service=fuseki
+      - traefik.http.services.fuseki.loadbalancer.server.port=3030
+
+networks:
+  proxy:
+    name: proxy
+
+volumes:
+  fuseki-data:
+    name: fuseki-data

@@ -1,0 +1,604 @@
+
+
+html{
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Dosis', sans-serif;
+  position: relative;
+  margin: 0;
+  min-height: 100%;
+  padding-bottom: 6.74rem;
+  box-sizing: inherit;
+
+  }
+  
+ 
+  #icon{
+    width: 10%;
+  }
+  
+  /* Navbar Hintergrundfarbe */
+  
+  .navbar.bg-body-tertiary {
+    background: linear-gradient(180deg, #E679AB 0%, #E679AB 100%)!important; 
+  }
+  .navbar-brand {
+  color: #ffffff !important;
+  margin-left: 50px;
+  
+  }
+  
+  /* Ändere die Höhe der Navbar */
+  .navbar {
+    padding: 20px; 
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+  
+  /* Ändere die Höhe der Navbar-Brand */
+  .navbar-brand {
+    font-size: 30px; 
+  }
+  /* Ändere die Schriftgröße der Navbar-Links */
+  .navbar-nav .nav-link {
+    font-size: 20px;
+    color: #ffffff !important;
+    font-weight: bold;
+  }
+  .navbar-nav .nav-link {
+    position: relative;
+  }
+  
+  /*Strich unter Link*/
+  .navbar-nav .nav-link::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 4px;
+      border-radius: 4px;
+      background-color: #ffffff;
+      bottom: 0;
+      left: 0;
+      transform-origin: right;
+      transform: scaleX(0);
+      transition: transform .3s ease-in-out;
+    }
+  
+  .navbar-nav .nav-link:hover::before {
+    transform-origin: left;
+    transform: scaleX(1);
+  }
+  
+  .nav-item{
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  
+  /* footer */
+  
+  
+  footer{
+    margin-top: 30px;
+    padding: 40px;
+    background: linear-gradient(180deg, #E679AB 0%, #E679AB 100%)!important;
+    text-align: center;
+    padding-top: 20px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+
+  }
+  
+ 
+  
+  .navbar-nav .nav-link:hover::before {
+    transform-origin: left;
+    transform: scaleX(1);
+  }
+  
+  /* Erklärfeld */
+  #header{
+    font-weight: bold;
+  }
+  
+  #intro-container{
+    text-align: center;
+  }
+  
+  
+  
+  #introduction{
+    margin-top: 3%;
+    padding: 30px;
+    width: 100%;
+    background: linear-gradient(180deg, #F5CDC5 0%, #F5CDC5 100%);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 40px;
+    color: black;
+    border: 2px solid #E679AB;
+  }
+
+  
+  #datadonationheader{
+    margin-top: 20px;
+    padding: 30px;
+    width: 100%;
+    background: linear-gradient(180deg, #F5CDC5 0%, #F5CDC5 100%);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 40px;
+    color: black;
+    border: 2px solid #E679AB;
+   
+    
+  }
+
+ 
+
+#bubble-chart {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+  #confirmbox{
+     margin-top: 20px;
+    padding: 30px;
+    width: 100%;
+    background: linear-gradient(180deg, #F5CDC5 0%, #F5CDC5 100%);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 40px;
+    color: black;
+    border: 2px solid #E679AB;
+  }
+  
+  #donation-header{
+    font-weight: bold;
+    font-size: px;
+  }
+  
+  #textfeld{
+    margin-top: 15px;
+    border-radius: 15px;
+    font-size: 18px;
+  }
+  
+  
+  
+  #dropdown-button{
+    color: black;
+  }
+  
+  #greybox{
+    margin-top: -7%;
+    padding: 30px;
+    width: 100%;
+    height: 800px;
+    background: #E8F0F5;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+  }
+  
+  @media (max-width: 576px) {
+    #greybox {
+        margin-top: -7%;
+        padding: 30px;
+        width: 100%;
+        height: 1000px;
+        background: #E8F0F5;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        border-radius: 20px;
+    }
+    }
+  #label{
+    padding: 5px;
+    text-align: justify;
+    height: 50px;
+    background: linear-gradient(180deg, #4CD49E 0%, #51D075 100%);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    color: white;
+    
+  }
+  
+  #label-continuation{
+    
+    margin-top: 30px;
+    padding: 5px;
+    height: 50px;
+    text-align: justify;
+    background: linear-gradient(180deg, #4CD49E 0%, #51D075 100%);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    color: white;
+  
+  }
+  
+
+  #clear{
+    background-color: #E8F0F5;
+    text-align: 30;
+    width: 50px;
+    padding-top: 1%;
+    line-height: 5%;
+  }
+
+  #time{
+    background-color: #DD7A7A;
+  }
+  
+  #physical{
+    background-color: #AD7CBC;
+  }
+  
+  #people{
+    background-color: #B8D466;
+  }
+  
+  #prior{
+    background-color: #FBEA67;
+  }
+  
+  #internal{
+    background-color: #E89F5C;
+  }
+  
+  #behavior{
+    background-color: #42C2CA;
+    
+  }
+  
+  #mark_time{
+    background-color: #DD7A7A;
+    border-radius: 10px;
+  }
+  #mark1_physical{
+    background-color: #AD7CBC;
+    border-radius: 10px;      
+  }
+  
+  #mark_people{
+    background-color: #B8D466;
+    border-radius: 10px;
+  }
+  
+  
+  #mark_prior{
+    background-color: #FBEA67;
+    border-radius: 10px;
+  }
+  
+  
+  #mark_internal{
+    background-color: #E89F5C;
+    border-radius: 10px;
+  }
+  
+  #mark_behavior{
+    background-color: #42C2CA;
+    border-radius: 10px;
+  }
+  
+  
+  
+  
+  #grünesFeld{
+    margin-top: 2%;
+    padding: 30px;
+    width: 100%;
+    background: linear-gradient(180deg, #4CD49E 0%, #51D075 100%);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+   
+  }
+  
+  
+  
+  button {
+    --primary-color: #E679AB;
+    --secondary-color: #fff;
+    --hover-color: #111;
+  
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 70%;
+    margin-top: 30px;
+   
+    text-align: center;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 20px;
+    color: var(--secondary-color);
+    padding: 1em 1.8em;
+    background: var(--primary-color);
+    display: flex;
+    transition: 0.2s background;
+    align-items: center;
+    gap: 0.6em;
+    font-weight: bold;
+    font-size: 1.5em;
+  }
+ 
+  
+  button .arrow::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    border: solid var(--secondary-color);
+    border-width: 0 var(--arrow-stroke) var(--arrow-stroke) 0;
+    display: inline-block;
+    top: -3px;
+    right: 3px;
+    transition: 0.2s;
+    padding: 3px;
+    transform: rotate(-45deg);
+  }
+  
+  button:hover {
+    background-color: var(--hover-color);
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+
+  }
+
+  
+  
+  #habitbutton{
+    width: 70%;
+    height: 70%;
+    margin-top: 30px;
+    padding: 5px;
+    text-align: center;
+    justify-content: flex-start;
+    background: darkcyan;
+    border-radius: 10px;
+    color: white;
+    border-color: transparent;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+  }
+
+  .custom-button {
+    width: calc(20% - 20px); 
+    margin:  10px; 
+    line-height: 2; 
+    
+  }
+
+  @media (max-width: 800px) {
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between; 
+  }
+  }
+
+  .custom-button:last-child {
+    width: 40%; 
+    margin-left: 80px; 
+  }
+  
+  @media (max-width: 1381px) {
+    .custom-button {
+      margin:  3px; 
+      line-height: 2; 
+      min-height: 70px;
+      height: 60px;
+      flex-basis: calc(33.33% - 10px);    
+    }
+    
+    custom-button:last-child {
+      width: 40%; 
+      margin-left: 10px; 
+      margin-right: 10px;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .custom-button {
+      margin:  3px; 
+      line-height: 2; 
+      min-height: 70px;
+      flex-basis: calc(34% - 5px);
+      
+
+   }
+    
+    custom-button:last-child {
+      margin-left: 10px; 
+      margin-right: 10px;
+      
+    }
+  }
+
+
+  
+  .dropdown-menu ul li a::before {
+    content: '';
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+    margin-right: px;
+    background-size: cover; 
+  }
+  
+  .de:before {
+    background-image: url(https://flagsapi.com/DE/flat/64.png);
+  }
+  
+  .en:before {
+    background-image: url(https://flagsapi.com/GB/flat/64.png);
+  }
+  .fr:before {
+    background-image: url(https://www.countryflags.io/fr/flat/32.png);
+  }
+  
+  .ar:before {
+    background-image: url(https://www.countryflags.io/ae/flat/32.png);
+  }
+  
+  
+  .dropdown-menu:hover ul {
+    display: block;
+  }
+  
+  .language-list {
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+  }
+  
+  a {
+    text-decoration: none; 
+    color: #111;
+  }  
+  
+  
+  .language-list   a:hover  {
+    color: #fff;
+    box-shadow: inset 200px 0 0 0 rgb(197, 201, 197)
+  }
+  
+  
+  
+  #lang-menu {
+    width: 100px;
+    text-align: right;
+    font-weight: bold;
+   
+    position: relative;
+  }
+  
+
+
+
+  #icon2{
+    width: 13%;
+    margin-top: 20px;
+  }
+
+  #globus{
+    height: 25px;
+  }
+  #slogan{
+    color: #E679AB ;
+  }
+
+  #bedankung{
+    margin-top: 3%;
+    padding: 30px;
+    width: 100%;
+    height: 210px;
+    align-items: center;
+    background: white;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    color: #E679AB;
+    border: 4px solid #E679AB;
+}
+
+
+
+  #donate_again{
+    --primary-color: #E679AB;
+    --secondary-color: #fff;
+    --hover-color: #111;
+ 
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 69px;
+  }
+
+  #reward{
+    color: #E679AB;
+    background-color:  #fff;
+   
+    
+ 
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 69px;
+    border-radius: 20px;
+    border: 4px solid #E679AB;
+    
+  }
+  #reward:hover {
+    background-color: #000; 
+  }
+
+.socialmedia{
+  height: 50px;
+  width: 50px;
+}
+.contact_text{
+  margin-top: 20px;
+  margin-bottom: 1px;
+
+}
+
+.highlighted-TimeReference {
+  background-color: #DD7A7A;
+}
+
+.highlighted-PhysicalSetting {
+  background-color: #AD7CBC;
+}
+
+.highlighted-People {
+  background-color: #B8D466;
+}
+
+.highlighted-RelatedBehaviour {
+  background-color: #FBEA67;
+}
+
+.highlighted-InternalState {
+  background-color: #E89F5C;
+}
+
+.highlighted-Behavior {
+  background-color: #42C2CA;
+}
+
+.node {
+  cursor: pointer;
+}
+
+.node:hover {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node--leaf {
+  fill: white;
+}
+
+.label {
+  font: 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-anchor: middle;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
+}
+
+.label,
+.node--root,
+.node--leaf {
+  pointer-events: none;
+}

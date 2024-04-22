@@ -1,0 +1,56 @@
+{
+  "en": {
+    "navbar": {
+      "home": "Donation",
+      "about": "About the donation",
+      "contact": "Contact",
+      "language":"Language"
+    },
+  "introduction": {
+    "header": "Introduction",
+    "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Malesuada bibendum  arcu vitae elementum curabitur vitae nunc sed. Sed ullamcorper morbi  tincidunt ornare massa. Malesuada pellentesque elit eget gravida cum  sociis natoque penatibus et. Proin libero nunc consequat interdum varius  sit amet mattis. Eget arcu dictum varius duis at. Adipiscing elit duis  tristique sollicitudin nibh. Lorem ipsum dolor sit amet consectetur  adipiscing elit. Nullam ac tortor vitae purus faucibus ornare  suspendisse sed.",
+    "image": "pics/intro_pic.png"
+  },
+  "datadonation": {
+    
+  },
+  "Greybox":{
+    "geschenke": "REWARD 🎁🎉",
+    "about_text":" <h5> <strong> About </strong> </h5>",
+    "step3":" <h5> <strong> Enter your context as sentence </strong> </h5>",
+    "example1": "<p><strong>Example:</strong> When I am <mark id=\"mark1_physical\">entering the kitchen</mark> and <mark id=\"mark_prior\">see a fruit basket</mark>, I am <mark id=\"mark_behavior\">taking an apple</mark> and <mark id=\"mark_behavior\">eat it</mark>.</p>",
+    "submit": "</h4><strong>Donate</strong></h4> ",
+    "add":"+ add another habit",
+    "fhome": "Home",
+    "fabout": "About",
+    "fcontact": "Contact",
+    "fmore": "More"
+  },
+  "emptyFieldError": "The text field must not be empty!"
+
+
+ 
+
+},
+"de": {
+  "navbar": {
+    "home": "Spende",
+    "about": "Über die Spende",
+    "contact": "Kontakt",
+    "language":""
+  },
+  
+
+  "Greybox":{
+    "geschenke": "BELOHNUNG 🎁🎉",
+    "about_text":" <h5> <strong> Über uns </strong> </h5>",
+    "fhome": "Startseite",
+    "fabout": "Über uns",
+    "fcontact": "Kontakt",
+    "fmore":"Mehr"
+  }
+
+
+  
+}
+}
