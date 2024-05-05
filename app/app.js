@@ -13,6 +13,8 @@ const path = require('path');
 const requestMiddlewares = require('./middleware/requestParser.cjs');
 const staticFileMiddleware = require('./middleware/staticFileMiddleware.cjs');
 
+import donateRouter from './donate/donateRouter.js';
+
 // Express config
 const app = express();
 const port = 3000;
@@ -48,22 +50,7 @@ let inputSource;
 let group_sql;
 
 // Routes
-app.get('/donate', (req, res) => {
-  console.log('Random Number used(get): ', rdmInt);
-  if (rdmInt % 4 == 0) {
-    res.sendFile(path.join(__dirname, 'public', 'closed.html'));
-    console.log('Sending closed.html', rdmInt%4);
-  } else if (rdmInt % 4 == 1) {
-    res.sendFile(path.join(__dirname, 'public', 'closehybrid.html'));
-    console.log('Sending closehybrid.html', rdmInt%4);
-  } else if (rdmInt % 4 == 2) {
-    res.sendFile(path.join(__dirname, 'public', 'open.html'));
-    console.log('Sending open.html', rdmInt%4);
-  } else {
-    res.sendFile(path.join(__dirname, 'public', 'openhybrid.html'));
-    console.log('Sending openhybrid.html', rdmInt%4);
-  }
-});
+app.use('/donate', donateRouter);
 
 app.post('/donate', (req, res) => {
   if (req.body.rdmIntForSiteLoad != undefined) {
