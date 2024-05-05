@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "body-parser": "^1.20.2",
@@ -13,5 +17,8 @@
     "sparql-http-client": "^2.4.2",
     "uuid": "^9.0.1"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
 }
