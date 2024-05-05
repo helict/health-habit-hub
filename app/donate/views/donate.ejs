@@ -65,6 +65,7 @@
     
     
     <!-- Introduction-->
+    <% if (closedDescription) { %>
     <div class="container" id="introduction">
       <div class="row">
           <div class="custom-square rounded position-relative">
@@ -77,7 +78,8 @@
               </div>
           </div>
       </div>
-  </div>
+    </div>
+    <% } %>
   
     
     
@@ -96,6 +98,7 @@
         <textarea class="form-control" rows="3" id="textfeld" maxlength="300" oninput="onInput()"></textarea>
       </div>
     </div>
+    <% if (closedTask) { %>
     <div class="row mt-4">
             <div class="col-8" role="alert">
                 <p id="example1"></p>
@@ -114,8 +117,10 @@
         <!-- Sechster Button rechts -->
         <button class="custom-button btn  " id="behavior"onclick="saveSelection('Behavior')"></button>
     </div>
+    <% } %>
 </div>
 
+<% if (closedTask) { %>
 <div class="container" id="confirmbox">
     <div class="row mt-4">
         <div class="col-12">
@@ -131,6 +136,7 @@
     </div>
 
 </div>
+<% } %>
 
 
 

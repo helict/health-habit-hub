@@ -8,6 +8,26 @@ const experimentGroups = {
   openTaskOpenDesc: "openTaskOpenDesc",
 };
 
+function isClosedTask(experimentGroup) {
+  if (
+    experimentGroup === experimentGroups.closedTaskClosedDesc ||
+    experimentGroup === experimentGroups.closedTaskOpenDesc
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function isClosedDescription(experimentGroup) {
+  if (
+    experimentGroup === experimentGroups.closedTaskClosedDesc ||
+    experimentGroup === experimentGroups.openTaskClosedDesc
+  ) {
+    return true;
+  }
+  return false;
+}
+
 export function donate(req, res) {
   let experimentGroup = req.cookies.experimentGroup;
   console.log("Experiment Group: ", experimentGroup);
@@ -15,10 +35,11 @@ export function donate(req, res) {
     experimentGroup = randomProperty(experimentGroups);
     res.cookie("experimentGroup", experimentGroup);
   }
-  //   res.sendFile("views/donate.html", { root: __dirname });
-  res.sendFile(
-    url.fileURLToPath(new URL("views/donate.html", import.meta.url))
-  );
+  res.render(url.fileURLToPath(new URL("views/donate.ejs", import.meta.url)), {
+    experimentGroup: experimentGroup,
+    closedTask: isClosedTask(experimentGroup),
+    closedDescription: isClosedDescription(experimentGroup),
+  });
 }
 
 export default {
