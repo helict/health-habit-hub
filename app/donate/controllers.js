@@ -1,4 +1,5 @@
 import randomProperty from "../utils/randomProperty.js";
+import url from "url";
 
 const experimentGroups = {
   closedTaskClosedDesc: "closedTaskClosedDesc",
@@ -14,8 +15,9 @@ export function donate(req, res) {
     experimentGroup = randomProperty(experimentGroups);
     res.cookie("experimentGroup", experimentGroup);
   }
-  res.send(
-    `Donate Page. Experiment Group: ${req.cookies.experimentGroup} -> ${experimentGroup}`
+  //   res.sendFile("views/donate.html", { root: __dirname });
+  res.sendFile(
+    url.fileURLToPath(new URL("views/donate.html", import.meta.url))
   );
 }
 
