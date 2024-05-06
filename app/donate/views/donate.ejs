@@ -65,7 +65,7 @@
     
     
     <!-- Introduction-->
-    <% if (closedDescription) { %>
+    <% if (experimentGroup.closedDescription) { %>
     <div class="container" id="introduction">
       <div class="row">
           <div class="custom-square rounded position-relative">
@@ -98,7 +98,7 @@
         <textarea class="form-control" rows="3" id="textfeld" maxlength="300" oninput="onInput()"></textarea>
       </div>
     </div>
-    <% if (closedTask) { %>
+    <% if (experimentGroup.closedTask) { %>
     <div class="row mt-4">
             <div class="col-8" role="alert">
                 <p id="example1"></p>
@@ -120,7 +120,7 @@
     <% } %>
 </div>
 
-<% if (closedTask) { %>
+<% if (experimentGroup.closedTask) { %>
 <div class="container" id="confirmbox">
     <div class="row mt-4">
         <div class="col-12">

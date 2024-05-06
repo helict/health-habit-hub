@@ -1,12 +1,11 @@
-// Create ExpressJS Router
 import express from "express";
 import cookieParser from "cookie-parser";
-import controllers from "./controllers.js";
+import { showDonateForm } from "./controllers.js";
 
 const router = express.Router();
 
 router.use(cookieParser());
 
-router.get("/", controllers.donate);
+router.get("/", showDonateForm);
 
 export default router;

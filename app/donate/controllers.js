@@ -1,47 +1,67 @@
-import randomProperty from "../utils/randomProperty.js";
 import url from "url";
+import { ExperimentGroup } from "./models/experiment.js";
 
-const experimentGroups = {
-  closedTaskClosedDesc: "closedTaskClosedDesc",
-  closedTaskOpenDesc: "closedTaskOpenDesc",
-  openTaskClosedDesc: "openTaskClosedDesc",
-  openTaskOpenDesc: "openTaskOpenDesc",
-};
-
-function isClosedTask(experimentGroup) {
-  if (
-    experimentGroup === experimentGroups.closedTaskClosedDesc ||
-    experimentGroup === experimentGroups.closedTaskOpenDesc
-  ) {
-    return true;
+function getExperimentGroupFromQuery(req) {
+  if (req.query.group) {
+    try {
+      return ExperimentGroup.fromString(req.query.group);
+    } catch (e) {
+      console.error(
+        `Ignoring invalid experiment group parameter "${req.query.group}".`
+      );
+      return null;
+    }
   }
-  return false;
 }
 
-function isClosedDescription(experimentGroup) {
-  if (
-    experimentGroup === experimentGroups.closedTaskClosedDesc ||
-    experimentGroup === experimentGroups.openTaskClosedDesc
-  ) {
-    return true;
+function getExperimentGroupFromCookie(req, res) {
+  console.log(`Request cookie: experimentGroup=${req.cookies.experimentGroup}`);
+
+  if (req.cookies.experimentGroup) {
+    try {
+      return ExperimentGroup.fromString(req.cookies.experimentGroup);
+    } catch {
+      console.error(
+        `Invalid experiment group cookie parameter "${req.cookies.experimentGroup}".`
+      );
+      return null;
+    }
+  } else {
+    return null;
   }
-  return false;
 }
 
-export function donate(req, res) {
-  let experimentGroup = req.cookies.experimentGroup;
-  console.log("Experiment Group: ", experimentGroup);
-  if (!experimentGroup) {
-    experimentGroup = randomProperty(experimentGroups);
-    res.cookie("experimentGroup", experimentGroup);
+// If query parameter 'group' is set, use it to determine experiment group.
+// Else, if experiment group cookie is set, use matching experiment group.
+// Else, select random experiment group and remember choice in session cookie.
+function getExperimentGroup(req, res) {
+  const experimentGroupFromQuery = getExperimentGroupFromQuery(req);
+  if (experimentGroupFromQuery) {
+    console.log(
+      `Using experiment group from query: ${experimentGroupFromQuery}`
+    );
+    return experimentGroupFromQuery;
+  } else {
+    const experimentGroupFromCookie = getExperimentGroupFromCookie(req);
+    if (experimentGroupFromCookie) {
+      console.log(
+        `Using experiment group from cookie: ${experimentGroupFromCookie}`
+      );
+      return experimentGroupFromCookie;
+    } else {
+      const randomExperimentGroup = ExperimentGroup.random();
+      console.log(
+        `Using randomly selected experiment group: ${randomExperimentGroup}`
+      );
+      res.cookie("experimentGroup", randomExperimentGroup.toString());
+      return randomExperimentGroup;
+    }
   }
+}
+
+export function showDonateForm(req, res) {
+  const experimentGroup = getExperimentGroup(req, res);
   res.render(url.fileURLToPath(new URL("views/donate.ejs", import.meta.url)), {
     experimentGroup: experimentGroup,
-    closedTask: isClosedTask(experimentGroup),
-    closedDescription: isClosedDescription(experimentGroup),
   });
 }
-
-export default {
-  donate,
-};
