@@ -1,9 +1,15 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+const createRequire = require('module').createRequire;
 
-import { translate } from 'deeplx';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+try {
+  require('dotenv').config();
+} catch (error) {
+  console.error("Failed to load .env file", error);
+}
+
+const translate = require('deeplx').translate;
+const dirname = require('path').dirname;
+const fileURLToPath = require('url').fileURLToPath
+
 
 const express = require('express');
 const sparqlClient = require('sparql-http-client');
@@ -14,24 +20,21 @@ const requestMiddlewares = require('./middleware/requestParser.cjs');
 const staticFileMiddleware = require('./middleware/staticFileMiddleware.cjs');
 
 // Express config
+const config = require('./EnvManager.js');
+
 const app = express();
-const port = 3000;
+const port = config.port;
 
 // SPARQL client config
-const db_user = "admin";
-const db_pass = "admin";
-const db_proto = "http";
-const db_host = "fuseki";
-const db_port = "3030";
-const db_name = "hhh";
-const db_endpoint = db_proto + "://" + db_host + ":" + db_port + "/" + db_name;
-const db_headers = [
-  ["host", db_host],
-  ["port", db_port],
-  ["path", "/" + db_name]
-];
+const db_user = config.db.user
+const db_pass = config.db.password
+const db_proto = config.db.protocol
+const db_host = config.db.host
+const db_port = config.db.dbPort
+const db_name = config.db.name
+const db_endpoint = config.getDbEndpoint()
+const db_headers = config.getDbHeader()
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Middleware to parse form data in the request body
 app.use(requestMiddlewares.jsonBodyParser);
