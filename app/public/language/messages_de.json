@@ -14,9 +14,8 @@
   "datadonation": {
     "donationHeader": "Daten Spende",
     "dataDonationGuide": "Daten Spende Anleitung",
-    "step1": "Schritt 1: Lies die Anleitung und Erklärung.",
-    "step2": "<h5><strong>Gib deine Gewohnheit als Satz ein, markier die Teile deines Satzes und ordne jedem Teil den unten aufgeführten Kontext oder die Situation zu.</strong></h5>",
-    "step3": "Schritt 3: Bestätige deine Gewohnheit, die du spenden möchtest, indem du auf \"Spenden\" drückst"
+    "step1": "<h5><strong>Gib deine Gewohnheit als Satz ein, markier die Teile deines Satzes und ordne jedem Teil den unten aufgeführten Kontext oder die Situation zu.</strong></h5>",
+    "step2": "Schritt 2: Bestätige deine Gewohnheit, die du spenden möchtest, indem du auf \"Spenden\" drückst"
   },
 
 
@@ -43,8 +42,7 @@
   },
 
   "Rewardbox":{
-    "gift": "BELOHNUNG 🎁🎉",
-    "about_text":" <h5> <strong> Über uns </strong> </h5>"
+    "gift": "BELOHNUNG"
   },
 
   "Contactbox":{
@@ -57,7 +55,7 @@
     "contact_us": "Impressum",
     "address": "Adresse: Dresdner Straße 2, 01234 Dresden",
     "phone": "01577/123456789",
-    "email_contact": "E-mail: info@habithub.de"
+    "email_contact": "E-Mail: info@habithub.de"
   },
 
 

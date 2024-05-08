@@ -1,0 +1,66 @@
+{
+  "de": {
+  "navbar": {
+    "home": "Donation",
+    "about": "About the donation",
+    "contact": "Contact",
+    "language": "Language"
+  },
+  "introduction": {
+    "header": "Introduction",
+    "text": "Dear habit contributor,<br> As you’re likely aware, a habit establishes a connection between a  behavior and a  context in which the behavior is consistently performed. Take, for instance, the behavior of running 5 kilometers. This behavior can be associated with the context of waking up in the morning on a weekend. In this scenario, the context category time (weekend mornings) and the context category related behavior (waking up in the morning) is combined into a comprehensive context. We are interested in exploring the contexts you assign to your behaviors to make it your habit. By sharing your habits with us, you contribute to a greater understanding of how specific contexts can reinforce behaviors. Your insights will be invaluable in helping other craft strong, personalized habits.",
+    "image": "pics/intro_pic.png"
+  },
+  "datadonation": {
+    "donationHeader": "Data Donation",
+    "dataDonationGuide": "Data donation department",
+    "step1": "<h5><strong>Enter your habit as a sentence, mark the parts of your sentence and match each part with the context or situation listed below.</strong></h5>",
+    "step2": "Step 2: Confirm the habit you would like to donate by clicking on \"Donate\""
+  },
+
+
+  "Greybox": {
+    "example1": "<p><strong>Example:</strong> If I <mark id=\"mark1_physical\">enter the kitchen</mark> and <mark id=\"mark_prior\">see a fruit basket</mark>, <mark id=\"mark_behavior\">I take an apple</mark> and <mark id=\"mark_behavior\">eat it</mark>.</p>",
+    "clear": "↺",
+    "time": "time",
+    "physical": "physical setting",
+    "prior": "prior behavior",
+    "people": "people",
+    "internal": "internal state",
+    "behavior": "Behavior",
+    "step3": "<h5><strong>Confirm your habit</strong></h5>",
+    "example2": "<h5>Placeholder: I drink a glass of water before bedtime.<h5>",
+    "submit": "<h4><strong>Donate</strong></h4>",
+    "add": "+ add another habit"
+  },
+
+  "Contentbox":{
+    "slogan":"You brought YOUR habit on the way to be become a common good.",
+    "bedankung":"<h2>🎉 Thank you for YOUR donation and for YOUR contribution!</h2>",
+    "donate_again": "Donate again!",
+    "reward":"Get your reward!"
+  },
+
+  "Rewardbox":{
+    "gift": "REWARD"
+  },
+
+  "Contactbox":{
+    "send_us":"Send us a message",
+    "name":"Name",
+    "email":"E-Mail",
+    "subject":"Subject",
+    "message":"Message",
+    "submit": "Send Message",
+    "contact_us": "Impressum",
+    "address": "Address: Dresdner Straße 2, 01234 Dresden",
+    "phone": "01577/123456789",
+    "email_contact": "E-Mail: info@habithub.de"
+  },
+
+
+
+  "emptyFieldError": "The text field must not be empty!",
+  "emptyBehaviorError": "Please mark a behavior in the text before submitting."
+}
+}
