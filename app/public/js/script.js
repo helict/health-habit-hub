@@ -63,35 +63,6 @@ function submitClosedData(){
       return response.json()})
 }
 
-//generate random number on first site load with session storage
-let rdmIntForSiteLoad
-if (!sessionStorage.getItem('rdmIntForSiteLoad')) {
-  rdmIntForSiteLoad = Math.floor(Math.random() * 1000);
-  sessionStorage.setItem('rdmIntForSiteLoad', rdmIntForSiteLoad);
-  console.log('Session Stroage no number: ', rdmIntForSiteLoad);
-  callMainPage();
-}else{
-  rdmIntForSiteLoad = sessionStorage.getItem('rdmIntForSiteLoad');
-  console.log('Session storage had number: ', rdmIntForSiteLoad);
-  callMainPage();
-}
-
-function callMainPage(){
-  fetch('/donate', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({rdmIntForSiteLoad})
-})
-  .then(response => {
-    console.log("Server response: ", response);
-    return response.json()
-  })
-  .then(serverResponse => console.log(serverResponse))
-  .catch(err => console.error(err));
-}
-
 
 // Function to check if the textfield is empty
 function checkTextfeld() {
