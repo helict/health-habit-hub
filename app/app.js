@@ -13,6 +13,8 @@ const path = require('path');
 const requestMiddlewares = require('./middleware/requestParser.cjs');
 const staticFileMiddleware = require('./middleware/staticFileMiddleware.cjs');
 
+import aboutRouter from './routes/aboutRouter.js';
+
 // Express config
 const app = express();
 const port = 3000;
@@ -48,6 +50,8 @@ let inputSource;
 let group_sql;
 
 // Routes
+app.use("/about", aboutRouter);
+
 app.get('/donate', (req, res) => {
   console.log('Random Number used(get): ', rdmInt);
   if (rdmInt % 4 == 0) {
