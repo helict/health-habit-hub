@@ -1,26 +1,17 @@
-const createRequire = require('module').createRequire;
+import express from 'express';
+import sparqlClient from 'sparql-http-client';
+import {v4 as uuid} from 'uuid';
+import path, {dirname} from 'path';
 
-try {
-  require('dotenv').config();
-} catch (error) {
-  console.error("Failed to load .env file", error);
-}
+import {translate} from 'deeplx';
+import {fileURLToPath} from "url";
 
-const translate = require('deeplx').translate;
-const dirname = require('path').dirname;
-const fileURLToPath = require('url').fileURLToPath
-
-
-const express = require('express');
-const sparqlClient = require('sparql-http-client');
-const uuid = require('uuid');
-const path = require('path');
-
-const requestMiddlewares = require('./middleware/requestParser.cjs');
-const staticFileMiddleware = require('./middleware/staticFileMiddleware.cjs');
+import {staticFileMiddleware} from './middleware/staticFileMiddleware.js';
+import {jsonBodyParser} from './middleware/requestParser.js';
 
 // Express config
-const config = require('./EnvManager.js');
+import {config} from "./EnvManager.js";
+
 
 const app = express();
 const port = config.port;
@@ -35,12 +26,13 @@ const db_name = config.db.name
 const db_endpoint = config.getDbEndpoint()
 const db_headers = config.getDbHeader()
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Middleware to parse form data in the request body
-app.use(requestMiddlewares.jsonBodyParser);
+app.use(jsonBodyParser);
 
 //Middleware to serve static files 
-app.use(staticFileMiddleware.staticFileMiddleware);
+app.use(staticFileMiddleware);
 
 let selectionDataClosed = new Map();
 let dataOpen;
