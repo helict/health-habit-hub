@@ -1,15 +1,16 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const config = {
     port: process.env.PORT || 3000,
     db: {
-        host: process.env.DB_HOST,
-        port: process.env.PORT,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        protocol: process.env.DB_PROTOCOL,
-        dbPort: process.env.DB_PORT
+        host: process.env.DB_HOST || 'localhost',
+        user: process.env.DB_USER || 'defaultUser',
+        password: process.env.DB_PASSWORD || 'defaultPassword',
+        database: process.env.DB_NAME || 'defaultDatabase',
+        protocol: process.env.DB_PROTOCOL || 'http',
+        dbPort: process.env.DB_PORT || 5432,
     },
     getDbEndpoint: function () {
         return `${this.db.protocol}://${this.db.host}:${this.db.port}/${this.db.name}`;
@@ -24,5 +25,5 @@ const config = {
     }
 };
 
-module.exports = config;
+export { config };
 
