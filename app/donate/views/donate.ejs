@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Health Habit Hub</title>
     <link rel="stylesheet" href="css/main.css">
+    <script src="js/donate.js"></script>
     <script src="js/script.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -95,7 +96,7 @@
     </div>
     <div class="row form-group">
       <div class="col-12">
-        <textarea class="form-control" rows="3" id="textfeld" maxlength="300" oninput="onInput()"></textarea>
+        <div contenteditable="true" class="form-control" id="habit-text"></div>
       </div>
     </div>
     <% if (experimentGroup.closedTask) { %>
@@ -109,35 +110,16 @@
     </div>
 
     <div class="d-flex flex-sm-row  button-container">        <!-- Erste fünf Buttons linksbündig -->
-        <button class="custom-button btn" id="time" onclick="saveSelection('TimeReference')"> </button>
-        <button class="custom-button btn" id="physical" onclick="saveSelection('PhysicalSetting')"></button>
-        <button class="custom-button btn" id="prior"onclick="saveSelection('RelatedBehaviour')"></button>
-        <button class="custom-button btn" id="people"onclick="saveSelection('People')"></button>
-        <button class="custom-button btn" id="internal"onclick="saveSelection('InternalState')"></button>
+        <button class="custom-button btn" id="time" onclick="markSelection('TimeReference', 'habit-text')"> </button>
+        <button class="custom-button btn" id="physical" onclick="markSelection('PhysicalSetting', 'habit-text')"></button>
+        <button class="custom-button btn" id="prior"onclick="markSelection('RelatedBehaviour', 'habit-text')"></button>
+        <button class="custom-button btn" id="people"onclick="markSelection('People', 'habit-text')"></button>
+        <button class="custom-button btn" id="internal"onclick="markSelection('InternalState', 'habit-text')"></button>
         <!-- Sechster Button rechts -->
-        <button class="custom-button btn  " id="behavior"onclick="saveSelection('Behavior')"></button>
+        <button class="custom-button btn  " id="behavior"onclick="markSelection('Behavior', 'habit-text')"></button>
     </div>
     <% } %>
 </div>
-
-<% if (experimentGroup.closedTask) { %>
-<div class="container" id="confirmbox">
-    <div class="row mt-4">
-        <div class="col-12">
-            <p id="step3"></p>
-        </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="" role="alert">
-                <p id="example2"></p>
-            </div>
-        </div>
-    </div>
-
-</div>
-<% } %>
-
 
 
 <div class="container mb-5">

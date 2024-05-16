@@ -16,7 +16,7 @@
   "Greybox":{
     "step2":" <h5> <strong> Enter your habit as sentence </strong> </h5>",
     "step3":" <h5> <strong> Enter your context as sentence </strong> </h5>",
-    "example1": "<p><strong>Example:</strong> When I am <mark id=\"mark1_physical\">entering the kitchen</mark> and <mark id=\"mark_prior\">see a fruit basket</mark>, I am <mark id=\"mark_behavior\">taking an apple</mark> and <mark id=\"mark_behavior\">eat it</mark>.</p>",
+    "example1": "<p><strong>Example:</strong> When I am <mark class=\"mark_PhysicalSetting\">entering the kitchen</mark> and <mark class=\"mark_RelatedBehaviour\">see a fruit basket</mark>, I am <mark class=\"mark_Behavior\">taking an apple</mark> and <mark class=\"mark_Behavior\">eat it</mark>.</p>",
     "submit": "</h4><strong>Donate</strong></h4> ",
     "add":"+ add another habit",
     "fhome": "Home",
@@ -50,7 +50,7 @@
   },
   "Greybox":{
 
-    "example1": "<p><strong>Beispiel:</strong> Wenn ich <mark id=\"mark1_physical\">die Küche betrete</mark>  und <mark id=\"mark_prior\">einen Obstkorb sehe</mark>, <mark id=\"mark_behavior\">nehme ich einen Apfel</mark> und <mark id=\"mark_behavior\">esse ihn</mark>.</p>",       
+    "example1": "<p><strong>Beispiel:</strong> Wenn ich <mark class=\"mark_PhysicalSetting\">die Küche betrete</mark>  und <mark class=\"mark_RelatedBehaviour\">einen Obstkorb sehe</mark>, <mark class=\"mark_Behavior\">nehme ich einen Apfel</mark> und <mark class=\"mark_Behavior\">esse ihn</mark>.</p>",       
     "step2":" <h5> <strong> Gib deine Gewohnheit in einem Satz an </strong> </h5>",
     "step3":" <h5> <strong> Gib deinen Kontext in einem Satz an </strong> </h5>",
     "time": "Zeit",

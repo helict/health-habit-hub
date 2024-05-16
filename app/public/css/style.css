@@ -251,33 +251,33 @@ body {
     
   }
   
-  #mark_time{
+  .mark_TimeReference{
     background-color: #DD7A7A;
     border-radius: 10px;
   }
-  #mark1_physical{
+  .mark_PhysicalSetting{
     background-color: #AD7CBC;
     border-radius: 10px;      
   }
   
-  #mark_people{
+  .mark_People{
     background-color: #B8D466;
     border-radius: 10px;
   }
   
   
-  #mark_prior{
+  .mark_RelatedBehaviour{
     background-color: #FBEA67;
     border-radius: 10px;
   }
   
   
-  #mark_internal{
+  .mark_InternalState{
     background-color: #E89F5C;
     border-radius: 10px;
   }
   
-  #mark_behavior{
+  .mark_Behavior{
     background-color: #42C2CA;
     border-radius: 10px;
   }
@@ -552,30 +552,6 @@ body {
   margin-top: 20px;
   margin-bottom: 1px;
 
-}
-
-.highlighted-TimeReference {
-  background-color: #DD7A7A;
-}
-
-.highlighted-PhysicalSetting {
-  background-color: #AD7CBC;
-}
-
-.highlighted-People {
-  background-color: #B8D466;
-}
-
-.highlighted-RelatedBehaviour {
-  background-color: #FBEA67;
-}
-
-.highlighted-InternalState {
-  background-color: #E89F5C;
-}
-
-.highlighted-Behavior {
-  background-color: #42C2CA;
 }
 
 .node {
