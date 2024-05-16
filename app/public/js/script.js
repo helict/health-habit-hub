@@ -170,29 +170,6 @@ function getWholeTerm(text, start, end) {
   return { word: text.substring(start, end).trim(), start: start, end: end };
 }
 
-function removeAllHighlights() {
-  //remove all highlighting and reset the selectedWordsMap and the textbox
-  let textareaValue = document.getElementById("textfeld").value;
-  let content = document.getElementById("example2");
-
-  selectedWordsMap.clear();
-  content.innerText = textareaValue;
-
-  //clear map from the server (remove all data)
-  fetch("/clearMap", {
-    method: "DELETE",
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      console.log("Map cleared successfully");
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-}
-
 function isHighlighted(highlightedWord, selectedMap) {
   // check if some of the new highlighted words are already highlighted
   let keysToDelete = [];

@@ -69,3 +69,8 @@ function removeEmptyTextNodes(editable) {
     }
   }
 }
+
+function removeAllHighlights(editableId) {
+  let editable = document.getElementById(editableId);
+  editable.innerHTML = editable.innerText;
+}
