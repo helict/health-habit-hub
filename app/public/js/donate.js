@@ -57,3 +57,65 @@ function cleanUpEditable(editableID) {
     child.innerHTML = child.textContent;
   }
 }
+
+function submitData(editableId) {
+  cleanUpEditable(editableId);
+  const editable = document.getElementById(editableId);
+  const data = parseInput(editable);
+  console.log(data);
+  const inputValidity = validate(data);
+  console.log(inputValidity);
+  if (checkValidity(inputValidity)) {
+    sendData(data);
+  } else {
+    if (inputValidity.empty) {
+      handleEmptyFieldError(); // TODO: better error handling
+    } else if (inputValidity.noBehavior) {
+      handleEmptyBehaviorError(); // TODO: better error handling
+    }
+  }
+}
+
+function sendData(data) {
+  console.log(data); // TODO: send data to server
+}
+
+function parseInput(editable) {
+  const habitText = editable.innerText;
+  const habitData = {
+    text: habitText,
+    language: "en", // TODO: get language from session
+    experimentGroup: {
+      // TODO: get actual experiment group
+      closedTask: true,
+      closedDescription: true,
+    },
+    contexts: getContexts(editable),
+  };
+  return habitData;
+}
+
+function getContexts(editable) {
+  const contexts = [];
+  for (const mark of editable.querySelectorAll("mark")) {
+    const context = {
+      name: mark.className.split("_")[1],
+      value: mark.innerText,
+    };
+    contexts.push(context);
+  }
+  return contexts;
+}
+
+function validate(data) {
+  return {
+    empty: data.text === "",
+    noBehavior: !data.contexts.find((context) => context.name === "Behavior"),
+  };
+}
+
+function checkValidity(validity) {
+  // return false if the value of at least one property of validity is true,
+  // i.e. if there is at least one error.
+  return !Object.values(validity).includes(true);
+}

@@ -1,7 +1,4 @@
-window.onselect = selectText;
-let selection = "";
 let currentLanguage = getBrowserLanguage() || "en";
-let selectedWordsMap = new Map();
 
 function getBrowserLanguage() {
   // Versuche, die bevorzugte Sprache des Browsers zu erhalten
@@ -20,42 +17,6 @@ function getBrowserLanguage() {
 function changeLanguage(lang) {
   currentLanguage = lang;
   loadContentClosed();
-}
-
-//test text to copy and paste: Ich gehe abends im Park joggen mit meinem Bruder nachdem wir gegessen haben und fühle mich glücklich dabei!
-function selectText(e) {
-  let textarea = document.getElementById("textfeld");
-  let start = e.target.selectionStart;
-  let end = e.target.selectionEnd;
-  selection = getWholeTerm(textarea.value, start, end).word;
-}
-
-function submitClosedData() {
-  fetch("/data", {
-    method: "GET",
-  }).then((response) => {
-    console.log("Server response: ", response);
-    window.location.href = "bedankung.html";
-    return response.json();
-  });
-}
-
-// Function to check if the textfield is empty
-function checkTextfeld() {
-  let textfeldWert = document.getElementById("textfeld").value.trim();
-
-  if (textfeldWert === "") {
-    handleEmptyFieldError();
-    return false;
-  } else {
-    if (!hasBehaviorMarked()) {
-      handleEmptyBehaviorError();
-      return false;
-    } else {
-      submitClosedData();
-      return true;
-    }
-  }
 }
 
 function handleEmptyFieldError() {
@@ -80,15 +41,6 @@ function handleEmptyBehaviorError() {
     .catch((error) =>
       console.error("Error loading language data file:", error)
     );
-}
-
-function hasBehaviorMarked() {
-  for (const value of selectedWordsMap.values()) {
-    if (value.button == "Behavior") {
-      return true;
-    }
-  }
-  return false;
 }
 
 function loadContentClosed() {
@@ -146,42 +98,6 @@ function updateGreybox(data) {
   document.getElementById("fcontact").innerText = data.fcontact;
   document.getElementById("fmore").innerText = data.fmore;
   document.getElementById("add").innerText = data.add;
-}
-
-function getWholeTerm(text, start, end) {
-  // check if selection start is boundary of word
-  let startBoundary = /\s/.test(text.charAt(start));
-  while (start > 0 && !startBoundary) {
-    start--;
-    startBoundary = /\s/.test(text.charAt(start));
-  }
-
-  // check if selection end is boundary of word
-  let endBoundary = /\s/.test(text.charAt(end));
-  while (end < text.length && !endBoundary) {
-    end++;
-    endBoundary = /\s/.test(text.charAt(end));
-  }
-
-  if (start != 0) {
-    start++;
-  }
-
-  return { word: text.substring(start, end).trim(), start: start, end: end };
-}
-
-function isHighlighted(highlightedWord, selectedMap) {
-  // check if some of the new highlighted words are already highlighted
-  let keysToDelete = [];
-  for (const keys of selectedMap.keys()) {
-    for (const entry of highlightedWord) {
-      if (keys.includes(entry)) {
-        keysToDelete.push(keys);
-      }
-    }
-  }
-  // return an array with only unique entries
-  return [...new Set(keysToDelete)];
 }
 
 loadContentClosed();
