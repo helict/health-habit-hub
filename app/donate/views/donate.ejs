@@ -16,6 +16,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.3/dist/purify.min.js" integrity="sha256-ykUC1Oqnato0nykqa4dwQTqKTkewuLP2Rhu49YV/kYY=" crossorigin="anonymous"></script>    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis&display=swap">
     <script src="js/donate.js"></script>
+    <script>
+      const EXPERIMENT_GROUP = <%- JSON.stringify(experimentGroup) %>;
+
+      window.onload = function() {
+        console.log("onload: ", EXPERIMENT_GROUP);
+        const contextButtons = {
+          'time': "TimeReference",
+          'physical': "PhysicalSetting",
+          'prior': "RelatedBehaviour",
+          'people': "People",
+          'internal': "InternalState",
+          'behavior': "Behavior"
+        };
+        addDonateEventListeners('habit-input', 'submit', 'clear', contextButtons, EXPERIMENT_GROUP, currentLanguage);
+      }
+    </script>
   </head>
 
   <body>
@@ -96,7 +112,7 @@
     </div>
     <div class="row form-group">
       <div class="col-12">
-        <div contenteditable="true" class="form-control" id="habit-text" oninput="cleanUpEditable('habit-text')"></div>
+        <div contenteditable="true" class="form-control" id="habit-input"></div>
       </div>
     </div>
     <% if (experimentGroup.closedTask) { %>
@@ -105,18 +121,18 @@
                 <p id="example1"></p>
             </div>       
             <div class="col-4 ">
-              <button class="custom-button btn" id="clear" onclick="removeAllHighlights('habit-text')">clear</button>
+              <button class="custom-button btn" id="clear">clear</button>
         </div>
     </div>
 
     <div class="d-flex flex-sm-row  button-container">        <!-- Erste fünf Buttons linksbündig -->
-        <button class="custom-button btn" id="time" onclick="markSelection('TimeReference', 'habit-text')"> </button>
-        <button class="custom-button btn" id="physical" onclick="markSelection('PhysicalSetting', 'habit-text')"></button>
-        <button class="custom-button btn" id="prior"onclick="markSelection('RelatedBehaviour', 'habit-text')"></button>
-        <button class="custom-button btn" id="people"onclick="markSelection('People', 'habit-text')"></button>
-        <button class="custom-button btn" id="internal"onclick="markSelection('InternalState', 'habit-text')"></button>
+        <button class="custom-button btn" id="time"></button>
+        <button class="custom-button btn" id="physical"></button>
+        <button class="custom-button btn" id="prior"></button>
+        <button class="custom-button btn" id="people"></button>
+        <button class="custom-button btn" id="internal"></button>
         <!-- Sechster Button rechts -->
-        <button class="custom-button btn  " id="behavior"onclick="markSelection('Behavior', 'habit-text')"></button>
+        <button class="custom-button btn  " id="behavior"></button>
     </div>
     <% } %>
 </div>
@@ -124,7 +140,7 @@
 
 <div class="container mb-5">
   <div class="col-12">
-    <button type="button" onclick="submitData('habit-text')"; class="button" id="submit">Absenden</button>
+    <button type="button" class="button" id="submit">Absenden</button>
   </div>
 </div>
 

@@ -1,5 +1,4 @@
-function markSelection(context, editableId) {
-  const editable = document.getElementById(editableId);
+function markSelection(context, editable) {
   const selection = window.getSelection();
 
   if (
@@ -39,14 +38,15 @@ function markSelection(context, editableId) {
   range.insertNode(mark);
 }
 
-function removeAllHighlights(editableId) {
-  let editable = document.getElementById(editableId);
+function removeAllHighlights(editable) {
   editable.innerHTML = editable.innerText;
 }
 
-// Ensure that only first-level mark elements are present in the editable div
-function cleanUpEditable(editableID) {
-  const editable = document.getElementById(editableID);
+/**
+ * Ensures that the editable contains only non-nested MARK elements as children
+ * by removing all other markup.
+ */
+function cleanUpHabitInput(editable) {
   // remove all markup other than first-level mark elements
   editable.innerHTML = DOMPurify.sanitize(editable.innerHTML, {
     ALLOWED_TAGS: ["mark"],
@@ -58,38 +58,40 @@ function cleanUpEditable(editableID) {
   }
 }
 
-function submitData(editableId) {
-  cleanUpEditable(editableId);
-  const editable = document.getElementById(editableId);
-  const data = parseInput(editable);
-  console.log(data);
+/**
+ * Validate habit data from <var>editable</var> and submit it to the server if valid.
+ */
+function submitHabit(editable, experimentGroup, language) {
+  cleanUpHabitInput(editable);
+
+  const data = parseInput(editable, experimentGroup, language);
   const inputValidity = validate(data);
-  console.log(inputValidity);
+
   if (checkValidity(inputValidity)) {
     sendData(data);
   } else {
+    // TODO: better error handling
     if (inputValidity.empty) {
-      handleEmptyFieldError(); // TODO: better error handling
+      // Definition of handleEmptyFieldError in script.js
+      handleEmptyFieldError();
     } else if (inputValidity.noBehavior) {
-      handleEmptyBehaviorError(); // TODO: better error handling
+      // Definition of handleEmptyBehaviorError in script.js
+      handleEmptyBehaviorError();
     }
   }
 }
 
 function sendData(data) {
-  console.log(data); // TODO: send data to server
+  // TODO: implement sending data to server
+  console.log(data);
 }
 
-function parseInput(editable) {
+function parseInput(editable, experimentGroup, language) {
   const habitText = editable.innerText;
   const habitData = {
     text: habitText,
-    language: "en", // TODO: get language from session
-    experimentGroup: {
-      // TODO: get actual experiment group
-      closedTask: true,
-      closedDescription: true,
-    },
+    experimentGroup: experimentGroup,
+    language: language,
     contexts: getContexts(editable),
   };
   return habitData;
@@ -118,4 +120,36 @@ function checkValidity(validity) {
   // return false if the value of at least one property of validity is true,
   // i.e. if there is at least one error.
   return !Object.values(validity).includes(true);
+}
+
+// Add event listeners
+function addDonateEventListeners(
+  editableId,
+  submitButtonId,
+  resetButtonId,
+  contextButtons,
+  experimentGroup,
+  language
+) {
+  const editable = document.getElementById(editableId);
+  const submitButton = document.getElementById(submitButtonId);
+  const resetButton = document.getElementById(resetButtonId);
+
+  editable.addEventListener("input", () => {
+    cleanUpHabitInput(editable);
+  });
+
+  submitButton.addEventListener("click", () => {
+    submitHabit(editable, experimentGroup, language);
+  });
+
+  resetButton.addEventListener("click", () => {
+    removeAllHighlights(editable);
+  });
+
+  Object.keys(contextButtons).forEach(function (key) {
+    document.getElementById(key).addEventListener("click", function (event) {
+      markSelection(contextButtons[key], editable);
+    });
+  });
 }
