@@ -48,6 +48,9 @@ let inputSource;
 let group_sql;
 
 // Routes
+app.get("/", (req, res) => {
+  res.redirect(301, "/donate");
+});
 app.use("/donate", donateRouter);
 
 //SPARQL Connection
