@@ -152,10 +152,6 @@ function addDonateEventListeners(
   const submitButton = document.getElementById(submitButtonId);
   const resetButton = document.getElementById(resetButtonId);
 
-  editable.addEventListener("input", () => {
-    cleanUpHabitInput(editable);
-  });
-
   submitButton.addEventListener("click", () => {
     submitHabit(editable, experimentGroup, language);
   });
