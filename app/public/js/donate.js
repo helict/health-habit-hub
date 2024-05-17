@@ -82,8 +82,25 @@ function submitHabit(editable, experimentGroup, language) {
 }
 
 function sendData(data) {
-  // TODO: implement sending data to server
-  console.log(data);
+  fetch("donate/data", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (response.ok) {
+        window.location.href = "bedankung.html";
+        console.log("Data saved successfully.");
+      } else {
+        alert("Server Error while saving data.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error while saving data:", error);
+      alert("Error while saving data.");
+    });
 }
 
 function parseInput(editable, experimentGroup, language) {

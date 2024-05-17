@@ -65,3 +65,9 @@ export function showDonateForm(req, res) {
     experimentGroup: experimentGroup,
   });
 }
+
+export function saveDonateData(req, res) {
+  // TODO: Save data to database
+  console.log("Received donate data:", req.body);
+  res.sendStatus(200);
+}
