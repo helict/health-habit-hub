@@ -1,6 +1,9 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import { showDonateForm, saveDonateData } from "./controllers.js";
+import {
+  showDonateForm,
+  saveDonateData,
+} from "../controllers/donateControllers.js";
 
 const router = express.Router();
 

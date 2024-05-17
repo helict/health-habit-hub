@@ -13,7 +13,7 @@ const path = require("path");
 const requestMiddlewares = require("./middleware/requestParser.cjs");
 const staticFileMiddleware = require("./middleware/staticFileMiddleware.cjs");
 
-import donateRouter from "./donate/router.js";
+import donateRouter from "./routers/donateRouter.js";
 
 // Express config
 const app = express();

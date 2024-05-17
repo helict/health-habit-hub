@@ -1,5 +1,5 @@
 import url from "url";
-import { ExperimentGroup } from "./models/experiment.js";
+import { ExperimentGroup } from "../models/experimentGroup.js";
 
 function getExperimentGroupFromQuery(req) {
   if (req.query.group) {
@@ -61,9 +61,12 @@ function getExperimentGroup(req, res) {
 
 export function showDonateForm(req, res) {
   const experimentGroup = getExperimentGroup(req, res);
-  res.render(url.fileURLToPath(new URL("views/donate.ejs", import.meta.url)), {
-    experimentGroup: experimentGroup,
-  });
+  res.render(
+    url.fileURLToPath(new URL("../views/donate.ejs", import.meta.url)),
+    {
+      experimentGroup: experimentGroup,
+    }
+  );
 }
 
 export function saveDonateData(req, res) {
