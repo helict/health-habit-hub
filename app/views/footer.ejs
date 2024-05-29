@@ -1,0 +1,13 @@
+<footer class="footer">
+    <div class="container">
+        <% let socialLinks = [
+      { url: "https://www.instagram.com/", img: "pics/insta.png" },
+      { url: "https://www.facebook.com/", img: "pics/facebook.png" },
+      { url: "https://www.X.com/", img: "pics/X.png" }
+    ]; %>
+
+    <% socialLinks.forEach(function(link) { %>
+        <a href="<%= link.url %>"><img src="<%= link.img %>" class="socialmedia"></a>
+      <% }); %>
+    </div>
+  </footer>
