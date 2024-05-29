@@ -15,6 +15,8 @@ const staticFileMiddleware = require("./middleware/staticFileMiddleware.cjs");
 
 import donateRouter from "./routers/donateRouter.js";
 
+import aboutRouter from './routes/aboutRouter.js';
+
 // Express config
 const app = express();
 const port = 3000;

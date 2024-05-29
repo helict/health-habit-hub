@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<%- include('header') %>
+    
+   <body class="d-flex flex-column min-vh-100">
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container">
+            <img src="pics/h3-logo.png" id="icon" alt="PepeHands">
+            <a class="navbar-brand" href="http://app.localhost/donate"><b>HabitHub</b></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+
+                    <% ["Home", "About", "Contact"].forEach(function(page) { -%>
+                        <% var lowerPage = page.toLowerCase(); %>
+                        <li class="nav-item">
+                            <a class="nav-link <%= lowerPage === 'home' ? 'active' : '' %>" href="<%= lowerPage %>.html" id="nav-<%= lowerPage %>"><%= page %></a>
+                        </li>
+                    <% }); %>
+                    <li class="nav-item dropdown" id="lang-menu">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="pics/globus.png" id="globus" alt="Language Icon">
+                            <span id="nav-language"><%= currentLanguage || 'EN' %></span>
+                        </a>
+                        <div class="dropdown-menu w-50" aria-labelledby="languageDropdown">
+                            <% ['English', 'Deutsch'].forEach(function(language) { %>
+                                <a href="#" class="dropdown-item" onclick="changeLanguage('<%= language.toLowerCase().substr(0, 2) %>')"><%= language %></a>
+                            <% }); %>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+   <div class="container" id="datadonationheader">
+    <div class="row">
+        <div class="col-12">
+            <p id="about_text"><%= aboutText || 'Standardtext für Über uns' %></p>
+            <p id="step3"><%= step3Text || 'Standardtext für Schritt 3' %></p>
+
+        </div>
+    </div>
+</div>
+
+<%- include('footer') %>
+
+</body>
+</html>
