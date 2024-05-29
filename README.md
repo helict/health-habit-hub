@@ -35,6 +35,8 @@ docker-compose up
 
 ## Usage
 
+### Location
+
 #### Online
 When inside the TU-Dresden Network you can access the website under:
 [http://swdev.wiwi.tu-dresden.de:3000](http://swdev.wiwi.tu-dresden.de:3000) 
@@ -48,6 +50,17 @@ After running ```docker-compose up``` you can access the following sites:
 Open [app.localhost](https://app.localhost) to use the main application \
 Open [fuseki.localhost](http://fuseki.localhost) to see/use the database \
 Open [proxy.localhost](http://proxy.localhost) to see the dashboard 
+
+### Donate a habit
+
+To donate a habit, go to `/donate`. You will be randomly assigned to one of the four experiment groups mentioned above. For the duration of your browser session, Health Habit Hub will remember to which experiment group you have been assigned and only show you the corresponding version of the habit entry form.
+
+For debugging, you can also manually select an entry mode by adding a query parameter. Doing so will not change to which experiment group you are assigned to.
+
+- `/donate?group=closed_task_closed_desc`
+- `/donate?group=closed_task_open_desc`
+- `/donate?group=open_task_closed_desc`
+- `/donate?group=open_task_open_desc`
 
 ## Repository
 All the app files are found in /app  \
