@@ -12,6 +12,7 @@ import {jsonBodyParser} from './middleware/requestParser.js';
 // Express config
 import {config} from "./EnvManager.js";
 
+import donateRouter from "./routers/donateRouter.js";
 
 const app = express();
 const port = config.port;
