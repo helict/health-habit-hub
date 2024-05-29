@@ -1,5 +1,8 @@
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import path, {dirname} from 'path';
+import {fileURLToPath} from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Create a router to define middleware
 const staticFileMiddleware = express.Router();
@@ -15,6 +18,4 @@ staticFileMiddleware.use('/js',
 // Serve language files with the 'application/json' MIME type
 staticFileMiddleware.use(express.static(path.join(__dirname, '..', 'public'), { 'extensions': ['json'] }));
 
-module.exports = {
-  staticFileMiddleware,
-};
+export { staticFileMiddleware};
