@@ -13,6 +13,7 @@ import {jsonBodyParser} from './middleware/requestParser.js';
 import {config} from "./EnvManager.js";
 
 import donateRouter from "./routers/donateRouter.js";
+import aboutRouter from "./routes/aboutRouter.js";
 
 const app = express();
 const port = config.port;
@@ -46,6 +47,7 @@ app.get("/", (req, res) => {
   res.redirect(301, "/donate");
 });
 app.use("/donate", donateRouter);
+app.use('/about.html', aboutRouter);
 
 //SPARQL Connection
 async function insertDataClosed() {
