@@ -1,16 +1,16 @@
-import express from 'express';
-import sparqlClient from 'sparql-http-client';
-import {v4 as uuid} from 'uuid';
-import path, {dirname} from 'path';
+import express from "express";
+import sparqlClient from "sparql-http-client";
+import { v4 as uuid } from "uuid";
+import path, { dirname } from "path";
 
-import {translate} from 'deeplx';
-import {fileURLToPath} from "url";
+import { translate } from "deeplx";
+import { fileURLToPath } from "url";
 
-import {staticFileMiddleware} from './middleware/staticFileMiddleware.js';
-import {jsonBodyParser} from './middleware/requestParser.js';
+import { staticFileMiddleware } from "./middleware/staticFileMiddleware.js";
+import { jsonBodyParser } from "./middleware/requestParser.js";
 
 // Express config
-import {config} from "./EnvManager.js";
+import { config } from "./EnvManager.js";
 
 import donateRouter from "./routers/donateRouter.js";
 import aboutRouter from "./routes/aboutRouter.js";
@@ -19,21 +19,21 @@ const app = express();
 const port = config.port;
 
 // SPARQL client config
-const db_user = config.db.user
-const db_pass = config.db.password
-const db_proto = config.db.protocol
-const db_host = config.db.host
-const db_port = config.db.dbPort
-const db_name = config.db.name
-const db_endpoint = config.getDbEndpoint()
-const db_headers = config.getDbHeader()
+const db_user = config.db.user;
+const db_pass = config.db.password;
+const db_proto = config.db.protocol;
+const db_host = config.db.host;
+const db_port = config.db.dbPort;
+const db_name = config.db.name;
+const db_endpoint = config.getDbEndpoint();
+const db_headers = config.getDbHeader();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Middleware to parse form data in the request body
 app.use(jsonBodyParser);
 
-//Middleware to serve static files 
+//Middleware to serve static files
 app.use(staticFileMiddleware);
 
 let selectionDataClosed = new Map();
@@ -47,7 +47,7 @@ app.get("/", (req, res) => {
   res.redirect(301, "/donate");
 });
 app.use("/donate", donateRouter);
-app.use('/about.html', aboutRouter);
+app.use("/about", aboutRouter);
 
 //SPARQL Connection
 async function insertDataClosed() {

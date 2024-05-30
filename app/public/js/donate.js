@@ -166,3 +166,48 @@ function addDonateEventListeners(
     });
   });
 }
+
+// TODO: Rework
+function handleEmptyFieldError() {
+  fetch("language/language-data.json")
+    .then((response) => response.json())
+    .then((data) => {
+      const fehlerText = data[currentLanguage].emptyFieldError;
+      alert(fehlerText);
+    })
+    .catch((error) =>
+      console.error("Error loading language data file:", error)
+    );
+}
+
+function handleEmptyBehaviorError() {
+  fetch("language/language-data.json")
+    .then((response) => response.json())
+    .then((data) => {
+      const fehlerText = data[currentLanguage].emptyBehaviorError;
+      alert(fehlerText);
+    })
+    .catch((error) =>
+      console.error("Error loading language data file:", error)
+    );
+}
+
+let currentLanguage = getBrowserLanguage() || "en";
+
+function getBrowserLanguage() {
+  // Versuche, die bevorzugte Sprache des Browsers zu erhalten
+  let browserLanguage = navigator.language || navigator.userLanguage;
+
+  if (
+    browserLanguage &&
+    (browserLanguage === "de" || browserLanguage.startsWith("de-"))
+  ) {
+    return "de";
+  } else {
+    return "en";
+  }
+}
+// Function to change the language
+function changeLanguage(lang) {
+  currentLanguage = lang;
+}
