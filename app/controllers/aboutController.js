@@ -5,8 +5,12 @@ const dummyContent = {
   title: "Über Uns - HabitHub",
   aboutText: "Standardtext für Über uns",
   step3Text: "Standardtext für Schritt 3",
-  currentLanguage: "EN"
-  
+  currentLanguage: "EN",
+  navigation: {
+    homePageName: "Home",
+    aboutPageName: "About",
+    contactPageName: "Contact",
+  },
 };
 
 // Funktion zum Rendern der About-Seite

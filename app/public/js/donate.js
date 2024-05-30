@@ -166,3 +166,28 @@ function addDonateEventListeners(
     });
   });
 }
+
+// TODO: Rework
+function handleEmptyFieldError() {
+  fetch("language/language-data.json")
+    .then((response) => response.json())
+    .then((data) => {
+      const fehlerText = data[currentLanguage].emptyFieldError;
+      alert(fehlerText);
+    })
+    .catch((error) =>
+      console.error("Error loading language data file:", error)
+    );
+}
+
+function handleEmptyBehaviorError() {
+  fetch("language/language-data.json")
+    .then((response) => response.json())
+    .then((data) => {
+      const fehlerText = data[currentLanguage].emptyBehaviorError;
+      alert(fehlerText);
+    })
+    .catch((error) =>
+      console.error("Error loading language data file:", error)
+    );
+}
