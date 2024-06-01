@@ -6,13 +6,13 @@ import path, { dirname } from "path";
 import { translate } from "deeplx";
 import { fileURLToPath } from "url";
 
+import { config } from "./utils/config.js";
 import { staticFileMiddleware } from "./middleware/staticFileMiddleware.js";
 import { jsonBodyParser } from "./middleware/requestParser.js";
 
 // Express config
-import { config } from "./EnvManager.js";
 
-import donateRouter from "./routers/donateRouter.js";
+import donateRouter from "./routes/donateRouter.js";
 import aboutRouter from "./routes/aboutRouter.js";
 
 const app = express();
