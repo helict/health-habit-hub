@@ -36,6 +36,8 @@ docker compose watch
 
 [Compose Watch](https://docs.docker.com/compose/file-watch/) watches the `./app` directory for changes and will automatically rebuild and restart the `app` Docker container.
 
+**Note:** If you are using a [Mac with Apple silicon](https://support.apple.com/116943), you may need to disable Rosetta emulation in Docker to get the `fuseki` service to run properly. 
+
 
 ## Usage
 
