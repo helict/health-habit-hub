@@ -55,14 +55,10 @@ services:
   fuseki:
     image: hhh/fuseki
     container_name: fuseki
-    build: .
+    build: ./fuseki
     restart: always
-    entrypoint: [ "/sbin/tini", "--", "/docker-entrypoint.sh" ]
-    command: sh -c "
-      /jena-fuseki/tdbloader2 --loc /fuseki/databases/hhh /init/data.ttl &&
-      /jena-fuseki/fuseki-server --loc /fuseki/databases/hhh --tdb2 --update --rdfs /init/schema.ttl /hhh"
     environment:
-      - ADMIN_PASSWORD=admin
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     ports:
       - 3030:3030
     networks:
