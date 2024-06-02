@@ -46,6 +46,11 @@ services:
       - traefik.http.routers.app.entrypoints=web
       - traefik.http.routers.app.service=app
       - traefik.http.services.app.loadbalancer.server.port=3000
+    develop:
+      watch:
+        - path: ./app
+          action: rebuild
+
 
   fuseki:
     image: hhh/fuseki
@@ -68,6 +73,7 @@ services:
       - traefik.http.routers.fuseki.entrypoints=web
       - traefik.http.routers.fuseki.service=fuseki
       - traefik.http.services.fuseki.loadbalancer.server.port=3030
+
 
 networks:
   proxy:
