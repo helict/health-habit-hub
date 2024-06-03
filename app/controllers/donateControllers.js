@@ -5,7 +5,7 @@ function getExperimentGroupFromQuery(req) {
   if (req.query.group) {
     try {
       return ExperimentGroup.fromString(req.query.group);
-    } catch (e) {
+    } catch {
       console.error(
         `Ignoring invalid experiment group parameter "${req.query.group}".`,
       );
@@ -14,7 +14,7 @@ function getExperimentGroupFromQuery(req) {
   }
 }
 
-function getExperimentGroupFromCookie(req, res) {
+function getExperimentGroupFromCookie(req) {
   console.log(`Request cookie: experimentGroup=${req.cookies.experimentGroup}`);
 
   if (req.cookies.experimentGroup) {

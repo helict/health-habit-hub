@@ -48,6 +48,7 @@ function removeAllHighlights(editable) {
  */
 function cleanUpHabitInput(editable) {
   // remove all markup other than first-level mark elements
+  // eslint-disable-next-line no-undef
   editable.innerHTML = DOMPurify.sanitize(editable.innerHTML, {
     ALLOWED_TAGS: ['mark'],
     ALLOWED_ATTR: ['class'],
@@ -140,6 +141,7 @@ function checkValidity(validity) {
 }
 
 // Add event listeners
+// eslint-disable-next-line no-unused-vars
 function addDonateEventListeners(
   editableId,
   submitButtonId,
@@ -161,7 +163,7 @@ function addDonateEventListeners(
   });
 
   Object.keys(contextButtons).forEach(function (key) {
-    document.getElementById(key).addEventListener('click', function (event) {
+    document.getElementById(key).addEventListener('click', function () {
       markSelection(contextButtons[key], editable);
     });
   });
@@ -208,6 +210,7 @@ function getBrowserLanguage() {
   }
 }
 // Function to change the language
+// eslint-disable-next-line no-unused-vars
 function changeLanguage(lang) {
   currentLanguage = lang;
 }

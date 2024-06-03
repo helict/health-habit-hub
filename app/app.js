@@ -1,10 +1,8 @@
 import express from 'express';
 import sparqlClient from 'sparql-http-client';
 import { v4 as uuid } from 'uuid';
-import path, { dirname } from 'path';
 
 import { translate } from 'deeplx';
-import { fileURLToPath } from 'url';
 
 import { config } from './utils/config.js';
 import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
@@ -21,14 +19,8 @@ const port = config.port;
 // SPARQL client config
 const db_user = config.db.user;
 const db_pass = config.db.password;
-const db_proto = config.db.protocol;
-const db_host = config.db.host;
-const db_port = config.db.dbPort;
-const db_name = config.db.name;
 const db_endpoint = config.getDbEndpoint();
 const db_headers = config.getDbHeader();
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Middleware to parse form data in the request body
 app.use(jsonBodyParser);
@@ -49,6 +41,7 @@ app.get('/', (req, res) => {
 app.use('/donate', donateRouter);
 app.use('/about', aboutRouter);
 
+/* eslint-disable */
 //SPARQL Connection
 async function insertDataClosed() {
   const keys = Array.from(selectionDataClosed.keys());
