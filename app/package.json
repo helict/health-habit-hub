@@ -1,7 +1,11 @@
 {
   "scripts": {
     "start": "node app.js",
-    "lint": "npx eslint ."
+    "format:check": "npx prettier --check .",
+    "format:fix": "npx prettier --write .",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint --fix .",
+    "test": "npm run format:check && npm run lint"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
@@ -25,8 +29,10 @@
     "@angelventura/eslint-plugin-ejs": "^0.2.0",
     "@eslint/js": "^9.4.0",
     "eslint": "^9.4.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-html": "^8.1.1",
     "eslint-plugin-json": "^4.0.0",
-    "globals": "^15.3.0"
+    "globals": "^15.3.0",
+    "prettier": "^3.3.0"
   }
 }
