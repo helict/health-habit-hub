@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "lint": "npx eslint ."
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
@@ -19,5 +20,13 @@
     "sparql-http-client": "^2.4.2",
     "uuid": "^9.0.1"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@angelventura/eslint-plugin-ejs": "^0.2.0",
+    "@eslint/js": "^9.4.0",
+    "eslint": "^9.4.0",
+    "eslint-plugin-html": "^8.1.1",
+    "eslint-plugin-json": "^4.0.0",
+    "globals": "^15.3.0"
+  }
 }
