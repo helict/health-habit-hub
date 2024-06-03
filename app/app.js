@@ -1,19 +1,19 @@
-import express from "express";
-import sparqlClient from "sparql-http-client";
-import { v4 as uuid } from "uuid";
-import path, { dirname } from "path";
+import express from 'express';
+import sparqlClient from 'sparql-http-client';
+import { v4 as uuid } from 'uuid';
+import path, { dirname } from 'path';
 
-import { translate } from "deeplx";
-import { fileURLToPath } from "url";
+import { translate } from 'deeplx';
+import { fileURLToPath } from 'url';
 
-import { config } from "./utils/config.js";
-import { staticFileMiddleware } from "./middleware/staticFileMiddleware.js";
-import { jsonBodyParser } from "./middleware/requestParser.js";
+import { config } from './utils/config.js';
+import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
+import { jsonBodyParser } from './middleware/requestParser.js';
 
 // Express config
 
-import donateRouter from "./routes/donateRouter.js";
-import aboutRouter from "./routes/aboutRouter.js";
+import donateRouter from './routes/donateRouter.js';
+import aboutRouter from './routes/aboutRouter.js';
 
 const app = express();
 const port = config.port;
@@ -43,17 +43,17 @@ let inputSource;
 let group_sql;
 
 // Routes
-app.get("/", (req, res) => {
-  res.redirect(301, "/donate");
+app.get('/', (req, res) => {
+  res.redirect(301, '/donate');
 });
-app.use("/donate", donateRouter);
-app.use("/about", aboutRouter);
+app.use('/donate', donateRouter);
+app.use('/about', aboutRouter);
 
 //SPARQL Connection
 async function insertDataClosed() {
   const keys = Array.from(selectionDataClosed.keys());
-  console.log("Keys:", keys, keys.length);
-  console.log("Inserting closed data into", db_endpoint);
+  console.log('Keys:', keys, keys.length);
+  console.log('Inserting closed data into', db_endpoint);
   const habituuid = uuid.v4();
   const client = new sparqlClient({
     updateUrl: db_endpoint,
@@ -90,8 +90,8 @@ async function insertDataClosed() {
                               hhh:source "${inputSource}"^^rdfs:Literal;
                               hhh:value "${await translate(
                                 selectionDataClosed.get(keys[i]),
-                                "en",
-                                dataLanguage
+                                'en',
+                                dataLanguage,
                               )}".
                               `;
       break;
@@ -105,8 +105,8 @@ async function insertDataClosed() {
                               hhh:source "${inputSource}"^^rdfs:Literal;
                               hhh:value "${await translate(
                                 selectionDataClosed.get(keys[i]),
-                                "en",
-                                dataLanguage
+                                'en',
+                                dataLanguage,
                               )}".
                               `;
     }
@@ -116,15 +116,15 @@ async function insertDataClosed() {
   closedQuery += `}`;
   try {
     await client.query.update(closedQuery);
-    console.log("Data inserted successfully uuid:", habituuid);
+    console.log('Data inserted successfully uuid:', habituuid);
   } catch (error) {
     console.debug(closedQuery);
-    console.error("Error inserting data:", error.message);
+    console.error('Error inserting data:', error.message);
   }
 }
 
 async function insertDataOpen() {
-  console.log("Inserting open data into", db_endpoint);
+  console.log('Inserting open data into', db_endpoint);
   const habituuid = uuid.v4();
   const client = new sparqlClient({
     updateUrl: db_endpoint,
@@ -153,17 +153,17 @@ async function insertDataOpen() {
                           hhh:source "${inputSource}"^^rdfs:Literal;
                           hhh:value "${await translate(
                             dataOpen,
-                            "en",
-                            dataLanguage
+                            'en',
+                            dataLanguage,
                           )}".
     }`;
 
   try {
     await client.query.update(openQuery);
-    console.log("Data inserted successfully uuid:", habituuid);
+    console.log('Data inserted successfully uuid:', habituuid);
   } catch (error) {
     console.debug(openQuery);
-    console.error("Error inserting data:", error.message);
+    console.error('Error inserting data:', error.message);
   }
 }
 

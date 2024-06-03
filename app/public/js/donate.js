@@ -17,7 +17,7 @@ function markSelection(context, editable) {
   if (startParent !== editable) {
     startParent.textContent = startParent.textContent.substring(
       0,
-      range.startOffset
+      range.startOffset,
     );
     // Cannot use setStartAfter because https://issues.chromium.org/issues/41239578
     range.setStart(startParent.nextSibling, 0);
@@ -31,7 +31,7 @@ function markSelection(context, editable) {
   }
 
   // Create new mark element
-  const mark = document.createElement("mark");
+  const mark = document.createElement('mark');
   mark.className = `mark_${context}`;
   mark.textContent = selectedText;
   range.deleteContents();
@@ -49,8 +49,8 @@ function removeAllHighlights(editable) {
 function cleanUpHabitInput(editable) {
   // remove all markup other than first-level mark elements
   editable.innerHTML = DOMPurify.sanitize(editable.innerHTML, {
-    ALLOWED_TAGS: ["mark"],
-    ALLOWED_ATTR: ["class"],
+    ALLOWED_TAGS: ['mark'],
+    ALLOWED_ATTR: ['class'],
   });
 
   for (const child of editable.children) {
@@ -82,24 +82,24 @@ function submitHabit(editable, experimentGroup, language) {
 }
 
 function sendData(data) {
-  fetch("donate/data", {
-    method: "POST",
+  fetch('donate/data', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
   })
     .then((response) => {
       if (response.ok) {
-        window.location.href = "bedankung.html";
-        console.log("Data saved successfully.");
+        window.location.href = 'bedankung.html';
+        console.log('Data saved successfully.');
       } else {
-        alert("Server Error while saving data.");
+        alert('Server Error while saving data.');
       }
     })
     .catch((error) => {
-      console.error("Error while saving data:", error);
-      alert("Error while saving data.");
+      console.error('Error while saving data:', error);
+      alert('Error while saving data.');
     });
 }
 
@@ -116,9 +116,9 @@ function parseInput(editable, experimentGroup, language) {
 
 function getContexts(editable) {
   const contexts = [];
-  for (const mark of editable.querySelectorAll("mark")) {
+  for (const mark of editable.querySelectorAll('mark')) {
     const context = {
-      name: mark.className.split("_")[1],
+      name: mark.className.split('_')[1],
       value: mark.innerText,
     };
     contexts.push(context);
@@ -128,8 +128,8 @@ function getContexts(editable) {
 
 function validate(data) {
   return {
-    empty: data.text === "",
-    noBehavior: !data.contexts.find((context) => context.name === "Behavior"),
+    empty: data.text === '',
+    noBehavior: !data.contexts.find((context) => context.name === 'Behavior'),
   };
 }
 
@@ -146,22 +146,22 @@ function addDonateEventListeners(
   resetButtonId,
   contextButtons,
   experimentGroup,
-  language
+  language,
 ) {
   const editable = document.getElementById(editableId);
   const submitButton = document.getElementById(submitButtonId);
   const resetButton = document.getElementById(resetButtonId);
 
-  submitButton.addEventListener("click", () => {
+  submitButton.addEventListener('click', () => {
     submitHabit(editable, experimentGroup, language);
   });
 
-  resetButton.addEventListener("click", () => {
+  resetButton.addEventListener('click', () => {
     removeAllHighlights(editable);
   });
 
   Object.keys(contextButtons).forEach(function (key) {
-    document.getElementById(key).addEventListener("click", function (event) {
+    document.getElementById(key).addEventListener('click', function (event) {
       markSelection(contextButtons[key], editable);
     });
   });
@@ -169,30 +169,30 @@ function addDonateEventListeners(
 
 // TODO: Rework
 function handleEmptyFieldError() {
-  fetch("language/language-data.json")
+  fetch('language/language-data.json')
     .then((response) => response.json())
     .then((data) => {
       const fehlerText = data[currentLanguage].emptyFieldError;
       alert(fehlerText);
     })
     .catch((error) =>
-      console.error("Error loading language data file:", error)
+      console.error('Error loading language data file:', error),
     );
 }
 
 function handleEmptyBehaviorError() {
-  fetch("language/language-data.json")
+  fetch('language/language-data.json')
     .then((response) => response.json())
     .then((data) => {
       const fehlerText = data[currentLanguage].emptyBehaviorError;
       alert(fehlerText);
     })
     .catch((error) =>
-      console.error("Error loading language data file:", error)
+      console.error('Error loading language data file:', error),
     );
 }
 
-let currentLanguage = getBrowserLanguage() || "en";
+let currentLanguage = getBrowserLanguage() || 'en';
 
 function getBrowserLanguage() {
   // Versuche, die bevorzugte Sprache des Browsers zu erhalten
@@ -200,11 +200,11 @@ function getBrowserLanguage() {
 
   if (
     browserLanguage &&
-    (browserLanguage === "de" || browserLanguage.startsWith("de-"))
+    (browserLanguage === 'de' || browserLanguage.startsWith('de-'))
   ) {
-    return "de";
+    return 'de';
   } else {
-    return "en";
+    return 'en';
   }
 }
 // Function to change the language
