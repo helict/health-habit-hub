@@ -1,5 +1,7 @@
 import url from 'url';
 import { ExperimentGroup } from '../models/experimentGroup.js';
+// Load language JSON File
+import data from '../language/messages_de.json' with {type: 'json'};
 
 function getExperimentGroupFromQuery(req) {
   if (req.query.group) {
@@ -59,26 +61,14 @@ function getExperimentGroup(req, res) {
   }
 }
 
-const dummyContent = {
-  title: 'Über Uns - HabitHub',
-  aboutText: 'Standardtext für Über uns',
-  step3Text: 'Standardtext für Schritt 3',
-  currentLanguage: 'EN',
-  navigation: {
-    homePageName: 'Home',
-    aboutPageName: 'About',
-    contactPageName: 'Contact',
-  },
-};
-
 export function showDonateForm(req, res) {
   const experimentGroup = getExperimentGroup(req, res);
   res.render(
     url.fileURLToPath(new URL('../views/donate.ejs', import.meta.url)),
     {
       experimentGroup: experimentGroup,
-      ...dummyContent,
-    },
+      ...data,
+    }
   );
 }
 
