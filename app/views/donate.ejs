@@ -35,7 +35,7 @@
               <h5 id="header"><%= header %></h5>
               <div class="row">
                   <div class="col-md-12 ">
-                      <p id="intro-text"><%= text %></p>
+                      <p id="intro-text"><%- text %></p>
                   </div>
 
               </div>
@@ -64,10 +64,10 @@
     <% if (experimentGroup.closedTask) { %>
     <div class="row mt-4">
             <div class="col-8" role="alert">
-                <p id="example1"><%= example1 %></p>
+                <p id="example1"><%- example1 %></p>
             </div>       
             <div class="col-4 ">
-              <button class="custom-button btn" id="clear">clear</button>
+              <button class="custom-button btn" id="clear"><%= clear || 'clear'%></button>
         </div>
     </div>
 
@@ -86,7 +86,7 @@
 
 <div class="container mb-5">
   <div class="col-12">
-    <button type="button" class="button" id="submit">Absenden</button>
+    <button type="button" class="button" id="submit"><h4><strong><%= submit || Absenden %></strong></button>
   </div>
 </div>
 
