@@ -67,9 +67,9 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
 
   const data = parseInput(editable, experimentGroup, language);
   const inputValidity = validate(data);
- console.log(grecaptcha)
- 
-  if (checkValidity(inputValidity) && checkCaptcha(grecaptcha))  {
+  const CaptchaSuccesful = checkCaptcha(grecaptcha)
+
+  if (checkValidity(inputValidity) && CaptchaSuccesful)  {
     sendData(data);
   } else {
     // TODO: better error handling
@@ -79,6 +79,9 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
     } else if (inputValidity.noBehavior) {
       // Definition of handleEmptyBehaviorError in script.js
       handleEmptyBehaviorError();
+    }
+    else if (!CaptchaSuccesful) {
+      alert("Bestätigen Sie, dass Sie kein Roboter sind.")
     }
   }
 }
