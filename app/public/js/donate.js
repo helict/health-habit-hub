@@ -62,13 +62,14 @@ function cleanUpHabitInput(editable) {
 /**
  * Validate habit data from <var>editable</var> and submit it to the server if valid.
  */
-function submitHabit(editable, experimentGroup, language) {
+function submitHabit(editable, experimentGroup, language, grecaptcha) {
   cleanUpHabitInput(editable);
 
   const data = parseInput(editable, experimentGroup, language);
   const inputValidity = validate(data);
-
-  if (checkValidity(inputValidity)) {
+ console.log(grecaptcha)
+ 
+  if (checkValidity(inputValidity) && checkCaptcha(grecaptcha))  {
     sendData(data);
   } else {
     // TODO: better error handling
@@ -140,6 +141,17 @@ function checkValidity(validity) {
   return !Object.values(validity).includes(true);
 }
 
+function checkCaptcha(grecaptcha) 
+ {
+    var response = grecaptcha.getResponse();
+    if(response.length == 0) {
+      // reCAPTCHA nicht bestätigt
+      return false 
+    } 
+    return true
+  }
+
+
 // Add event listeners
 // eslint-disable-next-line no-unused-vars
 function addDonateEventListeners(
@@ -149,13 +161,14 @@ function addDonateEventListeners(
   contextButtons,
   experimentGroup,
   language,
+  grecaptcha
 ) {
   const editable = document.getElementById(editableId);
   const submitButton = document.getElementById(submitButtonId);
   const resetButton = document.getElementById(resetButtonId);
 
   submitButton.addEventListener('click', () => {
-    submitHabit(editable, experimentGroup, language);
+    submitHabit(editable, experimentGroup, language, grecaptcha);
   });
 
   resetButton.addEventListener('click', () => {
