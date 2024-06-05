@@ -21,12 +21,6 @@ app.use(jsonBodyParser);
 //Middleware to serve static files
 app.use(staticFileMiddleware);
 
-let selectionDataClosed = new Map();
-let dataOpen;
-let dataLanguage;
-let inputSource;
-let group_sql;
-
 // Routes
 app.get('/', (req, res) => {
   res.redirect(301, '/donate');
