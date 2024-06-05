@@ -1,0 +1,7 @@
+**/*.html
+public/css/**
+public/data/**
+public/js/bedankung.js
+public/js/contact.js
+public/js/reward.js
+public/language/**

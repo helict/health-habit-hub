@@ -1,7 +1,11 @@
 {
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "format:check": "npx prettier --check .",
+    "format:fix": "npx prettier --write .",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint --fix .",
+    "test": "npm run format:check && npm run lint"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
@@ -11,17 +15,24 @@
     "d3": "^7.8.5",
     "deeplx": "^0.1.2",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.9",
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
     "jquery": "^3.7.1",
     "node-sessionstorage": "^1.0.0",
     "path": "^0.12.7",
     "sparql-http-client": "^2.4.2",
-    "uuid": "^9.0.1",
-    "ejs": "^3.1.9"
+    "uuid": "^9.0.1"
   },
   "type": "module",
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "@angelventura/eslint-plugin-ejs": "^0.2.0",
+    "@eslint/js": "^9.4.0",
+    "eslint": "^9.4.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-html": "^8.1.1",
+    "eslint-plugin-json": "^4.0.0",
+    "globals": "^15.3.0",
+    "prettier": "^3.3.0"
   }
 }
