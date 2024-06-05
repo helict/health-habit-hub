@@ -17,6 +17,7 @@
     "dotenv": "^16.4.5",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "express-recaptcha": "^5.1.0",
     "fs": "^0.0.1-security",
     "jquery": "^3.7.1",
     "node-sessionstorage": "^1.0.0",
