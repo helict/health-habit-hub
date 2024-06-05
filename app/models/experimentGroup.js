@@ -10,10 +10,10 @@ export class ExperimentGroup {
   }
 
   toString() {
-    const taskString = this.closedTask ? "CLOSED_TASK" : "OPEN_TASK";
+    const taskString = this.closedTask ? 'CLOSED_TASK' : 'OPEN_TASK';
     const descriptionString = this.closedDescription
-      ? "CLOSED_DESCRIPTION"
-      : "OPEN_DESCRIPTION";
+      ? 'CLOSED_DESCRIPTION'
+      : 'OPEN_DESCRIPTION';
     return `${taskString}_${descriptionString}`;
   }
 
@@ -30,6 +30,6 @@ export class ExperimentGroup {
     if (!match) {
       throw new Error(`Invalid experiment group string: ${str}`);
     }
-    return new ExperimentGroup(match[1] === "CLOSED", match[2] === "CLOSED");
+    return new ExperimentGroup(match[1] === 'CLOSED', match[2] === 'CLOSED');
   }
 }

@@ -25,13 +25,19 @@ Welcome to our web application, designed to empower users to willingly contribut
 The data is securely stored in a RDF database hosted on an [Apache Jena Fuseki](https://jena.apache.org/documentation/fuseki2/index.html) SPARQL server. This strategic approach not only ensures efficient data management but also paves the way for easier training of machine learning algorithms using the acquired data.
 
 ## Installation
-Install [Docker](https://www.docker.com/) on you local system. \
-If you want to edit/modify the app you also need [Node.js](https://nodejs.org)\
-To run the app use: 
+
+1. Install [Docker](https://www.docker.com/) on your local system.
+2. Clone the repository.
+3. From within the repository root, start the application with:
 
 ```
-docker-compose up
+docker compose watch
 ```
+
+[Compose Watch](https://docs.docker.com/compose/file-watch/) watches the `./app` directory for changes and will automatically rebuild and restart the `app` Docker container.
+
+**Note:** If you are using a [Mac with Apple silicon](https://support.apple.com/116943), you may need to disable Rosetta emulation in Docker to get the `fuseki` service to run properly. 
+
 
 ## Usage
 
@@ -63,6 +69,8 @@ For debugging, you can also manually select an entry mode by adding a query para
 - `/donate?group=open_task_open_desc`
 
 ## Repository
-All the app files are found in /app  \
-All docker files are found in the top repository \
-The database schematics are in /init/schema.ttl which is extracted from Ontology.ttl
+
+The repository contains two services:
+
+- `app` – the _Health Habit Hub_ Node.js app.
+- `fuseki` – an Apache Jena Fuseki server instance, initialized with example data and the appropriate schema.

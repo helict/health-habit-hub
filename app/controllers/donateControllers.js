@@ -1,20 +1,20 @@
-import url from "url";
-import { ExperimentGroup } from "../models/experimentGroup.js";
+import url from 'url';
+import { ExperimentGroup } from '../models/experimentGroup.js';
 
 function getExperimentGroupFromQuery(req) {
   if (req.query.group) {
     try {
       return ExperimentGroup.fromString(req.query.group);
-    } catch (e) {
+    } catch {
       console.error(
-        `Ignoring invalid experiment group parameter "${req.query.group}".`
+        `Ignoring invalid experiment group parameter "${req.query.group}".`,
       );
       return null;
     }
   }
 }
 
-function getExperimentGroupFromCookie(req, res) {
+function getExperimentGroupFromCookie(req) {
   console.log(`Request cookie: experimentGroup=${req.cookies.experimentGroup}`);
 
   if (req.cookies.experimentGroup) {
@@ -22,7 +22,7 @@ function getExperimentGroupFromCookie(req, res) {
       return ExperimentGroup.fromString(req.cookies.experimentGroup);
     } catch {
       console.error(
-        `Invalid experiment group cookie parameter "${req.cookies.experimentGroup}".`
+        `Invalid experiment group cookie parameter "${req.cookies.experimentGroup}".`,
       );
       return null;
     }
@@ -38,52 +38,52 @@ function getExperimentGroup(req, res) {
   const experimentGroupFromQuery = getExperimentGroupFromQuery(req);
   if (experimentGroupFromQuery) {
     console.log(
-      `Using experiment group from query: ${experimentGroupFromQuery}`
+      `Using experiment group from query: ${experimentGroupFromQuery}`,
     );
     return experimentGroupFromQuery;
   } else {
     const experimentGroupFromCookie = getExperimentGroupFromCookie(req);
     if (experimentGroupFromCookie) {
       console.log(
-        `Using experiment group from cookie: ${experimentGroupFromCookie}`
+        `Using experiment group from cookie: ${experimentGroupFromCookie}`,
       );
       return experimentGroupFromCookie;
     } else {
       const randomExperimentGroup = ExperimentGroup.random();
       console.log(
-        `Using randomly selected experiment group: ${randomExperimentGroup}`
+        `Using randomly selected experiment group: ${randomExperimentGroup}`,
       );
-      res.cookie("experimentGroup", randomExperimentGroup.toString());
+      res.cookie('experimentGroup', randomExperimentGroup.toString());
       return randomExperimentGroup;
     }
   }
 }
 
 const dummyContent = {
-  title: "Über Uns - HabitHub",
-  aboutText: "Standardtext für Über uns",
-  step3Text: "Standardtext für Schritt 3",
-  currentLanguage: "EN",
+  title: 'Über Uns - HabitHub',
+  aboutText: 'Standardtext für Über uns',
+  step3Text: 'Standardtext für Schritt 3',
+  currentLanguage: 'EN',
   navigation: {
-    homePageName: "Home",
-    aboutPageName: "About",
-    contactPageName: "Contact",
+    homePageName: 'Home',
+    aboutPageName: 'About',
+    contactPageName: 'Contact',
   },
 };
 
 export function showDonateForm(req, res) {
   const experimentGroup = getExperimentGroup(req, res);
   res.render(
-    url.fileURLToPath(new URL("../views/donate.ejs", import.meta.url)),
+    url.fileURLToPath(new URL('../views/donate.ejs', import.meta.url)),
     {
       experimentGroup: experimentGroup,
       ...dummyContent,
-    }
+    },
   );
 }
 
 export function saveDonateData(req, res) {
   // TODO: Save data to database
-  console.log("Received donate data:", req.body);
+  console.log('Received donate data:', req.body);
   res.sendStatus(200);
 }
