@@ -17,7 +17,7 @@
   "step1": "<h5><strong>Enter your habit as a sentence, mark the parts of your sentence and match each part with the context or situation listed below.",
   "step2": "Step 2: Confirm the habit you would like to donate by clicking on \"Donate\"</strong></h5>",
 
-  "example1": "<p><strong>Example:</strong> If I <mark id=physical>enter the kitchen</mark> and <mark id=prior>see a fruit basket</mark>, <mark id=behavior>I take an apple</mark> and <mark id=behavior>eat it</mark>.</p>",
+  "example1": "<p><strong>Example:</strong> If I <mark class=PhysicalSetting>enter the kitchen</mark> and <mark class=mark_RelatedBehaviour>see a fruit basket</mark>, <mark class=mark_Behavior>nehme ich einen Apfel</mark> und <mark class=mark_Behavior>I take an apple</mark> and <mark class=mark_Behavior>nehme ich einen Apfel</mark> und <mark class=mark_Behavior>eat it</mark>.</p>",
   "clear": "↺",
   "time": "time",
   "physical": "physical setting",
