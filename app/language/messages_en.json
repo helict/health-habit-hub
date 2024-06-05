@@ -1,6 +1,6 @@
 {
   "title": "About Us - HabitHub",
-  "aboutText": "<h5> <strong> About the Donation </strong> </h5>",
+  "aboutText": "About the Donation",
   "step3Text": "Lorem Ipsum",
   "currentLanguage": "EN",
   "navigation": {
@@ -14,10 +14,10 @@
 
   "donationHeader": "Data Donation",
   "dataDonationGuide": "Data donation department",
-  "step1": "<h5><strong>Enter your habit as a sentence, mark the parts of your sentence and match each part with the context or situation listed below.</strong></h5>",
-  "step2": "Step 2: Confirm the habit you would like to donate by clicking on \"Donate\"",
+  "step1": "<h5><strong>Enter your habit as a sentence, mark the parts of your sentence and match each part with the context or situation listed below.",
+  "step2": "Step 2: Confirm the habit you would like to donate by clicking on \"Donate\"</strong></h5>",
 
-  "example1": "<p><strong>Example:</strong> If I <mark id=\"mark1_physical\">enter the kitchen</mark> and <mark id=\"mark_prior\">see a fruit basket</mark>, <mark id=\"mark_behavior\">I take an apple</mark> and <mark id=\"mark_behavior\">eat it</mark>.</p>",
+  "example1": "<p><strong>Example:</strong> If I <mark id=physical>enter the kitchen</mark> and <mark id=prior>see a fruit basket</mark>, <mark id=behavior>I take an apple</mark> and <mark id=behavior>eat it</mark>.</p>",
   "clear": "↺",
   "time": "time",
   "physical": "physical setting",
@@ -27,7 +27,7 @@
   "behavior": "Behavior",
   "step3": "<h5><strong>Confirm your habit</strong></h5>",
   "example2": "<h5>Placeholder: I drink a glass of water before bedtime.<h5>",
-  "submit": "<h4><strong>Donate</strong></h4>",
+  "submit": "Donate",
   "add": "+ add another habit",
 
   "Contentbox":{
