@@ -22,11 +22,11 @@
                 <li class="nav-item dropdown" id="lang-menu">
                     <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img src="pics/globus.png" id="globus" alt="Language Icon">
-                        <span id="nav-language"><%= currentLanguage || 'EN' %></span>
+                        <span id="nav-language"><%= currentLanguage %></span>
                     </a>
                     <div class="dropdown-menu w-50" aria-labelledby="languageDropdown">
                         <% ['English', 'Deutsch'].forEach(function(language) { %>
-                            <a href="#" class="dropdown-item" onclick="changeLanguage('<%= language.toLowerCase().substr(0, 2) %>')"><%= language %></a>
+                            <a href="?lgn=<%= language.toLowerCase().substr(0, 2) %>" class="dropdown-item" onclick="changeLanguage('<%= language.toLowerCase().substr(0, 2) %>')"><%= language %></a>
                         <% }); %>
                     </div>
                 </li>

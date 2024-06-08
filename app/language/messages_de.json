@@ -2,12 +2,11 @@
   "title": "Über Uns - HabitHub",
   "aboutText":"Über die Spende",
   "step3Text": "Lorem Ipsum",
-  "currentLanguage": "DE",
-  "language": "",
   "navigation": {
     "homePageName": "Spende",
     "aboutPageName": "Über die Spende",
-    "contactPageName": "Kontakt"
+    "contactPageName": "Kontakt",
+    "currentLanguage": ""
   },
 
   "header": "Einführung",

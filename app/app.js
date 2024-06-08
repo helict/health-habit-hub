@@ -12,6 +12,8 @@ import { jsonBodyParser } from './middleware/requestParser.js';
 
 import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
+import languageRouter from './routes/languageRouter.js';
+
 
 const app = express();
 const port = config.port;
@@ -40,6 +42,13 @@ app.get('/', (req, res) => {
 });
 app.use('/donate', donateRouter);
 app.use('/about', aboutRouter);
+app.use('/clang', languageRouter);
+/*app.use(
+  middleware.handle(i18next, {
+    ignoreRoutes: ["/foo"], // or function(req, res, options, i18next)
+    removeLngFromUrl: false
+  })
+)*/
 
 /* eslint-disable */
 //SPARQL Connection

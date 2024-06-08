@@ -1,7 +1,6 @@
 import url from 'url';
 import { ExperimentGroup } from '../models/experimentGroup.js';
-// Load language JSON File
-import data from '../language/messages_de.json' with {type: 'json'};
+import { getLanguageMessages } from '../controllers/languageController.js';
 
 function getExperimentGroupFromQuery(req) {
   if (req.query.group) {
@@ -67,7 +66,7 @@ export function showDonateForm(req, res) {
     url.fileURLToPath(new URL('../views/donate.ejs', import.meta.url)),
     {
       experimentGroup: experimentGroup,
-      ...data,
+      ...getLanguageMessages(),
     }
   );
 }

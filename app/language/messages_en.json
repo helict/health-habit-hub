@@ -2,11 +2,11 @@
   "title": "About Us - HabitHub",
   "aboutText": "About the Donation",
   "step3Text": "Lorem Ipsum",
-  "currentLanguage": "EN",
   "navigation": {
     "homePageName": "Home",
     "aboutPageName": "About",
-    "contactPageName": "Contact"
+    "contactPageName": "Contact",
+    "currentLanguage": ""
   },
   "header": "Introduction",
   "text": "Dear habit contributor,<br> As you’re likely aware, a habit establishes a connection between a  behavior and a  context in which the behavior is consistently performed. Take, for instance, the behavior of running 5 kilometers. This behavior can be associated with the context of waking up in the morning on a weekend. In this scenario, the context category time (weekend mornings) and the context category related behavior (waking up in the morning) is combined into a comprehensive context. We are interested in exploring the contexts you assign to your behaviors to make it your habit. By sharing your habits with us, you contribute to a greater understanding of how specific contexts can reinforce behaviors. Your insights will be invaluable in helping other craft strong, personalized habits.",
@@ -15,16 +15,16 @@
   "donationHeader": "Data Donation",
   "dataDonationGuide": "Data donation department",
   "step1": "<h5><strong>Enter your habit as a sentence, mark the parts of your sentence and match each part with the context or situation listed below.",
-  "step2": "Step 2: Confirm the habit you would like to donate by clicking on \"Donate\"</strong></h5>",
+  "step2": "Step 2: Confirm the habit you would like to donate by clicking on \"Donate\"",
 
-  "example1": "<p><strong>Example:</strong> If I <mark class=PhysicalSetting>enter the kitchen</mark> and <mark class=mark_RelatedBehaviour>see a fruit basket</mark>, <mark class=mark_Behavior>nehme ich einen Apfel</mark> und <mark class=mark_Behavior>I take an apple</mark> and <mark class=mark_Behavior>nehme ich einen Apfel</mark> und <mark class=mark_Behavior>eat it</mark>.</p>",
+  "example1": "<p><strong>Example:</strong> If I <mark class=mark_PhysicalSetting>enter the kitchen</mark> and <mark class=mark_RelatedBehaviour>see a fruit basket</mark>, I am <mark class=mark_Behavior>taking an apple</mark> and <mark class=mark_Behavior>eat it</mark>.</p>",
   "clear": "↺",
   "time": "time",
   "physical": "physical setting",
   "prior": "prior behavior",
   "people": "people",
   "internal": "internal state",
-  "behavior": "Behavior",
+  "behavior": "behavior",
   "step3": "<h5><strong>Confirm your habit</strong></h5>",
   "example2": "<h5>Placeholder: I drink a glass of water before bedtime.<h5>",
   "submit": "Donate",
