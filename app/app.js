@@ -8,6 +8,8 @@ import { config } from './utils/config.js';
 import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
 import { jsonBodyParser } from './middleware/requestParser.js';
 
+import { initLanguage } from './controllers/languageController.js';
+
 // Express config
 
 import donateRouter from './routes/donateRouter.js';
@@ -35,6 +37,19 @@ let dataOpen;
 let dataLanguage;
 let inputSource;
 let group_sql;
+
+app.use((req, res, next) => {
+  const lang = req.acceptsLanguages('de', 'en');
+  //console.log(req.headers['accept-language']);
+  //console.log('Accepted browser language:', lang);
+  if (lang) {
+    req.lang = lang;
+  } else {
+    req.lang = 'en';
+  }
+  initLanguage(lang);
+  next();
+})
 
 // Routes
 app.get('/', (req, res) => {
