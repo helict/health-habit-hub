@@ -2,7 +2,7 @@ import express from 'express';
 import { config } from './utils/config.js';
 import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
 import { jsonBodyParser } from './middleware/requestParser.js';
-import { SparqlClient } from './utils/SparqlDatabase.js';
+import { SparqlDatabaseClient } from './utils/SparqlDatabase.js';
 
 // Express config
 import donateRouter from './routes/donateRouter.js';
@@ -12,7 +12,8 @@ const app = express();
 const port = config.port;
 
 // SPARQL client config
-const sparqlClient = new SparqlClient();
+// eslint-disable-next-line no-unused-vars
+const sparqlClient = new SparqlDatabaseClient(config);
 
 // Middleware to parse form data in the request body
 app.use(jsonBodyParser);
