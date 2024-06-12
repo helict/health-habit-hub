@@ -1,4 +1,4 @@
-import sparqlClient from 'sparql-http-client';
+import SparqlClient from 'sparql-http-client';
 import { translate } from 'deeplx';
 import { config } from './config.js';
 
