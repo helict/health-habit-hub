@@ -1,6 +1,5 @@
 import SparqlClient from 'sparql-http-client';
 import { translate } from 'deeplx';
-import { config } from './config.js';
 
 class SparqlDatabaseClient {
   constructor(config) {
