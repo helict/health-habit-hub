@@ -5,6 +5,7 @@ import { config } from './config.js';
 class SparqlClient {
   constructor() {
     this.client = new sparqlClient({
+class SparqlDatabaseClient {
       updateUrl: config.getDbEndpoint(),
       user: config.db.user,
       password: config.db.password,
@@ -77,4 +78,4 @@ class SparqlClient {
   }
 }
 
-export { SparqlClient };
+export { SparqlDatabaseClient };
