@@ -2,10 +2,9 @@ import sparqlClient from 'sparql-http-client';
 import { translate } from 'deeplx';
 import { config } from './config.js';
 
-class SparqlClient {
-  constructor() {
-    this.client = new sparqlClient({
 class SparqlDatabaseClient {
+  constructor(config) {
+    this.client = new SparqlClient({
       updateUrl: config.getDbEndpoint(),
       user: config.db.user,
       password: config.db.password,
