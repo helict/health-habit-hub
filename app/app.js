@@ -16,7 +16,6 @@ import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
 import languageRouter from './routes/languageRouter.js';
 
-
 const app = express();
 const port = config.port;
 
@@ -50,7 +49,7 @@ app.use((req, res, next) => {
   }
   initLanguage(lang);
   next();
-})
+});
 
 // Routes
 app.get('/', (req, res) => {

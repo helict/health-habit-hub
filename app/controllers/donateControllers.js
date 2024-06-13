@@ -67,7 +67,7 @@ export function showDonateForm(req, res) {
     {
       experimentGroup: experimentGroup,
       ...getLanguageMessages(),
-    }
+    },
   );
 }
 

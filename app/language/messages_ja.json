@@ -1,6 +1,6 @@
 {
   "title": "会社概要",
-  "aboutText":"寄付について",
+  "aboutText": "寄付について",
   "step3Text": "Lorem Ipsum",
   "navigation": {
     "homePageName": "寄付",
@@ -12,7 +12,7 @@
       "second": "ドイツ語",
       "third": "日本語"
     },
-    "boolean_ja":"1" 
+    "boolean_ja": "1"
   },
 
   "header": "はじめに",
@@ -21,9 +21,9 @@
 
   "donationHeader": "寄付データ",
   "dataDonationGuide": "データ提供の手順",
-      "step1": "<h5><strong>Gib deine Gewohnheit als Satz ein, markier die Teile deines Satzes und ordne jedem Teil den unten aufgeführten Kontext oder die Situation zu.</strong></h5>",
+  "step1": "<h5><strong>Gib deine Gewohnheit als Satz ein, markier die Teile deines Satzes und ordne jedem Teil den unten aufgeführten Kontext oder die Situation zu.</strong></h5>",
   "step2": "ステップ 2: 寄付する習慣を確認し、寄付するをクリックします。",
-  
+
   "example1": "<p><strong>例:</strong> <mark class=mark_PhysicalSetting>キッチン</mark>に<mark class=mark_Behavior>入って</mark>フルーツバスケットを<mark class=mark_Behavior>見る</mark>と、<mark class=mark_PhysicalSetting>リンゴ</mark>を<mark class=mark_Behavior>取って食</mark>べる。 <mark class=mark_RelatedBehaviour></mark></p>",
   "clear": "↺",
   "time": "時間",
@@ -32,28 +32,28 @@
   "people": "人",
   "internal": "内心",
   "behavior": "行動",
-      "example2": "<h5>プレースホルダー：寝る前にコップ1杯の水を飲む。<h5>",
+  "example2": "<h5>プレースホルダー：寝る前にコップ1杯の水を飲む。<h5>",
   "submit": "寄付金",
-  "add": "+ もう一つの習慣",  
+  "add": "+ もう一つの習慣",
 
-  "Contentbox":{
-    "slogan":"あなたは自分の習慣を共通善への道に置いたのだ。",
-    "bedankung":"<h2>🎉 ご寄付をありがとうございました！</h2>",
+  "Contentbox": {
+    "slogan": "あなたは自分の習慣を共通善への道に置いたのだ。",
+    "bedankung": "<h2>🎉 ご寄付をありがとうございました！</h2>",
     "donate_again": "再び寄付する",
-    "reward":"報酬を受け取る！"
+    "reward": "報酬を受け取る！"
   },
 
-  "Rewardbox":{
+  "Rewardbox": {
     "gift": "報酬"
   },
 
-  "Contactbox":{
-    "send_us":"メッセージを送る",
-    "name":"名称",
-    "email":"電子メール",
-    "subject":"トピック",
-    "message":"メッセージ",
-    "submit":"メッセージを送る",
+  "Contactbox": {
+    "send_us": "メッセージを送る",
+    "name": "名称",
+    "email": "電子メール",
+    "subject": "トピック",
+    "message": "メッセージ",
+    "submit": "メッセージを送る",
     "contact_us": "インプリント",
     "address": "住所 ドレスナー通り2、01234ドレスデン",
     "phone": "01577/123456789",
