@@ -1,6 +1,7 @@
 // Load language JSON Files
 import data_de from '../language/messages_de.json' with {type: 'json'};
 import data_en from '../language/messages_en.json' with {type: 'json'};
+import data_ja from '../language/messages_ja.json' with {type: 'json'};
 
 let language = null;
 
@@ -15,6 +16,8 @@ let language = null;
     if ( language.startsWith('de') ) {
       //console.log('AppLanguage is DE');
       return data_de;
+    } else if ( language.startsWith('ja') ) {
+      return data_ja;
     } else {
       //console.log('AppLanguage is EN');
       return data_en;
