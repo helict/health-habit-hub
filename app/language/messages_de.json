@@ -42,11 +42,11 @@
   },
 
   "Contactbox":{
-    "send_us":"Sende uns eine Nachicht",
+    "send_us":"Sende uns eine Nachricht",
     "name":"Name",
     "email":"E-Mail",
     "subject":"Thema",
-    "message":"Nachicht",
+    "message":"Nachricht",
     "submit":"Nachricht senden",
     "contact_us": "Impressum",
     "address": "Adresse: Dresdner Straße 2, 01234 Dresden",

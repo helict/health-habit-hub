@@ -1,0 +1,59 @@
+{
+  "title": "会社概要",
+  "aboutText":"寄付について",
+  "step3Text": "Lorem Ipsum",
+  "navigation": {
+    "homePageName": "寄付",
+    "aboutPageName": "寄付について",
+    "contactPageName": "お問い合わせ",
+    "currentLanguage": ""
+  },
+
+  "header": "はじめに",
+  "text": "親愛なるドナーの皆さん、<br> ご存じのように、習慣とは、ある行動と、その行動が一貫して実行される状況との間に結びつきを確立するものです。例えば、5キロ歩くという行動を考えてみましょう。この行動は、週末に朝起きるという文脈と関連づけることができる。このシナリオでは、時間（週末の朝）というコンテクスト・カテゴリーと行動（朝起きる）というコンテクスト・カテゴリーが組み合わさって、包括的なコンテクストになる。私は、あなたが自分の行動を習慣化するために、どのようなコンテクストを自分の行動に割り当てているのかを探ることに興味があります。あなたの習慣を私たちと共有することで、特定のコンテクストがどのように行動を強化することができるかについて、よりよい理解に貢献することができます。あなたの洞察は、他の人が個人化された強力な習慣を身につけるのを助ける上で、非常に貴重なものとなるでしょう。",
+  "image": "pics/intro_pic.png",
+
+  "donationHeader": "寄付データ",
+  "dataDonationGuide": "データ提供の手順",
+      "step1": "<h5><strong>Gib deine Gewohnheit als Satz ein, markier die Teile deines Satzes und ordne jedem Teil den unten aufgeführten Kontext oder die Situation zu.</strong></h5>",
+  "step2": "ステップ 2: 寄付する習慣を確認し、寄付するをクリックします。",
+  
+  "example1": "<p><strong>Beispiel:</strong> Wenn ich <mark class=mark_PhysicalSetting>die Küche betrete</mark>  und <mark class=mark_RelatedBehaviour>einen Obstkorb sehe</mark>, <mark class=mark_Behavior>nehme ich einen Apfel</mark> und <mark class=mark_Behavior>esse ihn</mark>.</p>",
+  "clear": "↺",
+  "time": "時間",
+  "physical": "周辺環境",
+  "prior": "以前の行動",
+  "people": "人",
+  "internal": "内心",
+  "behavior": "行動",
+      "example2": "<h5>プレースホルダー：寝る前にコップ1杯の水を飲む。<h5>",
+  "submit": "寄付金",
+  "add": "+ もう一つの習慣",  
+
+  "Contentbox":{
+    "slogan":"あなたは自分の習慣を共通善への道に置いたのだ。",
+    "bedankung":"<h2>🎉 ご寄付をありがとうございました！</h2>",
+    "donate_again": "再び寄付する",
+    "reward":"報酬を受け取る！"
+  },
+
+  "Rewardbox":{
+    "gift": "報酬"
+  },
+
+  "Contactbox":{
+    "send_us":"メッセージを送る",
+    "name":"名称",
+    "email":"電子メール",
+    "subject":"トピック",
+    "message":"メッセージ",
+    "submit":"メッセージを送る",
+    "contact_us": "インプリント",
+    "address": "住所 ドレスナー通り2、01234ドレスデン",
+    "phone": "01577/123456789",
+    "email_contact": "Eメール：info@habithub.de"
+  },
+
+  "emptyFieldError": "テキスト・フィールドは空であってはならない！",
+  "emptyBehaviorError": "続行する前に、本文中の行動を選択してください。"
+}
