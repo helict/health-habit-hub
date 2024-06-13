@@ -11,7 +11,8 @@
       "first": "Englisch",
       "second": "Deutsch",
       "third": "Japanisch"
-    }
+    },
+    "boolean_ja":"0" 
   },
 
   "header": "Einführung",

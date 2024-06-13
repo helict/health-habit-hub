@@ -13,9 +13,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/" id="nav-home"><%= homePageName %></a>
                     </li>
-                    <li class="nav-item">
+                    <% if (boolean_ja != 1) { %>
+                    <li class="nav-item">                         
                         <a class="nav-link" href="/about" id="nav-about"><%= aboutPageName %></a>
                     </li>
+                    <% } %>
                     <li class="nav-item">
                         <a class="nav-link" href="/contact.html" id="nav-contact"><%= contactPageName %></a>
                     </li>

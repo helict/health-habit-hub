@@ -11,7 +11,8 @@
       "first": "英語",
       "second": "ドイツ語",
       "third": "日本語"
-    }
+    },
+    "boolean_ja":"1" 
   },
 
   "header": "はじめに",
