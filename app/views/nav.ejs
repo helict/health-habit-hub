@@ -25,7 +25,7 @@
                         <span id="nav-language"><%= currentLanguage %></span>
                     </a>
                     <div class="dropdown-menu w-50" aria-labelledby="languageDropdown">
-                        <% ['Englisch', 'Deutsch', 'Japanisch'].forEach(function(language) { %>
+                        <% [languages.first, languages.second, languages.third].forEach(function(language) { %>
                             <a href="?lgn=<%= language.toLowerCase().substr(0, 2) %>" class="dropdown-item" onclick="changeLanguage('<%= language.toLowerCase().substr(0, 2) %>')"><%= language %></a>
                         <% }); %>
                     </div>

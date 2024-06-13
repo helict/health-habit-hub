@@ -6,7 +6,12 @@
     "homePageName": "Spende",
     "aboutPageName": "Über die Spende",
     "contactPageName": "Kontakt",
-    "currentLanguage": ""
+    "currentLanguage": "",
+    "languages": {
+      "first": "Englisch",
+      "second": "Deutsch",
+      "third": "Japanisch"
+    }
   },
 
   "header": "Einführung",
