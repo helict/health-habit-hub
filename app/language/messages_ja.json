@@ -18,7 +18,7 @@
       "step1": "<h5><strong>Gib deine Gewohnheit als Satz ein, markier die Teile deines Satzes und ordne jedem Teil den unten aufgeführten Kontext oder die Situation zu.</strong></h5>",
   "step2": "ステップ 2: 寄付する習慣を確認し、寄付するをクリックします。",
   
-  "example1": "<p><strong>Beispiel:</strong> Wenn ich <mark class=mark_PhysicalSetting>die Küche betrete</mark>  und <mark class=mark_RelatedBehaviour>einen Obstkorb sehe</mark>, <mark class=mark_Behavior>nehme ich einen Apfel</mark> und <mark class=mark_Behavior>esse ihn</mark>.</p>",
+  "example1": "<p><strong>例:</strong> <mark class=mark_PhysicalSetting>キッチン</mark>に<mark class=mark_Behavior>入って</mark>フルーツバスケットを<mark class=mark_Behavior>見る</mark>と、<mark class=mark_PhysicalSetting>リンゴ</mark>を<mark class=mark_Behavior>取って食</mark>べる。 <mark class=mark_RelatedBehaviour></mark></p>",
   "clear": "↺",
   "time": "時間",
   "physical": "周辺環境",
