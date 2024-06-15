@@ -35,10 +35,10 @@
     <div class="container" id="introduction">
       <div class="row">
           <div class="custom-square rounded position-relative">
-              <h5 id="header"></h5>
+              <h5 id="header"><%= header %></h5>
               <div class="row">
                   <div class="col-md-12 ">
-                      <p id="intro-text"></p>
+                      <p id="intro-text"><%- text %></p>
                   </div>
 
               </div>
@@ -56,7 +56,7 @@
  <div class="container "  id="datadonationheader">
     <div class="row">
         <div class="col-12">
-            <p id="step2"></p>
+            <p id="step2"><%= step2 %></p>
         </div>
     </div>
     <div class="row form-group">
@@ -67,24 +67,22 @@
     <% if (experimentGroup.closedTask) { %>
     <div class="row mt-4">
             <div class="col-8" role="alert">
-                <p id="example1"></p>
+                <p id="example1"><%- example1 %></p>
             </div>       
             <div class="col-4 ">
-              <button class="custom-button btn" id="clear">clear</button>
+              <button class="custom-button btn" id="clear"><%= clear || 'clear'%></button>
         </div>
     </div>
 
     <div class="d-flex flex-sm-row  button-container">        <!-- Erste fünf Buttons linksbündig -->
-        <button class="custom-button btn" id="time"></button>
-        <button class="custom-button btn" id="physical"></button>
-        <button class="custom-button btn" id="prior"></button>
-        <button class="custom-button btn" id="people"></button>
-        <button class="custom-button btn" id="internal"></button>
+        <button class="custom-button btn" id="time"><%= time %></button>
+        <button class="custom-button btn" id="physical"><%= physical %></button>
+        <button class="custom-button btn" id="prior"><%= prior %></button>
+        <button class="custom-button btn" id="people"><%= people %></button>
+        <button class="custom-button btn" id="internal"><%= internal %></button>
         <!-- Sechster Button rechts -->
-        <button class="custom-button btn  " id="behavior"></button>
-        
-      </div>
-     
+        <button class="custom-button btn" id="behavior"><%= behavior %></button>
+    </div>
     <% } %>
 </div>
 
@@ -101,7 +99,7 @@
 
 <div class="container mb-5">
   <div class="col-12">
-    <button type="button" class="button" id="submit">Absenden</button>
+    <button type="button" class="button" id="submit"><h4><strong><%= submit || Absenden %></strong></h4></button>
   </div>
 </div>
 
