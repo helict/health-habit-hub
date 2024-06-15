@@ -8,10 +8,14 @@ import { config } from './utils/config.js';
 import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
 import { jsonBodyParser } from './middleware/requestParser.js';
 
+import { initLanguage } from './controllers/languageController.js';
+
 // Express config
 
 import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
+import languageRouter from './routes/languageRouter.js';
+
 
 const app = express();
 const port = config.port;
@@ -34,12 +38,33 @@ let dataLanguage;
 let inputSource;
 let group_sql;
 
+// Checks whether the browser accepts one of the languages ('de', 'en'). If not, 'en' is set as the default language. The 'initLanguage' function is then executed.
+app.use((req, res, next) => {
+  const lang = req.acceptsLanguages('de', 'en');
+  //console.log(req.headers['accept-language']);
+  //console.log('Accepted browser language:', lang);
+  if (lang) {
+    req.lang = lang;
+  } else {
+    req.lang = 'en';
+  }
+  initLanguage(lang);
+  next();
+})
+
 // Routes
 app.get('/', (req, res) => {
   res.redirect(301, '/donate');
 });
 app.use('/donate', donateRouter);
 app.use('/about', aboutRouter);
+app.use('/clang', languageRouter);
+/*app.use(
+  middleware.handle(i18next, {
+    ignoreRoutes: ["/foo"], // or function(req, res, options, i18next)
+    removeLngFromUrl: false
+  })
+)*/
 
 /* eslint-disable */
 //SPARQL Connection

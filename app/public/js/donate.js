@@ -193,24 +193,3 @@ function handleEmptyBehaviorError() {
       console.error('Error loading language data file:', error),
     );
 }
-
-let currentLanguage = getBrowserLanguage() || 'en';
-
-function getBrowserLanguage() {
-  // Versuche, die bevorzugte Sprache des Browsers zu erhalten
-  let browserLanguage = navigator.language || navigator.userLanguage;
-
-  if (
-    browserLanguage &&
-    (browserLanguage === 'de' || browserLanguage.startsWith('de-'))
-  ) {
-    return 'de';
-  } else {
-    return 'en';
-  }
-}
-// Function to change the language
-// eslint-disable-next-line no-unused-vars
-function changeLanguage(lang) {
-  currentLanguage = lang;
-}

@@ -1,0 +1,59 @@
+{
+  "title": "Über Uns - HabitHub",
+  "aboutText":"Über die Spende",
+  "step3Text": "Lorem Ipsum",
+  "navigation": {
+    "homePageName": "Spende",
+    "aboutPageName": "Über die Spende",
+    "contactPageName": "Kontakt",
+    "currentLanguage": ""
+  },
+
+  "header": "Einführung",
+  "text": "Liebe Spenderin/ Spender,<br> wie du wahrscheinlich weißt, stellt eine Gewohnheit eine Verbindung zwischen einem Verhalten und einem Kontext her, in dem das Verhalten konsequent ausgeführt wird. Nehmen wir zum Beispiel das Verhalten, 5 Kilometer zu laufen. Dieses Verhalten kann mit dem Kontext des morgendlichen Aufstehens an einem Wochenende in Verbindung gebracht werden. In diesem Szenario werden die Kontextkategorie Zeit (Wochenendmorgens) und die Kontextkategorie Verhalten (Aufwachen am Morgen) zu einem umfassenden Kontext kombiniert. Ich bin daran interessiert, die Kontexte zu erforschen, die du deinen Verhaltensweisen zuordnest, um sie zu deiner Gewohnheit zu machen. Indem du deine Gewohnheiten mit uns teilst, trägst du zu einem besseren Verständnis dafür bei, wie bestimmte Kontexte Verhaltensweisen verstärken können. Deine Erkenntnisse werden von unschätzbarem Wert sein, wenn es darum geht, anderen zu helfen, starke, personalisierte Gewohnheiten zu entwickeln.",
+  "image": "pics/intro_pic.png",
+
+  "donationHeader": "Daten Spende",
+  "dataDonationGuide": "Daten Spende Anleitung",
+      "step1": "<h5><strong>Gib deine Gewohnheit als Satz ein, markier die Teile deines Satzes und ordne jedem Teil den unten aufgeführten Kontext oder die Situation zu.</strong></h5>",
+  "step2": "Schritt 2: Bestätige deine Gewohnheit, die du spenden möchtest, indem du auf \"Spenden\" drückst",
+  
+  "example1": "<p><strong>Beispiel:</strong> Wenn ich <mark class=mark_PhysicalSetting>die Küche betrete</mark>  und <mark class=mark_RelatedBehaviour>einen Obstkorb sehe</mark>, <mark class=mark_Behavior>nehme ich einen Apfel</mark> und <mark class=mark_Behavior>esse ihn</mark>.</p>",
+  "clear": "↺",
+  "time": "Zeit",
+  "physical": "Umbgebung",
+  "prior": "bisheriges Verhalten",
+  "people": "Personen",
+  "internal": "inneres Empfinden",
+  "behavior": "Verhalten",
+      "example2": "<h5>Platzhalter: Ich trinke ein Glas Wasser vor dem Zubettgehen.<h5>",
+  "submit": "Spenden",
+  "add": "+ weitere Gewohnheit",  
+
+  "Contentbox":{
+    "slogan":"Du hast DEINE Gewohnheit auf den Pfad gebracht, ein Gemeingut zu werden.",
+    "bedankung":"<h2>🎉 Vielen Dank für DEINE Spende und für DEINEN Beitrag!</h2>",
+    "donate_again": "Erneut spenden",
+    "reward":"Hole dir deine Belohnung ab!"
+  },
+
+  "Rewardbox":{
+    "gift": "BELOHNUNG"
+  },
+
+  "Contactbox":{
+    "send_us":"Sende uns eine Nachicht",
+    "name":"Name",
+    "email":"E-Mail",
+    "subject":"Thema",
+    "message":"Nachicht",
+    "submit":"Nachricht senden",
+    "contact_us": "Impressum",
+    "address": "Adresse: Dresdner Straße 2, 01234 Dresden",
+    "phone": "01577/123456789",
+    "email_contact": "E-Mail: info@habithub.de"
+  },
+
+  "emptyFieldError": "Das Textfeld darf nicht leer sein!",
+  "emptyBehaviorError": "Bitte markieren Sie ein Verhalten im Text, bevor Sie fortfahren."
+}
