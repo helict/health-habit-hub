@@ -16,7 +16,6 @@ import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
 import languageRouter from './routes/languageRouter.js';
 
-
 const app = express();
 const port = config.port;
 
@@ -40,7 +39,7 @@ let group_sql;
 
 // Checks whether the browser accepts one of the languages ('de', 'en'). If not, 'en' is set as the default language. The 'initLanguage' function is then executed.
 app.use((req, res, next) => {
-  const lang = req.acceptsLanguages('de', 'en');
+  const lang = req.acceptsLanguages('de', 'ja', 'en');
   //console.log(req.headers['accept-language']);
   //console.log('Accepted browser language:', lang);
   if (lang) {
@@ -50,7 +49,7 @@ app.use((req, res, next) => {
   }
   initLanguage(lang);
   next();
-})
+});
 
 // Routes
 app.get('/', (req, res) => {

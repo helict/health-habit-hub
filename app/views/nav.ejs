@@ -13,9 +13,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/" id="nav-home"><%= homePageName %></a>
                     </li>
-                    <li class="nav-item">
+                    <% if (boolean_ja != 1) { %>
+                    <li class="nav-item">                         
                         <a class="nav-link" href="/about" id="nav-about"><%= aboutPageName %></a>
                     </li>
+                    <% } %>
                     <li class="nav-item">
                         <a class="nav-link" href="/contact.html" id="nav-contact"><%= contactPageName %></a>
                     </li>
@@ -25,7 +27,7 @@
                         <span id="nav-language"><%= currentLanguage %></span>
                     </a>
                     <div class="dropdown-menu w-50" aria-labelledby="languageDropdown">
-                        <% ['English', 'Deutsch'].forEach(function(language) { %>
+                        <% [languages.first, languages.second, languages.third].forEach(function(language) { %>
                             <a href="?lgn=<%= language.toLowerCase().substr(0, 2) %>" class="dropdown-item" onclick="changeLanguage('<%= language.toLowerCase().substr(0, 2) %>')"><%= language %></a>
                         <% }); %>
                     </div>
