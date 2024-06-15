@@ -1,4 +1,7 @@
 import express from 'express';
+import bodyParser from 'body-parser';
+import { RecaptchaV2 as Recaptcha } from 'express-recaptcha'; // Import the express-recaptcha module
+
 import sparqlClient from 'sparql-http-client';
 import { v4 as uuid } from 'uuid';
 
@@ -25,10 +28,20 @@ const db_pass = config.db.password;
 const db_endpoint = config.getDbEndpoint();
 const db_headers = config.getDbHeader();
 
-// Middleware to parse form data in the request body
+// Use bodyParser and express-recaptcha module
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Configure the reCAPTCHA module with your own keys
+const recaptcha = new Recaptcha(
+  '6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l',
+  '6Lc_WPEpAAAAAJKIbXTBmYBGKsZeay4ANUykwh7m',
+);
+app.use(recaptcha.middleware.render);
+
+// Middleware for parsing form data in the request body
 app.use(jsonBodyParser);
 
-//Middleware to serve static files
+// Middleware for serving static files
 app.use(staticFileMiddleware);
 
 let selectionDataClosed = new Map();
@@ -66,7 +79,7 @@ app.use('/clang', languageRouter);
 )*/
 
 /* eslint-disable */
-//SPARQL Connection
+// SPARQL Connection
 async function insertDataClosed() {
   const keys = Array.from(selectionDataClosed.keys());
   console.log('Keys:', keys, keys.length);
@@ -183,6 +196,26 @@ async function insertDataOpen() {
     console.error('Error inserting data:', error.message);
   }
 }
+
+// Route for the contact form with reCAPTCHA verification
+app.post('/submit-form', recaptcha.middleware.verify, async (req, res) => {
+  // Verify the captcha
+  if (!req.recaptcha.error) {
+    // Captcha verification passed successfully
+    // Perform your further logic here
+    try {
+      await insertDataClosed(); // Example of a function for data processing
+      await insertDataOpen(); // Example of a function for data processing
+      res.send('Form submitted successfully!');
+    } catch (error) {
+      console.error('Error processing form:', error.message);
+      res.status(500).send('Internal Server Error');
+    }
+  } else {
+    // Captcha verification failed
+    res.status(400).send('Captcha verification failed');
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on http://app.localhost`);
