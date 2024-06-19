@@ -1,5 +1,6 @@
 import SparqlClient from 'sparql-http-client';
 import { translate } from 'deeplx';
+import { v4 as uuidv4 } from 'uuid';
 
 class DbClient {
   constructor(config) {
@@ -21,7 +22,14 @@ class DbClient {
     }
   }
 
-  async insertDonateData(habituuid, ExperimentGroup, data, keys = []) {
+  async insertDonateData(ExperimentGroup, data) {
+    const habituuid = uuidv4();
+    const source = data.language.toLowerCase() === 'en' ? 'user' : 'deeplx';
+    const value =
+      source === 'user'
+        ? data.inputValue
+        : translate(data.inputValue, 'en', data.language);
+
     let query = `
     PREFIX hhh: <http://example.com/hhh#>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -37,22 +45,20 @@ class DbClient {
     `;
 
     if (ExperimentGroup.closedTask) {
-      let i = 0;
-      while (i < keys.length) {
+      for (const context of data.contexts) {
         query += `
       hhh:Behaviour-${habituuid} rdf:type owl:NamedIndividual,
-                  hhh:${keys[i]} ;
+                  hhh:${context.name} ;
                             hhh:partOf hhh:ExperimentalSetting-${habituuid};
                             hhh:id "${habituuid}" ;
                             hhh:language "${data.language}"^^rdf:langString;
                             hhh:source "${data.source}"^^rdfs:Literal;
                             hhh:value "${await translate(
-                              data.get(keys[i]),
+                              context.value,
                               'en',
                               data.language,
                             )}".
       `;
-        i++;
       }
     } else {
       query += `
@@ -62,11 +68,7 @@ class DbClient {
                             hhh:id "${habituuid}" ;
                             hhh:language "${data.language}"^^rdf:langString;
                             hhh:source "${data.source}"^^rdfs:Literal;
-                            hhh:value "${await translate(
-                              data,
-                              'en',
-                              data.language,
-                            )}".
+                            hhh:value "${await value}".
     `;
     }
 
