@@ -1,7 +1,7 @@
 import SparqlClient from 'sparql-http-client';
 import { translate } from 'deeplx';
 
-class SparqlDatabaseClient {
+class DbClient {
   constructor(config) {
     this.client = new SparqlClient({
       updateUrl: config.getDbEndpoint(),
@@ -76,4 +76,4 @@ class SparqlDatabaseClient {
   }
 }
 
-export { SparqlDatabaseClient };
+export { DbClient };

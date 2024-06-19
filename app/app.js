@@ -7,7 +7,7 @@ import { config } from './utils/config.js';
 import { loadLanguageFiles, getLanguageCodes } from './utils/localization.js';
 import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
 import { jsonBodyParser } from './middleware/requestParser.js';
-import { SparqlDatabaseClient } from './utils/SparqlDatabase.js';
+import { DbClient } from './utils/SparqlDatabase.js';
 
 // Express config
 import donateRouter from './routes/donateRouter.js';
@@ -25,7 +25,7 @@ const validLanguageCodes = getLanguageCodes().join("|");
 
 // SPARQL client config
 // eslint-disable-next-line no-unused-vars
-const sparqlClient = new SparqlDatabaseClient(config);
+const sparqlClient = new DbClient(config);
 
 // Use bodyParser and express-recaptcha module
 app.use(bodyParser.urlencoded({ extended: true }));
