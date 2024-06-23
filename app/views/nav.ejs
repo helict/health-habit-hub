@@ -2,8 +2,8 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container">
-        <img src="pics/h3-logo.png" id="icon" alt="PepeHands">
-        <a class="navbar-brand" href="http://app.localhost/donate"><b>HabitHub</b></a>
+        <img src="/pics/h3-logo.png" id="icon" alt="PepeHands">
+        <a class="navbar-brand" href="http://app.localhost/<%= currentLanguage %>/"><b>HabitHub</b></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -11,11 +11,11 @@
             <ul class="navbar-nav ms-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/" id="nav-home"><%= homePageName %></a>
+                        <a class="nav-link" href="/<%= currentLanguage %>/donate" id="nav-home"><%= homePageName %></a>
                     </li>
                     <% if (boolean_ja != 1) { %>
                     <li class="nav-item">                         
-                        <a class="nav-link" href="/about" id="nav-about"><%= aboutPageName %></a>
+                        <a class="nav-link" href="/<%= currentLanguage %>/about" id="nav-about"><%= aboutPageName %></a>
                     </li>
                     <% } %>
                     <li class="nav-item">
@@ -23,13 +23,13 @@
                     </li>
                 <li class="nav-item dropdown" id="lang-menu">
                     <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="pics/globus.png" id="globus" alt="Language Icon">
-                        <span id="nav-language"><%= currentLanguage %></span>
+                        <img src="/pics/globus.png" id="globus" alt="Language Icon">
+                        <span id="nav-language"></span>
                     </a>
                     <div class="dropdown-menu w-50" aria-labelledby="languageDropdown">
-                        <% [languages.first, languages.second, languages.third].forEach(function(language) { %>
-                            <a href="?lgn=<%= language.toLowerCase().substr(0, 2) %>" class="dropdown-item" onclick="changeLanguage('<%= language.toLowerCase().substr(0, 2) %>')"><%= language %></a>
-                        <% }); %>
+                            <a href="#" class="dropdown-item" onclick="changeLanguage('en')"><%= languages.first %></a>
+                            <a href="#" class="dropdown-item" onclick="changeLanguage('de')"><%= languages.second %></a>
+                            <a href="#" class="dropdown-item" onclick="changeLanguage('ja')"><%= languages.third %></a>
                     </div>
                 </li>
             </ul>

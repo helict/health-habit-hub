@@ -66,7 +66,7 @@ export function showDonateForm(req, res) {
     url.fileURLToPath(new URL('../views/donate.ejs', import.meta.url)),
     {
       experimentGroup: experimentGroup,
-      ...getLanguageMessages(),
+      ...getLanguageMessages(req.lang),
     },
   );
 }

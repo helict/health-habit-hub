@@ -12,14 +12,15 @@ let language = null;
  *
  * @returns {object} - Returns the corresponding language data to the selected/preferred language.
  */
-export function getLanguageMessages() {
-  if (language.startsWith('de')) {
-    //console.log('AppLanguage is DE');
+export function getLanguageMessages(lang) {
+  if (lang.startsWith('de')) {
+    console.log('AppLanguage is DE');
     return data_de;
-  } else if (language.startsWith('ja')) {
+  } else if (lang.startsWith('ja')) {
+    console.log('AppLanguage is JA');
     return data_ja;
   } else {
-    //console.log('AppLanguage is EN');
+    console.log('AppLanguage is EN');
     return data_en;
   }
 }
@@ -31,14 +32,14 @@ export function getLanguageMessages() {
  *
  * @param {object} lang - The object, which contains the preferred browser language.
  */
-export function initLanguage(lang) {
+/*export function initLanguage(lang) {
   if (language == null) {
     language = lang;
     console.log('Set app language to', language.toUpperCase());
   } /*else {
       console.log('App language is already set to', language);
-    }*/
-}
+    }
+}*/
 
 /**
  * Sets the application's language based on the incoming request data and sends a response status.
@@ -49,8 +50,10 @@ export function initLanguage(lang) {
  * @param {object} req - The request object, which contains the HTTP request data. The language information is expected to be in the body of this request.
  * @param {object} res - The response object, used to send a response back to the client.
  */
+/*
 export function setLanguage(req, res) {
   console.log('Change app language to', req.body.language.toUpperCase());
-  language = req.body.language;
+  req.lang = req.body.language;
   res.sendStatus(200);
 }
+*/

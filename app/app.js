@@ -7,12 +7,14 @@ import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
 import { jsonBodyParser } from './middleware/requestParser.js';
 import { SparqlDatabaseClient } from './utils/SparqlDatabase.js';
 
-import { initLanguage } from './controllers/languageController.js';
+import path from 'path';
+
+//import { initLanguage } from './controllers/languageController.js';
 
 // Express config
 import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
-import languageRouter from './routes/languageRouter.js';
+//import languageRouter from './routes/languageRouter.js';
 
 const app = express();
 const port = config.port;
@@ -38,27 +40,50 @@ app.use(jsonBodyParser);
 app.use(staticFileMiddleware);
 
 
+
+
 // Checks whether the browser accepts one of the languages ('de', 'en'). If not, 'en' is set as the default language. The 'initLanguage' function is then executed.
-app.use((req, res, next) => {
-  const lang = req.acceptsLanguages('de', 'ja', 'en');
-  //console.log(req.headers['accept-language']);
-  //console.log('Accepted browser language:', lang);
-  if (lang) {
-    req.lang = lang;
+app.use('/:langId(de|en|ja)?/', (req, res, next) => {
+  
+  console.log('route parameter gets langId', req.params.langId);
+
+  req.lang = 'en';
+
+  if (req.params.langId) {
+    req.lang = req.params.langId;
   } else {
-    req.lang = 'en';
+    const lang = req.acceptsLanguages('de', 'ja', 'en');
+    //console.log(req.headers['accept-language']);
+    console.log('Accepted browser language:', lang);
+
+    if (lang) {
+      req.lang = lang;
+    } 
+  
   }
-  initLanguage(lang);
+  console.log('Application language is:', req.lang);
+  //initLanguage(lang);
+  //res.redirect(301, '/' + req.lang + '/donate');
   next();
 });
 
 // Routes
-app.get('/', (req, res) => {
-  res.redirect(301, '/donate');
+app.get('/:langId(de|en|ja)/', (req, res) => {
+    res.redirect(301, '/' + req.lang + '/donate');
 });
-app.use('/donate', donateRouter);
-app.use('/about', aboutRouter);
-app.use('/clang', languageRouter);
+
+app.use('/:langId(de|en|ja)/donate', donateRouter);
+app.use('/:langId(de|en|ja)/about', aboutRouter);
+//app.use('/:langId(de|en|ja)/clang', languageRouter);
+
+app.use( (req, res, next) => {
+  if (req.url.startsWith('/' + req.lang + '/')) {
+    next();
+  } else {
+    res.redirect(301, path.join('/', req.lang, req.url));
+  }
+});
+
 /*app.use(
   middleware.handle(i18next, {
     ignoreRoutes: ["/foo"], // or function(req, res, options, i18next)

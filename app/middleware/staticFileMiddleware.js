@@ -9,7 +9,7 @@ const staticFileMiddleware = express.Router();
 
 // Serve CSS files with the 'text/css' MIME type
 staticFileMiddleware.use(
-  '/css',
+  '/:langId(de|en|ja)?/css',
   express.static(path.join(__dirname, '..', 'public', 'css'), {
     extensions: ['css'],
   }),
@@ -17,7 +17,7 @@ staticFileMiddleware.use(
 
 // Serve JS files with the 'text/javascript' MIME type
 staticFileMiddleware.use(
-  '/js',
+  '/:langId(de|en|ja)?/js',
   express.static(path.join(__dirname, '..', 'public', 'js'), {
     extensions: ['js'],
   }),

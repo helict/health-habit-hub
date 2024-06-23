@@ -6,7 +6,7 @@
     "homePageName": "Home",
     "aboutPageName": "About",
     "contactPageName": "Contact",
-    "currentLanguage": "",
+    "currentLanguage": "en",
     "languages": {
       "first": "English",
       "second": "German",

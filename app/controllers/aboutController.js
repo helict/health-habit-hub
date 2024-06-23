@@ -5,6 +5,6 @@ import { getLanguageMessages } from '../controllers/languageController.js';
 export function renderAboutPage(req, res) {
   res.render(
     url.fileURLToPath(new URL('../views/about.ejs', import.meta.url)),
-    getLanguageMessages(),
+    getLanguageMessages(req.lang),
   );
 }

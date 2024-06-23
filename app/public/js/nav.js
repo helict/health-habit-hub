@@ -5,11 +5,24 @@
  *
  * @param {string} lang - The language code to set the application to (e.g., 'en', 'de').
  */
-function changeLanguage(lang) {
+/*
+function changeLanguageAlt(lang) {
   const data = {
     language: lang,
   };
   sendLanguage(data);
+}
+*/
+
+function changeLanguage(lang) {
+  console.log('Ziel:', lang);
+  console.log('href:', window.location.href);
+  console.log('Pathname:', window.location.pathname);
+  
+  const targetUrl = window.location.pathname.replace( /\/\w{2}\// , '/' + lang + '/');
+  console.log('neue Ziel:',targetUrl)
+  
+  window.location.href = targetUrl;
 }
 
 /**
@@ -20,6 +33,7 @@ function changeLanguage(lang) {
  *
  * @param {object} data - An object containing the language data to be sent to the backend.
  */
+/*
 function sendLanguage(data) {
   fetch('/clang', {
     method: 'POST',
@@ -36,3 +50,4 @@ function sendLanguage(data) {
       console.error('Error:', error);
     });
 }
+*/
