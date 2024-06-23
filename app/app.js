@@ -1,3 +1,4 @@
+import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
 import { RecaptchaV2 as Recaptcha } from 'express-recaptcha'; // Import the express-recaptcha module
@@ -7,14 +8,9 @@ import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
 import { jsonBodyParser } from './middleware/requestParser.js';
 import { SparqlDatabaseClient } from './utils/SparqlDatabase.js';
 
-import path from 'path';
-
-//import { initLanguage } from './controllers/languageController.js';
-
 // Express config
 import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
-//import languageRouter from './routes/languageRouter.js';
 
 const app = express();
 const port = config.port;
@@ -42,40 +38,36 @@ app.use(staticFileMiddleware);
 
 
 
-// Checks whether the browser accepts one of the languages ('de', 'en'). If not, 'en' is set as the default language. The 'initLanguage' function is then executed.
-app.use('/:langId(de|en|ja)?/', (req, res, next) => {
-  
-  console.log('route parameter gets langId', req.params.langId);
-
+// Either sets req.lang to the already set route language parameter or gets the preferred browser language. Default value is 'en'. 
+app.use('/:lng(de|en|ja)?/', (req, res, next) => {
+  //console.log('Route language parameter:', req.params.lng);
   req.lang = 'en';
 
-  if (req.params.langId) {
-    req.lang = req.params.langId;
+  if (req.params.lng) {
+    req.lang = req.params.lng;
   } else {
     const lang = req.acceptsLanguages('de', 'ja', 'en');
-    //console.log(req.headers['accept-language']);
-    console.log('Accepted browser language:', lang);
+    //console.log('Accepted browser language:', lang);
 
     if (lang) {
       req.lang = lang;
     } 
   
   }
-  console.log('Application language is:', req.lang);
-  //initLanguage(lang);
-  //res.redirect(301, '/' + req.lang + '/donate');
+  console.log('Application language:', req.lang);
   next();
 });
 
 // Routes
-app.get('/:langId(de|en|ja)/', (req, res) => {
+// Redirects all requests to '/donate' if the language parameter (lng) is already set
+app.get('/:lng(de|en|ja)/', (req, res) => {
     res.redirect(301, '/' + req.lang + '/donate');
 });
 
-app.use('/:langId(de|en|ja)/donate', donateRouter);
-app.use('/:langId(de|en|ja)/about', aboutRouter);
-//app.use('/:langId(de|en|ja)/clang', languageRouter);
+app.use('/:lng(de|en|ja)/donate', donateRouter);
+app.use('/:lng(de|en|ja)/about', aboutRouter);
 
+// Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
 app.use( (req, res, next) => {
   if (req.url.startsWith('/' + req.lang + '/')) {
     next();
@@ -83,13 +75,6 @@ app.use( (req, res, next) => {
     res.redirect(301, path.join('/', req.lang, req.url));
   }
 });
-
-/*app.use(
-  middleware.handle(i18next, {
-    ignoreRoutes: ["/foo"], // or function(req, res, options, i18next)
-    removeLngFromUrl: false
-  })
-)*/
 
 /* eslint-disable */
 
