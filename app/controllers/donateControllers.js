@@ -1,6 +1,6 @@
 import url from 'url';
 import { ExperimentGroup } from '../models/experimentGroup.js';
-import { getLanguageMessages } from '../controllers/languageController.js';
+import { getLanguageMessages } from '../utils/localization.js';
 
 function getExperimentGroupFromQuery(req) {
   if (req.query.group) {
@@ -66,7 +66,7 @@ export function showDonateForm(req, res) {
     url.fileURLToPath(new URL('../views/donate.ejs', import.meta.url)),
     {
       experimentGroup: experimentGroup,
-      ...getLanguageMessages(),
+      ...getLanguageMessages(req.lang),
     },
   );
 }
