@@ -1,18 +1,18 @@
 {
   "title": "会社概要",
   "aboutText": "寄付について",
-  "step3Text": "Lorem Ipsum",
+  "step3Text": "全体として、習慣寄付はデータ駆動型研究の有望な未来を切り開くものである。習慣データを自発的に提供することで、人々は科学的知識に積極的に貢献し、健康、心理学、社会科学などの分野の進歩を形作る。この革新的なデータ提供の形は、新たな発見への道を開くだけでなく、データ倫理と透明性の重要性に対する認識を高める可能性がある。",
   "navigation": {
-    "homePageName": "寄付",
+    "homePageName": "<b>HabitHub</b>",
+    "donatePageName": "寄付",
     "aboutPageName": "寄付について",
     "contactPageName": "お問い合わせ",
-    "currentLanguage": "",
+    "currentLanguage": "ja",
     "languages": {
       "first": "英語",
       "second": "ドイツ語",
       "third": "日本語"
-    },
-    "boolean_ja": "1"
+    }
   },
 
   "header": "はじめに",
