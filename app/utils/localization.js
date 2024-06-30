@@ -1,21 +1,15 @@
-// Load language JSON Files
-// import data_de from '../language/messages_de.json' with { type: 'json' };
-// import data_en from '../language/messages_en.json' with { type: 'json' };
-// import data_ja from '../language/messages_ja.json' with { type: 'json' };
-
 import fs from 'fs';
-
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-
 let languageDataMap = new Map()
 
-
-
-
-
-
+/**
+ * Imports selected files dynamicly from the /language/ folder and collects them in a map.
+ *
+ * The function iterates over every file in the /language/ folder and imports all files whose filename matches a certain pattern.
+ * These are then mapped to the corresponding language codes.
+ */
 export function loadLanguageFiles() {
 
   const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -25,7 +19,8 @@ export function loadLanguageFiles() {
   let languageFiles = fs.readdirSync(path.join(__dirname, '..', 'language'));
 
   languageFiles.forEach( file => {
-    if (path.extname(file) == '.json')  // ggf. noch Dateinamen prüfen (messages_xx.json)
+
+    if ( path.basename(file).match( /messages_\w\w\.json/ ) )
     {
         rawJson = fs.readFileSync(path.join(__dirname, '..', 'language',file));
         parsedJson = JSON.parse( rawJson );
@@ -38,7 +33,14 @@ export function loadLanguageFiles() {
   addAllLanguages();
 }
 
+/**
+ * Extends the JSON files with a map consisting of all languages and language codes.
+ *
+ * The function iterates over all language files and builds a new map that maps all languages in the national language to the corresponding language codes.
+ * The new map is then added to each language file. 
+ */
 function addAllLanguages() {
+
   let allLanguages = new Map();
 
   languageDataMap.values().forEach(data => {
@@ -62,7 +64,7 @@ function addAllLanguages() {
  * @returns {object} - Returns the corresponding language data to the selected/preferred language.
  */
 export function getLanguageMessages(lang) {
-
+  
   if (languageDataMap.has(lang)) {
     return languageDataMap.get(lang);
   }
@@ -71,7 +73,7 @@ export function getLanguageMessages(lang) {
 }
 
 export function getLanguageCodes() {
-  //console.log(languageDataMap.keys());
 
+  //console.log(languageDataMap.keys());
   return Array.from(languageDataMap.keys());
 }

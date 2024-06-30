@@ -16,7 +16,7 @@ import aboutRouter from './routes/aboutRouter.js';
 const app = express();
 const port = config.port;
 
-// Build and enable language functions
+// Enable language functions
 loadLanguageFiles();
 const validLanguageCodes = getLanguageCodes().join("|");
 
