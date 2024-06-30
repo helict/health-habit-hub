@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import { RecaptchaV2 as Recaptcha } from 'express-recaptcha'; // Import the express-recaptcha module
 
 import { config } from './utils/config.js';
+import { loadLanguageFiles, getLanguageCodes } from './utils/localization.js';
 import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
 import { jsonBodyParser } from './middleware/requestParser.js';
 import { SparqlDatabaseClient } from './utils/SparqlDatabase.js';
@@ -14,6 +15,11 @@ import aboutRouter from './routes/aboutRouter.js';
 
 const app = express();
 const port = config.port;
+
+// Build and enable language functions
+loadLanguageFiles();
+const validLanguageCodes = getLanguageCodes().join("|");
+
 
 // SPARQL client config
 // eslint-disable-next-line no-unused-vars
@@ -39,15 +45,15 @@ app.use(staticFileMiddleware);
 
 
 // Either sets req.lang to the already set route language parameter or gets the preferred browser language. Default value is 'en'. 
-app.use('/:lng(de|en|ja)?/', (req, res, next) => {
+app.use('/:lng('+validLanguageCodes+')?/', (req, res, next) => {
   //console.log('Route language parameter:', req.params.lng);
   req.lang = 'en';
 
   if (req.params.lng) {
     req.lang = req.params.lng;
   } else {
-    const lang = req.acceptsLanguages('de', 'ja', 'en');
-    //console.log('Accepted browser language:', lang);
+    const lang = req.acceptsLanguages(getLanguageCodes());
+    console.log('Accepted browser language:', lang);
 
     if (lang) {
       req.lang = lang;
@@ -60,12 +66,12 @@ app.use('/:lng(de|en|ja)?/', (req, res, next) => {
 
 // Routes
 // Redirects all requests to '/donate' if the language parameter (lng) is already set
-app.get('/:lng(de|en|ja)/', (req, res) => {
+app.get('/:lng('+validLanguageCodes+')?/', (req, res) => {
     res.redirect(301, '/' + req.lang + '/donate');
 });
 
-app.use('/:lng(de|en|ja)/donate', donateRouter);
-app.use('/:lng(de|en|ja)/about', aboutRouter);
+app.use('/:lng('+validLanguageCodes+')/donate', donateRouter);
+app.use('/:lng('+validLanguageCodes+')/about', aboutRouter);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
 app.use( (req, res, next) => {

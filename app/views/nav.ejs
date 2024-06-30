@@ -3,7 +3,7 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container">
         <img src="/pics/h3-logo.png" id="icon" alt="PepeHands">
-        <a class="navbar-brand" href="http://app.localhost/<%= currentLanguage %>/"><%- homePageName %></a>
+        <a class="navbar-brand" href="http://app.localhost/<%= languageCode %>/"><%- homePageName %></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -11,11 +11,11 @@
             <ul class="navbar-nav ms-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/<%= currentLanguage %>/donate" id="nav-home"><%= donatePageName %></a>
+                        <a class="nav-link" href="/<%= languageCode %>/donate" id="nav-home"><%= donatePageName %></a>
                     </li>
-                    <% if (currentLanguage != 'ja') { %>
+                    <% if (languageCode != 'ja') { %>
                     <li class="nav-item">                         
-                        <a class="nav-link" href="/<%= currentLanguage %>/about" id="nav-about"><%= aboutPageName %></a>
+                        <a class="nav-link" href="/<%= languageCode %>/about" id="nav-about"><%= aboutPageName %></a>
                     </li>
                     <% } %>
                     <li class="nav-item">
@@ -27,9 +27,9 @@
                         <span id="nav-language"></span>
                     </a>
                     <div class="dropdown-menu w-50" aria-labelledby="languageDropdown">
-                            <a href="#" class="dropdown-item" onclick="changeLanguage('en')"><%= languages.first %></a>
-                            <a href="#" class="dropdown-item" onclick="changeLanguage('de')"><%= languages.second %></a>
-                            <a href="#" class="dropdown-item" onclick="changeLanguage('ja')"><%= languages.third %></a>
+                        <% allLanguages.keys().forEach(function(language) { %>
+                            <a href="#" class="dropdown-item" onclick="changeLanguage('<%= allLanguages.get(language) %>')"><%= language %></a>
+                        <% }); %>
                     </div>
                 </li>
             </ul>

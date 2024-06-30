@@ -7,12 +7,8 @@
     "donatePageName": "Home",
     "aboutPageName": "About",
     "contactPageName": "Contact",
-    "currentLanguage": "en",
-    "languages": {
-      "first": "English",
-      "second": "German",
-      "third": "Japanese"
-    }
+    "languageCode": "en",
+    "language": "English"
   },
   "header": "Introduction",
   "text": "Dear habit contributor,<br> As you’re likely aware, a habit establishes a connection between a  behavior and a  context in which the behavior is consistently performed. Take, for instance, the behavior of running 5 kilometers. This behavior can be associated with the context of waking up in the morning on a weekend. In this scenario, the context category time (weekend mornings) and the context category related behavior (waking up in the morning) is combined into a comprehensive context. We are interested in exploring the contexts you assign to your behaviors to make it your habit. By sharing your habits with us, you contribute to a greater understanding of how specific contexts can reinforce behaviors. Your insights will be invaluable in helping other craft strong, personalized habits.",
