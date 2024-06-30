@@ -13,6 +13,7 @@ import { initLanguage } from './controllers/languageController.js';
 import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
 import languageRouter from './routes/languageRouter.js';
+import demoRouter from './routes/demoRouter.js';
 
 const app = express();
 const port = config.port;

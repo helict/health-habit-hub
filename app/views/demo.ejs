@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('header') %>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <%- include('nav', navigation) %>
+    
+    <form action="/submit-demographics" method="POST">
+        <div class="container" id="datadonationheader">
+            <p>Geschlecht:
+                <label><input type="radio" name="gender" value="männlich"> männlich</label>
+                <label><input type="radio" name="gender" value="weiblich"> weiblich</label>
+                <label><input type="radio" name="gender" value="divers"> divers</label>
+            </p>
+            <p>Herkunft:
+                <input type="text" name="country">
+            </p>
+            <p>Schulabschluss:
+                <select name="education">
+                    <option value="abitur">Abitur</option>
+                    <option value="fachabitur">Fachabitur</option>
+                    <option value="hauptschulabschluss">Hauptschulabschluss</option>
+                    <!-- Weitere Optionen hier -->
+                </select>
+            </p>
+            <p>Alter:
+                <input type="number" name="age">
+            </p>
+            <p>Gewicht:
+                <select name="weight">
+                    <option value="untergewichtig">Untergewichtig</option>
+                    <option value="normalgewichtig">Normalgewichtig</option>
+                    <option value="übergewichtig">Übergewichtig</option>
+                    <option value="stark-übergewichtig">Stark übergewichtig</option>
+                    <!-- Weitere Optionen hier -->
+                </select>
+            </p>
+            <p>Religionszugehörigkeit:
+                <select name="religion">
+                    <option value="christlich">Christlich</option>
+                    <option value="islamisch">Islamisch</option>
+                    <option value="jüdisch">Jüdisch</option>
+                    <option value="hinduistisch">Hinduistisch</option>
+                    <!-- Weitere Optionen hier -->
+                </select>
+            </p>
+            <p>Beruflicher Kontext:
+                <select name="employment_context">
+                    <option value="im-studium">Im Studium</option>
+                    <option value="angestellt-vollzeit">Angestellt in Vollzeit</option>
+                    <option value="angestellt-teilzeit">Angestellt in Teilzeit</option>
+                    <option value="in-ausbildung">In Ausbildung</option>
+                    <option value="selbstständig">Selbstständig / Freiberufler</option>
+                    <option value="in-rente">In Rente</option>
+                    <option value="arbeitssuchend">Arbeitssuchend</option>
+                    <option value="hausarbeit-familienpflege">In Hausarbeit / Familienpflege</option>
+                    <!-- Weitere Optionen hier -->
+                </select>
+            </p>
+            <p>Arbeitszeiten:
+                <select name="working_hours" multiple>
+                    <option value="schichtsystem-mit-nachtschicht">Schichtsystem (inkl. Nachtschicht)</option>
+                    <option value="schichtsystem-ohne-nachtschichten">Schichtsystem (ohne Nachtschichten)</option>
+                    <option value="wochenende-oft-im-dienst">Wochenende oft im Dienst</option>
+                    <option value="wochenende-meistens-frei">Wochenende meistens frei</option>
+                    <option value="wochenende-immer-frei">Wochenende immer frei</option>
+                    <option value="flexible-arbeitszeiten">Flexible Arbeitszeiten</option>
+                    <option value="unflexible-arbeitszeiten">Unflexible Arbeitszeiten</option>
+                    <option value="homeoffice">Homeoffice</option>
+                    <!-- Weitere Optionen hier -->
+                </select>
+            </p>
+            <p>Arbeitswege:
+                <select name="commute_mode" multiple>
+                    <option value="autofahrt">Autofahrt</option>
+                    <option value="fußweg">Fußweg</option>
+                    <option value="fahrradfahrt">Fahrradfahrt</option>
+                    <option value="öffentliche-verkehrsmittel">Öffentliche Verkehrsmittel (Bus, Bahn, Straßenbahn)</option>
+                    <option value="motorradfahrt">Motorradfahrt</option>
+                    <option value="mitfahrgelegenheit">Mitfahrgelegenheit</option>
+                    <option value="telecommuting">Telecommuting (kein täglicher Weg zur Arbeit)</option>
+                    <option value="sonstiges">Sonstiges (z. B. Homeoffice mit gelegentlichen Vor-Ort-Terminen)</option>
+                    <!-- Weitere Optionen hier -->
+                </select>
+            </p>
+            <p>Privater Kontext:
+                <select name="personal_context">
+                    <option value="partnerschaft-ohne-kind">In Partnerschaft ohne Kind/Kinder</option>
+                    <option value="partnerschaft-mit-kind">In Partnerschaft mit Kind/Kindern</option>
+                    <option value="alleinerziehend">Alleinerziehend mit Kind/Kindern</option>
+                    <option value="single-ohne-kind">Single ohne Kind/Kinder</option>
+                    <option value="getrennt-lebend-partnerschaft-kind">Getrennt lebend, aber in Partnerschaft mit Kind/Kindern</option>
+                    <option value="getrennt-lebend-single-kind">Getrennt lebend, Single mit Kind/Kindern</option>
+                    <option value="getrennt-lebend-single-ohne-kind">Getrennt lebend, Single ohne Kind/Kinder</option>
+                    <option value="andere-familienkonstellation">Andere familiäre Konstellation (bitte angeben)</option>
+                    <!-- Weitere Optionen hier -->
+                </select>
+            </p>
+            <p>Verfügbare Zeit:
+                <select name="available_time">
+                    <option value="mehr-als-3-stunden">Mehr als 3 Stunden pro Tag</option>
+                    <option value="2-3-stunden">2-3 Stunden pro Tag</option>
+                    <option value="1-2-stunden">1-2 Stunden pro Tag</option>
+                    <option value="0-5-1-stunde">0,5-1 Stunde pro Tag</option>
+                    <option value="weniger-als-0-5-stunden">Weniger als 0,5 Stunden pro Tag</option>
+                    <!-- Weitere Optionen hier -->
+                </select>
+            </p>
+            <p>Beziehungskontext:
+                <select name="relationship_context">
+                    <option value="gesundheitsbewusster-partner">Mein Partner ist sehr gesundheitsbewusst und regelmäßig körperlich aktiv.</option>
+                    <option value="mäßig-gesundheitsbewusster-partner">Mein Partner ist mäßig gesundheitsbewusst und gelegentlich körperlich aktiv.</option>
+                    <option value="unterstützender-partner">Mein Partner unterstützt meine Bemühungen um einen gesunden Lebensstil.</option>
+                    <option value="wenig-gesundheitsbewusster-partner">Mein Partner ist wenig gesundheitsbewusst und selten körperlich aktiv.</option>
+                    <option value="überwiegend-inaktiver-partner">Mein Partner bevorzugt einen überwiegend inaktiven Lebensstil und zeigt wenig Interesse an gesundheitlichen Aspekten.</option>
+                    <option value="kein-partner">Ich habe keinen Partner.</option>
+                    <!-- Weitere Optionen hier -->
+                </select>
+            </p>
+            <p>Beziehungskontext Haustiere:
+                <select name="pet_influence">
+                    <option value="regelmäßige-bewegung">Ich habe ein Haustier, mit dem ich mich regelmäßig bewege/spazieren gehe.</option>
+                    <option value="mehr-aktivität-im-alltag">Ich habe Haustiere, die mich zu mehr Aktivität im Alltag anregen.</option>
+                    <option value="kein-einfluss">Ich habe Haustiere, die keine Auswirkungen auf meine körperliche Aktivität haben.</option>
+                    <option value="keine-haustiere">Ich habe keine Haustiere.</option>
+                    <!-- Weitere Optionen hier -->
+                </select>
+            </p>
+        </div>
+        <button type="submit">Daten absenden</button>
+    </form>
+    
+
+    <div class="container mb-5">
+        <div class="col-12">
+          <button type="button" class="button" id="submit"><h4><strong>Absenden</strong></h4></button>
+        </div>
+    </div>
+
+<%- include('footer') %>
+
+</body>
+</html>
