@@ -70,7 +70,7 @@ app.use('/clang', languageRouter);
 /* eslint-disable */
 
 // Route for the contact form with reCAPTCHA verification
-app.post('/submit-form', recaptcha.middleware.verify, async (req, res) => {
+app.post('/:lng(de|en|ja)/submit-form', recaptcha.middleware.verify, async (req, res) => {
   // Verify the captcha
   if (!req.recaptcha.error) {
     // Captcha verification passed successfully
