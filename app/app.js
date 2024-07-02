@@ -11,8 +11,8 @@ import { SparqlDatabaseClient } from './utils/SparqlDatabase.js';
 // Express config
 import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
-import languageRouter from './routes/languageRouter.js';
 import demoRouter from './routes/demoRouter.js';
+import thanksRouter from './routes/thanksRouter.js';
 
 const app = express();
 const port = config.port;
@@ -68,6 +68,8 @@ app.get('/:lng(de|en|ja)/', (req, res) => {
 
 app.use('/:lng(de|en|ja)/donate', donateRouter);
 app.use('/:lng(de|en|ja)/about', aboutRouter);
+app.use('/:lng(de|en|ja)/demo', demoRouter);
+app.use('/:lng(de|en|ja)/thanks', thanksRouter);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
 app.use( (req, res, next) => {

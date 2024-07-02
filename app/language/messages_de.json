@@ -36,12 +36,10 @@
   "submit": "Spenden",
   "add": "+ weitere Gewohnheit",
 
-  "Contentbox": {
-    "slogan": "Du hast DEINE Gewohnheit auf den Pfad gebracht, ein Gemeingut zu werden.",
-    "bedankung": "<h2>🎉 Vielen Dank für DEINE Spende und für DEINEN Beitrag!</h2>",
-    "donate_again": "Erneut spenden",
-    "reward": "Hole dir deine Belohnung ab!"
-  },
+  "slogan": "Du hast DEINE Gewohnheit auf den Pfad gebracht, ein Gemeingut zu werden.",
+  "thanks": "<h2>🎉 Vielen Dank für DEINE Spende und für DEINEN Beitrag!</h2>",
+  "donate_again": "Erneut spenden",
+  "reward": "Hole dir deine Belohnung ab!",
 
   "Rewardbox": {
     "gift": "BELOHNUNG"

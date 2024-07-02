@@ -36,12 +36,10 @@
   "submit": "Donate",
   "add": "+ add another habit",
 
-  "Contentbox": {
-    "slogan": "You brought YOUR habit on the way to be become a common good.",
-    "bedankung": "<h2>🎉 Thank you for YOUR donation and for YOUR contribution!</h2>",
-    "donate_again": "Donate again!",
-    "reward": "Get your reward!"
-  },
+  "slogan": "You brought YOUR habit on the way to be become a common good.",
+  "thanks": "<h2>🎉 Thank you for YOUR donation and for YOUR contribution!</h2>",
+  "donate_again": "Donate again!",
+  "reward": "Get your reward!",
 
   "Rewardbox": {
     "gift": "REWARD"

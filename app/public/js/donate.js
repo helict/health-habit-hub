@@ -96,7 +96,7 @@ function sendData(data) {
   })
     .then((response) => {
       if (response.ok) {
-        window.location.href = 'bedankung.html';
+        window.location.href = '/thanks';
         console.log('Data saved successfully.');
       } else {
         alert('Server Error while saving data.');

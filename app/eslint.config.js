@@ -17,7 +17,7 @@ export default [
   eslintConfigPrettier,
   {
     ignores: [
-      'public/js/bedankung.js',
+      'public/js/thanks.js',
       'public/js/contact.js',
       'public/js/reward.js',
     ],
