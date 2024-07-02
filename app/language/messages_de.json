@@ -1,18 +1,18 @@
 {
   "title": "Über Uns - HabitHub",
   "aboutText": "Über die Spende",
-  "step3Text": "Lorem Ipsum",
+  "step3Text": "Insgesamt eröffnet die Habit-Spende eine vielversprechende Zukunft für datengetriebene Forschung. Durch die freiwillige Bereitstellung von Gewohnheitsdaten tragen Menschen aktiv zur wissenschaftlichen Erkenntnis bei und gestalten den Fortschritt in Bereichen wie Gesundheit, Psychologie und Sozialwissenschaften. Diese innovative Form der Datenspende könnte nicht nur den Weg für neue Entdeckungen ebnen, sondern auch das Bewusstsein für die Bedeutung von Datenethik und Transparenz stärken.",
   "navigation": {
-    "homePageName": "Spende",
+    "homePageName": "<b>HabitHub</b>",
+    "donatePageName": "Spende",
     "aboutPageName": "Über die Spende",
     "contactPageName": "Kontakt",
-    "currentLanguage": "",
+    "currentLanguage": "de",
     "languages": {
       "first": "Englisch",
       "second": "Deutsch",
       "third": "Japanisch"
-    },
-    "boolean_ja": "0"
+    }
   },
 
   "header": "Einführung",
