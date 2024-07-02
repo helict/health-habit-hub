@@ -11,6 +11,8 @@ import { SparqlDatabaseClient } from './utils/SparqlDatabase.js';
 // Express config
 import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
+import languageRouter from './routes/languageRouter.js';
+import demoRouter from './routes/demoRouter.js';
 
 const app = express();
 const port = config.port;
@@ -79,7 +81,7 @@ app.use( (req, res, next) => {
 /* eslint-disable */
 
 // Route for the contact form with reCAPTCHA verification
-app.post('/submit-form', recaptcha.middleware.verify, async (req, res) => {
+app.post('/:lng(de|en|ja)/submit-form', recaptcha.middleware.verify, async (req, res) => {
   // Verify the captcha
   if (!req.recaptcha.error) {
     // Captcha verification passed successfully

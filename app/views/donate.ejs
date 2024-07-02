@@ -1,63 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
+  <%- include('header') %>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.3/dist/purify.min.js" integrity="sha256-ykUC1Oqnato0nykqa4dwQTqKTkewuLP2Rhu49YV/kYY=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis&display=swap">
+  <script src="js/donate.js"></script>
+  <script>
+    const EXPERIMENT_GROUP = <%- JSON.stringify(experimentGroup) %>;
 
-    <%- include('header') %>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.3/dist/purify.min.js" integrity="sha256-ykUC1Oqnato0nykqa4dwQTqKTkewuLP2Rhu49YV/kYY=" crossorigin="anonymous"></script>    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis&display=swap">
-    <script src="js/donate.js"></script>
-    <script>
-      const EXPERIMENT_GROUP = <%- JSON.stringify(experimentGroup) %>;
+    window.onload = function() {
+      const contextButtons = {
+        'time': "TimeReference",
+        'physical': "PhysicalSetting",
+        'prior': "RelatedBehaviour",
+        'people': "People",
+        'internal': "InternalState",
+        'behavior': "Behavior"
+      };
+      addDonateEventListeners('habit-input', 'submit', 'clear', contextButtons, EXPERIMENT_GROUP, currentLanguage, grecaptcha);
+    }
+  </script>
+</head>
 
-      window.onload = function() {
-        const contextButtons = {
-          'time': "TimeReference",
-          'physical': "PhysicalSetting",
-          'prior': "RelatedBehaviour",
-          'people': "People",
-          'internal': "InternalState",
-          'behavior': "Behavior"
-        };
-        addDonateEventListeners('habit-input', 'submit', 'clear', contextButtons, EXPERIMENT_GROUP, currentLanguage, grecaptcha);
-      }
-    </script>
-    
-  </head>
+<body>
+  <%- include('nav', navigation) %>
 
-  <body>
-
-    <%- include('nav', navigation) %>
-
-    
-    
-    <!-- Introduction-->
-    <% if (experimentGroup.closedDescription) { %>
-    <div class="container" id="introduction">
-      <div class="row">
-          <div class="custom-square rounded position-relative">
-              <h5 id="header"><%= header %></h5>
-              <div class="row">
-                  <div class="col-md-12 ">
-                      <p id="intro-text"><%- text %></p>
-                  </div>
-
-              </div>
+  <!-- Introduction -->
+  <% if (experimentGroup.closedDescription) { %>
+  <div class="container" id="introduction">
+    <div class="row">
+      <div class="custom-square rounded position-relative">
+        <h5 id="header"><%= header %></h5>
+        <div class="row">
+          <div class="col-md-12">
+            <p id="intro-text"><%- text %></p>
           </div>
+        </div>
       </div>
     </div>
-    <% } %>
-  
-    
-    
-    
-    
- <!-- Datadonation guide-->
+  </div>
+  <% } %>
 
- <div class="container "  id="datadonationheader">
+  <!-- Datadonation guide -->
+  <div class="container" id="datadonationheader">
     <div class="row">
-        <div class="col-12">
-            <p id="step2"><%= step2 %></p>
-        </div>
+      <div class="col-12">
+        <p id="step2"><%= step2 %></p>
+      </div>
     </div>
     <div class="row form-group">
       <div class="col-12">
@@ -66,51 +56,42 @@
     </div>
     <% if (experimentGroup.closedTask) { %>
     <div class="row mt-4">
-            <div class="col-8" role="alert">
-                <p id="example1"><%- example1 %></p>
-            </div>       
-            <div class="col-4 ">
-              <button class="custom-button btn" id="clear"><%= clear || 'clear'%></button>
-        </div>
+      <div class="col-8" role="alert">
+        <p id="example1"><%- example1 %></p>
+      </div>
+      <div class="col-4">
+        <button class="custom-button btn" id="clear"><%= clear || 'clear' %></button>
+      </div>
     </div>
 
-    <div class="d-flex flex-sm-row  button-container">        <!-- Erste fünf Buttons linksbündig -->
-        <button class="custom-button btn" id="time"><%= time %></button>
-        <button class="custom-button btn" id="physical"><%= physical %></button>
-        <button class="custom-button btn" id="prior"><%= prior %></button>
-        <button class="custom-button btn" id="people"><%= people %></button>
-        <button class="custom-button btn" id="internal"><%= internal %></button>
-        <!-- Sechster Button rechts -->
-        <button class="custom-button btn" id="behavior"><%= behavior %></button>
+    <div class="d-flex flex-sm-row button-container">
+      <button class="custom-button btn" id="time"><%= time %></button>
+      <button class="custom-button btn" id="physical"><%= physical %></button>
+      <button class="custom-button btn" id="prior"><%= prior %></button>
+      <button class="custom-button btn" id="people"><%= people %></button>
+      <button class="custom-button btn" id="internal"><%= internal %></button>
+      <button class="custom-button btn" id="behavior"><%= behavior %></button>
     </div>
     <% } %>
-</div>
-
-<form action="/submit-form" method="POST">
-  
-  
-  <!-- Captcha-Widget -->
-  <div class="g-recaptcha" data-sitekey="6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l"></div>
- 
- 
-</form>
-
-
-
-<div class="container mb-5">
-  <div class="col-12">
-    <button type="button" class="button" id="submit"><h4><strong><%= submit || Absenden %></strong></h4></button>
   </div>
-</div>
 
-<%- include('footer') %>
+  <!-- Form with reCAPTCHA -->
+  <form action="/<%= currentLanguage %>/submit-form" method="POST">
+    <div class="g-recaptcha" data-sitekey="6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l"></div>
+    <div class="container mb-5">
+      <div class="col-12">
+        <button type="submit" class="button" id="submit"><h4><strong><%= submit || 'Absenden' %></strong></h4></button>
+      </div>
+    </div>
+  </form>
 
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <a href="https://www.instagram.com/"><img src="pics/insta.png" class="socialmedia"></a>
+      <a href="https://www.facebook.com/"><img src="pics/facebook.png" class="socialmedia"></a>
+      <a href="https://www.X.com/"><img src="pics/X.png" class="socialmedia"></a>
+    </div>
+  </footer>
 </body>
 </html>
-
-
-
-  
-       
-      
-   
