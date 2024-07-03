@@ -11,7 +11,6 @@ import { SparqlDatabaseClient } from './utils/SparqlDatabase.js';
 // Express config
 import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
-import languageRouter from './routes/languageRouter.js';
 import demoRouter from './routes/demoRouter.js';
 
 const app = express();
@@ -56,6 +55,7 @@ app.use('/:lng(de|en|ja)?/', (req, res, next) => {
     } 
   
   }
+  res.locals.currentLanguage = req.lang;
   console.log('Application language:', req.lang);
   next();
 });
