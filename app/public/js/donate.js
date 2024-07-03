@@ -1,3 +1,5 @@
+import { contexts } from '../../utils/contexts.js';
+
 function markSelection(context, editable) {
   const selection = window.getSelection();
 
@@ -154,6 +156,19 @@ function checkCaptcha(grecaptcha)
     return true
   }
 
+//Function to generate the context buttons
+function createContextButtons(contexts) {
+  const buttonContainer = document.querySelector('.button-container');
+
+  contexts.forEach(context => {
+    const button = document.createElement('button');
+    button.className = `custom-button btn`;
+    button.id = context.id;
+    button.textContent = context.label;
+    buttonContainer.appendChild(button);
+  });
+}
+
 
 // Add event listeners
 // eslint-disable-next-line no-unused-vars
@@ -178,9 +193,11 @@ function addDonateEventListeners(
     removeAllHighlights(editable);
   });
 
-  Object.keys(contextButtons).forEach(function (key) {
-    document.getElementById(key).addEventListener('click', function () {
-      markSelection(contextButtons[key], editable);
+  createContextButtons(contexts);
+
+  contexts.forEach(context => {
+    document.getElementById(context.id).addEventListener('click', function () {
+      markSelection(context.id, editable);
     });
   });
 }
