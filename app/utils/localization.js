@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import lang_config from "./language_config.json" with {type: "json"};
 
 let languageDataMap = new Map()
 
@@ -31,6 +32,7 @@ export function loadLanguageFiles() {
   })
 
   addAllLanguages();
+  configureData();
 }
 
 /**
@@ -52,6 +54,17 @@ function addAllLanguages() {
   });
 
   //console.log(allLanguages);
+}
+
+function configureData() {
+  
+  languageDataMap.values().forEach(data => {
+    if (data.navigation.languageCode == lang_config.hide_about) {
+      data.navigation.show_about = 1;
+    } else {
+      data.navigation.show_about = 0;
+    }
+  })
 }
 
 /**
