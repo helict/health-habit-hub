@@ -6,48 +6,64 @@
 <body class="d-flex flex-column min-vh-100">
 
     <%- include('nav', navigation) %>
+
+    <div class="container" id="datadonationheader"><%- demo_text %></div>
     
     <form action="/submit-demographics" method="POST">
         <div class="container" id="datadonationheader">
-            <p><%= sex %>
-                <label><input type="radio" name="gender" value="männlich"><%= sex_m %></label>
-                <label><input type="radio" name="gender" value="weiblich"><%= sex_w %></label>
-                <label><input type="radio" name="gender" value="divers"><%= sex_d %></label>
-            </p>
-            <p><%= origin %>
+        <div class="democontainer">
+            <div class="demosection">
+                <label><%= sex %></label>
+                <div class="demo-age" >
+                    <div><input id="m" type="radio" name="gender" value="männlich"><label for="m"><%= sex_m %></label></div>
+                    <div><input id="w" type="radio" name="gender" value="weiblich"><label for="w"><%= sex_w %></label></div>
+                    <div><input id="d" type="radio" name="gender" value="divers"><label for="d"><%= sex_d %></label></div>
+                </div>
+            </div>
+            <div class="demosection">
+                <label><%= origin %></label>
                 <input type="text" name="country">
-            </p>
-            <p><%= graduation %>
+            </div>
+            <div class="demosection">
+                <label><%= graduation %></label>
                 <select name="education">
+                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
                     <option value="abitur"><%= g_1 %></option>
                     <option value="fachabitur"><%= g_2 %></option>
                     <option value="hauptschulabschluss"><%= g_3 %></option>
                     <!-- Weitere Optionen hier -->
                 </select>
-            </p>
-            <p><%= age %>
+            </div>
+            <div class="demosection">
+                <label><%= age %></label>
                 <input type="number" name="age">
-            </p>
-            <p><%= weight %>
+            </div>
+            <div class="demosection">
+                <label><%= weight %></label>
                 <select name="weight">
+                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
                     <option value="untergewichtig"><%= w_1 %></option>
                     <option value="normalgewichtig"><%= w_2 %></option>
                     <option value="übergewichtig"><%= w_3 %></option>
                     <option value="stark-übergewichtig"><%= w_4 %></option>
                     <!-- Weitere Optionen hier -->
                 </select>
-            </p>
-            <p><%= religious_affiliation %>
+            </div>
+            <div class="demosection">
+                <label><%= religious_affiliation %></label>
                 <select name="religion">
+                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
                     <option value="christlich"><%= christianity %></option>
                     <option value="islamisch"><%= islam %></option>
                     <option value="jüdisch"><%= judaism %></option>
                     <option value="hinduistisch"><%= hinduism %></option>
                     <!-- Weitere Optionen hier -->
                 </select>
-            </p>
-            <p><%= profession %>
+            </div>
+            <div class="demosection">
+                <label><%= profession %></label>
                 <select name="employment_context">
+                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
                     <option value="im-studium"><%= study %></option>
                     <option value="in-ausbildung"><%= training %></option>
                     <option value="angestellt-vollzeit"><%= employed_full_time %></option>
@@ -58,12 +74,14 @@
                     <option value="hausarbeit-familienpflege"><%= family_care %></option>
                     <!-- Weitere Optionen hier -->
                 </select>
-            </p>
-            <p><%= working_hours %>
+            </div>
+            <div class="demosection">
+                <label><%= working_hours %></label>
                 <select name="working_hours" multiple>
+                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
                     <option value="schichtsystem-mit-nachtschicht"><%= shift_system_night %></option>
                     <option value="schichtsystem-ohne-nachtschichten"><%= shift_system_night %></option>
-                    <option value="wochenende-oft-im-dienst"><%= shift_system_day %></option>
+                    <option value="wochenende-oft-im-dienst"><%= work_WE %></option>
                     <option value="wochenende-meistens-frei"><%= free_WE_1 %></option>
                     <option value="wochenende-immer-frei"><%= free_WE_2 %></option>
                     <option value="flexible-arbeitszeiten"><%= flexible %></option>
@@ -71,65 +89,77 @@
                     <option value="homeoffice"><%= homeoffice %></option>
                     <!-- Weitere Optionen hier -->
                 </select>
-            </p>
-            <p><%= way_to_work %>
+            </div>
+            <div class="demosection">
+                <label><%= way_to_work %></label>
                 <select name="commute_mode" multiple>
-                    <option value="autofahrt">Autofahrt</option>
-                    <option value="fußweg">Fußweg</option>
-                    <option value="fahrradfahrt">Fahrradfahrt</option>
-                    <option value="öffentliche-verkehrsmittel">Öffentliche Verkehrsmittel (Bus, Bahn, Straßenbahn)</option>
-                    <option value="motorradfahrt">Motorradfahrt</option>
-                    <option value="mitfahrgelegenheit">Mitfahrgelegenheit</option>
-                    <option value="telecommuting">Telecommuting (kein täglicher Weg zur Arbeit)</option>
-                    <option value="sonstiges">Sonstiges (z. B. Homeoffice mit gelegentlichen Vor-Ort-Terminen)</option>
+                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
+                    <option value="autofahrt"><%= car %></option>
+                    <option value="fußweg"><%= walk %></option>
+                    <option value="fahrradfahrt"><%= bike %></option>
+                    <option value="öffentliche-verkehrsmittel"><%= public_transport %></option>
+                    <option value="motorradfahrt"><%= motorcycle %></option>
+                    <option value="mitfahrgelegenheit"><%= carpool %></option>
+                    <option value="telecommuting"><%= telecommuting %></option>
+                    <option value="sonstiges"><%= other_way %></option>
                     <!-- Weitere Optionen hier -->
                 </select>
-            </p>
-            <p><%= private_context %>
+            </div>
+            <div class="demosection">
+                <label><%= private_context %></label>
                 <select name="personal_context">
-                    <option value="partnerschaft-ohne-kind">In Partnerschaft ohne Kind/Kinder</option>
-                    <option value="partnerschaft-mit-kind">In Partnerschaft mit Kind/Kindern</option>
-                    <option value="alleinerziehend">Alleinerziehend mit Kind/Kindern</option>
-                    <option value="single-ohne-kind">Single ohne Kind/Kinder</option>
-                    <option value="getrennt-lebend-partnerschaft-kind">Getrennt lebend, aber in Partnerschaft mit Kind/Kindern</option>
-                    <option value="getrennt-lebend-single-kind">Getrennt lebend, Single mit Kind/Kindern</option>
-                    <option value="getrennt-lebend-single-ohne-kind">Getrennt lebend, Single ohne Kind/Kinder</option>
-                    <option value="andere-familienkonstellation">Andere familiäre Konstellation (bitte angeben)</option>
+                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
+                    <option value="partnerschaft-ohne-kind"><%= partner %></option>
+                    <option value="partnerschaft-mit-kind"><%= partner_child %></option>
+                    <option value="alleinerziehend"><%= single_child %></option>
+                    <option value="single-ohne-kind"><%= single %></option>
+                    <option value="getrennt-lebend-partnerschaft-kind"><%= separate_partner_child %></option>
+                    <option value="getrennt-lebend-single-kind"><%= separate_single_child %></option>
+                    <option value="getrennt-lebend-single-ohne-kind"><%= separate_single %></option>
+                    <option value="andere-familienkonstellation"><%= other_constellation %></option>
                     <!-- Weitere Optionen hier -->
                 </select>
-            </p>
-            <p><%= available_time %>
+            </div>
+            <div class="demosection">
+                <label><%= available_time %></label>
                 <select name="available_time">
-                    <option value="mehr-als-3-stunden">Mehr als 3 Stunden pro Tag</option>
-                    <option value="2-3-stunden">2-3 Stunden pro Tag</option>
-                    <option value="1-2-stunden">1-2 Stunden pro Tag</option>
-                    <option value="0-5-1-stunde">0,5-1 Stunde pro Tag</option>
-                    <option value="weniger-als-0-5-stunden">Weniger als 0,5 Stunden pro Tag</option>
+                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
+                    <option value="mehr-als-3-stunden"><%= more_3 %></option>
+                    <option value="2-3-stunden"><%= two_to_three %></option>
+                    <option value="1-2-stunden"><%= one_to_two %></option>
+                    <option value="0-5-1-stunde"><%= half_to_one %></option>
+                    <option value="weniger-als-0-5-stunden"><%= less_hours %></option>
                     <!-- Weitere Optionen hier -->
                 </select>
-            </p>
-            <p><%= relationship_context %>
+            </div>
+            <div class="demosection">
+                <label><%= relationship_context %></label>
                 <select name="relationship_context">
-                    <option value="gesundheitsbewusster-partner">Mein Partner ist sehr gesundheitsbewusst und regelmäßig körperlich aktiv.</option>
-                    <option value="mäßig-gesundheitsbewusster-partner">Mein Partner ist mäßig gesundheitsbewusst und gelegentlich körperlich aktiv.</option>
-                    <option value="unterstützender-partner">Mein Partner unterstützt meine Bemühungen um einen gesunden Lebensstil.</option>
-                    <option value="wenig-gesundheitsbewusster-partner">Mein Partner ist wenig gesundheitsbewusst und selten körperlich aktiv.</option>
-                    <option value="überwiegend-inaktiver-partner">Mein Partner bevorzugt einen überwiegend inaktiven Lebensstil und zeigt wenig Interesse an gesundheitlichen Aspekten.</option>
-                    <option value="kein-partner">Ich habe keinen Partner.</option>
+                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
+                    <option value="gesundheitsbewusster-partner"><%= partner_healthy %></option>
+                    <option value="mäßig-gesundheitsbewusster-partner"><%= partner_moderate_healthy %></option>
+                    <option value="unterstützender-partner"><%= partner_supportive %></option>
+                    <option value="wenig-gesundheitsbewusster-partner"><%= partner_less_healthy %></option>
+                    <option value="überwiegend-inaktiver-partner"><%= partner_inactive %></option>
+                    <option value="kein-partner"><%= no_partner %></option>
                     <!-- Weitere Optionen hier -->
                 </select>
-            </p>
-            <p><%= pets %>
+            </div>
+            <div class="demosection">
+                <label><%= pets %></label>
                 <select name="pet_influence">
-                    <option value="regelmäßige-bewegung">Ich habe ein Haustier, mit dem ich mich regelmäßig bewege/spazieren gehe.</option>
-                    <option value="mehr-aktivität-im-alltag">Ich habe Haustiere, die mich zu mehr Aktivität im Alltag anregen.</option>
-                    <option value="kein-einfluss">Ich habe Haustiere, die keine Auswirkungen auf meine körperliche Aktivität haben.</option>
-                    <option value="keine-haustiere">Ich habe keine Haustiere.</option>
+                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
+                    <option value="regelmäßige-bewegung"><%= pet_regular %></option>
+                    <option value="mehr-aktivität-im-alltag"><%= pet_more_activity %></option>
+                    <option value="kein-einfluss"><%= pet_no_impact %></option>
+                    <option value="keine-haustiere"><%= no_pet %></option>
                     <!-- Weitere Optionen hier -->
                 </select>
-            </p>
+            </div>
         </div>
-        <button type="submit">Daten absenden</button>
+        <button type="submit"><%= submit %></button>
+        </div>
+        
     </form>
     
 

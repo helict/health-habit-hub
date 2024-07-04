@@ -15,7 +15,6 @@ body {
 
   }
   
- 
   #icon{
     width: 10%;
   }
@@ -577,4 +576,29 @@ body {
 .node--root,
 .node--leaf {
   pointer-events: none;
+}
+
+.democontainer {
+  display: flex;
+  flex-flow: column wrap;
+  gap: 5px;
+}
+.demosection {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start; 
+}
+
+.demosection label {
+  width: 15%;
+}
+
+.demosection input, select {
+  width: 30%;
+}
+.demo-age {
+  width: 20%;;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
