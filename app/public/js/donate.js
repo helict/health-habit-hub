@@ -1,4 +1,9 @@
-import { contexts } from '../../utils/contexts.js';
+import { contexts } from './contexts.js';
+
+function getCurrentPageLanguage() {
+  return document.documentElement.lang;
+}
+
 
 function markSelection(context, editable) {
   const selection = window.getSelection();
@@ -32,16 +37,27 @@ function markSelection(context, editable) {
     range.setEnd(endParent.previousSibling, endParent.previousSibling.length);
   }
 
+  const contextObj = contexts.find(c => c.id === context);
+
   // Create new mark element
   const mark = document.createElement('mark');
   mark.className = `mark_${context}`;
   mark.textContent = selectedText;
+  if (contextObj && contextObj.color) {
+    mark.style.backgroundColor = contextObj.color; // Set the background color
+  }
   range.deleteContents();
   range.insertNode(mark);
 }
 
 function removeAllHighlights(editable) {
-  editable.innerHTML = editable.innerText;
+  // This assumes `editable` is the contentEditable area where highlights are made
+  const marks = editable.querySelectorAll('mark');
+  marks.forEach(mark => {
+    // Replace each mark element with its text content
+    const textNode = document.createTextNode(mark.textContent);
+    mark.parentNode.replaceChild(textNode, mark);
+  });
 }
 
 /**
@@ -146,60 +162,67 @@ function checkValidity(validity) {
   return !Object.values(validity).includes(true);
 }
 
-function checkCaptcha(grecaptcha) 
- {
-    var response = grecaptcha.getResponse();
-    if(response.length == 0) {
-      // reCAPTCHA nicht bestätigt
-      return false 
-    } 
-    return true
+function checkCaptcha(grecaptcha)
+{
+  var response = grecaptcha.getResponse();
+  if(response.length == 0) {
+    // reCAPTCHA nicht bestätigt
+    return false
   }
+  return true
+}
 
-//Function to generate the context buttons
-function createContextButtons(contexts) {
+export function createContextButtons(contexts) {
   const buttonContainer = document.querySelector('.button-container');
+  const editable = document.getElementById('habit-input');
 
   contexts.forEach(context => {
     const button = document.createElement('button');
     button.className = `custom-button btn`;
     button.id = context.id;
     button.textContent = context.label;
+    button.style.backgroundColor = context.color;
+    button.addEventListener('click', () => {
+      markSelection(context.id, editable); // Pass context.id and the editable element
+    });
     buttonContainer.appendChild(button);
   });
+  return buttonContainer;
 }
 
 
+
 // Add event listeners
-// eslint-disable-next-line no-unused-vars
-function addDonateEventListeners(
+export function addDonateEventListeners(
   editableId,
   submitButtonId,
   resetButtonId,
-  contextButtons,
   experimentGroup,
-  language,
   grecaptcha
 ) {
   const editable = document.getElementById(editableId);
   const submitButton = document.getElementById(submitButtonId);
   const resetButton = document.getElementById(resetButtonId);
 
+  if (!editable || !submitButton || !resetButton) {
+    console.error('One or more elements could not be found:', {
+      editable,
+      submitButton,
+      resetButton,
+    });
+    return;
+  }
+
   submitButton.addEventListener('click', () => {
+    const language  = getCurrentPageLanguage();
     submitHabit(editable, experimentGroup, language, grecaptcha);
   });
 
   resetButton.addEventListener('click', () => {
+    console.log('Clear button clicked');
     removeAllHighlights(editable);
   });
 
-  createContextButtons(contexts);
-
-  contexts.forEach(context => {
-    document.getElementById(context.id).addEventListener('click', function () {
-      markSelection(context.id, editable);
-    });
-  });
 }
 
 // TODO: Rework
@@ -207,6 +230,7 @@ function handleEmptyFieldError() {
   fetch('language/language-data.json')
     .then((response) => response.json())
     .then((data) => {
+      const currentLanguage = getCurrentPageLanguage();
       const fehlerText = data[currentLanguage].emptyFieldError;
       alert(fehlerText);
     })
@@ -219,6 +243,7 @@ function handleEmptyBehaviorError() {
   fetch('language/language-data.json')
     .then((response) => response.json())
     .then((data) => {
+      const currentLanguage = getCurrentPageLanguage();
       const fehlerText = data[currentLanguage].emptyBehaviorError;
       alert(fehlerText);
     })
@@ -226,3 +251,5 @@ function handleEmptyBehaviorError() {
       console.error('Error loading language data file:', error),
     );
 }
+
+
