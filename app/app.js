@@ -87,8 +87,7 @@ app.post('/:lng(de|en|ja)/submit-form', recaptcha.middleware.verify, async (req,
     // Captcha verification passed successfully
     // Perform your further logic here
     try {
-      await insertDataClosed(); // Example of a function for data processing
-      await insertDataOpen(); // Example of a function for data processing
+      await sparqlClient.insertDonateData();
       res.send('Form submitted successfully!');
     } catch (error) {
       console.error('Error processing form:', error.message);
