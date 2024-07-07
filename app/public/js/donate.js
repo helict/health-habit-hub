@@ -4,7 +4,6 @@ function getCurrentPageLanguage() {
   return document.documentElement.lang;
 }
 
-
 function markSelection(context, editable) {
   const selection = window.getSelection();
 
@@ -66,7 +65,6 @@ function removeAllHighlights(editable) {
  */
 function cleanUpHabitInput(editable) {
   // remove all markup other than first-level mark elements
-  // eslint-disable-next-line no-undef
   editable.innerHTML = DOMPurify.sanitize(editable.innerHTML, {
     ALLOWED_TAGS: ['mark'],
     ALLOWED_ATTR: ['class'],
@@ -85,21 +83,22 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
 
   const data = parseInput(editable, experimentGroup, language);
   const inputValidity = validate(data);
-  const CaptchaSuccesful = checkCaptcha(grecaptcha)
+  const CaptchaSuccesful = checkCaptcha(grecaptcha);
 
-  if (checkValidity(inputValidity) && CaptchaSuccesful)  {
+  if (checkValidity(inputValidity) && CaptchaSuccesful) {
     sendData(data);
   } else {
-    // TODO: better error handling
+    // Better error handling
+    const errorMessageElement = document.getElementById('error-messages');
+    const errorTextElement = document.getElementById('error-text');
+    errorMessageElement.style.display = 'block';
+
     if (inputValidity.empty) {
-      // Definition of handleEmptyFieldError in script.js
-      handleEmptyFieldError();
+      errorTextElement.textContent = 'Das Feld darf nicht leer sein.';
     } else if (inputValidity.noBehavior) {
-      // Definition of handleEmptyBehaviorError in script.js
-      handleEmptyBehaviorError();
-    }
-    else if (!CaptchaSuccesful) {
-      alert("Bestätigen Sie, dass Sie kein Roboter sind.")
+      errorTextElement.textContent = 'Bitte markieren Sie das Verhalten.';
+    } else if (!CaptchaSuccesful) {
+      errorTextElement.textContent = 'Bestätigen Sie, dass Sie kein Roboter sind.';
     }
   }
 }
@@ -114,7 +113,7 @@ function sendData(data) {
   })
     .then((response) => {
       if (response.ok) {
-        window.location.href = 'bedankung.html';
+        window.location.href = '/thanks';
         console.log('Data saved successfully.');
       } else {
         alert('Server Error while saving data.');
@@ -162,14 +161,13 @@ function checkValidity(validity) {
   return !Object.values(validity).includes(true);
 }
 
-function checkCaptcha(grecaptcha)
-{
+function checkCaptcha(grecaptcha) {
   var response = grecaptcha.getResponse();
-  if(response.length == 0) {
+  if (response.length === 0) {
     // reCAPTCHA nicht bestätigt
-    return false
+    return false;
   }
-  return true
+  return true;
 }
 
 export function createContextButtons(contexts) {
@@ -199,23 +197,15 @@ export function addDonateEventListeners(
   submitButtonId,
   resetButtonId,
   experimentGroup,
+  language,
   grecaptcha
 ) {
   const editable = document.getElementById(editableId);
   const submitButton = document.getElementById(submitButtonId);
   const resetButton = document.getElementById(resetButtonId);
 
-  if (!editable || !submitButton || !resetButton) {
-    console.error('One or more elements could not be found:', {
-      editable,
-      submitButton,
-      resetButton,
-    });
-    return;
-  }
-
-  submitButton.addEventListener('click', () => {
-    const language  = getCurrentPageLanguage();
+  submitButton.addEventListener('click', (event) => {
+    event.preventDefault(); // Prevent form submission for client-side validation
     submitHabit(editable, experimentGroup, language, grecaptcha);
   });
 
@@ -228,29 +218,24 @@ export function addDonateEventListeners(
 
 // TODO: Rework
 function handleEmptyFieldError() {
-  fetch('language/language-data.json')
-    .then((response) => response.json())
-    .then((data) => {
-      const currentLanguage = getCurrentPageLanguage();
-      const fehlerText = data[currentLanguage].emptyFieldError;
-      alert(fehlerText);
-    })
-    .catch((error) =>
-      console.error('Error loading language data file:', error),
-    );
+  const errorMessageElement = document.getElementById('error-messages');
+  const errorTextElement = document.getElementById('error-text');
+  errorMessageElement.style.display = 'block';
+  errorTextElement.textContent = 'Das Feld darf nicht leer sein.';
 }
 
 function handleEmptyBehaviorError() {
-  fetch('language/language-data.json')
-    .then((response) => response.json())
-    .then((data) => {
-      const currentLanguage = getCurrentPageLanguage();
-      const fehlerText = data[currentLanguage].emptyBehaviorError;
-      alert(fehlerText);
-    })
-    .catch((error) =>
-      console.error('Error loading language data file:', error),
-    );
+  const errorMessageElement = document.getElementById('error-messages');
+  const errorTextElement = document.getElementById('error-text');
+  errorMessageElement.style.display = 'block';
+  errorTextElement.textContent = 'Bitte markieren Sie das Verhalten.';
 }
 
+function validateForm() {
+  const editable = document.getElementById('habit-input');
+  const experimentGroup = EXPERIMENT_GROUP;
+  const language = currentLanguage;
+  const grecaptcha = grecaptcha;
 
+  return submitHabit(editable, experimentGroup, language, grecaptcha);
+}

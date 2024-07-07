@@ -1,6 +1,10 @@
 import express from 'express';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { loadLanguageFiles, getLanguageCodes } from '../utils/localization.js';
+
+loadLanguageFiles();
+const validLanguageCodes = getLanguageCodes().join('|');
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -9,7 +13,7 @@ const staticFileMiddleware = express.Router();
 
 // Serve CSS files with the 'text/css' MIME type
 staticFileMiddleware.use(
-  '/:lng(de|en|ja)?/css',
+  '/:lng('+validLanguageCodes+')?/css',
   express.static(path.join(__dirname, '..', 'public', 'css'), {
     extensions: ['css'],
   }),
@@ -17,7 +21,7 @@ staticFileMiddleware.use(
 
 
 staticFileMiddleware.use(
-  '/:lng(de|en|ja)?/js',
+  '/:lng('+validLanguageCodes+')?/js',
   express.static(path.join(__dirname, '..', 'public', 'js'), {
     extensions: ['js'],
   }),

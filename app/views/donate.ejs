@@ -12,9 +12,16 @@
     const EXPERIMENT_GROUP = <%- JSON.stringify(experimentGroup) %>;
     window.onload = function() {
       createContextButtons(contexts);
-      addDonateEventListeners('habit-input', 'submit', 'clear' ,EXPERIMENT_GROUP, grecaptcha);
+      addDonateEventListeners('habit-input', 'submit', 'clear' ,EXPERIMENT_GROUP,languageCode , grecaptcha);
     }
   </script>
+  <style>
+    .recaptcha-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 1em;
+    }
+  </style>
 </head>
 
 <body>
@@ -64,15 +71,27 @@
     <% } %>
   </div>
 
-  <!-- Form with reCAPTCHA -->
-  <form action="/<%= currentLanguage %>/submit-form" method="POST">
-    <div class="g-recaptcha" data-sitekey="6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l"></div>
-    <div class="container mb-5">
+  <!-- Error messages -->
+  <div id="error-messages" class="container" style="color: red; display: none;">
+    <div class="row">
       <div class="col-12">
-        <button type="submit" class="button" id="submit"><h4><strong><%= submit || 'Absenden' %></strong></h4></button>
+        <p id="error-text"></p>
       </div>
     </div>
-  </form>
+  </div>
+
+<!-- Form with reCAPTCHA -->
+  <form action="/<%= navigation.currentLanguage %>/submit-form" method="POST">
+  <div class="recaptcha-container">
+    <div class="g-recaptcha" data-sitekey="6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l"></div>
+  </div>
+  <div class="container mb-5">
+    <div class="col-12">
+      <button type="submit" class="button" id="submit"><h4><strong><%= submit || 'Absenden' %></strong></h4></button>
+    </div>
+  </div>
+</form>
+
 
   <!-- Footer -->
   <footer class="footer">
