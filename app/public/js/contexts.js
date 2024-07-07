@@ -1,0 +1,47 @@
+export const contexts = [
+  {
+    id: "physical",
+    labels: {
+      en: "Physical",
+      de: "Physisch",
+      ja: "物理的"
+    },
+    color: "#b2d8b2"
+  },
+  {
+    id: "prior",
+    labels: {
+      en: "Prior",
+      de: "Vorher",
+      ja: "前"
+    },
+    color: "#b2c7e1"
+  },
+  {
+    id: "people",
+    labels: {
+      en: "People",
+      de: "Menschen",
+      ja: "人々"
+    },
+    color: "#fff8b2"
+  },
+  {
+    id: "internal",
+    labels: {
+      en: "Internal",
+      de: "Intern",
+      ja: "内部の"
+    },
+    color: "#e1b2e1"
+  },
+  {
+    id: "behavior",
+    labels: {
+      en: "Behavior",
+      de: "Verhalten",
+      ja: "行動"
+    },
+    color: "#b2e1e1"
+  }
+];

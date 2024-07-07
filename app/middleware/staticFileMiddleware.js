@@ -19,10 +19,17 @@ staticFileMiddleware.use(
   }),
 );
 
-// Serve JS files with the 'text/javascript' MIME type
+
 staticFileMiddleware.use(
   '/:lng('+validLanguageCodes+')?/js',
   express.static(path.join(__dirname, '..', 'public', 'js'), {
+    extensions: ['js'],
+  }),
+);
+
+staticFileMiddleware.use(
+  '/utils',
+  express.static(path.join(__dirname, '..', 'public', 'utils'), {
     extensions: ['js'],
   }),
 );
