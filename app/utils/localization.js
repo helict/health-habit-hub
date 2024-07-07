@@ -1,7 +1,71 @@
-// Load language JSON Files
-import data_de from '../language/messages_de.json' with { type: 'json' };
-import data_en from '../language/messages_en.json' with { type: 'json' };
-import data_ja from '../language/messages_ja.json' with { type: 'json' };
+import fs from 'fs';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import lang_config from "./language_config.json" with {type: "json"};
+
+let languageDataMap = new Map()
+
+/**
+ * Imports selected files dynamicly from the /language/ folder and collects them in a map.
+ *
+ * The function iterates over every file in the /language/ folder and imports all files whose filename matches a certain pattern.
+ * These are then mapped to the corresponding language codes.
+ */
+export function loadLanguageFiles() {
+
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+
+  let rawJson;
+  let parsedJson;
+  let languageFiles = fs.readdirSync(path.join(__dirname, '..', 'language'));
+
+  languageFiles.forEach( file => {
+
+    if ( path.basename(file).match( /messages_\w\w\.json/ ) )
+    {
+        rawJson = fs.readFileSync(path.join(__dirname, '..', 'language',file));
+        parsedJson = JSON.parse( rawJson );
+        languageDataMap.set(parsedJson.navigation.languageCode, parsedJson);
+
+        //console.log('Languagefile loaded:', file, 'with Code:', parsedjson.navigation.languageCode)
+    }
+  })
+
+  addAllLanguages();
+  configureData();
+}
+
+/**
+ * Extends the JSON files with a map consisting of all languages and language codes.
+ *
+ * The function iterates over all language files and builds a new map that maps all languages in the national language to the corresponding language codes.
+ * The new map is then added to each language file. 
+ */
+function addAllLanguages() {
+
+  let allLanguages = new Map();
+
+  languageDataMap.values().forEach(data => {
+    allLanguages.set(data.navigation.language, data.navigation.languageCode);
+  });
+
+  languageDataMap.values().forEach(data => {
+    data.navigation.allLanguages = allLanguages;
+  });
+
+  //console.log(allLanguages);
+}
+
+function configureData() {
+  
+  languageDataMap.values().forEach(data => {
+    if (data.navigation.languageCode == lang_config.hide_about) {
+      data.navigation.show_about = 1;
+    } else {
+      data.navigation.show_about = 0;
+    }
+  })
+}
 
 /**
  * Determines the language to be used based on the user's language preference and returns the corresponding language data.
@@ -13,15 +77,16 @@ import data_ja from '../language/messages_ja.json' with { type: 'json' };
  * @returns {object} - Returns the corresponding language data to the selected/preferred language.
  */
 export function getLanguageMessages(lang) {
-  switch(lang) {
-    case 'de':
-      //console.log('AppLanguage is DE');
-      return data_de;
-    case 'ja':
-      //console.log('AppLanguage is JA');
-      return data_ja;
-    default:
-      //console.log('AppLanguage is EN');
-      return data_en;
+  
+  if (languageDataMap.has(lang)) {
+    return languageDataMap.get(lang);
   }
+  
+  return languageDataMap.get('en');
+}
+
+export function getLanguageCodes() {
+
+  //console.log(languageDataMap.keys());
+  return Array.from(languageDataMap.keys());
 }

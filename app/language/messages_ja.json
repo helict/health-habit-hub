@@ -7,12 +7,8 @@
     "donatePageName": "寄付",
     "aboutPageName": "寄付について",
     "contactPageName": "お問い合わせ",
-    "currentLanguage": "ja",
-    "languages": {
-      "first": "英語",
-      "second": "ドイツ語",
-      "third": "日本語"
-    }
+    "languageCode": "ja",
+    "language": "日本語"
   },
 
   "header": "はじめに",
