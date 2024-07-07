@@ -174,20 +174,21 @@ function checkCaptcha(grecaptcha)
 
 export function createContextButtons(contexts) {
   const buttonContainer = document.querySelector('.button-container');
+  buttonContainer.innerHTML = '';
   const editable = document.getElementById('habit-input');
+  const language = getCurrentPageLanguage();
 
   contexts.forEach(context => {
     const button = document.createElement('button');
     button.className = `custom-button btn`;
     button.id = context.id;
-    button.textContent = context.label;
+    button.textContent = context.labels[language];
     button.style.backgroundColor = context.color;
     button.addEventListener('click', () => {
-      markSelection(context.id, editable); // Pass context.id and the editable element
+      markSelection(context.id, editable);
     });
     buttonContainer.appendChild(button);
   });
-  return buttonContainer;
 }
 
 
