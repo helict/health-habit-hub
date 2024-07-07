@@ -2,26 +2,26 @@ export const contexts = [
   {
     "id": "physical",
     "label": "Physical",
-    "color": "#00ff00"
+    "color": "#b2d8b2" // Light green
   },
   {
     "id": "prior",
     "label": "Prior",
-    "color": "#0000ff"
+    "color": "#b2c7e1" // Light blue
   },
   {
     "id": "people",
     "label": "People",
-    "color": "#ffff00"
+    "color": "#fff8b2" // Light yellow
   },
   {
     "id": "internal",
     "label": "Internal",
-    "color": "#ff00ff"
+    "color": "#e1b2e1" // Light lavender
   },
   {
     "id": "behavior",
     "label": "Behavior",
-    "color": "#00ffff"
+    "color": "#b2e1e1" // Light teal
   }
 ];
