@@ -1,5 +1,7 @@
 import url from 'url';
 import { ExperimentGroup } from '../models/experimentGroup.js';
+import fs from 'fs';
+import path from 'path';
 import { getLanguageMessages } from '../utils/localization.js';
 
 function getExperimentGroupFromQuery(req) {
