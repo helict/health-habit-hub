@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <%- include('header') %>
-    <script src="js/bedankung.js"></script>
+    <script src="js/thanks.js"></script>
 </head>
 
 <body>
@@ -14,8 +14,8 @@
         <h4 id="slogan"><%= slogan || 'You brought YOUR habit on the way to be become a common good.' %></h4>
     </div>
 
-    <div class="container d-flex justify-content-center" id="bedankung">
-        <h2 id="bedankung_text"><%= bedankung_text || '🎉 Thank you for YOUR donation and for YOUR contribution!' %></h2>
+    <div class="container d-flex justify-content-center" id="thanks">
+        <h2 id="thanks_text"><%- thanks || '🎉 Thank you for YOUR donation and for YOUR contribution!' %></h2>
     </div>
 
     <div class="container">

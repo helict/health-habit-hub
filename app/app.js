@@ -12,6 +12,7 @@ import { SparqlDatabaseClient } from './utils/SparqlDatabase.js';
 import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
 import demoRouter from './routes/demoRouter.js';
+import thanksRouter from './routes/thanksRouter.js';
 
 const app = express();
 const port = config.port;
@@ -26,7 +27,7 @@ app.use(bodyParser.json()); // Added to parse JSON bodies
 
 // Configure the reCAPTCHA module with your own keys
 const recaptcha = new Recaptcha(
-  '6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l', 
+  '6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l',
   '6Lc_WPEpAAAAAJKIbXTBmYBGKsZeay4ANUykwh7m'
 );
 app.use(recaptcha.middleware.render);
@@ -69,6 +70,7 @@ app.get('/:lng(de|en|ja)/', (req, res) => {
 app.use('/:lng(de|en|ja)/donate', donateRouter);
 app.use('/:lng(de|en|ja)/about', aboutRouter);
 app.use('/:lng(de|en|ja)/demo', demoRouter);
+app.use('/:lng(de|en|ja)/thanks', thanksRouter);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
 app.use((req, res, next) => {
