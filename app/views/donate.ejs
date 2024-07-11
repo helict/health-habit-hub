@@ -46,8 +46,13 @@
   <!-- Datadonation guide -->
   <div class="container" id="datadonationheader">
     <div class="row">
+      <h5 id="header"><%= proceeding %></h5>
       <div class="col-12">
-        <p id="step2"><%= step2 %></p>
+        <p id="steps"><%= step1 %></br>
+        <% if (experimentGroup.closedTask) { %>
+          <%= step2 %></br>
+        <% } %>
+          <%= step3 %></p>
       </div>
     </div>
     <div class="row form-group">

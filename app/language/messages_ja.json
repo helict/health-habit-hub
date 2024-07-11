@@ -17,8 +17,10 @@
 
   "donationHeader": "寄付データ",
   "dataDonationGuide": "データ提供の手順",
-  "step1": "<h5><strong>Gib deine Gewohnheit als Satz ein, markier die Teile deines Satzes und ordne jedem Teil den unten aufgeführten Kontext oder die Situation zu.</strong></h5>",
-  "step2": "ステップ 2: 寄付する習慣を確認し、寄付するをクリックします。",
+  "proceeding": "進め方",
+  "step1": "習慣を文章として入力する。",
+  "step2": "文章の部分に印をつけ、それぞれの部分に下記の文脈や状況を割り当ててください。",
+  "step3": "寄付する」を押して、寄付したい習慣を確認する。",
 
   "example1": "<p><strong>例:</strong> <mark class=mark_PhysicalSetting>キッチン</mark>に<mark class=mark_Behavior>入って</mark>フルーツバスケットを<mark class=mark_Behavior>見る</mark>と、<mark class=mark_PhysicalSetting>リンゴ</mark>を<mark class=mark_Behavior>取って食</mark>べる。 <mark class=mark_RelatedBehaviour></mark></p>",
   "clear": "↺",
