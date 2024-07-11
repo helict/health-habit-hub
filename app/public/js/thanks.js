@@ -10,24 +10,25 @@
 //         return 'en';
 //     }
 // }
-function navigateHomePage() {
-    //clear map from the server (remove all data)
-    fetch('/clearMap', {
-    method: 'DELETE',
-    })
-    .then(response => {
-    if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    console.log('Map cleared successfully');
-    })
-    .catch(error => {
-    console.error('Error:', error);
-    });
 
-    // Hier den vollständigen Pfad zur open.html-Datei angeben
-    window.location.href = "/lng(de|en|ja)/donate"
-}
+// function navigateHomePage(lang) {
+//     //clear map from the server (remove all data)
+//     // fetch('/clearMap', {
+//     // method: 'DELETE',
+//     // })
+//     // .then(response => {
+//     // if (!response.ok) {
+//     //     throw new Error(`HTTP error! Status: ${response.status}`);
+//     // }
+//     // console.log('Map cleared successfully');
+//     // })
+//     // .catch(error => {
+//     // console.error('Error:', error);
+//     // });
+
+//     // Hier den vollständigen Pfad zur open.html-Datei angeben
+//     window.location.href = "/lng(de|en|ja)/donate";
+// }
 
 
 // // Function to change the language
