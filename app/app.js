@@ -78,8 +78,8 @@ app.get('/:lng('+validLanguageCodes+')?/', (req, res) => {
 
 app.use('/:lng('+validLanguageCodes+')/donate', donateRouter);
 app.use('/:lng('+validLanguageCodes+')/about', aboutRouter);
-app.use('/:lng(de|en|ja)/demo', demoRouter); //Probably needs to be changed like the ones on the top
-app.use('/:lng(de|en|ja)/thanks', thanksRouter);
+app.use('/:lng('+validLanguageCodes+')/demo', demoRouter); //Probably needs to be changed like the ones on the top
+app.use('/:lng('+validLanguageCodes+')/thanks', thanksRouter);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
 app.use((req, res, next) => {
@@ -94,7 +94,7 @@ app.use((req, res, next) => {
 
 // Route for the contact form with reCAPTCHA verification
 //Also probably needs to be changed like the ones on top
-app.post('/:lng(de|en|ja)/submit-form', recaptcha.middleware.verify, async (req, res) => {
+app.post('/:lng('+validLanguageCodes+')/submit-form', recaptcha.middleware.verify, async (req, res) => {
   if (!req.recaptcha.error) {
     try {
       // Replace these with your actual data processing functions
