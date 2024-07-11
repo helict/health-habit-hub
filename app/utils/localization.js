@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import lang_config from "./language_config.json" with {type: "json"};
+import { hide_about } from "./language_config.js";
 
 let languageDataMap = new Map()
 
@@ -59,7 +59,8 @@ function addAllLanguages() {
 function configureData() {
   
   languageDataMap.values().forEach(data => {
-    if (data.navigation.languageCode == lang_config.hide_about) {
+    //console.log(data.navigation.languageCode, ':', hide_about.includes(data.navigation.languageCode))
+    if (hide_about.includes(data.navigation.languageCode)) {
       data.navigation.show_about = 1;
     } else {
       data.navigation.show_about = 0;
