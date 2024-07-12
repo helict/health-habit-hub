@@ -1,4 +1,4 @@
-export const contexts = [
+const contexts = [
   {
     id: "physical",
     labels: {

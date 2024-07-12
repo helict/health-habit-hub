@@ -1,5 +1,3 @@
-import { contexts } from './contexts.js';
-
 function getCurrentPageLanguage() {
   return document.documentElement.lang;
 }
@@ -170,11 +168,10 @@ function checkCaptcha(grecaptcha) {
   return true;
 }
 
-export function createContextButtons(contexts) {
+function createContextButtons(contexts, language) {
   const buttonContainer = document.querySelector('.button-container');
   buttonContainer.innerHTML = '';
   const editable = document.getElementById('habit-input');
-  const language = getCurrentPageLanguage();
 
   contexts.forEach(context => {
     const button = document.createElement('button');
@@ -192,7 +189,7 @@ export function createContextButtons(contexts) {
 
 
 // Add event listeners
-export function addDonateEventListeners(
+function addDonateEventListeners(
   editableId,
   submitButtonId,
   resetButtonId,
