@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
   <%- include('header') %>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.3/dist/purify.min.js" integrity="sha256-ykUC1Oqnato0nykqa4dwQTqKTkewuLP2Rhu49YV/kYY=" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis&display=swap">
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js" integrity="sha256-WCzAhd2P6gRJF9Hv3oOOd+hFJi/QJbv+Azn4CGB8gfY=" crossorigin="anonymous"></script>  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis&display=swap">
   <script src="/js/donate.js"></script>
-  <script src="/js/contexts.js"></script>
   <script>
       const EXPERIMENT_GROUP = <%- JSON.stringify(experimentGroup) %>;
+      const DONATE_ERRORS = <%- JSON.stringify(donateErrors) %>;
       const languageCode = "<%= navigation.languageCode %>";
       window.onload = function() {
-        createContextButtons(contexts, languageCode);
-        addDonateEventListeners('habit-input', 'submit', 'clear' ,EXPERIMENT_GROUP,languageCode , grecaptcha);
+        const contextIds = <%- JSON.stringify(contexts.map(context => context.id)) %>;
+        addDonateEventListeners('habit-input', 'submit', 'clear', contextIds, EXPERIMENT_GROUP, languageCode, grecaptcha);
 
     };
   </script>
@@ -22,6 +21,12 @@
       justify-content: center;
       margin-top: 1em;
     }
+    <% for (const context of contexts) { %>
+      .mark_<%= context.id %> {
+        background-color: <%= context.color %>;
+        border-radius: 10px;
+      }
+    <% } %>
   </style>
 </head>
 
@@ -47,8 +52,15 @@
   <!-- Datadonation guide -->
   <div class="container" id="datadonationheader">
     <div class="row">
+      <h5 id="header"><%= proceeding %></h5>
       <div class="col-12">
-        <p id="step2"><%= step2 %></p>
+        <ul id="steps" style="list-style-type: dicimal;">
+          <li><%= step1 %></li>
+        <% if (experimentGroup.closedTask) { %>
+          <li><%= step2 %></li>
+        <% } %>
+          <li><%= step3 %></li>
+        </ul>
       </div>
     </div>
     <div class="row form-group">
@@ -67,7 +79,10 @@
     </div>
 
     <div class="d-flex flex-sm-row button-container">
-      <!-- Context buttons are dynamically generated from contexts.js -->
+      <% for (const context of contexts) { %>
+      <button class="custom-button btn" id="<%= context.id %>" style="background-color:<%= context.color %>"><%= context.labels[navigation.languageCode] %></button>
+
+      <% } %>
     </div>
     <% } %>
   </div>
@@ -82,9 +97,9 @@
   </div>
 
 <!-- Form with reCAPTCHA -->
-  <form action="/<%= navigation.languageCode %>/submit-form" method="POST">
+  <form action="/<%= navigation.languageCode %>/donate/submit-form" method="POST">
   <div class="recaptcha-container">
-    <div class="g-recaptcha" data-sitekey="6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l"></div>
+     <%- recaptcha || '' %>
   </div>
   <div class="container mb-5">
     <div class="col-12">
@@ -95,12 +110,7 @@
 
 
   <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <a href="https://www.instagram.com/"><img src="pics/insta.png" class="socialmedia"></a>
-      <a href="https://www.facebook.com/"><img src="pics/facebook.png" class="socialmedia"></a>
-      <a href="https://www.X.com/"><img src="pics/X.png" class="socialmedia"></a>
-    </div>
-  </footer>
+  <%- include('footer') %>
+  
 </body>
 </html>

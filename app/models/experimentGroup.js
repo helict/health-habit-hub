@@ -32,4 +32,8 @@ export class ExperimentGroup {
     }
     return new ExperimentGroup(match[1] === 'CLOSED', match[2] === 'CLOSED');
   }
+
+  static fromObject(obj) {
+    return new ExperimentGroup(obj.closedTask, obj.closedDescription);
+  }
 }

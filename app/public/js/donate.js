@@ -1,7 +1,3 @@
-function getCurrentPageLanguage() {
-  return document.documentElement.lang;
-}
-
 function markSelection(context, editable) {
   const selection = window.getSelection();
 
@@ -34,27 +30,16 @@ function markSelection(context, editable) {
     range.setEnd(endParent.previousSibling, endParent.previousSibling.length);
   }
 
-  const contextObj = contexts.find(c => c.id === context);
-
   // Create new mark element
   const mark = document.createElement('mark');
   mark.className = `mark_${context}`;
   mark.textContent = selectedText;
-  if (contextObj && contextObj.color) {
-    mark.style.backgroundColor = contextObj.color; // Set the background color
-  }
   range.deleteContents();
   range.insertNode(mark);
 }
 
 function removeAllHighlights(editable) {
-  // This assumes `editable` is the contentEditable area where highlights are made
-  const marks = editable.querySelectorAll('mark');
-  marks.forEach(mark => {
-    // Replace each mark element with its text content
-    const textNode = document.createTextNode(mark.textContent);
-    mark.parentNode.replaceChild(textNode, mark);
-  });
+  editable.innerHTML = editable.innerText;
 }
 
 /**
@@ -92,11 +77,11 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
     errorMessageElement.style.display = 'block';
 
     if (inputValidity.empty) {
-      errorTextElement.textContent = 'Das Feld darf nicht leer sein.';
+      errorTextElement.textContent = DONATE_ERRORS.emptyFieldError;
     } else if (inputValidity.noBehavior) {
-      errorTextElement.textContent = 'Bitte markieren Sie das Verhalten.';
+      errorTextElement.textContent = DONATE_ERRORS.emptyBehaviorError;
     } else if (!CaptchaSuccesful) {
-      errorTextElement.textContent = 'Bestätigen Sie, dass Sie kein Roboter sind.';
+      errorTextElement.textContent = DONATE_ERRORS.noCaptchaError;
     }
   }
 }
@@ -111,7 +96,11 @@ function sendData(data) {
   })
     .then((response) => {
       if (response.ok) {
-        window.location.href = '/thanks';
+        if (Cookies.get('demographicsCompleted') === 'true') {
+          window.location.href = '/thanks';
+        } else {
+          window.location.href = '/demo';
+        }
         console.log('Data saved successfully.');
       } else {
         alert('Server Error while saving data.');
@@ -126,7 +115,7 @@ function sendData(data) {
 function parseInput(editable, experimentGroup, language) {
   const habitText = editable.innerText;
   const habitData = {
-    text: habitText,
+    inputValue: habitText,
     experimentGroup: experimentGroup,
     language: language,
     contexts: getContexts(editable),
@@ -149,7 +138,9 @@ function getContexts(editable) {
 function validate(data) {
   return {
     empty: data.text === '',
-    noBehavior: !data.contexts.find((context) => context.name === 'Behavior'),
+    noBehavior:
+      data.experimentGroup.closedTask &&
+      !data.contexts.find((context) => context.name === 'behavior'),
   };
 }
 
@@ -168,34 +159,15 @@ function checkCaptcha(grecaptcha) {
   return true;
 }
 
-function createContextButtons(contexts, language) {
-  const buttonContainer = document.querySelector('.button-container');
-  buttonContainer.innerHTML = '';
-  const editable = document.getElementById('habit-input');
-
-  contexts.forEach(context => {
-    const button = document.createElement('button');
-    button.className = `custom-button btn`;
-    button.id = context.id;
-    button.textContent = context.labels[language];
-    button.style.backgroundColor = context.color;
-    button.addEventListener('click', () => {
-      markSelection(context.id, editable);
-    });
-    buttonContainer.appendChild(button);
-  });
-}
-
-
-
 // Add event listeners
 function addDonateEventListeners(
   editableId,
   submitButtonId,
   resetButtonId,
+  contextIds,
   experimentGroup,
   language,
-  grecaptcha
+  grecaptcha,
 ) {
   const editable = document.getElementById(editableId);
   const submitButton = document.getElementById(submitButtonId);
@@ -206,33 +178,14 @@ function addDonateEventListeners(
     submitHabit(editable, experimentGroup, language, grecaptcha);
   });
 
-  resetButton.addEventListener('click', () => {
+  resetButton?.addEventListener('click', () => {
     console.log('Clear button clicked');
     removeAllHighlights(editable);
   });
 
-}
-
-// TODO: Rework
-function handleEmptyFieldError() {
-  const errorMessageElement = document.getElementById('error-messages');
-  const errorTextElement = document.getElementById('error-text');
-  errorMessageElement.style.display = 'block';
-  errorTextElement.textContent = 'Das Feld darf nicht leer sein.';
-}
-
-function handleEmptyBehaviorError() {
-  const errorMessageElement = document.getElementById('error-messages');
-  const errorTextElement = document.getElementById('error-text');
-  errorMessageElement.style.display = 'block';
-  errorTextElement.textContent = 'Bitte markieren Sie das Verhalten.';
-}
-
-function validateForm() {
-  const editable = document.getElementById('habit-input');
-  const experimentGroup = EXPERIMENT_GROUP;
-  const language = currentLanguage;
-  const grecaptcha = grecaptcha;
-
-  return submitHabit(editable, experimentGroup, language, grecaptcha);
+  contextIds.forEach((contextId) => {
+    document.getElementById(contextId)?.addEventListener('click', () => {
+      markSelection(contextId, editable);
+    });
+  });
 }

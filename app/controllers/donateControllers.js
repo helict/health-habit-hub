@@ -1,8 +1,9 @@
 import url from 'url';
+import contexts from '../models/contexts.js';
 import { ExperimentGroup } from '../models/experimentGroup.js';
-import fs from 'fs';
-import path from 'path';
 import { getLanguageMessages } from '../utils/localization.js';
+import { DbClient } from '../utils/SparqlDatabase.js';
+import { config } from '../utils/config.js';
 
 function getExperimentGroupFromQuery(req) {
   if (req.query.group) {
@@ -68,13 +69,19 @@ export function showDonateForm(req, res) {
     url.fileURLToPath(new URL('../views/donate.ejs', import.meta.url)),
     {
       experimentGroup: experimentGroup,
+      contexts: contexts,
       ...getLanguageMessages(req.lang),
     },
   );
 }
 
-export function saveDonateData(req, res) {
-  // TODO: Save data to database
+export async function saveDonateData(req, res) {
   console.log('Received donate data:', req.body);
+  const dbClient = new DbClient(config);
+  const data = {
+    ...req.body,
+    experimentGroup: ExperimentGroup.fromObject(req.body.experimentGroup),
+  };
+  await dbClient.insertDonateData(data);
   res.sendStatus(200);
 }
