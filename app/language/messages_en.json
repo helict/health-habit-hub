@@ -137,6 +137,9 @@
     "email_contact": "E-Mail: info@habithub.de"
   },
 
-  "emptyFieldError": "The text field must not be empty!",
-  "emptyBehaviorError": "Please mark a behavior in the text before submitting."
+  "donateErrors": {
+    "emptyFieldError": "The text field must not be empty!",
+    "emptyBehaviorError": "Please mark a behavior in the text before submitting.",
+    "noContextError": "Please confirm that you are not a robot."
+  }
 }

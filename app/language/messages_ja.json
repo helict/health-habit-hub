@@ -138,6 +138,9 @@
     "email_contact": "Eメール：info@habithub.de"
   },
 
-  "emptyFieldError": "テキスト・フィールドは空であってはならない！",
-  "emptyBehaviorError": "続行する前に、本文中の行動を選択してください。"
+  "donateErrors": {
+    "emptyFieldError": "テキスト・フィールドは空であってはならない！",
+    "emptyBehaviorError": "続行する前に、本文中の行動を選択してください。",
+    "noCaptchaError": "あなたがロボットでないことを確認してください。"
+  }
 }

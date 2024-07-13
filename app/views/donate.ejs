@@ -7,6 +7,7 @@
   <script src="/js/donate.js"></script>
   <script>
       const EXPERIMENT_GROUP = <%- JSON.stringify(experimentGroup) %>;
+      const DONATE_ERRORS = <%- JSON.stringify(donateErrors) %>;
       const languageCode = "<%= navigation.languageCode %>";
       window.onload = function() {
         const contextIds = <%- JSON.stringify(contexts.map(context => context.id)) %>;

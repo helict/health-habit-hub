@@ -77,12 +77,11 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
     errorMessageElement.style.display = 'block';
 
     if (inputValidity.empty) {
-      errorTextElement.textContent = 'Das Feld darf nicht leer sein.';
+      errorTextElement.textContent = DONATE_ERRORS.emptyFieldError;
     } else if (inputValidity.noBehavior) {
-      errorTextElement.textContent = 'Bitte markieren Sie das Verhalten.';
+      errorTextElement.textContent = DONATE_ERRORS.emptyBehaviorError;
     } else if (!CaptchaSuccesful) {
-      errorTextElement.textContent =
-        'Bestätigen Sie, dass Sie kein Roboter sind.';
+      errorTextElement.textContent = DONATE_ERRORS.noCaptchaError;
     }
   }
 }

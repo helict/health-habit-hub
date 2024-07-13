@@ -138,6 +138,9 @@
     "email_contact": "E-Mail: info@habithub.de"
   },
 
-  "emptyFieldError": "Das Textfeld darf nicht leer sein!",
-  "emptyBehaviorError": "Bitte markieren Sie ein Verhalten im Text, bevor Sie fortfahren."
+  "donateErrors": {
+    "emptyFieldError": "Das Textfeld darf nicht leer sein!",
+    "emptyBehaviorError": "Bitte markieren Sie ein Verhalten im Text, bevor Sie fortfahren.",
+    "noCaptchaError": "Bitte bestätigen Sie, dass Sie kein Roboter sind."
+  }
 }
