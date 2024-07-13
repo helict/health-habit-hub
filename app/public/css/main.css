@@ -328,8 +328,8 @@ small, .small {
 
 mark, .mark {
   padding: 0.1875em;
-  color: var(--bs-highlight-color);
-  background-color: var(--bs-highlight-bg);
+  color: inherit;
+  background-color: inherit;
 }
 
 sub,
