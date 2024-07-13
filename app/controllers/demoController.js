@@ -8,3 +8,9 @@ export function renderDemoPage(req, res) {
     getLanguageMessages(req.lang),
   );
 }
+
+export function saveDemoData(req, res) {
+  console.log('Received demographics data:', req.body);
+  res.cookie('demographicsCompleted', 'true');
+  res.redirect('/thanks');
+}

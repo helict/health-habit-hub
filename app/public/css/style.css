@@ -250,40 +250,6 @@ body {
     
   }
   
-  .mark_TimeReference{
-    background-color: #DD7A7A;
-    border-radius: 10px;
-  }
-  .mark_PhysicalSetting{
-    background-color: #AD7CBC;
-    border-radius: 10px;      
-  }
-  
-  .mark_People{
-    background-color: #B8D466;
-    border-radius: 10px;
-  }
-  
-  
-  .mark_RelatedBehaviour{
-    background-color: #FBEA67;
-    border-radius: 10px;
-  }
-  
-  
-  .mark_InternalState{
-    background-color: #E89F5C;
-    border-radius: 10px;
-  }
-  
-  .mark_Behavior{
-    background-color: #42C2CA;
-    border-radius: 10px;
-  }
-  
-  
-  
-  
   #grünesFeld{
     margin-top: 2%;
     padding: 30px;

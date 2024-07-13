@@ -1,7 +1,8 @@
 import SparqlClient from 'sparql-http-client';
 import { translate } from 'deeplx';
+import { v4 as uuidv4 } from 'uuid';
 
-class SparqlDatabaseClient {
+class DbClient {
   constructor(config) {
     this.client = new SparqlClient({
       updateUrl: config.getDbEndpoint(),
@@ -21,7 +22,15 @@ class SparqlDatabaseClient {
     }
   }
 
-  async insertDonateData(habituuid, ExperimentGroup, data, keys = []) {
+  async insertDonateData(data) {
+    const experimentGroup = data.experimentGroup;
+    const habituuid = uuidv4();
+    const source = data.language.toLowerCase() === 'en' ? 'user' : 'deeplx';
+    const value =
+      source === 'user'
+        ? data.inputValue
+        : translate(data.inputValue, 'en', data.language);
+
     let query = `
     PREFIX hhh: <http://example.com/hhh#>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -33,26 +42,24 @@ class SparqlDatabaseClient {
     
     INSERT DATA {
       hhh:ExperimentalSetting-${habituuid} rdf:type owl:NamedIndividual,
-                                            hhh:${ExperimentGroup.toString()}.
+                                            hhh:${experimentGroup.toString()}.
     `;
 
-    if (ExperimentGroup.closedTask) {
-      let i = 0;
-      while (i < keys.length) {
+    if (experimentGroup.closedTask) {
+      for (const context of data.contexts) {
         query += `
       hhh:Behaviour-${habituuid} rdf:type owl:NamedIndividual,
-                  hhh:${keys[i]} ;
+                  hhh:${context.name} ;
                             hhh:partOf hhh:ExperimentalSetting-${habituuid};
                             hhh:id "${habituuid}" ;
                             hhh:language "${data.language}"^^rdf:langString;
-                            hhh:source "${data.source}"^^rdfs:Literal;
+                            hhh:source "${source}"^^rdfs:Literal;
                             hhh:value "${await translate(
-                              data.get(keys[i]),
+                              context.value,
                               'en',
                               data.language,
                             )}".
       `;
-        i++;
       }
     } else {
       query += `
@@ -61,12 +68,8 @@ class SparqlDatabaseClient {
                             hhh:partOf hhh:ExperimentalSetting-${habituuid};
                             hhh:id "${habituuid}" ;
                             hhh:language "${data.language}"^^rdf:langString;
-                            hhh:source "${data.source}"^^rdfs:Literal;
-                            hhh:value "${await translate(
-                              data,
-                              'en',
-                              data.language,
-                            )}".
+                            hhh:source "${source}"^^rdfs:Literal;
+                            hhh:value "${await value}".
     `;
     }
 
@@ -76,4 +79,4 @@ class SparqlDatabaseClient {
   }
 }
 
-export { SparqlDatabaseClient };
+export { DbClient };
