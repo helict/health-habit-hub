@@ -2,6 +2,8 @@ import url from 'url';
 import contexts from '../models/contexts.js';
 import { ExperimentGroup } from '../models/experimentGroup.js';
 import { getLanguageMessages } from '../utils/localization.js';
+import { DbClient } from '../utils/SparqlDatabase.js';
+import { config } from '../utils/config.js';
 
 function getExperimentGroupFromQuery(req) {
   if (req.query.group) {
@@ -73,8 +75,12 @@ export function showDonateForm(req, res) {
   );
 }
 
-export function saveDonateData(req, res) {
-  // TODO: Save data to database
+export async function saveDonateData(req, res) {
   console.log('Received donate data:', req.body);
+  const dbClient = new DbClient(config);
+  await dbClient.insertDonateData(
+    ExperimentGroup.fromObject(req.body.experimentGroup),
+    req.body,
+  );
   res.sendStatus(200);
 }
