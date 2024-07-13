@@ -4,6 +4,10 @@ dotenv.config();
 
 const config = {
   port: process.env.PORT || 3000,
+  recaptcha: {
+    siteKey: process.env.RECAPTCHA_SITEKEY || '',
+    secretKey: process.env.RECAPTCHA_SECRETKEY || '',
+  },
   db: {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'defaultUser',

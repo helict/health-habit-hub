@@ -1,6 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { RecaptchaV2 as Recaptcha } from 'express-recaptcha'; // Import the express-recaptcha module
+import { config } from '../utils/config.js';
 import {
   showDonateForm,
   saveDonateData,
@@ -13,8 +14,8 @@ router.use(cookieParser());
 
 // Configure the reCAPTCHA module with your own keys
 const recaptcha = new Recaptcha(
-  '6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l',
-  '6Lc_WPEpAAAAAJKIbXTBmYBGKsZeay4ANUykwh7m',
+  config.recaptcha.siteKey,
+  config.recaptcha.secretKey,
 );
 // Add reCAPTCHA display to the context
 router.use(recaptcha.middleware.render, (req, res, next) => {
