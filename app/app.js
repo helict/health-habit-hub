@@ -66,7 +66,7 @@ app.use((req, res, next) => {
   if (req.url.startsWith('/' + req.lang + '/')) {
     next();
   } else {
-    res.redirect(301, path.join('/', req.lang, req.url));
+    res.redirect(307, path.join('/', req.lang, req.url));
   }
 });
 
