@@ -181,7 +181,7 @@ function addDonateEventListeners(
   });
 
   contextIds.forEach((contextId) => {
-    document.getElementById(contextId).addEventListener('click', () => {
+    document.getElementById(contextId)?.addEventListener('click', () => {
       markSelection(contextId, editable);
     });
   });
