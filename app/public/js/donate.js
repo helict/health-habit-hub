@@ -97,7 +97,11 @@ function sendData(data) {
   })
     .then((response) => {
       if (response.ok) {
-        window.location.href = '/thanks';
+        if (Cookies.get('demographicsCompleted') === 'true') {
+          window.location.href = '/thanks';
+        } else {
+          window.location.href = '/demo';
+        }
         console.log('Data saved successfully.');
       } else {
         alert('Server Error while saving data.');
