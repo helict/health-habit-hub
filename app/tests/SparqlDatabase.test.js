@@ -49,20 +49,22 @@ test.skip('Insert open data', async () => {
     source: 'user',
     //   inputValue: 'I eat a banana',
     inputValue: 'Ich esse eine Pflaume',
+    experimentGroup: openExperimentGroup,
   };
   const dbClient = new DbClient(sparqlClientTestConfig);
-  await dbClient.insertDonateData(openExperimentGroup, data);
+  await dbClient.insertDonateData(data);
 });
 
 // Skip test, because test case is only partially completed
 test.skip('Insert closed data', async () => {
-  const openExperimentGroup = new ExperimentGroup(true, true);
+  const closedExperimentGroup = new ExperimentGroup(true, true);
   const data = {
     //   language: 'en',
     language: 'de',
     source: 'user',
     //   inputValue: 'I eat a banana',
     inputValue: 'Morgens esse ich einen Kuchen.',
+    experimentGroup: closedExperimentGroup,
     contexts: [
       {
         name: 'Behavior',
@@ -75,5 +77,5 @@ test.skip('Insert closed data', async () => {
     ],
   };
   const dbClient = new DbClient(sparqlClientTestConfig);
-  await dbClient.insertDonateData(openExperimentGroup, data);
+  await dbClient.insertDonateData(data);
 });
