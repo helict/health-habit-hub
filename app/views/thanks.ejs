@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <%- include('header') %>
-    <script src="js/thanks.js"></script>
+    <!-- <script src="js/thanks.js"></script> -->
 </head>
 
 <body>
@@ -19,7 +19,8 @@
     </div>
 
     <div class="container">
-        <button type="" id="donate_again" onclick="navigateHomePage()"><%= donate_again || 'Donate again!' %></button>
+        <!-- <button type="" id="donate_again" onclick="navigateHomePage('<%= navigation.languageCode %>')"><%= donate_again || 'Donate again!' %></button> -->
+        <button type="" id="donate_again" onclick="location.href='/<%= navigation.languageCode %>/donate'"><%= donate_again || 'Donate again!' %></button>
     </div>
 
     <div class="container mb-5">

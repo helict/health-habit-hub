@@ -17,8 +17,10 @@
 
   "donationHeader": "Daten Spende",
   "dataDonationGuide": "Daten Spende Anleitung",
-  "step1": "<h5><strong>Gib deine Gewohnheit als Satz ein, markier die Teile deines Satzes und ordne jedem Teil den unten aufgeführten Kontext oder die Situation zu.</strong></h5>",
-  "step2": "Schritt 2: Bestätige deine Gewohnheit, die du spenden möchtest, indem du auf \"Spenden\" drückst",
+  "proceeding": "Vorgehen",
+  "step1": "Gib deine Gewohnheit als Satz ein.",
+  "step2": "Markier die Teile deines Satzes und ordne jedem Teil den unten aufgeführten Kontext oder die Situation zu.",
+  "step3": "Bestätige deine Gewohnheit, die du spenden möchtest, indem du auf \"Spenden\" drückst.",
 
   "example1": "<p><strong>Beispiel:</strong> Wenn ich <mark class=mark_physical>die Küche betrete</mark>  und <mark class=mark_prior>einen Obstkorb sehe</mark>, <mark class=mark_behavior>nehme ich einen Apfel</mark> und <mark class=mark_behavior>esse ihn</mark>.</p>",
   "clear": "↺",

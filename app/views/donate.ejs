@@ -51,8 +51,15 @@
   <!-- Datadonation guide -->
   <div class="container" id="datadonationheader">
     <div class="row">
+      <h5 id="header"><%= proceeding %></h5>
       <div class="col-12">
-        <p id="step2"><%= step2 %></p>
+        <ul id="steps" style="list-style-type: dicimal;">
+          <li><%= step1 %></li>
+        <% if (experimentGroup.closedTask) { %>
+          <li><%= step2 %></li>
+        <% } %>
+          <li><%= step3 %></li>
+        </ul>
       </div>
     </div>
     <div class="row form-group">
@@ -103,5 +110,6 @@
 
   <!-- Footer -->
   <%- include('footer') %>
+  
 </body>
 </html>

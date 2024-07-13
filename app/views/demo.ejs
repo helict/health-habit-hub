@@ -22,7 +22,7 @@
             </div>
             <div class="demosection">
                 <label><%= origin %></label>
-                <input type="text" name="country">
+                <input type="text" name="country" maxlength="100">
             </div>
             <div class="demosection">
                 <label><%= graduation %></label>
@@ -36,7 +36,7 @@
             </div>
             <div class="demosection">
                 <label><%= age %></label>
-                <input type="number" name="age">
+                <input type="number" name="age" min="0" max="122">
             </div>
             <div class="demosection">
                 <label><%= weight %></label>
@@ -80,7 +80,7 @@
                 <select name="working_hours" multiple>
                     <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
                     <option value="schichtsystem-mit-nachtschicht"><%= shift_system_night %></option>
-                    <option value="schichtsystem-ohne-nachtschichten"><%= shift_system_night %></option>
+                    <option value="schichtsystem-ohne-nachtschichten"><%= shift_system_day %></option>
                     <option value="wochenende-oft-im-dienst"><%= work_WE %></option>
                     <option value="wochenende-meistens-frei"><%= free_WE_1 %></option>
                     <option value="wochenende-immer-frei"><%= free_WE_2 %></option>
@@ -148,7 +148,7 @@
             <div class="demosection">
                 <label><%= pets %></label>
                 <select name="pet_influence">
-                    <option style="text-align: center;" selected disabled hidden><%= choose_option %></option>
+                    <option selected disabled hidden><%= choose_option %></option>
                     <option value="regelmäßige-bewegung"><%= pet_regular %></option>
                     <option value="mehr-aktivität-im-alltag"><%= pet_more_activity %></option>
                     <option value="kein-einfluss"><%= pet_no_impact %></option>

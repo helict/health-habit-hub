@@ -58,8 +58,8 @@ app.get('/:lng(' + validLanguageCodes + ')?/', (req, res) => {
 
 app.use('/:lng(' + validLanguageCodes + ')/donate', donateRouter);
 app.use('/:lng(' + validLanguageCodes + ')/about', aboutRouter);
-app.use('/:lng(de|en|ja)/demo', demoRouter); //Probably needs to be changed like the ones on the top
-app.use('/:lng(de|en|ja)/thanks', thanksRouter);
+app.use('/:lng(' + validLanguageCodes + ')/demo', demoRouter); //Probably needs to be changed like the ones on the top
+app.use('/:lng(' + validLanguageCodes + ')/thanks', thanksRouter);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
 app.use((req, res, next) => {

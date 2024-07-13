@@ -16,8 +16,10 @@
 
   "donationHeader": "Data Donation",
   "dataDonationGuide": "Data donation department",
-  "step1": "<h5><strong>Enter your habit as a sentence, mark the parts of your sentence and match each part with the context or situation listed below.",
-  "step2": "Step 2: Confirm the habit you would like to donate by clicking on \"Donate\"",
+  "proceeding": "Proceeding",
+  "step1": "Enter your habit as a sentence.",
+  "step2": "Mark the parts of your sentence and assign the context or situation listed below to each part.",
+  "step3": "Confirm your habit you want to donate by pressing \"Donate\".",
 
   "example1": "<p><strong>Example:</strong> If I <mark class=mark_physical>enter the kitchen</mark> and <mark class=mark_prior>see a fruit basket</mark>, I am <mark class=mark_behavior>taking an apple</mark> and <mark class=mark_behavior>eat it</mark>.</p>",
   "clear": "↺",
@@ -27,7 +29,6 @@
   "people": "people",
   "internal": "internal state",
   "behavior": "behavior",
-  "step3": "<h5><strong>Confirm your habit</strong></h5>",
   "example2": "<h5>Placeholder: I drink a glass of water before bedtime.<h5>",
   "submit": "Donate",
   "add": "+ add another habit",
