@@ -16,11 +16,9 @@ const recaptcha = new Recaptcha(
   '6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l',
   '6Lc_WPEpAAAAAJKIbXTBmYBGKsZeay4ANUykwh7m',
 );
-router.use(recaptcha.middleware.render);
-
-// Middleware to add reCAPTCHA to the context
-router.use((req, res, next) => {
-  res.locals.recaptcha = recaptcha.render();
+// Add reCAPTCHA display to the context
+router.use(recaptcha.middleware.render, (req, res, next) => {
+  res.locals.recaptcha = res.recaptcha;
   next();
 });
 
