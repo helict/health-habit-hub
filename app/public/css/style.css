@@ -578,27 +578,44 @@ body {
   pointer-events: none;
 }
 
-.democontainer {
-  display: flex;
-  flex-flow: column wrap;
-  gap: 5px;
-}
 .demosection {
+  margin-bottom: 1em;
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-start; 
+  flex-flow: row wrap;
+  justify-content: flex-start;
 }
 
 .demosection label {
-  width: 15%;
+  flex-basis: 10em;
 }
 
-.demosection input, select {
-  width: 30%;
+@media (max-width: 400px) {
+  .demosection > input, select {
+    width: 100%;
+  }
 }
-.demo-age {
-  width: 20%;;
-  display:flex;
+
+@media (min-width: 400px) {
+  .demosection > input, select {
+    width: 350px;
+  }
+}
+
+/* .demo-gender {
+  display: flex;
+  flex-flow: row wrap;
+} */
+
+.demo-gender div, input {
+  margin-right: 1em;
+}
+/* .demo-age {
+  width: auto;
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
+} */
+
+#chooseOpt {
+  text-align: center;
 }
