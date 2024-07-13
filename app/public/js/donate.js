@@ -1,7 +1,3 @@
-function getCurrentPageLanguage() {
-  return document.documentElement.lang;
-}
-
 function markSelection(context, editable) {
   const selection = window.getSelection();
 
@@ -34,27 +30,16 @@ function markSelection(context, editable) {
     range.setEnd(endParent.previousSibling, endParent.previousSibling.length);
   }
 
-  const contextObj = contexts.find((c) => c.id === context);
-
   // Create new mark element
   const mark = document.createElement('mark');
   mark.className = `mark_${context}`;
   mark.textContent = selectedText;
-  if (contextObj && contextObj.color) {
-    mark.style.backgroundColor = contextObj.color; // Set the background color
-  }
   range.deleteContents();
   range.insertNode(mark);
 }
 
 function removeAllHighlights(editable) {
-  // This assumes `editable` is the contentEditable area where highlights are made
-  const marks = editable.querySelectorAll('mark');
-  marks.forEach((mark) => {
-    // Replace each mark element with its text content
-    const textNode = document.createTextNode(mark.textContent);
-    mark.parentNode.replaceChild(textNode, mark);
-  });
+  editable.innerHTML = editable.innerText;
 }
 
 /**
@@ -152,7 +137,7 @@ function validate(data) {
     empty: data.text === '',
     noBehavior:
       data.experimentGroup.closedTask &&
-      !data.contexts.find((context) => context.name === 'Behavior'),
+      !data.contexts.find((context) => context.name === 'behavior'),
   };
 }
 
@@ -171,31 +156,12 @@ function checkCaptcha(grecaptcha) {
   return true;
 }
 
-function createContextButtons(contexts, language) {
-  const buttonContainer = document.querySelector('.button-container');
-  if (buttonContainer) {
-    buttonContainer.innerHTML = '';
-    const editable = document.getElementById('habit-input');
-
-    contexts.forEach((context) => {
-      const button = document.createElement('button');
-      button.className = `custom-button btn`;
-      button.id = context.id;
-      button.textContent = context.labels[language];
-      button.style.backgroundColor = context.color;
-      button.addEventListener('click', () => {
-        markSelection(context.id, editable);
-      });
-      buttonContainer.appendChild(button);
-    });
-  }
-}
-
 // Add event listeners
 function addDonateEventListeners(
   editableId,
   submitButtonId,
   resetButtonId,
+  contextIds,
   experimentGroup,
   language,
   grecaptcha,
@@ -212,5 +178,11 @@ function addDonateEventListeners(
   resetButton?.addEventListener('click', () => {
     console.log('Clear button clicked');
     removeAllHighlights(editable);
+  });
+
+  contextIds.forEach((contextId) => {
+    document.getElementById(contextId).addEventListener('click', () => {
+      markSelection(contextId, editable);
+    });
   });
 }

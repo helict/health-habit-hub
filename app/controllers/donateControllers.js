@@ -1,7 +1,6 @@
 import url from 'url';
+import contexts from '../models/contexts.js';
 import { ExperimentGroup } from '../models/experimentGroup.js';
-import fs from 'fs';
-import path from 'path';
 import { getLanguageMessages } from '../utils/localization.js';
 
 function getExperimentGroupFromQuery(req) {
@@ -68,6 +67,7 @@ export function showDonateForm(req, res) {
     url.fileURLToPath(new URL('../views/donate.ejs', import.meta.url)),
     {
       experimentGroup: experimentGroup,
+      contexts: contexts,
       ...getLanguageMessages(req.lang),
     },
   );
