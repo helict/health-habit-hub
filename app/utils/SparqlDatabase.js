@@ -22,7 +22,8 @@ class DbClient {
     }
   }
 
-  async insertDonateData(ExperimentGroup, data) {
+  async insertDonateData(data) {
+    const experimentGroup = data.experimentGroup;
     const habituuid = uuidv4();
     const source = data.language.toLowerCase() === 'en' ? 'user' : 'deeplx';
     const value =
@@ -41,10 +42,10 @@ class DbClient {
     
     INSERT DATA {
       hhh:ExperimentalSetting-${habituuid} rdf:type owl:NamedIndividual,
-                                            hhh:${ExperimentGroup.toString()}.
+                                            hhh:${experimentGroup.toString()}.
     `;
 
-    if (ExperimentGroup.closedTask) {
+    if (experimentGroup.closedTask) {
       for (const context of data.contexts) {
         query += `
       hhh:Behaviour-${habituuid} rdf:type owl:NamedIndividual,
@@ -52,7 +53,7 @@ class DbClient {
                             hhh:partOf hhh:ExperimentalSetting-${habituuid};
                             hhh:id "${habituuid}" ;
                             hhh:language "${data.language}"^^rdf:langString;
-                            hhh:source "${data.source}"^^rdfs:Literal;
+                            hhh:source "${source}"^^rdfs:Literal;
                             hhh:value "${await translate(
                               context.value,
                               'en',
@@ -67,7 +68,7 @@ class DbClient {
                             hhh:partOf hhh:ExperimentalSetting-${habituuid};
                             hhh:id "${habituuid}" ;
                             hhh:language "${data.language}"^^rdf:langString;
-                            hhh:source "${data.source}"^^rdfs:Literal;
+                            hhh:source "${source}"^^rdfs:Literal;
                             hhh:value "${await value}".
     `;
     }

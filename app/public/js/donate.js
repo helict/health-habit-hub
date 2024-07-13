@@ -115,7 +115,7 @@ function sendData(data) {
 function parseInput(editable, experimentGroup, language) {
   const habitText = editable.innerText;
   const habitData = {
-    text: habitText,
+    inputValue: habitText,
     experimentGroup: experimentGroup,
     language: language,
     contexts: getContexts(editable),

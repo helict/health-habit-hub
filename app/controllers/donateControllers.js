@@ -78,9 +78,10 @@ export function showDonateForm(req, res) {
 export async function saveDonateData(req, res) {
   console.log('Received donate data:', req.body);
   const dbClient = new DbClient(config);
-  await dbClient.insertDonateData(
-    ExperimentGroup.fromObject(req.body.experimentGroup),
-    req.body,
-  );
+  const data = {
+    ...req.body,
+    experimentGroup: ExperimentGroup.fromObject(req.body.experimentGroup),
+  };
+  await dbClient.insertDonateData(data);
   res.sendStatus(200);
 }
