@@ -11,15 +11,6 @@ Welcome to our web application, designed to empower users to willingly contribut
 - Closed-Task, Open data entry: Predefined task to ensure the right data is submitted but no labeling functionality to leave to user some freedom 
 - Open-Task, Closed data entry: No Task, just a textfield with the buttons to label the provided data for well sturctured but less influenced data
 
-
-
-#### Technological Foundation
-
-- Frontend development is enriched by the Bootstrap framework and plain JavaScript.
-- Backend data handling is efficiently executed using Node.js for a fast and synchronous processing experience.
-
-![Our Development architecture](./assets/SD_Diagramm.png)
-
 #### Data Storage
 
 The data is securely stored in a RDF database hosted on an [Apache Jena Fuseki](https://jena.apache.org/documentation/fuseki2/index.html) SPARQL server. This strategic approach not only ensures efficient data management but also paves the way for easier training of machine learning algorithms using the acquired data.
@@ -74,3 +65,24 @@ The repository contains two services:
 
 - `app` – the _Health Habit Hub_ Node.js app.
 - `fuseki` – an Apache Jena Fuseki server instance, initialized with example data and the appropriate schema.
+
+## Development
+
+### Overview
+
+![Architecture diagram](./assets/Architecture.svg)
+
+### Utility scripts for development
+
+- `npm run format:check` – Check code format with _Prettier_.
+- `npm run lint` – Check for code problems with _ESLint_.
+- `npm run test:unitTests` – Run unit tests.
+
+To run all of the above in sequence:
+
+- `npm run test`
+
+To fix code problems:
+
+- `npm run format:fix` – Run _Prettier_ to automatically format code.
+- `npm run lint:fix` – Run _ESLint_ to fix all automatically fixable problems.
