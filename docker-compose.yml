@@ -1,3 +1,4 @@
+version: '2'
 services:
   proxy:
     image: traefik:v3.0
@@ -14,15 +15,15 @@ services:
       - --entrypoints.web.address=:80
     restart: always
     ports:
-      - 80:80
-      - 8080:8080
+      - ${TRAEFIK_HOST_PORT80:-80}:80
+      - ${TRAEFIK_HOST_PORT8080:-8080}:8080
     networks:
       - proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - traefik.enable=true
-      - traefik.http.routers.proxy.rule=Host(`proxy.localhost`)
+      - traefik.http.routers.proxy.rule=Host(`${PROXY_PATH:-proxy}.${PATH_SUFFIX:-localhost}`)
       - traefik.http.routers.proxy.entrypoints=web
       - traefik.http.routers.proxy.service=proxy
       - traefik.http.services.proxy.loadbalancer.server.port=8080
@@ -34,7 +35,7 @@ services:
     restart: on-failure:3
     user: node
     ports:
-      - 3000:3000
+      - ${APP_HOST_PORT:-3000}:3000
     networks:
       - proxy
     depends_on:
@@ -42,7 +43,7 @@ services:
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.app.rule=Host(`app.localhost`)
+      - traefik.http.routers.app.rule=Host(`${APP_PATH:-app}.${PATH_SUFFIX:-localhost}`)
       - traefik.http.routers.app.entrypoints=web
       - traefik.http.routers.app.service=app
       - traefik.http.services.app.loadbalancer.server.port=3000
@@ -58,9 +59,9 @@ services:
     build: ./fuseki
     restart: always
     environment:
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
     ports:
-      - 3030:3030
+      - ${FUSEKI_HOST_PORT:-3030}:3030
     networks:
       - proxy
     volumes:
@@ -69,7 +70,7 @@ services:
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.fuseki.rule=Host(`fuseki.localhost`)
+      - traefik.http.routers.fuseki.rule=Host(`${FUSEKI_PATH:-fuseki}.${PATH_SUFFIX:-localhost}`)
       - traefik.http.routers.fuseki.entrypoints=web
       - traefik.http.routers.fuseki.service=fuseki
       - traefik.http.services.fuseki.loadbalancer.server.port=3030
