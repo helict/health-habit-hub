@@ -83,8 +83,7 @@ services:
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.fuseki.rule=PathPrefix(`/${FUSEKI_PATH:-fuseki}`)
-      - traefik.http.routers.fuseki.rule=PathPrefix(`/static`)
+      - traefik.http.routers.fuseki.rule=PathPrefix(`/${FUSEKI_PATH:-fuseki}`)&&PathPrefix(`/static`)
       - traefik.http.routers.fuseki.entrypoints=web
       - traefik.http.routers.fuseki.service=fuseki
       - traefik.http.services.fuseki.loadbalancer.server.port=3030
