@@ -32,6 +32,9 @@ services:
     container_name: app
     build: ./app
     restart: on-failure:3
+    environment:
+      - NODE_ENV=production
+      - NODE_OPTIONS=--no-warnings
     user: node
     ports:
       - 3000:3000
@@ -51,14 +54,13 @@ services:
         - path: ./app
           action: rebuild
 
-
   fuseki:
     image: hhh/fuseki
     container_name: fuseki
     build: ./fuseki
     restart: always
     environment:
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
     ports:
       - 3030:3030
     networks:
@@ -73,7 +75,6 @@ services:
       - traefik.http.routers.fuseki.entrypoints=web
       - traefik.http.routers.fuseki.service=fuseki
       - traefik.http.services.fuseki.loadbalancer.server.port=3030
-
 
 networks:
   proxy:
