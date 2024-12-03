@@ -35,16 +35,11 @@ router.use(jsonBodyParser);
 router.use(staticFileMiddleware);
 
 // Either sets req.lang to the already set route language parameter or gets the preferred browser language. Default value is 'en'.
-<<<<<<< HEAD
 router.use('/:lng(' + validLanguageCodes + ')?/', (req, res, next) => {
 
   console.log("Language use: ", req.url)
 
   //console.log('Route language parameter:', req.params.lng);
-=======
-app.use('/:lng(' + validLanguageCodes + ')?/', (req, res, next) => {
-  console.debug('Route language parameter:', req.params.lng);
->>>>>>> max-deployment-optionen
   req.lang = 'en';
 
   if (req.params.lng) {
@@ -76,13 +71,8 @@ router.use('/:lng(' + validLanguageCodes + ')/demo', demoRouter); //Probably nee
 router.use('/:lng(' + validLanguageCodes + ')/thanks', thanksRouter);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
-<<<<<<< HEAD
 router.use((req, res, next) => {
   console.log("Path: ",req.url)
-=======
-app.use((req, res, next) => {
-  console.debug('UI Language:', req.lang);
->>>>>>> max-deployment-optionen
   if (req.url.startsWith('/' + req.lang + '/')) {
     next();
   } else {
