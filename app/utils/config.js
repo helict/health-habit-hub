@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const config = {
+  path : process.env.PATH || './',
   port: process.env.PORT || 3000,
   recaptcha: {
     siteKey: process.env.RECAPTCHA_SITEKEY || '',

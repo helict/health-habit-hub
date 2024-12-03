@@ -15,23 +15,30 @@ import thanksRouter from './routes/thanksRouter.js';
 
 const app = express();
 const port = config.port;
+const contextPath = process.env.APP_PATH || "/";
+console.log("ContextPath: ",contextPath);
+
+const router = express.Router();
 
 // Enable language functions
 loadLanguageFiles();
 const validLanguageCodes = getLanguageCodes().join('|');
 
 // Use bodyParser and express-recaptcha module
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json()); // Added to parse JSON bodies
+router.use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.json()); // Added to parse JSON bodies
 
 // Middleware for parsing form data in the request body
-app.use(jsonBodyParser);
+router.use(jsonBodyParser);
 
 // Middleware for serving static files
-app.use(staticFileMiddleware);
+router.use(staticFileMiddleware);
 
 // Either sets req.lang to the already set route language parameter or gets the preferred browser language. Default value is 'en'.
-app.use('/:lng(' + validLanguageCodes + ')?/', (req, res, next) => {
+router.use('/:lng(' + validLanguageCodes + ')?/', (req, res, next) => {
+
+  console.log("Language use: ", req.url)
+
   //console.log('Route language parameter:', req.params.lng);
   req.lang = 'en';
 
@@ -52,23 +59,31 @@ app.use('/:lng(' + validLanguageCodes + ')?/', (req, res, next) => {
 
 // Routes
 // Redirects all requests to '/donate' if the language parameter (lng) is already set
-app.get('/:lng(' + validLanguageCodes + ')?/', (req, res) => {
-  res.redirect(301, '/' + req.lang + '/donate');
+router.get('/:lng(' + validLanguageCodes + ')?/', (req, res) => {
+  console.log("Redirecting to donate")
+  console.log(contextPath + req.lang + '/donate')
+  res.redirect(301, contextPath + req.lang + '/donate');
 });
 
-app.use('/:lng(' + validLanguageCodes + ')/donate', donateRouter);
-app.use('/:lng(' + validLanguageCodes + ')/about', aboutRouter);
-app.use('/:lng(' + validLanguageCodes + ')/demo', demoRouter); //Probably needs to be changed like the ones on the top
-app.use('/:lng(' + validLanguageCodes + ')/thanks', thanksRouter);
+router.use('/:lng(' + validLanguageCodes + ')/donate', donateRouter);
+router.use('/:lng(' + validLanguageCodes + ')/about', aboutRouter);
+router.use('/:lng(' + validLanguageCodes + ')/demo', demoRouter); //Probably needs to be changed like the ones on the top
+router.use('/:lng(' + validLanguageCodes + ')/thanks', thanksRouter);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
-app.use((req, res, next) => {
+router.use((req, res, next) => {
+  console.log("Path: ",req.url)
   if (req.url.startsWith('/' + req.lang + '/')) {
     next();
   } else {
-    res.redirect(307, path.join('/', req.lang, req.url));
+    console.log("Redirecting")
+    let p = path.join(contextPath, req.lang, req.url)
+    console.log("Redirect-Path",p)
+    res.redirect(307, path.join(contextPath, req.lang, req.url));
   }
 });
+
+app.use(contextPath, router)
 
 app.listen(port, () => {
   console.log(`Server is running on http://app.localhost`);
