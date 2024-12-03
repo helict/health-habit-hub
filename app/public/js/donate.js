@@ -69,7 +69,7 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
   const CaptchaSuccesful = checkCaptcha(grecaptcha);
 
   if (checkValidity(inputValidity) && CaptchaSuccesful) {
-    sendData(data);
+    sendData(data, language);
   } else {
     // Better error handling
     const errorMessageElement = document.getElementById('error-messages');
@@ -86,7 +86,7 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
   }
 }
 
-function sendData(data) {
+function sendData(data, language) {
   fetch('donate/data', {
     method: 'POST',
     headers: {
@@ -97,9 +97,9 @@ function sendData(data) {
     .then((response) => {
       if (response.ok) {
         if (Cookies.get('demographicsCompleted') === 'true') {
-          window.location.href = '/thanks';
+          window.location.href = '/' + language + '/thanks';
         } else {
-          window.location.href = '/demo';
+          window.location.href = '/' + language + '/demo';
         }
         console.log('Data saved successfully.');
       } else {

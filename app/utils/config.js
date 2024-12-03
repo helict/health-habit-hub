@@ -8,6 +8,7 @@ const config = {
   recaptcha: {
     siteKey: process.env.RECAPTCHA_SITEKEY || '',
     secretKey: process.env.RECAPTCHA_SECRETKEY || '',
+    useRecaptchaDomain: process.env.RECAPTCHA_USE_RECAPTCHA_DOMAIN || false
   },
   db: {
     host: process.env.DB_HOST || 'localhost',

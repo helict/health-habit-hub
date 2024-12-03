@@ -1,16 +1,16 @@
-import path from 'path';
-import express from 'express';
 import bodyParser from 'body-parser';
+import express from 'express';
+import path from 'path';
 
-import { config } from './utils/config.js';
-import { loadLanguageFiles, getLanguageCodes } from './utils/localization.js';
-import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
 import { jsonBodyParser } from './middleware/requestParser.js';
+import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
+import { config } from './utils/config.js';
+import { getLanguageCodes, loadLanguageFiles } from './utils/localization.js';
 
 // Express config
-import donateRouter from './routes/donateRouter.js';
 import aboutRouter from './routes/aboutRouter.js';
 import demoRouter from './routes/demoRouter.js';
+import donateRouter from './routes/donateRouter.js';
 import thanksRouter from './routes/thanksRouter.js';
 
 const app = express();
@@ -35,25 +35,30 @@ router.use(jsonBodyParser);
 router.use(staticFileMiddleware);
 
 // Either sets req.lang to the already set route language parameter or gets the preferred browser language. Default value is 'en'.
+<<<<<<< HEAD
 router.use('/:lng(' + validLanguageCodes + ')?/', (req, res, next) => {
 
   console.log("Language use: ", req.url)
 
   //console.log('Route language parameter:', req.params.lng);
+=======
+app.use('/:lng(' + validLanguageCodes + ')?/', (req, res, next) => {
+  console.debug('Route language parameter:', req.params.lng);
+>>>>>>> max-deployment-optionen
   req.lang = 'en';
 
   if (req.params.lng) {
     req.lang = req.params.lng;
   } else {
     const lang = req.acceptsLanguages(getLanguageCodes());
-    console.log('Accepted browser language:', lang);
+    console.debug('Accepted browser language:', lang);
 
     if (lang) {
       req.lang = lang;
     }
   }
   res.locals.currentLanguage = req.lang;
-  console.log('Application language:', req.lang);
+  console.debug('Application language:', req.lang);
   next();
 });
 
@@ -71,8 +76,13 @@ router.use('/:lng(' + validLanguageCodes + ')/demo', demoRouter); //Probably nee
 router.use('/:lng(' + validLanguageCodes + ')/thanks', thanksRouter);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
+<<<<<<< HEAD
 router.use((req, res, next) => {
   console.log("Path: ",req.url)
+=======
+app.use((req, res, next) => {
+  console.debug('UI Language:', req.lang);
+>>>>>>> max-deployment-optionen
   if (req.url.startsWith('/' + req.lang + '/')) {
     next();
   } else {
