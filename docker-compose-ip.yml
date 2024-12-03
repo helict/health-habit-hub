@@ -42,6 +42,16 @@ services:
     build: ./app
     restart: on-failure:3
     user: node
+    environment:
+      - RECAPTCHA_SITEKEY=${RECAPTCHA_SITEKEY}
+      - RECAPTCHA_SECRETKEY=${RECAPTCHA_SECRETKEY}
+      - RECAPTCHA_USE_RECAPTCHA_DOMAIN=${RECAPTCHA_USE_RECAPTCHA_DOMAIN:-true}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PATH=${DB_PATH}
+      - APP_BASE_PATH=/${APP_PATH:-app}/
     ports:
       - ${APP_HOST_PORT:-3000}:3000
     networks:
@@ -52,7 +62,7 @@ services:
     labels:
       - traefik.enable=true
       # - traefik.http.routers.app.rule=PathPrefix(`/${APP_PATH:-app}`) || PathPrefix(`/js`) || PathPrefix(`/pics`) || PathPrefix(`/about`) || PathPrefix(`/demo`) || PathPrefix(`/donate`) || PathPrefix(`/thanks`) || Path(`/reward.html`) || Path(`/contact.html`) || PathPrefix(`/data`) || PathPrefix(`/de`) || PathPrefix(`/en`) || PathPrefix(`/jp`)
-      - traefik.http.routers.app.rule=Host(`${HOST:-localhost}`) && PathPrefix(`/${APP_PATH:-app}`)
+      - traefik.http.routers.app.rule=PathPrefix(`/${APP_PATH:-app}`)
       - traefik.http.routers.app.entrypoints=web
       - traefik.http.routers.app.service=app
       - traefik.http.services.app.loadbalancer.server.port=3000

@@ -15,7 +15,7 @@ import thanksRouter from './routes/thanksRouter.js';
 
 const app = express();
 const port = config.port;
-const contextPath = process.env.APP_PATH || "/";
+const contextPath = process.env.APP_BASE_PATH || "/";
 console.log("ContextPath: ",contextPath);
 
 const router = express.Router();
