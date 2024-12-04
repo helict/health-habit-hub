@@ -74,7 +74,7 @@ services:
     labels:
       - traefik.enable=true
       # - traefik.http.routers.app.rule=PathPrefix(`/${APP_PATH:-app}`) || PathPrefix(`/js`) || PathPrefix(`/pics`) || PathPrefix(`/about`) || PathPrefix(`/demo`) || PathPrefix(`/donate`) || PathPrefix(`/thanks`) || Path(`/reward.html`) || Path(`/contact.html`) || PathPrefix(`/data`) || PathPrefix(`/de`) || PathPrefix(`/en`) || PathPrefix(`/jp`)
-      - traefik.http.routers.app.rule=Host(`localhost`) && PathPrefix(`/${APP_PATH:-/app}`)
+      - traefik.http.routers.app.rule=Host(`${HOST:-localhost}`) && PathPrefix(`/${APP_PATH:-/app}`)
       - traefik.http.routers.app.entrypoints=websecure
       - traefik.http.routers.app.tls=true
       - traefik.http.routers.app.tls.certresolver=letencrypt
