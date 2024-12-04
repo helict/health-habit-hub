@@ -1,3 +1,5 @@
+# https://medium.com/@svenvanginkel/setting-up-traefik-v3-in-docker-0c0559a696f1
+
 version: '3'
 services:
   proxy:
@@ -13,16 +15,26 @@ services:
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=proxy
       - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --certificatesResolvers.letencrypt.acme.email=youremail@email.com
+      - --certificatesResolvers.letencrypt.acme.storage=/certs/acme.json
+      - --certificatesResolvers.letencrypt.acme.caServer=https://acme-v02.api.letsencrypt.org/directory # prod (default)
+      #- --certificatesResolvers.letencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # staging
+      - --certificatesResolvers.letencrypt.acme.httpChallenge.entryPoint=web
       - --experimental.plugins.rewriteHeaders.moduleName=github.com/XciD/traefik-plugin-rewrite-headers
       - --experimental.plugins.rewriteHeaders.version=v0.0.4
     restart: always
     ports:
+      - ${TRAEFIK_HOST_PORT443:-443}:443
       - ${TRAEFIK_HOST_PORT80:-80}:80
       - ${TRAEFIK_HOST_PORT8080:-8080}:8080
     networks:
       - proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - treafik-certs:/certs
     labels:
       - traefik.enable=true
       - traefik.http.routers.proxy.rule=PathPrefix(`/${PROXY_PATH:-proxy}`)
@@ -62,8 +74,10 @@ services:
     labels:
       - traefik.enable=true
       # - traefik.http.routers.app.rule=PathPrefix(`/${APP_PATH:-app}`) || PathPrefix(`/js`) || PathPrefix(`/pics`) || PathPrefix(`/about`) || PathPrefix(`/demo`) || PathPrefix(`/donate`) || PathPrefix(`/thanks`) || Path(`/reward.html`) || Path(`/contact.html`) || PathPrefix(`/data`) || PathPrefix(`/de`) || PathPrefix(`/en`) || PathPrefix(`/jp`)
-      - traefik.http.routers.app.rule=PathPrefix(`/${APP_PATH:-/app}`)
-      - traefik.http.routers.app.entrypoints=web
+      - traefik.http.routers.app.rule=Host(`localhost`) && PathPrefix(`/${APP_PATH:-/app}`)
+      - traefik.http.routers.app.entrypoints=websecure
+      - traefik.http.routers.app.tls=true
+      - traefik.http.routers.app.tls.certresolver=letencrypt
       - traefik.http.routers.app.service=app
       - traefik.http.services.app.loadbalancer.server.port=3000
       #- "traefik.http.middlewares.app-prefixstripper.stripprefix.prefixes=/${APP_PATH:-app}"
@@ -95,7 +109,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.fuseki.rule=PathPrefix(`/${FUSEKI_PATH:-fuseki}`) || PathPrefix(`/static`)
-      - traefik.http.routers.fuseki.entrypoints=web
+      - traefik.http.routers.fuseki.entrypoints=websecure
       - traefik.http.routers.fuseki.service=fuseki
       - traefik.http.services.fuseki.loadbalancer.server.port=3030
       - "traefik.http.middlewares.fuseki-prefixstripper.stripprefix.prefixes=/${FUSEKI_PATH:-fuseki}"
@@ -112,3 +126,5 @@ networks:
 volumes:
   fuseki-data:
     name: fuseki-data
+  treafik-certs:
+    name: treafik-certs
