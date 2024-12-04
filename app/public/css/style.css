@@ -9,11 +9,10 @@ body {
   font-family: 'Dosis', sans-serif;
   position: relative;
   margin: 0;
-  min-height: 100%;
   padding-bottom: 6.74rem;
+  min-height: 100%;
   box-sizing: inherit;
-
-  }
+}
   
   #icon{
     width: 10%;
@@ -22,7 +21,7 @@ body {
   /* Navbar Hintergrundfarbe */
   
   .navbar.bg-body-tertiary {
-    background: linear-gradient(180deg, #E679AB 0%, #E679AB 100%)!important; 
+    background: linear-gradient(180deg, #E679AB 0%, #E679AB 100%) !important;
   }
   .navbar-brand {
   color: #ffffff !important;
@@ -71,8 +70,7 @@ body {
   }
   
   .nav-item{
-    padding-left: 20px;
-    padding-right: 20px;
+    text-align: center;
   }
   
   
@@ -204,7 +202,6 @@ body {
   }
   
   #label-continuation{
-    
     margin-top: 30px;
     padding: 5px;
     height: 50px;
@@ -215,14 +212,26 @@ body {
     color: white;
   
   }
-  
+
+  div.habit-input-container,
+  div.clear-container{
+    height: 5em;
+    min-height: 5em;
+  }
+
+  div#habit-input,
+  button#clear {
+    height: 100%;
+  }
 
   #clear{
-    background-color: #E8F0F5;
-    text-align: 30;
-    width: 50px;
-    padding-top: 1%;
-    line-height: 5%;
+    color: #E679AB;
+    background-color: transparent;
+    border: 0 none;
+    height: auto;
+    width: auto;;
+    padding: 0;
+    margin: 0;
   }
 
   #time{
@@ -259,8 +268,6 @@ body {
     border-radius: 20px;
    
   }
-  
-  
   
   button {
     --primary-color: #E679AB;
@@ -434,25 +441,11 @@ body {
     color: #111;
   }  
   
-  
   .language-list   a:hover  {
     color: #fff;
     box-shadow: inset 200px 0 0 0 rgb(197, 201, 197)
   }
   
-  
-  
-  #lang-menu {
-    width: 100px;
-    text-align: right;
-    font-weight: bold;
-   
-    position: relative;
-  }
-  
-
-
-
   #icon2{
     width: 13%;
     margin-top: 20px;
