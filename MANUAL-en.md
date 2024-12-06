@@ -136,7 +136,7 @@ The selection of the experiment group has an influence on what content can be se
 
 After the habit has been recorded, the Habit App user has the opportunity to provide further voluntary information before the habit is finally donated.
 
-The voluntary information requested is the following demographic information about the Habit App user:
+The voluntary information requested includes the following demographic information about the Habit App user:
 
 - Gender
 - Age
@@ -149,7 +149,7 @@ The voluntary information requested is the following demographic information abo
 - Educational Background
 - Occupation and Everyday Working Life
 
-The additional collection of voluntary information allows a donated habit to be better categorized, which further increases the contribution to further research.
+The additional collection of voluntary information allows a donated habit to be better categorized, which further increases its value for research.
 
 When donating several habits in succession or within a browser session, the additional voluntary information is not requested several times, but only during the first data donation.
 
