@@ -66,7 +66,7 @@ While the main categories of habit contexts are well-defined, other unique or co
 
 # 2x2 Experimental Design
 
-The 2x2 experimental design is a structured approach to study how the level of constraint in task instructions and  general description formats impacts participants' responses. It involves two independent variables—**Task Type** (Closed vs. Open) and **General Description Format** (Closed vs. Open)—resulting in four experimental groups. Each group combines one level of task description with one level of general instruction description, providing insights into how different levels of structure influence data quality, diversity, and consistency. The 2x2 experimental design allows us to explore how variations in task and general description format influence data quality. We examine how closed versus open formats of task description and general instruction affect engagement as well as the richness and diversity of responses. This design also lets us investigate interaction effects, such as whether open-ended tasks paired with open descriptions foster creativity at the expense of comparability. By analyzing these factors, we aim to identify the best balance of structure and flexibility to meet our research goals, whether prioritizing standardization or maximizing data richness.
+The 2x2 experimental design is a structured approach to study how the level of constraint in task instructions and  general description formats impacts participants' responses. It involves two independent variables—**Task Type** (Closed vs. Open) and **General Description Format** (Closed vs. Open)—resulting in four experimental groups. Each group combines one level of task description with one level of general instruction description, providing insights into how different levels of structure influence data quality, diversity, and consistency. The 2x2 experimental design allows to explore how variations in task and general description format influence data quality. We examine how closed versus open formats of task description and general instruction affect engagement as well as the richness and diversity of responses. This design also lets us investigate interaction effects, such as whether open-ended tasks paired with open descriptions foster creativity at the expense of comparability. By analyzing these factors, we aim to identify the best balance of structure and flexibility to meet our research goals, whether prioritizing standardization or maximizing data richness.
 
 ![2x2 Experiment Design](2x2ExperimentDesign.png)
 
@@ -75,7 +75,8 @@ The 2x2 experimental design is a structured approach to study how the level of c
 1. **Task Description Format**:
 
    - **Closed**: Participants are given specific, well-defined tasks, which focus on reporting habits within predefined categories. These participants receive extensive guidance to ensure their responses are aligned with the experiment's objectives. For example, they are shown predefined contexts such as **time**, **physical setting**, **social context**, **prior behavior**, and **internal state**. Participants also see examples like "When arriving home after work (context), I immediately change into workout clothes and go to the gym (behavior)." This structured approach minimizes ambiguity and ensures consistency in the data collected.
-   - **Open**: Participants have the freedom to choose which habits to report and how to define their context. Instead of predefined tasks, they are provided with general instructions encouraging them to explore personal habits. For example, participants may be asked to think about a habit they perform frequently and describe it as they see fit. They receive less guidance about specific categories or examples, encouraging a broader range of responses and more creativity.
+   - **Open**: Participants have the freedom to report their habit incluing its context as they want. They receive less guidance about specific categories or examples, encouraging a broader range of responses and more creativity.
+     
 2. **General Instruction Format**:
 
    - **Closed-Description**: Participants describe their habits using a predefined structure. This includes categories such as **time**, **physical setting**, **social context**, **prior behavior**, and **internal state**, each with specific prompts to ensure detailed responses. For instance, participants might be instructed to complete a template like: "When [context], I [behavior]." To support this, they are presented with examples for each category:
@@ -86,22 +87,23 @@ The 2x2 experimental design is a structured approach to study how the level of c
      - **Prior behavior**: "After brushing my teeth, I floss every night."
      - **Internal state**: "When feeling stressed, I practice mindfulness meditation."
 
-     These examples help participants align their responses to the predefined structure while ensuring all relevant variables are captured systematically.
-   - **Open-Description**: Participants only get minimal instruction to not be biased to the predefined categories of the closed-description scenario and are free to describe their habits in their own words. They are encouraged to elaborate naturally on their habits and contexts. Instead of prompts, they receive general encouragement to be detailed and descriptive such as: "Please describe the context in which you perform this habit, including details like time, location, and emotional state if relevant." This format aims to capture richer and more diverse responses but relies on the participants' initiative and understanding.
+     These examples help participants align their responses to the predefined structure while ensuring all relevant context dimensions are captured.
+     
+   - **Open-Description**: Participants only get minimal instruction to not be biased to the predefined context dimensions and are free to describe their habits (including context) in their own words. This format aims to capture richer and more diverse responses but relies on the participants' initiative and understanding.
 
 ## Groups
 
 - **Group 1: Closed-Task, Closed-Description**:
-  - Full guidance is provided. Participants are given predefined tasks and required to use structured formats. They see examples for each context (time, physical setting, etc.) and are prompted to align their responses with the given categories.
+  - Full guidance is provided. Participants are given predefined tasks description and are required to use structured input formats. Before starting with data entry, they see examples for each context (time, physical setting, etc.) and are prompted to align their responses with the given categories.
 
 - **Group 2: Closed-Task, Open-Description**:
-  - Participants are assigned specific tasks but have the freedom to describe habits in their own words. They receive examples of habits to help them understand the scope of their responses but are not constrained by templates or predefined categories.
+  - Participants are assigned specific tasks without being prompted with much general instruction information. They receive examples of habits in the task description to help them understand the scope of their responses but do not receive much explanation in the general instruction.
 
 - **Group 3: Open-Task, Closed-Description**:
-  - Minimal guidance is offered regarding task selection, allowing participants to choose their own habits. However, once chosen, they must use structured formats to describe their habits. Examples and predefined categories are provided to guide their descriptions.
+  - Minimal guidance is offered regarding task execution and data entry. However, before starting data entry, the participants receives comprehensive instructions with examples.
 
 - **Group 4: Open-Task, Open-Description**:
-  - This group receives the least amount of guidance. Participants are free to choose both their tasks and description style. They are encouraged to provide detailed and comprehensive responses but are not shown specific categories or examples, allowing for maximum flexibility and creativity.
+  - This group receives the least amount of guidance. Participants are free to report about their habit and its context dimension as they like. They are not shown specific categories or examples, allowing for maximum flexibility and creativity.
 
 This differentiated support ensures that each group aligns with its designated level of task and description flexibility, enabling the study to investigate how varying degrees of structure influence the quality and diversity of the data collected.
 
