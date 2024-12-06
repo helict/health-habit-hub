@@ -39,7 +39,7 @@ By specifying or including these factors in combination, different possibilities
 
 **Experiment group 3** - Habit app users are given partial instructions by displaying the general instructions. A habit is recorded according to a predefined scheme.
 
-**Experiment group 4** - Habit app users are not given any instructions. The habit is recorded in their own words without any further instructions.
+**Experiment group 4** - Habit app users are not given any instructions. The habit is recorded in their own words without any instructions.
 
 ### Step-by-step instructions
 
