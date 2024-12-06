@@ -1,6 +1,6 @@
 # General Experimental Design
 
-Understanding the mechanisms of habit formation and maintenance is crucial for developing effective interventions that promote positive behavioral change [^1]. This study investigates two distinct research questions simultaneously.
+Understanding the mechanisms of habit formation and maintenance is crucial for developing effective interventions that promote positive behavioral change [^1]. This study investigates two research questions.
 
 First, it seeks to understand how participants define and report their habits. The goal is to create a robust database that can serve as a foundation for advancing the understanding of habits, particularly in the context of behavioral change interventions. This database will help identify actionable factors in habit formation that can support individuals in developing healthier habits across various contexts and integrating them into their daily routines [^2].
 
