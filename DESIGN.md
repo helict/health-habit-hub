@@ -68,7 +68,7 @@ While the main categories of habit contexts are well-defined, other unique or co
 
 The 2x2 experimental design is a structured approach to study how the level of constraint in task instructions and  general description formats impacts participants' responses. It involves two independent variables—**Task Type** (Closed vs. Open) and **General Description Format** (Closed vs. Open)—resulting in four experimental groups. Each group combines one level of task description with one level of general instruction description, providing insights into how different levels of structure influence data quality, diversity, and consistency. The 2x2 experimental design allows to explore how variations in task and general description format influence data quality. We examine how closed versus open formats of task description and general instruction affect engagement as well as the richness and diversity of responses. This design also lets us investigate interaction effects, such as whether open-ended tasks paired with open descriptions foster creativity at the expense of comparability. By analyzing these factors, we aim to identify the best balance of structure and flexibility to meet our research goals, whether prioritizing standardization or maximizing data richness.
 
-![2x2 Experiment Design](./assets/2x2ExperimentDesign.png)
+![2x2 Experiment Design](2x2ExperimentDesign.png)
 
 ## Variables in the Design
 
