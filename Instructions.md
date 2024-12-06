@@ -72,11 +72,11 @@ The 2x2 experimental design is a structured approach to study how the level of c
 
 ## Variables in the Design
 
-1. **Task Type**:
+1. **Task Description Format**:
 
-   - **Closed-Task**: Participants are given specific, well-defined tasks, which focus on reporting habits within predefined categories. These participants receive extensive guidance to ensure their responses are aligned with the experiment's objectives. For example, they are shown predefined contexts such as **time**, **physical setting**, **social context**, **prior behavior**, and **internal state**. Participants also see examples like "When arriving home after work (context), I immediately change into workout clothes and go to the gym (behavior)." This structured approach minimizes ambiguity and ensures consistency in the data collected.
-   - **Open-Task**: Participants have the freedom to choose which habits to report and how to define their context. Instead of predefined tasks, they are provided with general instructions encouraging them to explore personal habits. For example, participants may be asked to think about a habit they perform frequently and describe it as they see fit. They receive less guidance about specific categories or examples, encouraging a broader range of responses and more creativity.
-2. **Description Format**:
+   - **Closed**: Participants are given specific, well-defined tasks, which focus on reporting habits within predefined categories. These participants receive extensive guidance to ensure their responses are aligned with the experiment's objectives. For example, they are shown predefined contexts such as **time**, **physical setting**, **social context**, **prior behavior**, and **internal state**. Participants also see examples like "When arriving home after work (context), I immediately change into workout clothes and go to the gym (behavior)." This structured approach minimizes ambiguity and ensures consistency in the data collected.
+   - **Open**: Participants have the freedom to choose which habits to report and how to define their context. Instead of predefined tasks, they are provided with general instructions encouraging them to explore personal habits. For example, participants may be asked to think about a habit they perform frequently and describe it as they see fit. They receive less guidance about specific categories or examples, encouraging a broader range of responses and more creativity.
+2. **General Instruction Format**:
 
    - **Closed-Description**: Participants describe their habits using a predefined structure. This includes categories such as **time**, **physical setting**, **social context**, **prior behavior**, and **internal state**, each with specific prompts to ensure detailed responses. For instance, participants might be instructed to complete a template like: "When [context], I [behavior]." To support this, they are presented with examples for each category:
 
