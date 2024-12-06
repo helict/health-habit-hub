@@ -29,7 +29,3 @@ TBD
 ## Examples
 
 TBD Good/ Bad Examples
-
-# User Manual
-
-TBD
