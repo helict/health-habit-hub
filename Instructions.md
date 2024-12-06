@@ -87,7 +87,7 @@ The 2x2 experimental design is a structured approach to study how the level of c
      - **Internal state**: "When feeling stressed, I practice mindfulness meditation."
 
      These examples help participants align their responses to the predefined structure while ensuring all relevant variables are captured systematically.
-   - **Open-Description**: Participants are free to describe their habits in their own words, without being constrained by predefined categories or templates. They are encouraged to elaborate naturally on their habits and contexts. Instead of prompts, they receive general encouragement to be detailed and descriptive. For instance, they might be asked, "Please describe the context in which you perform this habit, including details like time, location, and emotional state if relevant." This format aims to capture richer and more diverse responses but relies on the participants' initiative and understanding.
+   - **Open-Description**: Participants only get minimal instruction to not be biased to the predefined categories of the closed-description scenario and are free to describe their habits in their own words. They are encouraged to elaborate naturally on their habits and contexts. Instead of prompts, they receive general encouragement to be detailed and descriptive such as: "Please describe the context in which you perform this habit, including details like time, location, and emotional state if relevant." This format aims to capture richer and more diverse responses but relies on the participants' initiative and understanding.
 
 ## Groups
 
