@@ -63,7 +63,7 @@ The selection of the experiment group has an influence on what content can be se
   </div>
 </div>
 -->
-
+    <br/><br/>
 
 **Experiment group 1**
 
@@ -82,7 +82,7 @@ The selection of the experiment group has an influence on what content can be se
   </div>
 </div>
 
-
+    <br/><br/>
 **Experiment group 2**
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
@@ -100,7 +100,7 @@ The selection of the experiment group has an influence on what content can be se
   </div>
 </div>
 
-
+    <br/><br/>
 **Experiment group 3**
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
@@ -118,7 +118,7 @@ The selection of the experiment group has an influence on what content can be se
   </div>
 </div>
 
-
+    <br/><br/>
 **Experiment group 4**
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
