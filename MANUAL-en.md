@@ -28,8 +28,8 @@ If you like the idea behind the Habit app and would like to support the research
 
 As the understanding of what exactly a habit is may vary in different social and cultural environments, a method for surveying habits was developed and implemented in the Habit App that is adapted to this situation. The method is based on the assumption that clarification and information on the definition of the term habit has an impact on the quality of the data donation. According to this assumption, the following factors influence the survey:
 
-- **General instructions**: This is a greeting and definition of the term habit. The components of a habit are explained and at least one concrete example of a habit is given. The contribution of data donation to further research is explained.
-- **Task description**: A precise description of the sequence of steps from entering the habit to submitting the data donation.
+- **General instructions**: General instructions include a welcome note and a definition of the term habit. The components of a habit are explained and at least one concrete example of a habit is given. The contribution of data donation to further research is explained.
+- **Task description**: Task description contains a precise description of the sequence of steps from entering the habit to submitting the data donation.
 
 By specifying or including these factors in combination, different possibilities for collecting a habit arise. These combinations are divided into four experiment groups and implemented by the Habit App. The experiment groups are made up as follows:
 
