@@ -53,23 +53,11 @@ When the Habit app is opened, one of the four possible experiment groups is dete
 
 The selection of the experiment group has an influence on what content can be seen in the Habit app and the extent to which instructions for donating a habit are provided. When the Habit App is opened, the content of the start page is therefore determined by the experiment group (see section Behavior of the start page).
 
-<!--
-<div style="display: flex; flex-direction: row; flex-wrap: nowrap">
-  <div style="padding: 1em; width: 50%">
-  
-  </div>
-  <div style="padding: 1em; width: 50%">
-  
-  </div>
-</div>
--->
-  
-
 **Experiment group 1**
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="./assets/manual/sp_exp_g1-en.png"/>
+    <img src="../assets/manual/sp_exp_g1-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Habit app.
@@ -82,12 +70,11 @@ The selection of the experiment group has an influence on what content can be se
   </div>
 </div>
 
-  
 **Experiment group 2**
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="./assets/manual/sp_exp_g2-en.png"/>
+    <img src="../assets/manual/sp_exp_g2-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Habit app.
@@ -100,12 +87,11 @@ The selection of the experiment group has an influence on what content can be se
   </div>
 </div>
 
-  
 **Experiment group 3**
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="./assets/manual/sp_exp_g3-en.png"/>
+    <img src="../assets/manual/sp_exp_g3-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Habit app.
@@ -118,12 +104,11 @@ The selection of the experiment group has an influence on what content can be se
   </div>
 </div>
 
-   
 **Experiment group 4**
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="./assets/manual/sp_exp_g4-en.png"/>
+    <img src="../assets/manual/sp_exp_g4-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Habit app.
@@ -159,7 +144,7 @@ When donating several habits in succession or within a browser session, the addi
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="./assets/manual/dp-en.png"/>
+    <img src="../assets/manual/dp-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Habit app.
@@ -172,7 +157,7 @@ When donating several habits in succession or within a browser session, the addi
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="./assets/manual/rp-en.png"/>
+    <img src="../assets/manual/rp-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Habit app.
@@ -199,7 +184,7 @@ In progress
 
 #### Time
 
-**Markierung**: Time Reference
+**Label**: Time Reference
 
 **Description**: Time is one of the most prominent contextual variables influencing habit formation. It serves as a consistent and predictable anchor, making it easier to associate specific behaviors with particular moments or periods. Temporal cues create a natural rhythm for habit repetition, reducing the reliance on conscious decision-making.
 
