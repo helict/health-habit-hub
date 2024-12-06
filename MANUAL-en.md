@@ -4,11 +4,11 @@
 
 ### Purpose of the app
 
-Thank you for your interest in the Habit App and for using it. The purpose of the Habit App is to record the everyday habits of people from different backgrounds and cultures. A habit is a learned or trained behavior that is performed situationally and predominantly subconsciously. The survey is carried out as a voluntary and anonymous data donation.
+Thank you for your interest in the Habit App and for choosing to use it! The Habit App is designed to collect everyday habits of individuals from diverse backgrounds and cultures. A habit typically connects a behavior (e.g., brushing teeth) with a context (e.g., after waking up in the morning) and is often performed subconsciously, requiring minimal cognitive effort.
 
-The data donations are intended to create and provide a database of habits that can be used for research. On the basis of this database, further research is made possible, e.g. with regard to established habits with reference to a situation and the circumstances in everyday life or also to social origin and cultural background. With a better understanding of everyday habits, it is easier to identify and investigate beneficial or obstructive behavioral patterns in various aspects of social relevance. In addition, a better understanding can promote more suitable or innovative solutions for different areas of society, e.g. a healthier diet or more effective daily planning.
+Participation in the survey is entirely voluntary and anonymous, as it involves donating data to support research. The collected data aims to build a comprehensive database of habit elements, such as behaviors and their associated contexts. This database will facilitate research, for example, identifying optimal contexts for establishing beneficial habits, helping habits become stronger, or exploring cultural differences in habitual behaviors. With a better understanding of effective contexts for habits, it becomes easier to define and promote positive habits, ultimately supporting their reinforcement.
 
-By donating your data, you are helping to better understand parts of society and influence its further development.
+By donating your data, you are helping to better understand the habits of our society and help influence to develop beneficial habits.
 
 The Habit App is developed, provided and researched in international collaboration by renowned Japanese, Canadian and German research institutions.
 
