@@ -10,15 +10,15 @@ To answer these research questions, an online web interface was developed, allow
 
 # Habit Context
 
-Habit formation and maintenance are inherently context-dependent, as highlighted by habit theory and cognitive studies on behavior [^5], [^6], [^7]. Cues and contexts play a crucial role in initiating and sustaining habits, serving as anchors that trigger automatic behaviors. Without these contextual frameworks, habits lose their consistency and are less likely to persist over time [^8]. Understanding the relationship between habits and their contexts is therefore essential for developing interventions that promote positive behaviors or disrupt maladaptive ones.
+Habit formation and maintenance are inherently context-dependent, as highlighted by habit studies and cognitive studies on behavior [^5], [^6], [^7]. Contexts are crucial in initiating and sustaining habits, serving as anchors that trigger automatic behaviors. Without these contextual integration, habits lose their consistency and are less likely to persist over time [^8]. Understanding the relationship between habits and their contexts is therefore essential for developing interventions that promote positive behaviors or disrupt maladaptive ones.
 
-This study seeks to advance our understanding of how specific contextual variables influence habit formation and maintenance. By exploring these dynamics, we aim to identify strategies for tailoring interventions that leverage contextual factors to optimize the habit-formation process. Such insights are valuable not only for individuals striving to adopt healthier lifestyles but also for broader applications in fields such as healthcare, education, and workplace productivity.
+This study seeks to advance our understanding of how specific contexts influence habit formation and maintenance. By exploring these dynamics, we aim to identify strategies for tailoring interventions that leverage context factors to optimize the habit-formation process. Such insights are valuable not only for individuals striving to adopt healthier lifestyles but also for broader applications in fields such as healthcare, education, and workplace productivity.
 
-Through the systematic analysis of habits and their contexts, donated by volunteers, we aim to generate actionable insights for designing personalized and scalable habit-based interventions. The contexts we are investigating include **time**, **physical setting**, **social context**, **prior behavior**, and **internal state**. Since multiple contexts may often be present within a single habit description, participants are instructed to mark all relevant contexts they identify.
+Through the systematic analysis of habits and their contexts, donated by volunteers, we aim to generate actionable insights for designing personalized and scalable habit-based interventions. The contexts we are multidimensional and include **time**, **physical setting**, **social context**, **prior behavior**, and **internal state**. Since multiple dimensions of contexts may often be present within a single habit description, participants are instructed to mark all relevant context dimension they identify.
 
 ## Time
 
-Time is one of the most prominent contextual variables influencing habit formation. It serves as a consistent and predictable anchor, making it easier to associate specific behaviors with particular moments or periods. Temporal cues create a natural rhythm for habit repetition, reducing the reliance on conscious decision-making.
+Time is one of the most prominent context dimension influencing habit formation. It serves as a consistent and predictable anchor, making it easier to associate specific behaviors with particular moments or periods. Temporal cues create a natural rhythm for habit repetition, reducing the reliance on conscious decision-making.
 
 ### Example
 
