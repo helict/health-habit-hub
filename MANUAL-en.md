@@ -64,6 +64,7 @@ The selection of the experiment group has an influence on what content can be se
 </div>
 -->
 
+
 **Experiment group 1**
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
@@ -80,6 +81,7 @@ The selection of the experiment group has an influence on what content can be se
     Once the habit has been entered and selected in the input field, the habit can be donated by pressing the button at the bottom.
   </div>
 </div>
+
 
 **Experiment group 2**
 
@@ -98,6 +100,7 @@ The selection of the experiment group has an influence on what content can be se
   </div>
 </div>
 
+
 **Experiment group 3**
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
@@ -114,6 +117,7 @@ The selection of the experiment group has an influence on what content can be se
     Once the habit has been entered and selected in the input field, the habit can be donated by pressing the button at the bottom.
   </div>
 </div>
+
 
 **Experiment group 4**
 
