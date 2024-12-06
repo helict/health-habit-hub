@@ -51,7 +51,7 @@ The Habit App is opened by clicking on the link in the browser. If a bookmark ha
 
 When the Habit app is opened, one of the four possible experiment groups is determined and selected in the background (see section Donating a habit). If the Habit app is opened in a new browser session, one of the four experiment groups is randomly determined and selected. However, if a habit has already been donated via an existing browser session, this experiment group is adopted.
 
-The selection of the experiment group has an influence on what content can be seen in the Habit app and the extent to which instructions for donating a habit are provided. When the Habit App is called up, the content of the start page is therefore determined by the experiment group (see section Behavior of the start page).
+The selection of the experiment group has an influence on what content can be seen in the Habit app and the extent to which instructions for donating a habit are provided. When the Habit App is opened, the content of the start page is therefore determined by the experiment group (see section Behavior of the start page).
 
 <!--
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
