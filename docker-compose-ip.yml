@@ -22,7 +22,7 @@ services:
       - --certificatesResolvers.letencrypt.acme.storage=/certs/acme.json
       - --certificatesresolvers.letencrypt.acme.tlschallenge=true
       - --certificatesResolvers.letencrypt.acme.caServer=https://acme-v02.api.letsencrypt.org/directory # prod (default)
-      - --certificatesResolvers.letencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # staging
+      #- --certificatesResolvers.letencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # staging
       - --certificatesResolvers.letencrypt.acme.httpChallenge.entryPoint=web
       - --experimental.plugins.rewriteHeaders.moduleName=github.com/XciD/traefik-plugin-rewrite-headers
       - --experimental.plugins.rewriteHeaders.version=v0.0.4

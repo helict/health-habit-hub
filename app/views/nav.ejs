@@ -28,7 +28,7 @@
                     </a>
                     <div class="dropdown-menu w-50" aria-labelledby="languageDropdown">
                         <% allLanguages.keys().forEach(function(language) { %>
-                            <a href="#" class="dropdown-item" onclick="changeLanguage('<%= allLanguages.get(language) %>'); createContextButtons(contexts, language)"><%= language %></a>
+                            <a class="dropdown-item" onclick="changeLanguage('<%= allLanguages.get(language) %>'); createContextButtons(contexts, language)"><%= language %></a>
                         <% }); %>
                     </div>
                 </li>
