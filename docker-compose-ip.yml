@@ -106,6 +106,8 @@ services:
       - traefik.http.routers.fuseki.rule=PathPrefix(`/${FUSEKI_PATH:-fuseki}`) || PathPrefix(`/static`)
       - traefik.http.routers.fuseki.entrypoints=websecure
       - traefik.http.routers.fuseki.service=fuseki
+      - traefik.http.routers.app.tls=true
+      - traefik.http.routers.app.tls.certresolver=letencrypt
       - traefik.http.services.fuseki.loadbalancer.server.port=3030
       - "traefik.http.middlewares.fuseki-prefixstripper.stripprefix.prefixes=/${FUSEKI_PATH:-fuseki}"
       - "traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].header=Location"
