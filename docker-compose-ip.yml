@@ -15,8 +15,8 @@ services:
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=proxy
       - --entrypoints.web.address=:80
-      #- --entrypoints.web.http.redirections.entryPoint.to=websecure
-      #- --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
       - --entrypoints.websecure.address=:443
       - --certificatesResolvers.letencrypt.acme.email=youremail@email.com
       - --certificatesResolvers.letencrypt.acme.storage=/certs/acme.json
@@ -40,7 +40,9 @@ services:
       - traefik.enable=true
       #- traefik.http.routers.proxy.rule=PathPrefix(`/${PROXY_PATH:-proxy}`)
       - traefik.http.routers.proxy.rule=Host(`${HOST:-localhost}`)
-      - traefik.http.routers.proxy.entrypoints=web
+      - traefik.http.routers.proxy.entrypoints=websecure
+      - traefik.http.routers.proxy.tls=true
+      - traefik.http.routers.proxy.tls.certresolver=letencrypt
       - traefik.http.routers.proxy.service=proxy
       - traefik.http.services.proxy.loadbalancer.server.port=8080
       #- "traefik.http.middlewares.proxy-prefixstripper.stripprefix.prefixes=/${PROXY_PATH:-proxy}"
@@ -106,8 +108,8 @@ services:
       - traefik.http.routers.fuseki.rule=PathPrefix(`/${FUSEKI_PATH:-fuseki}`) || PathPrefix(`/static`)
       - traefik.http.routers.fuseki.entrypoints=websecure
       - traefik.http.routers.fuseki.service=fuseki
-      - traefik.http.routers.app.tls=true
-      - traefik.http.routers.app.tls.certresolver=letencrypt
+      - traefik.http.routers.fuseki.tls=true
+      - traefik.http.routers.fuseki.tls.certresolver=letencrypt
       - traefik.http.services.fuseki.loadbalancer.server.port=3030
       - "traefik.http.middlewares.fuseki-prefixstripper.stripprefix.prefixes=/${FUSEKI_PATH:-fuseki}"
       - "traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].header=Location"
