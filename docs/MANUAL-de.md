@@ -57,7 +57,7 @@ Die Auswahl der Experimentgruppe hat Einfluss darauf, welche Inhalte in der Habi
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g1-de.png"/>
+    <img src="assets/manual/sp_exp_g1-de.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     Die Seite ist in einen Kopf-, Haupt- und Fußbereich aufgeteilt. Im Kopfbereich befindet sich das Navigationsmenü und Möglichkeiten zur Spracheinstellung. Im Fußbereich befinden sich Verlinkungen auf Soziale Medien, die im Zusammenhang mit der Habit App stehen.
@@ -74,7 +74,7 @@ Die Auswahl der Experimentgruppe hat Einfluss darauf, welche Inhalte in der Habi
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g2-de.png"/>
+    <img src="assets/manual/sp_exp_g2-de.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     Die Seite ist in einen Kopf-, Haupt- und Fußbereich aufgeteilt. Im Kopfbereich befindet sich das Navigationsmenü und Möglichkeiten zur Spracheinstellung. Im Fußbereich befinden sich Verlinkungen auf Soziale Medien, die im Zusammenhang mit der Habit App stehen.
@@ -91,7 +91,7 @@ Die Auswahl der Experimentgruppe hat Einfluss darauf, welche Inhalte in der Habi
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g3-de.png"/>
+    <img src="assets/manual/sp_exp_g3-de.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     Die Seite ist in einen Kopf-, Haupt- und Fußbereich aufgeteilt. Im Kopfbereich befindet sich das Navigationsmenü und Möglichkeiten zur Spracheinstellung. Im Fußbereich befinden sich Verlinkungen auf Soziale Medien, die im Zusammenhang mit der Habit App stehen.
@@ -108,7 +108,7 @@ Die Auswahl der Experimentgruppe hat Einfluss darauf, welche Inhalte in der Habi
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g4-de.png"/>
+    <img src="assets/manual/sp_exp_g4-de.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     Die Seite ist in einen Kopf-, Haupt- und Fußbereich aufgeteilt. Im Kopfbereich befindet sich das Navigationsmenü und Möglichkeiten zur Spracheinstellung. Im Fußbereich befinden sich Verlinkungen auf Soziale Medien, die im Zusammenhang mit der Habit App stehen.
@@ -144,7 +144,7 @@ Beim Spenden mehrerer Gewohnheiten hintereinander oder innerhalb einer Browser-S
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/dp-de.png"/>
+    <img src="assets/manual/dp-de.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     Die Seite ist in einen Kopf-, Haupt- und Fußbereich aufgeteilt. Im Kopfbereich befindet sich das Navigationsmenü und Möglichkeiten zur Spracheinstellung. Im Fußbereich befinden sich Verlinkungen auf Soziale Medien, die im Zusammenhang mit der Habit App stehen.
@@ -157,7 +157,7 @@ Beim Spenden mehrerer Gewohnheiten hintereinander oder innerhalb einer Browser-S
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/rp-de.png"/>
+    <img src="assets/manual/rp-de.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     Die Seite ist in einen Kopf-, Haupt- und Fußbereich aufgeteilt. Im Kopfbereich befindet sich das Navigationsmenü und Möglichkeiten zur Spracheinstellung. Im Fußbereich befinden sich Verlinkungen auf Soziale Medien, die im Zusammenhang mit der Habit App stehen.

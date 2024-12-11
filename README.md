@@ -70,7 +70,7 @@ The repository contains two services:
 
 ### Overview
 
-![Architecture diagram](../assets/Architecture.svg)
+![Architecture diagram](docs/assets/Architecture.svg)
 
 ### Utility scripts for development
 

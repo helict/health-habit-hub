@@ -57,7 +57,7 @@ The selection of the experiment group has an influence on what content can be se
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g1-en.png"/>
+    <img src="assets/manual/sp_exp_g1-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Habit app.
@@ -74,7 +74,7 @@ The selection of the experiment group has an influence on what content can be se
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g2-en.png"/>
+    <img src="assets/manual/sp_exp_g2-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Habit app.
@@ -91,7 +91,7 @@ The selection of the experiment group has an influence on what content can be se
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g3-en.png"/>
+    <img src="assets/manual/sp_exp_g3-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Habit app.
@@ -108,7 +108,7 @@ The selection of the experiment group has an influence on what content can be se
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g4-en.png"/>
+    <img src="assets/manual/sp_exp_g4-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Habit app.
@@ -144,7 +144,7 @@ When donating several habits in succession or within a browser session, the addi
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/dp-en.png"/>
+    <img src="assets/manual/dp-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Habit app.
@@ -157,7 +157,7 @@ When donating several habits in succession or within a browser session, the addi
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/rp-en.png"/>
+    <img src="assets/manual/rp-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Habit app.
