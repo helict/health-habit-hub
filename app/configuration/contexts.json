@@ -1,19 +1,28 @@
 [
   {
+    "id": "time",
+    "labels": {
+      "en": "Time Reference",
+      "de": "Zeitbezug",
+      "ja": "時間基準"
+    },
+    "color": "#52d9c2"
+  },
+  {
     "id": "physical",
     "labels": {
-      "en": "Physical",
-      "de": "Physisch",
-      "ja": "物理的"
+      "en": "Physical Setting",
+      "de": "Physische Umgebung",
+      "ja": "物理的設定"
     },
     "color": "#b2d8b2"
   },
   {
     "id": "prior",
     "labels": {
-      "en": "Prior",
-      "de": "Vorher",
-      "ja": "前"
+      "en": "Prior Behavior",
+      "de": "Vorheriges Verhalten",
+      "ja": "事前行動"
     },
     "color": "#b2c7e1"
   },
@@ -29,9 +38,9 @@
   {
     "id": "internal",
     "labels": {
-      "en": "Internal",
-      "de": "Intern",
-      "ja": "内部の"
+      "en": "Internal State",
+      "de": "Interner Zustand",
+      "ja": "内部状態"
     },
     "color": "#e1b2e1"
   },

@@ -50,11 +50,11 @@
   <% } %>
 
   <!-- Datadonation guide -->
-  <div class="container" id="datadonationheader">
+  <div class="container ml-5 mr-5" id="datadonationheader">
     <div class="row">
       <h5 id="header"><%= proceeding %></h5>
       <div class="col-12">
-        <ul id="steps" style="list-style-type: dicimal;">
+        <ul id="steps" style="list-style-type: decimal">
           <li><%= step1 %></li>
         <% if (experimentGroup.closedTask) { %>
           <li><%= step2 %></li>
@@ -64,26 +64,29 @@
       </div>
     </div>
     <div class="row form-group">
-      <div class="col-12">
-        <div contenteditable="true" class="form-control" id="habit-input" style="min-height: 5em;"></div>
+      <div class="col-11 habit-input-container">
+        <div contenteditable="true" class="form-control" id="habit-input"></div>
+      </div>
+      <div class="col-1 p-0 clear-container">
+        <button id="clear"><%= clear %></button>
       </div>
     </div>
     <% if (experimentGroup.closedTask) { %>
-    <div class="row mt-4">
-      <div class="col-8" role="alert">
-        <p id="example1"><%- example1 %></p>
+      <div class="row mt-2">
+        <div class="col-12" role="alert">
+          <p id="example1"><%- example1 %></p>
+        </div>
       </div>
-      <div class="col-4">
-        <button class="custom-button btn" id="clear"><%= clear || 'clear' %></button>
+
+      <div class="d-flex flex-wrap">
+        <% for (const context of contexts) { %>
+          <div class="m-1 flex-grow-1">
+            <button class="btn mt-0 h-100" id="<%= context.id %>" style="background-color:<%= context.color %>">
+              <%= context.labels[navigation.languageCode] %>
+            </button>
+          </div>
+        <% } %>
       </div>
-    </div>
-
-    <div class="d-flex flex-sm-row button-container">
-      <% for (const context of contexts) { %>
-      <button class="custom-button btn" id="<%= context.id %>" style="background-color:<%= context.color %>"><%= context.labels[navigation.languageCode] %></button>
-
-      <% } %>
-    </div>
     <% } %>
   </div>
 
