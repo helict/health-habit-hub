@@ -24,7 +24,7 @@
     </div>
 
     <div class="container mb-5">
-        <a href="/reward.html"><button type="" id="reward"><%= reward || 'Get your reward' %></button></a>
+        <a href='<%= process.env.APP_BASE_PATH %><%= navigation.languageCode %>/reward'><button type="" id="reward"><%= reward || 'Get your reward' %></button></a>
     </div>
 
     <%- include('footer') %>

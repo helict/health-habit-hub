@@ -12,6 +12,8 @@ import aboutRouter from './routes/aboutRouter.js';
 import demoRouter from './routes/demoRouter.js';
 import donateRouter from './routes/donateRouter.js';
 import thanksRouter from './routes/thanksRouter.js';
+import contactRouter from './routes/contactRouter.js';
+import rewardRouter from './routes/rewardRouter.js';
 
 const app = express();
 const port = config.port;
@@ -65,6 +67,8 @@ router.get('/:lng(' + validLanguageCodes + ')?/', (req, res) => {
   res.redirect(301, contextPath + req.lang + '/donate');
 });
 
+router.use('/:lng(' + validLanguageCodes + ')/reward', rewardRouter);
+router.use('/:lng(' + validLanguageCodes + ')/contact', contactRouter);
 router.use('/:lng(' + validLanguageCodes + ')/donate', donateRouter);
 router.use('/:lng(' + validLanguageCodes + ')/about', aboutRouter);
 router.use('/:lng(' + validLanguageCodes + ')/demo', demoRouter); //Probably needs to be changed like the ones on the top

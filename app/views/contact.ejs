@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <%- include('header') %>
+  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/contact.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
+  </head>
+
+  <body>
+
+    <%- include('nav', navigation) %>    
+    
+ <!-- Datadonation guide-->
+ <section id="contact" class="ftco-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+          <div class="row no-gutters">
+            <div class="col-md-6">
+              <div id="contact-wrap" class="contact-wrap w-100 p-lg-5 p-4">
+                <h3 class="mb-4" id="send_us"></h3>
+                <form method="POST" id="contactForm" name="contactForm" class="contactForm">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group mb-3">
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group mb-3">
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group mb-3">
+                        <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group mb-3">
+                        <textarea name="message" class="form-control" id="message" cols="30" rows="6" placeholder="Message"></textarea>
+                      </div>
+                    </div>
+                    
+
+<form action="submit-form" method="POST">
+  
+  
+  <!-- Captcha-Widget -->
+  <div class="g-recaptcha" data-sitekey="6Lc_WPEpAAAAAFmAbljvtUq2lX3Iekior1r3qr7l"></div>
+ 
+ 
+</form>
+
+                    <div class="col-md-12">
+                      <div class="form-group ">
+                        <button type="button" id="submit" class="button" onclick="checkTextfeld()"></button>
+                    </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-stretch">
+              <div id="info-wrap" class="info-wrap w-100 p-lg-5 p-4 img">
+                <h3 id="contact_us"></h3>
+                <div class="dbox w-100">
+                  <div class="text">
+                    <p id="address"></p>
+                  </div>
+                </div>
+                <div  class="dbox w-100">
+                  <div class="text">
+                    <p id="phone"></p>
+                  </div>
+                </div>
+                <div class="dbox w-100">
+                  <div class="text">
+                    <p id="email_contact" ></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+  
+<!-- Footer -->
+<%- include('footer') %>
+  
+
+
+</body>
+</html>
