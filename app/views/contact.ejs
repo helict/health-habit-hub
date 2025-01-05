@@ -23,27 +23,27 @@
           <div class="row no-gutters">
             <div class="col-md-6">
               <div id="contact-wrap" class="contact-wrap w-100 p-lg-5 p-4">
-                <h3 class="mb-4" id="send_us"></h3>
+                <h3 class="mb-4" id="send_us"><%= contact.send_us %></h3>
                 <form method="POST" id="contactForm" name="contactForm" class="contactForm">
                   <div class="row">
                     <div class="col-md-12">
                       <div class="form-group mb-3">
-                        <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                        <input type="text" class="form-control" name="name" id="name" placeholder=<%= contact.name %>>
                       </div>
                     </div>
                     <div class="col-md-12">
                       <div class="form-group mb-3">
-                        <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+                        <input type="email" class="form-control" name="email" id="email" placeholder=<%= contact.email %>>
                       </div>
                     </div>
                     <div class="col-md-12">
                       <div class="form-group mb-3">
-                        <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject">
+                        <input type="text" class="form-control" name="subject" id="subject" placeholder=<%= contact.subject %>>
                       </div>
                     </div>
                     <div class="col-md-12">
                       <div class="form-group mb-3">
-                        <textarea name="message" class="form-control" id="message" cols="30" rows="6" placeholder="Message"></textarea>
+                        <textarea name="message" class="form-control" id="message" cols="30" rows="6" placeholder=<%= contact.message %>></textarea>
                       </div>
                     </div>
                     
@@ -59,7 +59,7 @@
 
                     <div class="col-md-12">
                       <div class="form-group ">
-                        <button type="button" id="submit" class="button" onclick="checkTextfeld()"></button>
+                        <button type="button" id="submit" class="button" onclick="checkTextfeld()"><%= contact.submit %></button>
                     </div>
                     </div>
                   </div>
@@ -68,20 +68,20 @@
             </div>
             <div class="col-md-6 d-flex align-items-stretch">
               <div id="info-wrap" class="info-wrap w-100 p-lg-5 p-4 img">
-                <h3 id="contact_us"></h3>
+                <h3 id="contact_us"><%= contact.contact_us %></h3>
                 <div class="dbox w-100">
                   <div class="text">
-                    <p id="address"></p>
+                    <p id="address"><%= contact.address %></p>
                   </div>
                 </div>
                 <div  class="dbox w-100">
                   <div class="text">
-                    <p id="phone"></p>
+                    <p id="phone"><%= contact.phone %></p>
                   </div>
                 </div>
                 <div class="dbox w-100">
                   <div class="text">
-                    <p id="email_contact" ></p>
+                    <p id="email_contact" ><%= contact.email_contact %></p>
                   </div>
                 </div>
               </div>

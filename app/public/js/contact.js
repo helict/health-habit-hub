@@ -11,10 +11,13 @@ function getBrowserLanguage() {
   }
 }
 // Function to change the language
+/*
 function changeLanguage(lang) {
     currentLanguage = lang;
     loadContentContact();
 }
+*/
+
 //receive form data from opem.html
 function sendOpenContact(){
     let openData = document.getElementById('textfeld').value;
@@ -102,5 +105,5 @@ function updateGreybox(data) {
     document.getElementById('fmore').innerText = data.fmore;
 }
 
-loadContentContact();
+//loadContentContact();
 

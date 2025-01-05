@@ -1,4 +1,22 @@
 {
+
+  "reward": {
+    "geschenke": "褒美 🎁🎉"
+  },
+
+  "contact":{
+    "send_us":"メッセージを送ってください",
+    "name":"名前",
+    "email":"電子メール",
+    "subject":"テーマ",
+    "message":"メッセージ",
+    "submit": "メッセージを送信する",
+    "contact_us": "インプリント",
+    "address": "Address: Straße, Nummer, Dresden",
+    "phone": "01577/123456789",
+    "email_contact": "Email: Habithub@test.de"
+  },
+
   "title": "概要",
   "aboutText": "寄付について",
   "step3Text": "日常生活の「習慣」に関するデータ提供は、人々が自分の日常生活や行動に関するデータを自発的に研究のために提供することで、科学的な進歩に役立てようという考え方です。このデータは健康、心理学、社会科学といったさまざまな分野での研究に活用できるため、革新的な発見をもたらす可能性があります。",

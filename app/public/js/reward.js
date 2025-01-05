@@ -11,10 +11,12 @@ function getBrowserLanguage() {
     }
 }
 // Function to change the language
+/*
 function changeLanguage(lang) {
     currentLanguage = lang;
     loadContentReward();
 }
+*/
 
 // Function to load content based on the selected language
 function loadContentReward() {
