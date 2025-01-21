@@ -19,6 +19,7 @@ jobs:
     - name: Deploy to remote server via SSH
       uses: appleboy/ssh-action@v0.1.8
       with:
+        debug: true
         host: ${{ secrets.SSH_HOSTNAME }}
         username: ${{ secrets.SSH_USER }}
         password: ${{ secrets.SSH_PASSWORD }} # Or use private key instead of password
