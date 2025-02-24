@@ -48,6 +48,8 @@ Open [app.localhost](https://app.localhost) to use the main application \
 Open [fuseki.localhost](http://fuseki.localhost) to see/use the database \
 Open [proxy.localhost](http://proxy.localhost) to see the dashboard 
 
+Alternatively on Mac Docker Desktop run `docker ps` to check where the traffic is routet. You can then access the sites e.g., with `http://localhost:3000/en/donate`
+
 ### Donate a habit
 
 To donate a habit, go to `/donate`. You will be randomly assigned to one of the four experiment groups mentioned above. For the duration of your browser session, Health Habit Hub will remember to which experiment group you have been assigned and only show you the corresponding version of the habit entry form.
