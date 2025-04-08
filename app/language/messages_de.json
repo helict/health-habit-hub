@@ -29,6 +29,12 @@
     "language": "Deutsch"
   },
 
+  "footer": {
+    "imprint": "Impressum",
+    "privacy": "Datenschutz",
+    "accessibility": "Barrierefreiheit"
+  },
+
   "header": "Einführung",
   "text": "Liebe Spenderin/ Spender,<br> wie du wahrscheinlich weißt, stellt eine Gewohnheit eine Verbindung zwischen einem Verhalten und einem Kontext her, in dem das Verhalten konsequent ausgeführt wird. Nehmen wir zum Beispiel das Verhalten, 5 Kilometer zu laufen. Dieses Verhalten kann mit dem Kontext des morgendlichen Aufstehens an einem Wochenende in Verbindung gebracht werden. In diesem Szenario werden die Kontextkategorie Zeit (Wochenendmorgens) und die Kontextkategorie Verhalten (Aufwachen am Morgen) zu einem umfassenden Kontext kombiniert. Ich bin daran interessiert, die Kontexte zu erforschen, die du deinen Verhaltensweisen zuordnest, um sie zu deiner Gewohnheit zu machen. Indem du deine Gewohnheiten mit uns teilst, trägst du zu einem besseren Verständnis dafür bei, wie bestimmte Kontexte Verhaltensweisen verstärken können. Deine Erkenntnisse werden von unschätzbarem Wert sein, wenn es darum geht, anderen zu helfen, starke, personalisierte Gewohnheiten zu entwickeln.",
   "image": "pics/intro_pic.png",

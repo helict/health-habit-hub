@@ -17,7 +17,7 @@
     "email_contact": "Email: Habithub@test.de"
   },
   
-  "title": "About Us - HabitHub",
+  "title": "HabitHub",
   "aboutText": "About the Donation",
   "step3Text": "Overall, the Habit donation opens up a promising future for data-driven research. By voluntarily providing habit data, people are actively contributing to scientific knowledge and shaping progress in fields such as health, psychology and social sciences. This innovative form of data donation could not only pave the way for new discoveries, but also raise awareness of the importance of data ethics and transparency.",
   "navigation": {
@@ -27,6 +27,12 @@
     "contactPageName": "Contact",
     "languageCode": "en",
     "language": "English"
+  },
+
+  "footer": {
+    "imprint": "Imprint",
+    "privacy": "Privacy",
+    "accessibility": "Accessibility"
   },
   
   "header": "Introduction",

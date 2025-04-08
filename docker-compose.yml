@@ -33,6 +33,8 @@ services:
     container_name: app
     build: ./app
     restart: on-failure:3
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
       - NODE_OPTIONS=--no-warnings

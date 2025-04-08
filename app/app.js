@@ -14,6 +14,9 @@ import donateRouter from './routes/donateRouter.js';
 import thanksRouter from './routes/thanksRouter.js';
 import contactRouter from './routes/contactRouter.js';
 import rewardRouter from './routes/rewardRouter.js';
+import imprintRouter from './routes/imprintRouter.js';
+import privacyRouter from './routes/privacyRouter.js';
+import accessibilityRouter from './routes/accessibilityRouter.js';
 
 const app = express();
 const port = config.port;
@@ -73,6 +76,9 @@ router.use('/:lng(' + validLanguageCodes + ')/donate', donateRouter);
 router.use('/:lng(' + validLanguageCodes + ')/about', aboutRouter);
 router.use('/:lng(' + validLanguageCodes + ')/demo', demoRouter); //Probably needs to be changed like the ones on the top
 router.use('/:lng(' + validLanguageCodes + ')/thanks', thanksRouter);
+router.use('/:lng(' + validLanguageCodes + ')/imprint', imprintRouter);
+router.use('/:lng(' + validLanguageCodes + ')/privacy', privacyRouter);
+router.use('/:lng(' + validLanguageCodes + ')/accessibility', accessibilityRouter);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
 router.use((req, res, next) => {

@@ -4,7 +4,7 @@ import { RecaptchaV2 as Recaptcha } from 'express-recaptcha'; // Import the expr
 import {
   saveDonateData,
   showDonateForm,
-} from '../controllers/donateControllers.js';
+} from '../controllers/donateController.js';
 import { config } from '../utils/config.js';
 
 const router = express.Router();

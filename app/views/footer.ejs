@@ -1,13 +1,28 @@
 <footer class="footer">
-    <div class="container">
-        <% let socialLinks = [
-      { url: "https://www.instagram.com/", img: "pics/insta.png" },
-      { url: "https://www.facebook.com/", img: "pics/facebook.png" },
-      { url: "https://www.X.com/", img: "pics/X.png" }
-    ]; %>
+  <div class="container">
+    <div>
+      <% let socialLinks = [
+        { url: "https://www.instagram.com/", img: "pics/insta.png" },
+        { url: "https://www.facebook.com/", img: "pics/facebook.png" },
+        { url: "https://www.X.com/", img: "pics/X.png" }
+      ]; %>
 
-    <% socialLinks.forEach(function(link) { %>
+      <% socialLinks.forEach(function(link) { %>
         <a href="<%= link.url %>"><img src="<%= link.img %>" class="socialmedia"></a>
       <% }); %>
     </div>
-  </footer>
+    <div class="container">
+      <ul class="nav justify-content-center">
+        <li class="nav-item">
+          <a href="<%= navigation.languageCode %>/imprint" class="nav-link"><%= footer.imprint %></a>
+        </li>
+        <li class="nav-item">
+          <a href="<%= navigation.languageCode %>/privacy" class="nav-link"><%= footer.privacy %></a>
+        </li>
+        <li class="nav-item">
+          <a href="<%= navigation.languageCode %>/accessibility" class="nav-link"><%= footer.accessibility %></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</footer>

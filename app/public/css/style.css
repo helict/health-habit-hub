@@ -42,15 +42,18 @@ body {
   /* Ändere die Schriftgröße der Navbar-Links */
   .navbar-nav .nav-link {
     font-size: 20px;
-    color: #ffffff !important;
     font-weight: bold;
   }
-  .navbar-nav .nav-link {
+
+  .navbar-nav .nav-link,
+  .nav .nav-link {
+    color: #ffffff !important;
     position: relative;
   }
   
   /*Strich unter Link*/
-  .navbar-nav .nav-link::before {
+  .navbar-nav .nav-link::before,
+  .nav .nav-link::before {
       content: '';
       position: absolute;
       width: 100%;
@@ -64,7 +67,8 @@ body {
       transition: transform .3s ease-in-out;
     }
   
-  .navbar-nav .nav-link:hover::before {
+  .navbar-nav .nav-link:hover::before,
+  .nav .nav-link:hover::before {
     transform-origin: left;
     transform: scaleX(1);
   }
@@ -79,10 +83,9 @@ body {
   
   footer{
     margin-top: 30px;
-    padding: 40px;
+    padding: 20px;
     background: linear-gradient(180deg, #E679AB 0%, #E679AB 100%)!important;
     text-align: center;
-    padding-top: 20px;
     position: absolute;
     left: 0;
     right: 0;
