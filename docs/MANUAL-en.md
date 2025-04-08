@@ -4,67 +4,67 @@
 
 ### Purpose of the app
 
-Thank you for your interest in the Habit App and for choosing to use it! The Habit App is designed to collect everyday habits of individuals from diverse backgrounds and cultures. A habit typically connects a behavior (e.g., brushing teeth) with a context (e.g., after waking up in the morning) and is often performed subconsciously, requiring minimal cognitive effort.
+Thank you for your interest in the Health-Habit-Hub (HHH) and for choosing to use it! The Health-Habit-Hub is designed to collect everyday habits of individuals from diverse backgrounds and cultures. A habit typically connects a behavior (e.g., brushing teeth) with a context (e.g., after waking up in the morning) and is often performed subconsciously, requiring minimal cognitive effort.
 
 Participation in the survey is entirely voluntary and anonymous, as it involves donating data to support research. The collected data aims to build a comprehensive database of habit elements, such as behaviors and their associated contexts. This database will facilitate research, for example, identifying optimal contexts for establishing beneficial habits, helping habits become stronger, or exploring cultural differences in habitual behaviors. With a better understanding of effective contexts for habits, it becomes easier to define and promote positive habits, ultimately supporting their reinforcement.
 
 By donating your data, you are helping to better understand the habits of our society and help influence to develop beneficial habits.
 
-The Habit App is developed, provided and researched in international collaboration by renowned Japanese, Canadian and German research institutions.
+The Health-Habit-Hub is developed, provided and researched in international collaboration by renowned Japanese, Canadian and German research institutions.
 
 ### Using the user manual
 
-The user manual helps you to use and better understand the Habit app. To this end, the main areas of the Habit app are presented. The presentation follows the main pages of the Habit app. Screenshots of the Habit App or areas of the Habit App and a corresponding explanation will help you to understand the app.
+The user manual helps you to use and better understand the Health-Habit-Hub. To this end, the main areas of the Health-Habit-Hub are presented. The presentation follows the main pages of the Health-Habit-Hub. Screenshots of the Health-Habit-Hub or areas of the Health-Habit-Hub and a corresponding explanation will help you to understand the app.
 
 ## First steps
 
-To use the Habit app, all you need is a standard browser, e.g. Firefox or Chrome, and a working internet connection, e.g. via WLAN or mobile data. It is best to use the Habit app with a tablet or smartphone. Installation is not required.
+To use the Health-Habit-Hub, all you need is a standard browser, e.g. Firefox or Chrome, and a working internet connection, e.g. via WLAN or mobile data. It is best to use the Health-Habit-Hub with a tablet or smartphone. Installation is not required.
 
-If you like the idea behind the Habit app and would like to support the research project over a longer period of time, create a bookmark on your home screen for quick access.
+If you like the idea behind the Health-Habit-Hub and would like to support the research project over a longer period of time, create a bookmark on your home screen for quick access.
 
 ## Donate a habit
 
 ### Background information
 
-As the understanding of what exactly a habit is may vary in different social and cultural environments, a method for surveying habits was developed and implemented in the Habit App that is adapted to this situation. The method is based on the assumption that clarification and information on the definition of the term habit has an impact on the quality of the data donation. According to this assumption, the following factors influence the survey:
+As the understanding of what exactly a habit is may vary in different social and cultural environments, a method for surveying habits was developed and implemented in the Health-Habit-Hub that is adapted to this situation. The method is based on the assumption that clarification and information on the definition of the term habit has an impact on the quality of the data donation. According to this assumption, the following factors influence the survey:
 
 - **General instructions**: General instructions include a welcome note and a definition of the term habit. The components of a habit are explained and at least one concrete example of a habit is given. The contribution of data donation to further research is explained.
 - **Task description**: Task description contains a precise description of the sequence of steps from entering the habit to submitting the data donation.
 
-By specifying or including these factors in combination, different possibilities for collecting a habit arise. These combinations are divided into four experiment groups and implemented by the Habit App. The experiment groups are made up as follows:
+By specifying or including these factors in combination, different possibilities for collecting a habit arise. These combinations are divided into four experiment groups and implemented by the Health-Habit-Hub. The experiment groups are made up as follows:
 
-**Experiment group 1** - Habit App users are given comprehensive instructions by displaying the general instructions and task description. A habit is recorded according to a predefined scheme.
+**Experiment group 1** - Health-Habit-Hub users are given comprehensive instructions by displaying the general instructions and task description. A habit is recorded according to a predefined scheme.
 
-**Experiment group 2** - Habit app users are given partial instructions by displaying the task description. The habit is recorded in their own words without further instructions.
+**Experiment group 2** - Health-Habit-Hub users are given partial instructions by displaying the task description. The habit is recorded in their own words without further instructions.
 
-**Experiment group 3** - Habit app users are given partial instructions by displaying the general instructions. A habit is recorded according to a predefined scheme.
+**Experiment group 3** - Health-Habit-Hub users are given partial instructions by displaying the general instructions. A habit is recorded according to a predefined scheme.
 
-**Experiment group 4** - Habit app users are not given any instructions. The habit is recorded in their own words without any instructions.
+**Experiment group 4** - Health-Habit-Hub users are not given any instructions. The habit is recorded in their own words without any instructions.
 
 ### Step-by-step instructions
 
-#### Step 1: Opening the Habit App
+#### Step 1: Opening the Health-Habit-Hub
 
-The Habit App is opened by clicking on the link in the browser. If a bookmark has been created for the Habit App on the start screen, the Habit App can also be opened via this.
+The Health-Habit-Hub is opened by clicking on the link in the browser. If a bookmark has been created for the Health-Habit-Hub on the start screen, the Health-Habit-Hub can also be opened via this.
 
 #### Step 2: Donating a habit
 
-When the Habit app is opened, one of the four possible experiment groups is determined and selected in the background (see section Donating a habit). If the Habit app is opened in a new browser session, one of the four experiment groups is randomly determined and selected. However, if a habit has already been donated via an existing browser session, this experiment group is adopted.
+When the Health-Habit-Hub is opened, one of the four possible experiment groups is determined and selected in the background (see section Donating a habit). If the Health-Habit-Hub is opened in a new browser session, one of the four experiment groups is randomly determined and selected. However, if a habit has already been donated via an existing browser session, this experiment group is adopted.
 
-The selection of the experiment group has an influence on what content can be seen in the Habit app and the extent to which instructions for donating a habit are provided. When the Habit App is opened, the content of the start page is therefore determined by the experiment group (see section Behavior of the start page).
+The selection of the experiment group has an influence on what content can be seen in the Health-Habit-Hub and the extent to which instructions for donating a habit are provided. When the Health-Habit-Hub is opened, the content of the start page is therefore determined by the experiment group (see section Behavior of the start page).
 
 **Experiment group 1**
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g1-en.png"/>
+    <img src="assets/manual/sp_exp_g1-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
-    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Habit app.
+    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Health-Habit-Hub.
     <br/><br/>
     The main area of the page is divided into three sub-areas - the top area with the general instructions, the middle area with the task description and the option to record the habit and the bottom area for sending the donation. The options for recording habits in the middle area are divided into an area for entering the habit and an area for marking context and behavior. After a habit has been entered, individual words or related word groups can be selected in the input field that represent a context or the behavior. The previously made selection of words can then be marked as a context or behavior by pressing the respective button below the input field. The selections made can be completely reset by pressing the ↺ button to the right of the input field.
     <br/><br/>
-    The confirmation (reCAPTCHA) that the Habit app user is a human and not a robot is a security precaution.
+    The confirmation (reCAPTCHA) that the Health-Habit-Hub user is a human and not a robot is a security precaution.
     <br/><br/>
     Once the habit has been entered and selected in the input field, the habit can be donated by pressing the button at the bottom.
   </div>
@@ -74,14 +74,14 @@ The selection of the experiment group has an influence on what content can be se
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g2-en.png"/>
+    <img src="assets/manual/sp_exp_g2-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
-    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Habit app.
+    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Health-Habit-Hub.
     <br/><br/>
     The main area of the page is divided into two sub-areas - the upper area with the task description and the option to record the habit and the lower area for sending the donation. The options for recording habits in the middle area are divided into an area for entering the habit and an area for marking context and behavior. After a habit has been entered, individual words or related word groups can be selected in the input field, which represent a context or the behavior. The previously made selection of words can then be marked as a context or behavior by pressing the respective button below the input field. The selections made can be completely reset by pressing the ↺ button to the right of the input field.
     <br/><br/>
-    The confirmation (reCAPTCHA) that the Habit app user is a human and not a robot is a security precaution.
+    The confirmation (reCAPTCHA) that the Health-Habit-Hub user is a human and not a robot is a security precaution.
     <br/><br/>
     Once the habit has been entered and selected in the input field, the habit can be donated by pressing the button at the bottom.
   </div>
@@ -91,14 +91,14 @@ The selection of the experiment group has an influence on what content can be se
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g3-en.png"/>
+    <img src="assets/manual/sp_exp_g3-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
-    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Habit app.
+    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Health-Habit-Hub.
     <br/><br/>
     The main area of the page is divided into three sub-areas - the upper area with the general instructions, the middle area with the task description and the option to record the habit and the lower area for sending the donation. The habit is entered in the input field as a single sentence.
     <br/><br/>
-    The confirmation (reCAPTCHA) that the Habit app user is a human and not a robot is a security precaution.
+    The confirmation (reCAPTCHA) that the Health-Habit-Hub user is a human and not a robot is a security precaution.
     <br/><br/>
     Once the habit has been entered and selected in the input field, the habit can be donated by pressing the button at the bottom.
   </div>
@@ -108,14 +108,14 @@ The selection of the experiment group has an influence on what content can be se
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g4-en.png"/>
+    <img src="assets/manual/sp_exp_g4-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
-    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Habit app.
+    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer area contains links to social media related to the Health-Habit-Hub.
     <br/><br/>
     The main area of the page is divided into two sub-areas - the upper area with the task description and the option to record the habit and the lower area for submitting the donation. The habit is entered in the input field as a single sentence.
     <br/><br/>
-    The confirmation (reCAPTCHA) that the Habit app user is a human and not a robot is a security precaution.
+    The confirmation (reCAPTCHA) that the Health-Habit-Hub user is a human and not a robot is a security precaution.
     <br/><br/>
     Once the habit has been entered and selected in the input field, the habit can be donated by pressing the button at the bottom.
   </div>
@@ -123,9 +123,9 @@ The selection of the experiment group has an influence on what content can be se
 
 #### Step 3: Further voluntary information
 
-After the habit has been recorded, the Habit App user has the opportunity to provide further voluntary information before the habit is finally donated.
+After the habit has been recorded, the Health-Habit-Hub user has the opportunity to provide further voluntary information before the habit is finally donated.
 
-The voluntary information requested includes the following demographic information about the Habit App user:
+The voluntary information requested includes the following demographic information about the Health-Habit-Hub user:
 
 - Gender
 - Age
@@ -144,10 +144,10 @@ When donating several habits in succession or within a browser session, the addi
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/dp-en.png"/>
+    <img src="assets/manual/dp-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
-    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Habit app.
+    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Health-Habit-Hub.
     <br/><br/>
     The main area of the page is divided into two sub-areas - the upper area with a brief explanation of the additional voluntary information and the lower area for entering the voluntary information and finally submitting the donation.
   </div>
@@ -157,12 +157,12 @@ When donating several habits in succession or within a browser session, the addi
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/rp-en.png"/>
+    <img src="assets/manual/rp-en.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
-    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Habit app.
+    The page is divided into a header, main and footer area. The header area contains the navigation menu and options for language settings. The footer contains links to social media related to the Health-Habit-Hub.
     <br/><br/>
-    The main area of the page is divided into two sub-areas - the upper area with a thank you and the lower area where another habit can be donated or a reward can be collected. If you select to donate a habit again, the Habit App home page is called up.
+    The main area of the page is divided into two sub-areas - the upper area with a thank you and the lower area where another habit can be donated or a reward can be collected. If you select to donate a habit again, the Health-Habit-Hub home page is called up.
   </div>
 </div>
 

@@ -58,7 +58,7 @@ Habitアプリはブラウザのリンクをクリックして開きます。ス
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g1-ja.png"/>
+    <img src="assets/manual/sp_exp_g1-ja.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
    ページはヘッダー、メイン、フッターのエリアに分かれています。ヘッダーエリアにはナビゲーションメニューと言語設定のオプションがあります。フッターエリアには、Habitアプリに関連するソーシャルメディアへのリンクが含まれています。
@@ -75,7 +75,7 @@ Habitアプリはブラウザのリンクをクリックして開きます。ス
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g2-ja.png"/>
+    <img src="assets/manual/sp_exp_g2-ja.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     ページはヘッダー、メイン、フッターのエリアに分かれています。ヘッダーエリアにはナビゲーションメニューと言語設定のオプションがあります。フッターにはHabitアプリに関連するソーシャルメディアへのリンクが含まれています。
@@ -92,7 +92,7 @@ Habitアプリはブラウザのリンクをクリックして開きます。ス
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g3-ja.png"/>
+    <img src="assets/manual/sp_exp_g3-ja.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     ページはヘッダー、メイン、フッターのエリアに分かれています。ヘッダーエリアにはナビゲーションメニューと言語設定のオプションがあります。フッターエリアには、Habitアプリに関連するソーシャルメディアへのリンクが含まれています。
@@ -109,7 +109,7 @@ Habitアプリはブラウザのリンクをクリックして開きます。ス
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/sp_exp_g4-ja.png"/>
+    <img src="assets/manual/sp_exp_g4-ja.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     ページはヘッダー、メイン、フッターのエリアに分かれています。ヘッダーエリアにはナビゲーションメニューと言語設定のオプションがあります。フッターエリアには、Habitアプリに関連するソーシャルメディアへのリンクが含まれています。
@@ -145,7 +145,7 @@ Habitアプリはブラウザのリンクをクリックして開きます。ス
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/dp-ja.png"/>
+    <img src="assets/manual/dp-ja.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     ページはヘッダー、メイン、フッターのエリアに分かれています。ヘッダーエリアにはナビゲーションメニューと言語設定のオプションがあります。フッターには、Habitアプリに関連するソーシャルメディアへのリンクが含まれています。
@@ -158,7 +158,7 @@ Habitアプリはブラウザのリンクをクリックして開きます。ス
 
 <div style="display: flex; flex-direction: row; flex-wrap: nowrap">
   <div style="padding: 1em; width: 50%">
-    <img src="../assets/manual/rp-ja.png"/>
+    <img src="assets/manual/rp-ja.png"/>
   </div>
   <div style="padding: 1em; width: 50%">
     ページはヘッダー、メイン、フッターエリアに分かれています。ヘッダーエリアにはナビゲーションメニューと言語設定のオプションがあります。フッターにはHabitアプリに関連するソーシャルメディアへのリンクが含まれています。
