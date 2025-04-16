@@ -2,7 +2,7 @@
 
 ## Einführung
 
-### Zweck der A
+### Zweck der Anwendung
 
 Vielen Dank, dass Sie sich für das Health-Habit-Hub interessieren und diese nutzen möchten. Der Zweck des Health-Habit-Hub (HHH) ist es, alltägliche Gewohnheiten von Menschen unterschiedlicher Herkunft und Kultur zu erheben. Bei einer Gewohnheit handelt es sich um erlerntes oder antrainiertes Verhalten, das situationsbedingt und überwiegend unterbewusst ausgeführt wird. Die Erhebung erfolgt als freiwillige und anonyme Datenspende.
 
