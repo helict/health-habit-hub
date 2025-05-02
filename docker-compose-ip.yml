@@ -117,6 +117,20 @@ services:
       - "traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].replacement=/${FUSEKI_PATH:-fuseki}$$1"
       - "traefik.http.routers.fuseki.middlewares=fuseki-prefixstripper,fuseki-redirect"
 
+  libretranslate:
+    image: libretranslate/libretranslate
+    container_name: libretranslate
+    restart: always
+    ports:
+      - "5001:5000"
+    volumes:
+      - libretranslate-models:/root/.local/share/argos-translate/packages
+    networks:
+      - proxy
+    environment:
+      - LT_HOST=0.0.0.0
+      - LT_REQ_LIMIT=0
+
 
 networks:
   proxy:
@@ -127,3 +141,5 @@ volumes:
     name: fuseki-data
   treafik-certs:
     name: treafik-certs
+  libretranslate-models:
+    name: libretranslate-models
