@@ -87,7 +87,7 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
 }
 
 function sendData(data, language) {
-  console.log("Sending data to database")
+  console.log('Sending data to database');
   fetch('donate/data', {
     method: 'POST',
     headers: {

@@ -1,286 +1,285 @@
 {
-    "name": "flare",
-    "children": [
+  "name": "flare",
+  "children": [
+    {
+      "name": "behavior brushing your teeth",
+      "children": [
         {
-            "name": "behavior brushing your teeth",
-            "children": [
-                {
-                    "name": "cleaning teeth",
-                    "size": 253
-                },
-                {
-                    "name": "dental hygiene",
-                    "size": 7594
-                },
-                {
-                    "name": "tooth care",
-                    "size": 1105
-                },
-                {
-                    "name": "oral cleansing",
-                    "size": 5248
-                },
-                {
-                    "name": "using toothbrush",
-                    "size": 2904
-                },
-                {
-                    "name": "tooth brushing",
-                    "size": 3310
-                },
-                {
-                    "name": "flossing",
-                    "size": 9899
-                },
-                {
-                    "name": "gargling",
-                    "size": 7257
-                },
-                {
-                    "name": "rinsing mouth",
-                    "size": 1937
-                },
-                {
-                    "name": "oral care routine",
-                    "size": 6893
-                }
-            ]
+          "name": "cleaning teeth",
+          "size": 253
         },
         {
-            "name": "prior",
-            "children": [
-                {
-                    "name": "After I wake up",
-                    "size": 7043
-                },
-                {
-                    "name": "After eating breakfast",
-                    "children": [
-                        {"name": "Test_1", "size": 198},
-                        {"name": "Test_2", "size": 204},
-                        {"name": "Test_3", "size": 137},
-                        {"name": "Test_4", "size": 874},
-                        {"name": "Test_5", "size": 222},
-                        {"name": "Test_6", "size": 182},
-                        {"name": "Test_7", "size": 1629},
-                        {"name": "Test_8", "size": 1675},
-                        {"name": "Test_9", "size": 2042}
-                    ]
-
-                },
-                {
-                    "name": "Before leaving home",
-                    "size": 5314
-                },
-                {
-                    "name": "Before morning workout",
-                    "size": 7819
-                },
-                {
-                    "name": "After morning meditation",
-                    "size": 5123
-                },
-                {
-                    "name": "Upon entering the bathroom",
-                    "size": 1948
-                },
-                {
-                    "name": "After using the toilet",
-                    "size": 3164
-                },
-                {
-                    "name": "After a morning coffee",
-                    "size": 8232
-                },
-                {
-                    "name": "Before going to work",
-                    "size": 4458
-                },
-                {
-                    "name": "After morning stretches",
-                    "size": 561
-                }
-            ]
+          "name": "dental hygiene",
+          "size": 7594
         },
         {
-            "name": "time",
-            "children": [
-                {
-                    "name": "In the morning",
-                    "size": 3295
-                },
-                {
-                    "name": "Before noon",
-                    "size": 9390
-                },
-                {
-                    "name": "At dawn",
-                    "size": 4725
-                },
-                {
-                    "name": "When the alarm goes off",
-                    "size": 7989
-                },
-                {
-                    "name": "As the first activity of the day",
-                    "size": 4832
-                },
-                {
-                    "name": "Before sunrise",
-                    "size": 8132
-                },
-                {
-                    "name": "After the sun comes up",
-                    "size": 5684
-                },
-                {
-                    "name": "At the start of the day",
-                    "size": 8164
-                },
-                {
-                    "name": "When the day begins",
-                    "size": 9404
-                },
-                {
-                    "name": "During the morning routine",
-                    "size": 2707
-                }
-            ]
+          "name": "tooth care",
+          "size": 1105
         },
         {
-            "name": "physical",
-            "children": [
-                {
-                    "name": "In my bathroom",
-                    "size": 4353
-                },
-                {
-                    "name": "At the wash basin",
-                    "size": 1051
-                },
-                {
-                    "name": "In the shower",
-                    "size": 8346
-                },
-                {
-                    "name": "At the sink",
-                    "size": 5916
-                },
-                {
-                    "name": "In front of the mirror",
-                    "size": 7445
-                },
-                {
-                    "name": "At home",
-                    "size": 5183
-                },
-                {
-                    "name": "In the guest bathroom",
-                    "size": 9113
-                },
-                {
-                    "name": "In the master bathroom",
-                    "size": 6859
-                },
-                {
-                    "name": "While in my pajamas",
-                    "size": 8661
-                },
-                {
-                    "name": "Standing on the bath mat",
-                    "size": 7251
-                }
-            ]
+          "name": "oral cleansing",
+          "size": 5248
         },
         {
-            "name": "people",
-            "children": [
-                {
-                    "name": "With my brother",
-                    "size": 8482
-                },
-                {
-                    "name": "Alone",
-                    "size": 7102
-                },
-                {
-                    "name": "With family",
-                    "size": 7441
-                },
-                {
-                    "name": "With my roommate",
-                    "size": 8025
-                },
-                {
-                    "name": "With my partner",
-                    "size": 468
-                },
-                {
-                    "name": "While my cat watches",
-                    "size": 8995
-                },
-                {
-                    "name": "In front of my children",
-                    "size": 2321
-                },
-                {
-                    "name": "While everyone else is asleep",
-                    "size": 8664
-                },
-                {
-                    "name": "As my dog waits",
-                    "size": 9753
-                },
-                {
-                    "name": "With my parents",
-                    "size": 6668
-                }
-            ]
+          "name": "using toothbrush",
+          "size": 2904
         },
         {
-            "name": "internal",
-            "children": [
-                {
-                    "name": "Feeling refreshed",
-                    "size": 8646
-                },
-                {
-                    "name": "Feeling awake",
-                    "size": 6369
-                },
-                {
-                    "name": "Feeling clean",
-                    "size": 1680
-                },
-                {
-                    "name": "Feeling energized",
-                    "size": 9160
-                },
-                {
-                    "name": "Feeling diligent",
-                    "size": 4255
-                },
-                {
-                    "name": "Feeling minty",
-                    "size": 1181
-                },
-                {
-                    "name": "Feeling routine",
-                    "size": 1178
-                },
-                {
-                    "name": "Feeling accomplished",
-                    "size": 3621
-                },
-                {
-                    "name": "Feeling ready for the day",
-                    "size": 3635
-                },
-                {
-                    "name": "Feeling invigorated",
-                    "size": 6422
-                }
-            ]
+          "name": "tooth brushing",
+          "size": 3310
+        },
+        {
+          "name": "flossing",
+          "size": 9899
+        },
+        {
+          "name": "gargling",
+          "size": 7257
+        },
+        {
+          "name": "rinsing mouth",
+          "size": 1937
+        },
+        {
+          "name": "oral care routine",
+          "size": 6893
         }
-    ]
+      ]
+    },
+    {
+      "name": "prior",
+      "children": [
+        {
+          "name": "After I wake up",
+          "size": 7043
+        },
+        {
+          "name": "After eating breakfast",
+          "children": [
+            { "name": "Test_1", "size": 198 },
+            { "name": "Test_2", "size": 204 },
+            { "name": "Test_3", "size": 137 },
+            { "name": "Test_4", "size": 874 },
+            { "name": "Test_5", "size": 222 },
+            { "name": "Test_6", "size": 182 },
+            { "name": "Test_7", "size": 1629 },
+            { "name": "Test_8", "size": 1675 },
+            { "name": "Test_9", "size": 2042 }
+          ]
+        },
+        {
+          "name": "Before leaving home",
+          "size": 5314
+        },
+        {
+          "name": "Before morning workout",
+          "size": 7819
+        },
+        {
+          "name": "After morning meditation",
+          "size": 5123
+        },
+        {
+          "name": "Upon entering the bathroom",
+          "size": 1948
+        },
+        {
+          "name": "After using the toilet",
+          "size": 3164
+        },
+        {
+          "name": "After a morning coffee",
+          "size": 8232
+        },
+        {
+          "name": "Before going to work",
+          "size": 4458
+        },
+        {
+          "name": "After morning stretches",
+          "size": 561
+        }
+      ]
+    },
+    {
+      "name": "time",
+      "children": [
+        {
+          "name": "In the morning",
+          "size": 3295
+        },
+        {
+          "name": "Before noon",
+          "size": 9390
+        },
+        {
+          "name": "At dawn",
+          "size": 4725
+        },
+        {
+          "name": "When the alarm goes off",
+          "size": 7989
+        },
+        {
+          "name": "As the first activity of the day",
+          "size": 4832
+        },
+        {
+          "name": "Before sunrise",
+          "size": 8132
+        },
+        {
+          "name": "After the sun comes up",
+          "size": 5684
+        },
+        {
+          "name": "At the start of the day",
+          "size": 8164
+        },
+        {
+          "name": "When the day begins",
+          "size": 9404
+        },
+        {
+          "name": "During the morning routine",
+          "size": 2707
+        }
+      ]
+    },
+    {
+      "name": "physical",
+      "children": [
+        {
+          "name": "In my bathroom",
+          "size": 4353
+        },
+        {
+          "name": "At the wash basin",
+          "size": 1051
+        },
+        {
+          "name": "In the shower",
+          "size": 8346
+        },
+        {
+          "name": "At the sink",
+          "size": 5916
+        },
+        {
+          "name": "In front of the mirror",
+          "size": 7445
+        },
+        {
+          "name": "At home",
+          "size": 5183
+        },
+        {
+          "name": "In the guest bathroom",
+          "size": 9113
+        },
+        {
+          "name": "In the master bathroom",
+          "size": 6859
+        },
+        {
+          "name": "While in my pajamas",
+          "size": 8661
+        },
+        {
+          "name": "Standing on the bath mat",
+          "size": 7251
+        }
+      ]
+    },
+    {
+      "name": "people",
+      "children": [
+        {
+          "name": "With my brother",
+          "size": 8482
+        },
+        {
+          "name": "Alone",
+          "size": 7102
+        },
+        {
+          "name": "With family",
+          "size": 7441
+        },
+        {
+          "name": "With my roommate",
+          "size": 8025
+        },
+        {
+          "name": "With my partner",
+          "size": 468
+        },
+        {
+          "name": "While my cat watches",
+          "size": 8995
+        },
+        {
+          "name": "In front of my children",
+          "size": 2321
+        },
+        {
+          "name": "While everyone else is asleep",
+          "size": 8664
+        },
+        {
+          "name": "As my dog waits",
+          "size": 9753
+        },
+        {
+          "name": "With my parents",
+          "size": 6668
+        }
+      ]
+    },
+    {
+      "name": "internal",
+      "children": [
+        {
+          "name": "Feeling refreshed",
+          "size": 8646
+        },
+        {
+          "name": "Feeling awake",
+          "size": 6369
+        },
+        {
+          "name": "Feeling clean",
+          "size": 1680
+        },
+        {
+          "name": "Feeling energized",
+          "size": 9160
+        },
+        {
+          "name": "Feeling diligent",
+          "size": 4255
+        },
+        {
+          "name": "Feeling minty",
+          "size": 1181
+        },
+        {
+          "name": "Feeling routine",
+          "size": 1178
+        },
+        {
+          "name": "Feeling accomplished",
+          "size": 3621
+        },
+        {
+          "name": "Feeling ready for the day",
+          "size": 3635
+        },
+        {
+          "name": "Feeling invigorated",
+          "size": 6422
+        }
+      ]
+    }
+  ]
 }

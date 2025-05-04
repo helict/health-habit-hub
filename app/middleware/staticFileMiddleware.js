@@ -13,15 +13,14 @@ const staticFileMiddleware = express.Router();
 
 // Serve CSS files with the 'text/css' MIME type
 staticFileMiddleware.use(
-  '/:lng('+validLanguageCodes+')?/css',
+  '/:lng(' + validLanguageCodes + ')?/css',
   express.static(path.join(__dirname, '..', 'public', 'css'), {
     extensions: ['css'],
   }),
 );
 
-
 staticFileMiddleware.use(
-  '/:lng('+validLanguageCodes+')?/js',
+  '/:lng(' + validLanguageCodes + ')?/js',
   express.static(path.join(__dirname, '..', 'public', 'js'), {
     extensions: ['js'],
   }),

@@ -1,6 +1,30 @@
 import SparqlClient from 'sparql-http-client';
-import { translate } from 'deeplx';
+// import { translate } from 'deeplx';
+import fetch from 'node fetch'; // to make HHTP POST request to LibreTranslate API
 import { v4 as uuidv4 } from 'uuid';
+
+// funtion to translate text using LibreTranslate API
+async function libreTranslate(text, from, to) {
+  const response = await fetch('http://localhost:5001/translate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      q: text, // input text to translate
+      source: from, // "de" for German
+      target: to, // "en" for English
+      format: 'text', // format could also be "html"
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Translation failed: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.translatedText;
+}
 
 class DbClient {
   constructor(config) {
@@ -25,11 +49,12 @@ class DbClient {
   async insertDonateData(data) {
     const experimentGroup = data.experimentGroup;
     const habituuid = uuidv4();
-    const source = data.language.toLowerCase() === 'en' ? 'user' : 'deeplx';
+    const source =
+      data.language.toLowerCase() === 'en' ? 'user' : 'libretranslate';
     const value =
       source === 'user'
         ? data.inputValue
-        : translate(data.inputValue, 'en', data.language);
+        : await libreTranslate(data.inputValue, data.language, 'en');
 
     let query = `
     PREFIX hhh: <http://example.com/hhh#>
@@ -54,10 +79,10 @@ class DbClient {
                             hhh:id "${habituuid}" ;
                             hhh:language "${data.language}"^^rdf:langString;
                             hhh:source "${source}"^^rdfs:Literal;
-                            hhh:value "${await translate(
+                            hhh:value "${await libreTranslate(
                               context.value,
-                              'en',
                               data.language,
+                              'en',
                             )}".
       `;
       }

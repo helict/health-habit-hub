@@ -30,7 +30,6 @@
 //     window.location.href = "/lng(de|en|ja)/donate";
 // }
 
-
 // // Function to change the language
 // function changeLanguage(lang) {
 //     currentLanguage = lang;

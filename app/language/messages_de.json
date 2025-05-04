@@ -1,16 +1,15 @@
 {
-
   "reward": {
     "geschenke": "BELOHNUNG 🎁🎉"
   },
 
-  "contact":{
-    "send_us":"Sende uns eine Nachicht",
-    "name":"Name",
-    "email":"E-Mail",
-    "subject":"Thema",
-    "message":"Nachicht",
-    "submit":"Nachicht senden",
+  "contact": {
+    "send_us": "Sende uns eine Nachicht",
+    "name": "Name",
+    "email": "E-Mail",
+    "subject": "Thema",
+    "message": "Nachicht",
+    "submit": "Nachicht senden",
     "contact_us": "Impressum",
     "address": "Adresse: Straße, Nummer, Dresden",
     "phone": "Telefon: 01577/123123112345678923231",

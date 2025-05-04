@@ -17,8 +17,8 @@ const recaptcha = new Recaptcha(
   config.recaptcha.siteKey,
   config.recaptcha.secretKey,
   {
-    useRecaptchaDomain: config.recaptcha.useRecaptchaDomain
-  }
+    useRecaptchaDomain: config.recaptcha.useRecaptchaDomain,
+  },
 );
 // Add reCAPTCHA display to the context
 router.use(recaptcha.middleware.render, (req, res, next) => {

@@ -20,8 +20,8 @@ import accessibilityRouter from './routes/accessibilityRouter.js';
 
 const app = express();
 const port = config.port;
-const contextPath = process.env.APP_BASE_PATH || "/";
-console.log("ContextPath: ",contextPath);
+const contextPath = process.env.APP_BASE_PATH || '/';
+console.log('ContextPath: ', contextPath);
 
 const router = express.Router();
 
@@ -41,8 +41,7 @@ router.use(staticFileMiddleware);
 
 // Either sets req.lang to the already set route language parameter or gets the preferred browser language. Default value is 'en'.
 router.use('/:lng(' + validLanguageCodes + ')?/', (req, res, next) => {
-
-  console.log("Language use: ", req.url)
+  console.log('Language use: ', req.url);
 
   //console.log('Route language parameter:', req.params.lng);
   req.lang = 'en';
@@ -65,8 +64,8 @@ router.use('/:lng(' + validLanguageCodes + ')?/', (req, res, next) => {
 // Routes
 // Redirects all requests to '/donate' if the language parameter (lng) is already set
 router.get('/:lng(' + validLanguageCodes + ')?/', (req, res) => {
-  console.log("Redirecting to donate")
-  console.log(contextPath + req.lang + '/donate')
+  console.log('Redirecting to donate');
+  console.log(contextPath + req.lang + '/donate');
   res.redirect(301, contextPath + req.lang + '/donate');
 });
 
@@ -78,22 +77,25 @@ router.use('/:lng(' + validLanguageCodes + ')/demo', demoRouter); //Probably nee
 router.use('/:lng(' + validLanguageCodes + ')/thanks', thanksRouter);
 router.use('/:lng(' + validLanguageCodes + ')/imprint', imprintRouter);
 router.use('/:lng(' + validLanguageCodes + ')/privacy', privacyRouter);
-router.use('/:lng(' + validLanguageCodes + ')/accessibility', accessibilityRouter);
+router.use(
+  '/:lng(' + validLanguageCodes + ')/accessibility',
+  accessibilityRouter,
+);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
 router.use((req, res, next) => {
-  console.log("Path: ",req.url)
+  console.log('Path: ', req.url);
   if (req.url.startsWith('/' + req.lang + '/')) {
     next();
   } else {
-    console.log("Redirecting")
-    let p = path.join(contextPath, req.lang, req.url)
-    console.log("Redirect-Path",p)
+    console.log('Redirecting');
+    let p = path.join(contextPath, req.lang, req.url);
+    console.log('Redirect-Path', p);
     res.redirect(307, path.join(contextPath, req.lang, req.url));
   }
 });
 
-app.use(contextPath, router)
+app.use(contextPath, router);
 
 app.listen(port, () => {
   console.log(`Server is running on http://app.localhost`);

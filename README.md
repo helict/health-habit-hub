@@ -8,7 +8,7 @@ Welcome to our web application, designed to empower users to willingly contribut
 
 - Closed: Predefined tasks and labels guide users to provide structured data
 - Open: An empty text field encourages users to share unstructured information without any influence
-- Closed-Task, Open data entry: Predefined task to ensure the right data is submitted but no labeling functionality to leave to user some freedom 
+- Closed-Task, Open data entry: Predefined task to ensure the right data is submitted but no labeling functionality to leave to user some freedom
 - Open-Task, Closed data entry: No Task, just a textfield with the buttons to label the provided data for well sturctured but less influenced data
 
 #### Data Storage
@@ -27,26 +27,26 @@ docker compose watch
 
 [Compose Watch](https://docs.docker.com/compose/file-watch/) watches the `./app` directory for changes and will automatically rebuild and restart the `app` Docker container.
 
-**Note:** If you are using a [Mac with Apple silicon](https://support.apple.com/116943), you may need to disable Rosetta emulation in Docker to get the `fuseki` service to run properly. 
-
+**Note:** If you are using a [Mac with Apple silicon](https://support.apple.com/116943), you may need to disable Rosetta emulation in Docker to get the `fuseki` service to run properly.
 
 ## Usage
 
 ### Location
 
 #### Online
-When inside the TU-Dresden Network you can access the website under:
-[http://swdev.wiwi.tu-dresden.de:3000](http://swdev.wiwi.tu-dresden.de:3000) 
-And the database under: 
-[http://swdev.wiwi.tu-dresden.de:3001](http://swdev.wiwi.tu-dresden.de:3001) 
 
+When inside the TU-Dresden Network you can access the website under:
+[http://swdev.wiwi.tu-dresden.de:3000](http://swdev.wiwi.tu-dresden.de:3000)
+And the database under:
+[http://swdev.wiwi.tu-dresden.de:3001](http://swdev.wiwi.tu-dresden.de:3001)
 
 #### Running the app locally
-After running ```docker-compose up``` you can access the following sites: 
+
+After running `docker-compose up` you can access the following sites:
 
 Open [app.localhost](https://app.localhost) to use the main application \
 Open [fuseki.localhost](http://fuseki.localhost) to see/use the database \
-Open [proxy.localhost](http://proxy.localhost) to see the dashboard 
+Open [proxy.localhost](http://proxy.localhost) to see the dashboard
 
 Alternatively on Mac Docker Desktop run `docker ps` to check where the traffic is routet. You can then access the sites e.g., with `http://localhost:3000/en/donate`
 
