@@ -1,30 +1,36 @@
 import SparqlClient from 'sparql-http-client';
 // import { translate } from 'deeplx';
-import fetch from 'node fetch'; // to make HHTP POST request to LibreTranslate API
+import fetch from 'node-fetch'; // to make HTTP POST request to LibreTranslate API
 import { v4 as uuidv4 } from 'uuid';
 
-// funtion to translate text using LibreTranslate API
+// function to translate text using LibreTranslate API
 async function libreTranslate(text, from, to) {
-  const response = await fetch('http://localhost:5001/translate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      q: text, // input text to translate
-      source: from, // "de" for German
-      target: to, // "en" for English
-      format: 'text', // format could also be "html"
-    }),
-  });
+  try {
+    const response = await fetch('http://libretranslate:5000/translate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        q: text,
+        source: from,
+        target: to,
+        format: 'text',
+      }),
+    });
 
-  if (!response.ok) {
-    throw new Error(`Translation failed: ${response.statusText}`);
+    if (!response.ok) {
+      throw new Error(`Translation failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.translatedText;
+  } catch (err) {
+    console.error('LibreTranslate error:', err);
+    throw err;
   }
-
-  const data = await response.json();
-  return data.translatedText;
 }
+
 
 class DbClient {
   constructor(config) {
@@ -47,6 +53,7 @@ class DbClient {
   }
 
   async insertDonateData(data) {
+    console.log('Inserting donation data:', data);
     const experimentGroup = data.experimentGroup;
     const habituuid = uuidv4();
     const source =

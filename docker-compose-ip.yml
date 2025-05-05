@@ -1,4 +1,5 @@
 # https://medium.com/@svenvanginkel/setting-up-traefik-v3-in-docker-0c0559a696f1
+# DOCKER-COMPOSE-IP.YML
 
 version: '3'
 services:
@@ -132,6 +133,7 @@ services:
 networks:
   proxy:
     name: proxy
+    external: true
 
 volumes:
   fuseki-data:
