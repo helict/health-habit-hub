@@ -1,4 +1,3 @@
-version: '3'
 services:
   proxy:
     image: traefik:v3.0
@@ -79,6 +78,30 @@ services:
       - traefik.http.routers.fuseki.service=fuseki
       - traefik.http.services.fuseki.loadbalancer.server.port=3030
 
+  translate:
+    image: libretranslate/libretranslate
+    container_name: translate
+    restart: always
+    ports:
+      - 5001:5000
+    volumes:
+      - translate-data:/root/.local/share/argos-translate/packages
+    networks:
+      - proxy
+    environment:
+      - LT_HOST=0.0.0.0
+      - LT_DEBUG=true
+      - LT_REQ_LIMIT=0
+    tty: true
+    depends_on:
+      - app
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.translate.rule=Host(`${TRANSLATE_PATH:-translate}.${PATH_SUFFIX:-localhost}`)
+      - traefik.http.routers.translate.entrypoints=web
+      - traefik.http.routers.translate.service=translate
+      - traefik.http.services.translate.loadbalancer.server.port=5000
+
 networks:
   proxy:
     name: proxy
@@ -86,3 +109,5 @@ networks:
 volumes:
   fuseki-data:
     name: fuseki-data
+  translate-data:
+    name: translate-data

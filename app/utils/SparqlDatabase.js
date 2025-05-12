@@ -6,7 +6,9 @@ import { v4 as uuidv4 } from 'uuid';
 // function to translate text using LibreTranslate API
 async function libreTranslate(text, from, to) {
   try {
-    const response = await fetch('http://libretranslate:5000/translate', {
+
+    //const response = await fetch('http://translate.localhost/translate', {
+    const response = await fetch('http://172.18.0.5:5001/translate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
