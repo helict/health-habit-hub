@@ -21,7 +21,6 @@ const config = {
   getDbEndpoint: function () {
     return `${this.db.protocol}://${this.db.host}:${this.db.port}/${this.db.path}`;
   },
-
   getDbHeader: function () {
     return [
       ['host', this.db.host],
@@ -29,6 +28,9 @@ const config = {
       ['path', `/${this.db.name}`],
     ];
   },
+  getTranslationApiEndpoint: function () {
+    return `http://${process.env.TRANSLATE_PATH}:${process.env.TRANSLATE_HOST_PORT}/translate`;
+  }
 };
 
 export { config };

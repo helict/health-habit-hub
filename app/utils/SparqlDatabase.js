@@ -2,13 +2,12 @@ import SparqlClient from 'sparql-http-client';
 // import { translate } from 'deeplx';
 import fetch from 'node-fetch'; // to make HTTP POST request to LibreTranslate API
 import { v4 as uuidv4 } from 'uuid';
+import { config } from './config.js';
 
 // function to translate text using LibreTranslate API
 async function libreTranslate(text, from, to) {
   try {
-
-    //const response = await fetch('http://translate.localhost/translate', {
-    const response = await fetch('http://172.18.0.5:5001/translate', {
+    const response = await fetch(config.getTranslationApiEndpoint(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -19,7 +18,9 @@ async function libreTranslate(text, from, to) {
         target: to,
         format: 'text',
       }),
-    });
+    })
+    .then(console.debug)
+    .catch(console.error);
 
     if (!response.ok) {
       throw new Error(`Translation failed: ${response.statusText}`);

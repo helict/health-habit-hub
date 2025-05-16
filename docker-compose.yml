@@ -83,16 +83,17 @@ services:
     container_name: translate
     restart: always
     ports:
-      - 5001:5000
+      - ${TRANSLATE_HOST_PORT:-5000}:5000
     volumes:
       - translate-data:/root/.local/share/argos-translate/packages
     networks:
       - proxy
     environment:
       - LT_HOST=0.0.0.0
-      - LT_DEBUG=true
+      - LT_DEBUG=${TRANSLATE_DEBUG:-false}
       - LT_REQ_LIMIT=0
-    tty: true
+      - LT_LOAD_ONLY=${TRANSLATE_LANG:-de,en}
+    tty: ${TRANSLATE_DEBUG:-false}
     depends_on:
       - app
     labels:
