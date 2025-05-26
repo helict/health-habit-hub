@@ -1,0 +1,144 @@
+# https://medium.com/@svenvanginkel/setting-up-traefik-v3-in-docker-0c0559a696f1
+# DOCKER-COMPOSE-IP.YML
+
+version: '3'
+services:
+  proxy:
+    image: traefik:v3.0
+    container_name: proxy
+    command:
+      - --api.insecure=true
+      - --api.dashboard=true
+      - --api.debug=true
+      - --log.level=INFO
+      - --accesslog=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=proxy
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --certificatesResolvers.letencrypt.acme.email=youremail@email.com
+      - --certificatesResolvers.letencrypt.acme.storage=/certs/acme.json
+      - --certificatesresolvers.letencrypt.acme.tlschallenge=true
+      - --certificatesResolvers.letencrypt.acme.caServer=https://acme-v02.api.letsencrypt.org/directory # prod (default)
+      #- --certificatesResolvers.letencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # staging
+      - --certificatesResolvers.letencrypt.acme.httpChallenge.entryPoint=web
+      - --experimental.plugins.rewriteHeaders.moduleName=github.com/XciD/traefik-plugin-rewrite-headers
+      - --experimental.plugins.rewriteHeaders.version=v0.0.4
+    restart: always
+    ports:
+      - ${TRAEFIK_HOST_PORT443:-443}:443
+      - ${TRAEFIK_HOST_PORT80:-80}:80
+      - ${TRAEFIK_HOST_PORT8080:-8080}:8080
+    networks:
+      - proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - treafik-certs:/certs
+    labels:
+      - traefik.enable=true
+      #- traefik.http.routers.proxy.rule=PathPrefix(`/${PROXY_PATH:-proxy}`)
+      - traefik.http.routers.proxy.rule=Host(`${HOST:-localhost}`)
+      - traefik.http.routers.proxy.entrypoints=websecure
+      - traefik.http.routers.proxy.tls=true
+      - traefik.http.routers.proxy.tls.certresolver=letencrypt
+      - traefik.http.routers.proxy.service=proxy
+      - traefik.http.services.proxy.loadbalancer.server.port=8080
+      #- "traefik.http.middlewares.proxy-prefixstripper.stripprefix.prefixes=/${PROXY_PATH:-proxy}"
+      #- "traefik.http.middlewares.proxy-redirect.plugin.rewriteHeaders.rewrites[0].header=Location"
+      #- "traefik.http.middlewares.proxy-redirect.plugin.rewriteHeaders.rewrites[0].regex=^(.+)$$"
+      #- "traefik.http.middlewares.proxy-redirect.plugin.rewriteHeaders.rewrites[0].replacement=/${PROXY_PATH:-proxy}$$1"
+      #- "traefik.http.routers.proxy.middlewares=proxy-prefixstripper,proxy-redirect"
+
+  app:
+    image: hhh/app
+    container_name: app
+    build: ./app
+    restart: on-failure:3
+    user: node
+    env_file:
+      - .env
+    ports:
+      - ${APP_HOST_PORT:-3000}:3000
+    networks:
+      - proxy
+    depends_on:
+      - fuseki
+      - proxy
+    labels:
+      - traefik.enable=true
+      # - traefik.http.routers.app.rule=PathPrefix(`/${APP_PATH:-app}`) || PathPrefix(`/js`) || PathPrefix(`/pics`) || PathPrefix(`/about`) || PathPrefix(`/demo`) || PathPrefix(`/donate`) || PathPrefix(`/thanks`) || Path(`/reward.html`) || Path(`/contact.html`) || PathPrefix(`/data`) || PathPrefix(`/de`) || PathPrefix(`/en`) || PathPrefix(`/jp`)
+      - traefik.http.routers.app.rule=Host(`${HOST:-localhost}`) && PathPrefix(`/${APP_PATH:-/app}`)
+      - traefik.http.routers.app.entrypoints=websecure
+      #- traefik.http.routers.app.entrypoints=web
+      - traefik.http.routers.app.tls=true
+      - traefik.http.routers.app.tls.certresolver=letencrypt
+      - traefik.http.routers.app.service=app
+      - traefik.http.services.app.loadbalancer.server.port=3000
+      #- "traefik.http.middlewares.app-prefixstripper.stripprefix.prefixes=/${APP_PATH:-app}"
+      #- "traefik.http.middlewares.app-redirect.plugin.rewriteHeaders.rewrites[0].header=Location"
+      #- "traefik.http.middlewares.app-redirect.plugin.rewriteHeaders.rewrites[0].regex=^(.+)$$"
+      #- "traefik.http.middlewares.app-redirect.plugin.rewriteHeaders.rewrites[0].replacement=/${APP_PATH:-app}$$1"
+      #- "traefik.http.routers.app.middlewares=app-prefixstripper,app-redirect"
+    develop:
+      watch:
+        - path: ./app
+          action: rebuild
+
+  fuseki:
+    image: hhh/fuseki
+    container_name: fuseki
+    build: ./fuseki
+    restart: always
+    environment:
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+    ports:
+      - ${FUSEKI_HOST_PORT:-3030}:3030
+    networks:
+      - proxy
+    volumes:
+      - fuseki-data:/fuseki
+    depends_on:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.fuseki.rule=PathPrefix(`/${FUSEKI_PATH:-fuseki}`) || PathPrefix(`/static`)
+      - traefik.http.routers.fuseki.entrypoints=websecure
+      - traefik.http.routers.fuseki.service=fuseki
+      - traefik.http.routers.fuseki.tls=true
+      - traefik.http.routers.fuseki.tls.certresolver=letencrypt
+      - traefik.http.services.fuseki.loadbalancer.server.port=3030
+      - 'traefik.http.middlewares.fuseki-prefixstripper.stripprefix.prefixes=/${FUSEKI_PATH:-fuseki}'
+      - 'traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].header=Location'
+      - 'traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].regex=^(.+)$$'
+      - 'traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].replacement=/${FUSEKI_PATH:-fuseki}$$1'
+      - 'traefik.http.routers.fuseki.middlewares=fuseki-prefixstripper,fuseki-redirect'
+
+  libretranslate:
+    image: libretranslate/libretranslate
+    container_name: libretranslate
+    restart: always
+    ports:
+      - '5001:5000'
+    volumes:
+      - libretranslate-models:/root/.local/share/argos-translate/packages
+    networks:
+      - proxy
+    environment:
+      - LT_HOST=0.0.0.0
+      - LT_REQ_LIMIT=0
+
+networks:
+  proxy:
+    name: proxy
+    external: true
+
+volumes:
+  fuseki-data:
+    name: fuseki-data
+  treafik-certs:
+    name: treafik-certs
+  libretranslate-models:
+    name: libretranslate-models

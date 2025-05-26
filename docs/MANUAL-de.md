@@ -33,13 +33,13 @@ Da es in unterschiedlichen sozialen und kulturellen Umgebungen ein möglicherwei
 
 Durch das Vorgeben oder Enthalten dieser Faktoren in Kombination ergeben sich verschiedene Möglichkeiten zur Erhebung einer Gewohnheit. Diese Kombinationen werden in vier Experimentgruppen unterteilt und durch das Health-Habit-Hub umgesetzt. Die Experimentgruppen setzen sich wie folgt zusammen:
 
-**Experimentgruppe 1** - Den HHH-Nutzenden wird eine *umfangreiche Anleitung* gegeben, indem die allgemeinen Instruktionen und die Aufgabenbeschreibung angezeigt werden. Die Erhebung einer Gewohnheit erfolgt nach einem vorgegebenen Schema.
+**Experimentgruppe 1** - Den HHH-Nutzenden wird eine _umfangreiche Anleitung_ gegeben, indem die allgemeinen Instruktionen und die Aufgabenbeschreibung angezeigt werden. Die Erhebung einer Gewohnheit erfolgt nach einem vorgegebenen Schema.
 
-**Experimentgruppe 2** - Den HHH-Nutzenden wird eine *teilweise Anleitung* gegeben, indem die Aufgabenbeschreibung angezeigt wird. Die Erhebung einer Gewohnheit erfolgt in eigenen Worten ohne weitere Vorgaben.
+**Experimentgruppe 2** - Den HHH-Nutzenden wird eine _teilweise Anleitung_ gegeben, indem die Aufgabenbeschreibung angezeigt wird. Die Erhebung einer Gewohnheit erfolgt in eigenen Worten ohne weitere Vorgaben.
 
-**Experimentgruppe 3** - Den HHH-Nutzenden wird eine *teilweise Anleitung* gegeben, indem die allgemeinen Instruktionen angezeigt werden. Die Erhebung einer Gewohnheit erfolgt nach einem vorgegebenen Schema.
+**Experimentgruppe 3** - Den HHH-Nutzenden wird eine _teilweise Anleitung_ gegeben, indem die allgemeinen Instruktionen angezeigt werden. Die Erhebung einer Gewohnheit erfolgt nach einem vorgegebenen Schema.
 
-**Experimentgruppe 4** - Den HHH-Nutzenden wird *keine Anleitung* gegeben. Die Erhebung einer Gewohnheit erfolgt in eigenen Worten ohne weitere Vorgaben.
+**Experimentgruppe 4** - Den HHH-Nutzenden wird _keine Anleitung_ gegeben. Die Erhebung einer Gewohnheit erfolgt in eigenen Worten ohne weitere Vorgaben.
 
 ### Schritt für Schritt Anleitung
 
@@ -220,7 +220,7 @@ In Bearbeitung
 
 **Beschreibung**: Der innere Zustand bezieht sich auf die emotionalen oder physiologischen Bedingungen, die gewohnheitsmäßige Verhaltensweisen hervorrufen. Gefühle wie Stress, Ruhe, Hunger oder Müdigkeit können bestimmte Handlungen auslösen, da der Einzelne versucht, seine inneren Erfahrungen zu regulieren oder darauf zu reagieren.
 
-**Beispiel**: „Wenn ich mich gestresst fühle, praktiziere ich 10 Minuten lang Achtsamkeitsmeditation, um zur Ruhe zu kommen und mich zu konzentrieren.”  Der emotionale Zustand des Stresses dient als Anhaltspunkt für eine beruhigende und erholsame Gewohnheit.
+**Beispiel**: „Wenn ich mich gestresst fühle, praktiziere ich 10 Minuten lang Achtsamkeitsmeditation, um zur Ruhe zu kommen und mich zu konzentrieren.” Der emotionale Zustand des Stresses dient als Anhaltspunkt für eine beruhigende und erholsame Gewohnheit.
 
 ## Rechtliche Informationen
 

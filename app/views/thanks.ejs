@@ -20,11 +20,11 @@
 
     <div class="container">
         <!-- <button type="" id="donate_again" onclick="navigateHomePage('<%= navigation.languageCode %>')"><%= donate_again || 'Donate again!' %></button> -->
-        <button type="" id="donate_again" onclick="location.href='/<%= navigation.languageCode %>/donate'"><%= donate_again || 'Donate again!' %></button>
+        <button type="" id="donate_again" onclick="location.href='<%= process.env.APP_BASE_PATH %><%= navigation.languageCode %>/donate'"><%= donate_again || 'Donate again!' %></button>
     </div>
 
     <div class="container mb-5">
-        <a href="/reward.html"><button type="" id="reward"><%= reward || 'Get your reward' %></button></a>
+        <a href='<%= process.env.APP_BASE_PATH %><%= navigation.languageCode %>/reward'><button type="" id="reward"><%= reward || 'Get your reward' %></button></a>
     </div>
 
     <%- include('footer') %>

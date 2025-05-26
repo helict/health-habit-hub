@@ -1,4 +1,4 @@
-FROM stain/jena-fuseki:4.8.0
+FROM stain/jena-fuseki:5.1.0
 
 ADD --chown=fuseki:fuseki ./init /init
 

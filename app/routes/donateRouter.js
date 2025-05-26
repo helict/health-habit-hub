@@ -4,7 +4,7 @@ import { RecaptchaV2 as Recaptcha } from 'express-recaptcha'; // Import the expr
 import {
   saveDonateData,
   showDonateForm,
-} from '../controllers/donateControllers.js';
+} from '../controllers/donateController.js';
 import { config } from '../utils/config.js';
 
 const router = express.Router();
@@ -17,8 +17,8 @@ const recaptcha = new Recaptcha(
   config.recaptcha.siteKey,
   config.recaptcha.secretKey,
   {
-    useRecaptchaDomain: config.recaptcha.useRecaptchaDomain
-  }
+    useRecaptchaDomain: config.recaptcha.useRecaptchaDomain,
+  },
 );
 // Add reCAPTCHA display to the context
 router.use(recaptcha.middleware.render, (req, res, next) => {

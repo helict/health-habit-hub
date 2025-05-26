@@ -83,5 +83,5 @@ export async function saveDonateData(req, res) {
     experimentGroup: ExperimentGroup.fromObject(req.body.experimentGroup),
   };
   await dbClient.insertDonateData(data);
-  res.sendStatus(200);
+  res.status(200).send();
 }

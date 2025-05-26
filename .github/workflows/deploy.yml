@@ -1,0 +1,35 @@
+name: Deploy to Remote Server
+
+on:
+  push:
+    branches:
+      - development # Trigger on push to the main branch
+      #  ÄNDERN auf main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository (locally for reference, but not used for the deployment itself)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Connect to the remote server and perform the deployment
+      - name: Deploy to remote server via SSH
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          debug: true
+          host: ${{ secrets.SSH_HOSTNAME }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }} # Or use private key instead of password
+          script: |
+            # Navigate to the project directory
+            cd health-habit-hub/ || exit
+
+            # Pull the latest changes from the main branch
+            git pull origin development 
+            # ÄNDERN auf main
+
+            docker-compose up --force-recreate --build -d
+            docker image prune -f

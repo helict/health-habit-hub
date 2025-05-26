@@ -87,6 +87,7 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
 }
 
 function sendData(data, language) {
+  console.log('Sending data to database');
   fetch('donate/data', {
     method: 'POST',
     headers: {
@@ -97,9 +98,9 @@ function sendData(data, language) {
     .then((response) => {
       if (response.ok) {
         if (Cookies.get('demographicsCompleted') === 'true') {
-          window.location.href = '/' + language + '/thanks';
+          window.location.href = language + '/thanks';
         } else {
-          window.location.href = '/' + language + '/demo';
+          window.location.href = language + '/demo';
         }
         console.log('Data saved successfully.');
       } else {

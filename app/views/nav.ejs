@@ -1,34 +1,37 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark navbar-static-top" id="navbar">
 
-
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container">
-        <img src="/pics/h3-logo.png" id="icon" alt="Health Habit Hub">
-        <a class="navbar-brand" href="http://app.localhost/<%= languageCode %>/"><%- homePageName %></a>
+        <div class="logo-stack d-flex flex-column align-items-left me-auto">
+            <img src="pics/FGDH_Logo.png" id="FGDH_Logo" alt="Forschungsgruppe Digital Health Logo" width ="120">
+            <img src="pics/TUD_Logo.png" id="TUD_Logo" alt="TU Dresden Logo" width ="120">
+        </div>
+       
+        <a class="navbar-brand" href="<%= languageCode %>/"><%- homePageName %></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse " id="navbarNav">
             <ul class="navbar-nav ms-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/<%= languageCode %>/donate" id="nav-home"><%= donatePageName %></a>
+                        <a class="nav-link" href="<%= languageCode %>/donate" id="nav-home"><%= donatePageName %></a>
                     </li>
                     <% if (show_about != 1) { %>
                     <li class="nav-item">                         
-                        <a class="nav-link" href="/<%= languageCode %>/about" id="nav-about"><%= aboutPageName %></a>
+                        <a class="nav-link" href="<%= languageCode %>/about" id="nav-about"><%= aboutPageName %></a>
                     </li>
                     <% } %>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contact.html" id="nav-contact"><%= contactPageName %></a>
+                        <a class="nav-link" href="<%= languageCode %>/contact" id="nav-contact"><%= contactPageName %></a>
                     </li>
                 <li class="nav-item dropdown" id="lang-menu">
                     <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="/pics/globus.png" id="globus" alt="Language Icon">
+                        <img src="pics/globus.png" id="globus" alt="Language Icon">
                         <span id="nav-language"></span>
                     </a>
                     <div class="dropdown-menu w-50" aria-labelledby="languageDropdown">
                         <% allLanguages.keys().forEach(function(language) { %>
-                            <a href="#" class="dropdown-item" onclick="changeLanguage('<%= allLanguages.get(language) %>'); createContextButtons(contexts, language)"><%= language %></a>
+                            <a class="dropdown-item" onclick="changeLanguage('<%= allLanguages.get(language) %>'); createContextButtons(contexts, language)"><%= language %></a>
                         <% }); %>
                     </div>
                 </li>

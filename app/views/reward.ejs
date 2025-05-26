@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <%- include('header') %>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+  </head>
+
+  <body class="d-flex flex-column min-vh-100">
+
+    <%- include('nav', navigation) %>  
+
+    
+<div class="container d-flex justify-content-center mt-5">
+ <h1 id="geschenke"><%= reward.geschenke %></h1>
+</div>    
+    
+ <!-- Datadonation guide-->
+
+
+ <div class="container mb-5" id="datadonationheader">
+    <div class="row">
+        <div class="col-12 ">
+          <svg width = "900" height = "900"></svg>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<!-- Footer -->
+<%- include('footer') %>
+  
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="js/reward.js"></script>
+
+</body>
+</html>

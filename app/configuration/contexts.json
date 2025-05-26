@@ -6,7 +6,7 @@
       "de": "Zeitbezug",
       "ja": "時間基準"
     },
-    "color": "#52d9c2"
+    "color": "#85c99b"
   },
   {
     "id": "physical",
@@ -15,7 +15,7 @@
       "de": "Physische Umgebung",
       "ja": "物理的設定"
     },
-    "color": "#b2d8b2"
+    "color": "#83b0d6"
   },
   {
     "id": "prior",
@@ -24,7 +24,7 @@
       "de": "Vorheriges Verhalten",
       "ja": "事前行動"
     },
-    "color": "#b2c7e1"
+    "color": "#d8a573"
   },
   {
     "id": "people",
@@ -33,7 +33,7 @@
       "de": "Menschen",
       "ja": "人々"
     },
-    "color": "#fff8b2"
+    "color": "#ae8ec0"
   },
   {
     "id": "internal",
@@ -42,7 +42,7 @@
       "de": "Interner Zustand",
       "ja": "内部状態"
     },
-    "color": "#e1b2e1"
+    "color": "#e2cd71"
   },
   {
     "id": "behavior",
@@ -51,6 +51,6 @@
       "de": "Verhalten",
       "ja": "行動"
     },
-    "color": "#b2e1e1"
+    "color": "#d58a7e"
   }
 ]

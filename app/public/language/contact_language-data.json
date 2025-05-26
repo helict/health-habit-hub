@@ -4,58 +4,49 @@
       "home": "Donation",
       "about": "About us",
       "contact": "Contact",
-      "language":"Language"
+      "language": "Language"
     },
 
-  "Greybox":{
-    "send_us":"Send us a message",
-    "name":"Name",
-    "email":"E-Mail",
-    "subject":"Subject",
-    "message":"Message",
-    "submit": "Send Message",
-    "contact_us": "Impressum",
-    "address": "Address: Straße, Nummer, Dresden",
-    "phone": "01577/123456789",
-    "email_contact": "Email: Habithub@test.de",
-    "fhome": "Home",
-    "fabout": "About",
-    "fcontact": "Contact",
-    "fmore": "More"
+    "Greybox": {
+      "send_us": "Send us a message",
+      "name": "Name",
+      "email": "E-Mail",
+      "subject": "Subject",
+      "message": "Message",
+      "submit": "Send Message",
+      "contact_us": "Impressum",
+      "address": "Address: Straße, Nummer, Dresden",
+      "phone": "01577/123456789",
+      "email_contact": "Email: Habithub@test.de",
+      "fhome": "Home",
+      "fabout": "About",
+      "fcontact": "Contact",
+      "fmore": "More"
+    },
+    "emptyFieldError": "The text field must not be empty!"
   },
-  "emptyFieldError": "The text field must not be empty!"
+  "de": {
+    "navbar": {
+      "home": "Spende",
+      "about": "Über die Spende",
+      "contact": "Kontakt"
+    },
 
-
- 
-
-},
-"de": {
-  "navbar": {
-    "home": "Spende",
-    "about": "Über die Spende",
-    "contact": "Kontakt"
-  },
-  
-
-  "Greybox":{
-
-    "send_us":"Sende uns eine Nachicht",
-    "name":"Name",
-    "email":"E-Mail",
-    "subject":"Thema",
-    "message":"Nachicht",
-    "submit":"Nachicht senden",
-    "contact_us": "Impressum",
-    "address": "Adresse: Straße, Nummer, Dresden",
-    "phone": "Telefon: 01577/123123112345678923231",
-    "email_contact": "Email: Habithub@test.de",
-    "fhome": "Startseite",
-    "fabout": "Über uns",
-    "fcontact": "Kontakt",
-    "fmore":"Mehr"
+    "Greybox": {
+      "send_us": "Sende uns eine Nachicht",
+      "name": "Name",
+      "email": "E-Mail",
+      "subject": "Thema",
+      "message": "Nachicht",
+      "submit": "Nachicht senden",
+      "contact_us": "Impressum",
+      "address": "Adresse: Straße, Nummer, Dresden",
+      "phone": "Telefon: 01577/123123112345678923231",
+      "email_contact": "Email: Habithub@test.de",
+      "fhome": "Startseite",
+      "fabout": "Über uns",
+      "fcontact": "Kontakt",
+      "fmore": "Mehr"
+    }
   }
-
-
-  
-}
 }

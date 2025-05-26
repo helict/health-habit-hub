@@ -1,1 +1,1 @@
-export const hide_about = [ "ja" ]
+export const hide_about = ['ja'];
