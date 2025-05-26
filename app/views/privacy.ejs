@@ -8,29 +8,9 @@
   <body>
     <%- include('nav', navigation) %>
     <main class="container mt-5 pb-5">
-      <h1>Privacy Policy</h1>
+      <h1><%- privacy.title %> </h1>
       <section>
-        <h4>General Information</h4>
-        The following notes provide a simple overview of what happens to your personal data when you visit our website.
-        Personal data is any data that can be used to identify you personally.
-        <p>
-          <h4>Data Collection on Our Website</h4>
-          We collect data when you visit our website. This data is automatically collected by our IT systems.
-          This primarily includes technical data (e.g., internet browser, operating system, or time of the page view).
-        </p>
-        <p>
-          <h4>Cookies</h4>
-          Our website uses cookies. Cookies are text files that are stored on your computer and allow for an analysis of the use of the website.
-        </p>
-        <p>
-          <h4>Your Rights</h4>
-          You have the right to request information about the personal data we process about you.
-          You also have the right to rectification, deletion, or restriction of the processing of your data.
-        </p>
-        <p>
-          <h4>Further Information</h4>
-          For detailed information on data protection, please refer to the <a href="https://tu-dresden.de/impressum#ck_datenschutz">Privacy Policy of TU Dresden</a>.
-        </p>
+        <%- privacy.text %>
       </section>
     </main>
     <%- include('footer') %>

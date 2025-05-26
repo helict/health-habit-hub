@@ -8,35 +8,9 @@
   <body>
     <%- include('nav', navigation) %>
     <main class="container mt-5 pb-5">
-      <h1>Imprint</h1>
+      <h1> <%- imprint.title %> </h1>
       <section>
-        Information in accordance with § 5 TMG:<br><br>
-        <h4>Health Habit Hub Prototype</h4>
-        <p>
-          TUD Dresden University of Technology<br>
-          Faculty of Business and Economics<br>
-          Research Group Digital Health<br>
-          01062 Dresden
-        </p>
-        <p>
-          Email: <a href="mailto:digital-health@tu-dresden.de">digital-health@tu-dresden.de</a><br>
-          Phone: <a href="tel:+4935146337671">+49 351 463-37671</a>
-        </p>
-        </p>
-        <p>
-          <h4>Disclaimer</h4>
-          The contents of this website have been created with the utmost care. However, we cannot guarantee the accuracy,
-          completeness, and timeliness of the information provided.
-        </p>
-        </p>
-          <h4>External Links</h4>
-          This website contains links to external third-party websites. We have no influence on the content of these pages.
-          The respective operators are responsible for the content of the linked pages.
-        <p>
-        </p>
-          <h4>Further Information</h4>
-          For more information, please refer to the <a href="https://tu-dresden.de/impressum">Imprint of TU Dresden</a>.
-        </p>
+        <%- imprint.text %>
       </section>
     </main>
     <%- include('footer') %>
