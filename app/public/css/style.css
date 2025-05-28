@@ -587,5 +587,21 @@ a:focus {
 }
 
 .caps-green {
-  color: #50b034;  /* or any green you like */
+  color: #50b034; 
+}
+
+/* target every Bootstrap radio and give it a green check */
+input.form-check-input[type="radio"] {
+  accent-color: #50b034;
+}
+
+.custom-radio .form-check-input:checked {
+  background-color: #50b034;
+  border-color: #50b034;
+  box-shadow: 0 0 0 .25rem rgba(0, 0, 0, 0.25);
+}
+
+.text-justify {
+  text-align: justify;
+  text-justify: inter-word;
 }

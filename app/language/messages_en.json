@@ -159,7 +159,7 @@
 
   "slogan": "You brought YOUR habit on the way to be become a common good.",
   "thanks": "🎉 Thank you for YOUR donation and for YOUR contribution!",
-  "donate_again": "Donate again!",
+  "donate_again": "Share another habit",
   "Rewardbox": {
     "gift": "REWARD"
   },
@@ -181,5 +181,20 @@
     "emptyFieldError": "The text field must not be empty!",
     "emptyBehaviorError": "Please mark a behavior in the text before submitting.",
     "noContextError": "Please confirm that you are not a robot."
+  },
+
+  "form_descriptions":{
+    "sex": "Choose the gender you identify with the most.",
+    "origin": "Select the country you are from.",
+    "graduation": "Select the highest school-leaving certificate you have obtained.",
+    "age": "Type in your current age in years.", 
+    "weight": "Select the weight category that best describes you.",
+    "occupation": "Select the option that best describes your current professional situation.",
+    "working_hours": "Select the option that best describes your working hours.",
+    "way_to_work": "Select the option that best describes your way to work.",
+    "private_context": "Select the option that best describes your current family situation.",
+    "available_time": "Select the option that best describes how much time you have available for your habits.",
+    "relationship_context": "Select the option that best describes your partner's attitude towards health and physical activity.",
+    "pets": "Select the option that best describes your relationship with pets and their influence on your physical activity."
   }
 }

@@ -1,178 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('header') %>
+  <!-- bootstrap core -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- bootstrap icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+  />
+
+  <link rel="stylesheet" href="/css/style.css">
+
+  <%- include('header') %>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-    <%- include('nav', navigation) %>
+  <%- include('nav', navigation) %>
 
-    <div class="container" id="datadonationheader"><%- demo_text %></div>
-    
-    <form action="demo/submit" method="POST">
-        <div class="container" id="datadonationheader">
-        <div class="democontainer">
-            <div class="demosection">
-                <label><%= sex %></label>
-                <div class="demo-gender" >
-                    <div><input id="m" type="radio" name="gender" value="männlich"/><label for="m"><%= sex_m %></label></div>
-                    <div><input id="w" type="radio" name="gender" value="weiblich"/><label for="w"><%= sex_w %></label></div>
-                    <div><input id="d" type="radio" name="gender" value="divers"/><label for="d"><%= sex_d %></label></div>
+  <main class="flex-fill">
+    <div class="container my-5">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <%- demo_text %>
+        </div>
+        <div class="card-body">
+          <form action="demo/submit" method="POST">
+            <div class="row g-4">
+
+              <!-- Gender -->
+              <div class="col-12">
+                <label class="form-label fw-bold d-block">
+                  <%= sex %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.sex %>"
+                  ></i>
+                </label>
+                <div>
+                  <div class="form-check form-check-inline custom-radio">
+                    <input class="form-check-input" type="radio" name="gender" id="m" value="männlich">
+                    <label class="form-check-label" for="m"><%= sex_m %></label>
+                  </div>
+                  <div class="form-check form-check-inline custom-radio">
+                    <input class="form-check-input" type="radio" name="gender" id="w" value="weiblich">
+                    <label class="form-check-label" for="w"><%= sex_w %></label>
+                  </div>
+                  <div class="form-check form-check-inline custom-radio">
+                    <input class="form-check-input" type="radio" name="gender" id="d" value="divers">
+                    <label class="form-check-label" for="d"><%= sex_d %></label>
+                  </div>
                 </div>
-            </div>
-            <div class="demosection">
-                <label><%= origin %></label>
-                <input type="text" name="country" maxlength="100">
-            </div>
-            <div class="demosection">
-                <label><%= graduation %></label>
-                <select name="education">
-                    <option id="chooseOpt" selected disabled hidden><%= choose_option %></option>
-                    <option value="abitur"><%= g_1 %></option>
-                    <option value="fachabitur"><%= g_2 %></option>
-                    <option value="hauptschulabschluss"><%= g_3 %></option>
-                    <!-- Weitere Optionen hier -->
-                </select>
-            </div>
-            <div class="demosection">
-                <label><%= age %></label>
-                <input type="number" name="age" min="0" max="122">
-            </div>
-            <div class="demosection">
-                <label><%= weight %></label>
-                <select name="weight">
-                    <option id="chooseOpt" selected disabled hidden><%= choose_option %></option>
-                    <option value="untergewichtig"><%= w_1 %></option>
-                    <option value="normalgewichtig"><%= w_2 %></option>
-                    <option value="übergewichtig"><%= w_3 %></option>
-                    <option value="stark-übergewichtig"><%= w_4 %></option>
-                    <!-- Weitere Optionen hier -->
-                </select>
-            </div>
-            <div class="demosection">
-                <label><%= religious_affiliation %></label>
-                <select name="religion">
-                    <option id="chooseOpt" selected disabled hidden><%= choose_option %></option>
-                    <option value="christlich"><%= christianity %></option>
-                    <option value="islamisch"><%= islam %></option>
-                    <option value="jüdisch"><%= judaism %></option>
-                    <option value="hinduistisch"><%= hinduism %></option>
-                    <option value="buddistisch"><%= buddhism %></option>
-                    <option value="schintoistisch"><%= shintoism %></option>
-                    <option value="konfessionslos"><%= nondenominational %></option>
-                    <!-- Weitere Optionen hier -->
-                </select>
-            </div>
-            <div class="demosection">
-                <label><%= profession %></label>
-                <select name="employment_context">
-                    <option id="chooseOpt" selected disabled hidden><%= choose_option %></option>
-                    <option value="im-studium"><%= study %></option>
-                    <option value="in-ausbildung"><%= training %></option>
-                    <option value="angestellt-vollzeit"><%= employed_full_time %></option>
-                    <option value="angestellt-teilzeit"><%= employed_part_time %></option>
-                    <option value="selbstständig"><%= self_employed %></option>
-                    <option value="arbeitssuchend"><%= job_seeker %></option>
-                    <option value="in-rente"><%= retired %></option>
-                    <option value="hausarbeit-familienpflege"><%= family_care %></option>
-                    <!-- Weitere Optionen hier -->
-                </select>
-            </div>
-            <div class="demosection">
-                <label><%= working_hours %></label>
-                <select name="working_hours" multiple>
-                    <option id="chooseOpt" selected disabled hidden><%= choose_option %></option>
-                    <option value="schichtsystem-mit-nachtschicht"><%= shift_system_night %></option>
-                    <option value="schichtsystem-ohne-nachtschichten"><%= shift_system_day %></option>
-                    <option value="wochenende-oft-im-dienst"><%= work_WE %></option>
-                    <option value="wochenende-meistens-frei"><%= free_WE_1 %></option>
-                    <option value="wochenende-immer-frei"><%= free_WE_2 %></option>
-                    <option value="flexible-arbeitszeiten"><%= flexible %></option>
-                    <option value="unflexible-arbeitszeiten"><%= rigid %></option>
-                    <option value="homeoffice"><%= homeoffice %></option>
-                    <!-- Weitere Optionen hier -->
-                </select>
-            </div>
-            <div class="demosection">
-                <label><%= way_to_work %></label>
-                <select name="commute_mode" multiple>
-                    <option id="chooseOpt" selected disabled hidden><%= choose_option %></option>
-                    <option value="autofahrt"><%= car %></option>
-                    <option value="fußweg"><%= walk %></option>
-                    <option value="fahrradfahrt"><%= bike %></option>
-                    <option value="öffentliche-verkehrsmittel"><%= public_transport %></option>
-                    <option value="motorradfahrt"><%= motorcycle %></option>
-                    <option value="mitfahrgelegenheit"><%= carpool %></option>
-                    <option value="telecommuting"><%= telecommuting %></option>
-                    <option value="sonstiges"><%= other_way %></option>
-                    <!-- Weitere Optionen hier -->
-                </select>
-            </div>
-            <div class="demosection">
-                <label><%= private_context %></label>
-                <select name="personal_context">
-                    <option id="chooseOpt" selected disabled hidden><%= choose_option %></option>
-                    <option value="partnerschaft-ohne-kind"><%= partner %></option>
-                    <option value="partnerschaft-mit-kind"><%= partner_child %></option>
-                    <option value="alleinerziehend"><%= single_child %></option>
-                    <option value="single-ohne-kind"><%= single %></option>
-                    <option value="getrennt-lebend-partnerschaft-kind"><%= separate_partner_child %></option>
-                    <option value="getrennt-lebend-single-kind"><%= separate_single_child %></option>
-                    <option value="getrennt-lebend-single-ohne-kind"><%= separate_single %></option>
-                    <option value="andere-familienkonstellation"><%= other_constellation %></option>
-                    <!-- Weitere Optionen hier -->
-                </select>
-            </div>
-            <div class="demosection">
-                <label><%= available_time %></label>
-                <select name="available_time">
-                    <option id="chooseOpt" selected disabled hidden><%= choose_option %></option>
-                    <option value="mehr-als-3-stunden"><%= more_3 %></option>
-                    <option value="2-3-stunden"><%= two_to_three %></option>
-                    <option value="1-2-stunden"><%= one_to_two %></option>
-                    <option value="0-5-1-stunde"><%= half_to_one %></option>
-                    <option value="weniger-als-0-5-stunden"><%= less_hours %></option>
-                    <!-- Weitere Optionen hier -->
-                </select>
-            </div>
-            <div class="demosection">
-                <label><%= relationship_context %></label>
-                <select name="relationship_context">
-                    <option id="chooseOpt" selected disabled hidden><%= choose_option %></option>
-                    <option value="gesundheitsbewusster-partner"><%= partner_healthy %></option>
-                    <option value="mäßig-gesundheitsbewusster-partner"><%= partner_moderate_healthy %></option>
-                    <option value="unterstützender-partner"><%= partner_supportive %></option>
-                    <option value="wenig-gesundheitsbewusster-partner"><%= partner_less_healthy %></option>
-                    <option value="überwiegend-inaktiver-partner"><%= partner_inactive %></option>
-                    <option value="kein-partner"><%= no_partner %></option>
-                    <!-- Weitere Optionen hier -->
-                </select>
-            </div>
-            <div class="demosection">
-                <label><%= pets %></label>
-                <select name="pet_influence">
-                    <option id="chooseOpt" selected disabled hidden><%= choose_option %></option>
-                    <option value="regelmäßige-bewegung"><%= pet_regular %></option>
-                    <option value="mehr-aktivität-im-alltag"><%= pet_more_activity %></option>
-                    <option value="kein-einfluss"><%= pet_no_impact %></option>
-                    <option value="keine-haustiere"><%= no_pet %></option>
-                    <!-- Weitere Optionen hier -->
-                </select>
-            </div>
-        </div>
-        <button type="submit"><%= submit %></button>
-        </div>
-        
-    </form>
-    
+              </div>
 
-    <!-- <div class="container mb-5">
-        <div class="col-12">
-          <button type="button" class="button" id="submit"><h4><strong>Absenden</strong></h4></button>
+              <!-- Origin -->
+              <div class="col-md-6">
+                <label for="country" class="form-label fw-bold">
+                  <%= origin %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.origin %>"
+                  ></i>
+                </label>
+                <input
+                  type="text"
+                  id="country"
+                  name="country"
+                  class="form-control"
+                  maxlength="100"
+                >
+              </div>
+
+              <!-- Education -->
+              <div class="col-md-6">
+                <label for="education" class="form-label fw-bold">
+                  <%= graduation %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.graduation %>"
+                  ></i>
+                </label>
+                <select id="education" name="education" class="form-select">
+                  <option selected disabled hidden><%= choose_option %></option>
+                  <option value="abitur"><%= g_1 %></option>
+                  <option value="fachabitur"><%= g_2 %></option>
+                  <option value="hauptschulabschluss"><%= g_3 %></option>
+                </select>
+              </div>
+
+              <!-- Age -->
+              <div class="col-md-6">
+                <label for="age" class="form-label fw-bold">
+                  <%= age %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.age %>"
+                  ></i>
+                </label>
+                <input
+                  type="number"
+                  id="age"
+                  name="age"
+                  class="form-control"
+                  min="0"
+                  max="122"
+                >
+              </div>
+
+              <!-- Weight -->
+              <div class="col-md-6">
+                <label for="weight" class="form-label fw-bold">
+                  <%= weight %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.weight %>"
+                  ></i>
+                </label>
+                <select id="weight" name="weight" class="form-select">
+                  <option selected disabled hidden><%= choose_option %></option>
+                  <option value="untergewichtig"><%= w_1 %></option>
+                  <option value="normalgewichtig"><%= w_2 %></option>
+                  <option value="übergewichtig"><%= w_3 %></option>
+                  <option value="stark-übergewichtig"><%= w_4 %></option>
+                </select>
+              </div>
+
+              <!-- Profession -->
+              <div class="col-md-6">
+                <label for="employment_context" class="form-label fw-bold">
+                  <%= profession %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.occupation %>"
+                  ></i>
+                </label>
+                <select id="employment_context" name="employment_context" class="form-select">
+                  <option selected disabled hidden><%= choose_option %></option>
+                  <option value="im-studium"><%= study %></option>
+                  <option value="in-ausbildung"><%= training %></option>
+                  <option value="angestellt-vollzeit"><%= employed_full_time %></option>
+                  <option value="angestellt-teilzeit"><%= employed_part_time %></option>
+                  <option value="selbstständig"><%= self_employed %></option>
+                  <option value="arbeitssuchend"><%= job_seeker %></option>
+                  <option value="in-rente"><%= retired %></option>
+                  <option value="hausarbeit-familienpflege"><%= family_care %></option>
+                </select>
+              </div>
+
+              <!-- Working Hours -->
+              <div class="col-md-6">
+                <label for="working_hours" class="form-label fw-bold">
+                  <%= working_hours %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.working_hours %>"
+                  ></i>
+                </label>
+                <select id="working_hours" name="working_hours" class="form-select">
+                  <option selected disabled hidden><%= choose_option %></option>
+                  <option value="schichtsystem-mit-nachtschicht"><%= shift_system_night %></option>
+                  <option value="schichtsystem-ohne-nachtschichten"><%= shift_system_day %></option>
+                  <option value="wochenende-oft-im-dienst"><%= work_WE %></option>
+                  <option value="wochenende-meistens-frei"><%= free_WE_1 %></option>
+                  <option value="wochenende-immer-frei"><%= free_WE_2 %></option>
+                  <option value="flexible-arbeitszeiten"><%= flexible %></option>
+                  <option value="unflexible-arbeitszeiten"><%= rigid %></option>
+                  <option value="homeoffice"><%= homeoffice %></option>
+                </select>
+              </div>
+
+              <!-- Commute Mode -->
+              <div class="col-md-6">
+                <label for="commute_mode" class="form-label fw-bold">
+                  <%= way_to_work %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.way_to_work %>"
+                  ></i>
+                </label>
+                <select id="commute_mode" name="commute_mode" class="form-select">
+                  <option selected disabled hidden><%= choose_option %></option>
+                  <option value="autofahrt"><%= car %></option>
+                  <option value="fußweg"><%= walk %></option>
+                  <option value="fahrradfahrt"><%= bike %></option>
+                  <option value="öffentliche-verkehrsmittel"><%= public_transport %></option>
+                  <option value="motorradfahrt"><%= motorcycle %></option>
+                  <option value="mitfahrgelegenheit"><%= carpool %></option>
+                  <option value="telecommuting"><%= telecommuting %></option>
+                  <option value="sonstiges"><%= other_way %></option>
+                </select>
+              </div>
+
+              <!-- Private Context -->
+              <div class="col-md-6">
+                <label for="personal_context" class="form-label fw-bold">
+                  <%= private_context %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.private_context %>"
+                  ></i>
+                </label>
+                <select id="personal_context" name="personal_context" class="form-select">
+                  <option selected disabled hidden><%= choose_option %></option>
+                  <option value="partnerschaft-ohne-kind"><%= partner %></option>
+                  <option value="partnerschaft-mit-kind"><%= partner_child %></option>
+                  <option value="alleinerziehend"><%= single_child %></option>
+                  <option value="single-ohne-kind"><%= single %></option>
+                  <option value="getrennt-lebend-partnerschaft-kind"><%= separate_partner_child %></option>
+                  <option value="getrennt-lebend-single-kind"><%= separate_single_child %></option>
+                  <option value="getrennt-lebend-single-ohne-kind"><%= separate_single %></option>
+                  <option value="andere-familienkonstellation"><%= other_constellation %></option>
+                </select>
+              </div>
+
+              <!-- Available Time -->
+              <div class="col-md-6">
+                <label for="available_time" class="form-label fw-bold">
+                  <%= available_time %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.available_time %>"
+                  ></i>
+                </label>
+                <select id="available_time" name="available_time" class="form-select">
+                  <option selected disabled hidden><%= choose_option %></option>
+                  <option value="mehr-als-3-stunden"><%= more_3 %></option>
+                  <option value="2-3-stunden"><%= two_to_three %></option>
+                  <option value="1-2-stunden"><%= one_to_two %></option>
+                  <option value="0-5-1-stunde"><%= half_to_one %></option>
+                  <option value="weniger-als-0-5-stunden"><%= less_hours %></option>
+                </select>
+              </div>
+
+              <!-- Relationship Context -->
+              <div class="col-md-6">
+                <label for="relationship_context" class="form-label fw-bold">
+                  <%= relationship_context %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.relationship_context %>"
+                  ></i>
+                </label>
+                <select id="relationship_context" name="relationship_context" class="form-select">
+                  <option selected disabled hidden><%= choose_option %></option>
+                  <option value="gesundheitsbewusster-partner"><%= partner_healthy %></option>
+                  <option value="mäßig-gesundheitsbewusster-partner"><%= partner_moderate_healthy %></option>
+                  <option value="unterstützender-partner"><%= partner_supportive %></option>
+                  <option value="wenig-gesundheitsbewusster-partner"><%= partner_less_healthy %></option>
+                  <option value="überwiegend-inaktiver-partner"><%= partner_inactive %></option>
+                  <option value="kein-partner"><%= no_partner %></option>
+                </select>
+              </div>
+
+              <!-- Pet Influence -->
+              <div class="col-md-6">
+                <label for="pet_influence" class="form-label fw-bold">
+                  <%= pets %>
+                  <i
+                    class="bi bi-question-circle ms-1 text-muted"
+                    tabindex="0"
+                    data-bs-toggle="tooltip"
+                    title="<%= form_descriptions.pets %>"
+                  ></i>
+                </label>
+                <select id="pet_influence" name="pet_influence" class="form-select">
+                  <option selected disabled hidden><%= choose_option %></option>
+                  <option value="regelmäßige-bewegung"><%= pet_regular %></option>
+                  <option value="mehr-aktivität-im-alltag"><%= pet_more_activity %></option>
+                  <option value="kein-einfluss"><%= pet_no_impact %></option>
+                  <option value="keine-haustiere"><%= no_pet %></option>
+                </select>
+              </div>
+
+            </div>
+
+            <div class="text-center mt-4">
+             
+            </div>
+          </form>
         </div>
-    </div> -->
+      </div>
 
-<%- include('footer') %>
+        <button type="submit" class="button" id="submiz-demo">
+                <%= submit %>
+        </button>
+    </div>
+  </main>
 
+  <%- include('footer') %>
+
+  <!-- Initialize Bootstrap tooltips -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var triggers = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      triggers.forEach(function (el) {
+        new bootstrap.Tooltip(el);
+      });
+    });
+  </script>
 </body>
 </html>

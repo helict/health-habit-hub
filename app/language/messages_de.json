@@ -69,7 +69,7 @@
   "internal": "inneres Empfinden",
   "behavior": "Verhalten",
   "example2": "<h5>Platzhalter: Ich trinke ein Glas Wasser vor dem Zubettgehen.<h5>",
-  "submit": "Spenden",
+  "submit": "Teilen",
   "add": "+ weitere Gewohnheit",
 
   "demo_text": "Die von Ihnen bereitgestellten Informationen helfen uns dabei wertvolle Erkenntnisse zu gewinnen. Zur besseren Einordnung der Daten und Verbesserung des Forschungsergebnisses, würden wir uns freuen, wenn Sie die unten stehenden Angaben machen können. Die Teilnahme ist freiwillig und anonymisiert. Die Angaben werden vertraulich behandelt. </br> Bitte nehmen Sie sich einen Moment Zeit und füllen Sie die unten stehenden Felder aus:",
@@ -159,7 +159,7 @@
 
   "slogan": "Du hast DEINE Gewohnheit auf den Pfad gebracht, ein Gemeingut zu werden.",
   "thanks": "🎉 Vielen Dank für DEINE Spende und für DEINEN Beitrag!",
-  "donate_again": "Erneut spenden",
+  "donate_again": "Weitere Gewohnheit teilen",
 
   "Rewardbox": {
     "gift": "BELOHNUNG"
@@ -182,5 +182,20 @@
     "emptyFieldError": "Das Textfeld darf nicht leer sein!",
     "emptyBehaviorError": "Bitte markieren Sie ein Verhalten im Text, bevor Sie fortfahren.",
     "noCaptchaError": "Bitte bestätigen Sie, dass Sie kein Roboter sind."
+  },
+  "form_descriptions": {
+    "sex": "Wähle das Geschlecht, mit dem du dich am meisten identifizierst.",
+    "origin": "Wähle das Land, aus dem du kommst.",
+    "graduation": "Wähle den höchsten Schulabschluss, den du erreicht hast.",
+    "age": "Gib dein aktuelles Alter in Jahren ein.",
+    "weight": "Wähle die Gewichtskategorie, die dich am besten beschreibt.",
+    "occupation": "Wähle die Option, die deine aktuelle berufliche Situation am besten beschreibt.",
+    "working_hours": "Wähle die Option, die deine Arbeitszeiten am besten beschreibt.",
+    "way_to_work": "Wähle die Option, die deine Art des Arbeitswegs am besten beschreibt.",
+    "private_context": "Wähle die Option, die deine aktuelle Familiensituation am besten beschreibt.",
+    "available_time": "Wähle die Option, die beschreibt, wie viel Zeit dir für deine Gewohnheiten zur Verfügung steht.",
+    "relationship_context": "Wähle die Option, die die Einstellung deines Partners zu Gesundheit und körperlicher Aktivität am besten beschreibt.",
+    "pets": "Wähle die Option, die deine Beziehung zu Haustieren und deren Einfluss auf deine körperliche Aktivität am besten beschreibt."
   }
 }
+
