@@ -23,20 +23,20 @@ test('Create instance of DbClient', () => {
   assert(dbClient.client instanceof SparqlClient);
   assert.strictEqual(
     dbClient.client.query.endpoint.updateUrl,
-    'http://localhost:3030/hhh',
+    'http://localhost:3030/hhh'
   );
   // Base64 encoded 'admin:admin'
   assert.strictEqual(
     dbClient.client.query.endpoint.headers.get('authorization'),
-    'Basic YWRtaW46YWRtaW4=',
+    'Basic YWRtaW46YWRtaW4='
   );
   assert.strictEqual(
     dbClient.client.query.endpoint.headers.get('host'),
-    'localhost',
+    'localhost'
   );
   assert.strictEqual(
     dbClient.client.query.endpoint.headers.get('port'),
-    '3030',
+    '3030'
   );
 });
 

@@ -1,0 +1,15 @@
+drop-empty-elements: yes
+drop-empty-paras:    yes
+merge-divs:          yes
+merge-spans:         yes
+clean:               yes
+show-body-only:      no
+wrap:                0
+indent:              yes
+quiet:               yes
+force-output:        yes
+vertical-space: auto
+wrap: 0
+indent: yes
+quiet: yes
+force-output: yes

@@ -17,7 +17,7 @@ function markSelection(context, editable) {
   if (startParent !== editable) {
     startParent.textContent = startParent.textContent.substring(
       0,
-      range.startOffset,
+      range.startOffset
     );
     // Cannot use setStartAfter because https://issues.chromium.org/issues/41239578
     range.setStart(startParent.nextSibling, 0);
@@ -168,7 +168,7 @@ function addDonateEventListeners(
   contextIds,
   experimentGroup,
   language,
-  grecaptcha,
+  grecaptcha
 ) {
   const editable = document.getElementById(editableId);
   const submitButton = document.getElementById(submitButtonId);

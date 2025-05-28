@@ -30,7 +30,7 @@ const config = {
   },
   getTranslationApiEndpoint: function () {
     return `http://${process.env.TRANSLATE_PATH}:${process.env.TRANSLATE_HOST_PORT}/translate`;
-  }
+  },
 };
 
 export { config };

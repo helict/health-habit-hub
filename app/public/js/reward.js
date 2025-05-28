@@ -33,7 +33,7 @@ function loadContentReward() {
       updateGreybox(GreyboxData);
     })
     .catch((error) =>
-      console.error('Error loading language data file:', error),
+      console.error('Error loading language data file:', error)
     );
 }
 

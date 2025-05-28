@@ -11,7 +11,7 @@ function getExperimentGroupFromQuery(req) {
       return ExperimentGroup.fromString(req.query.group);
     } catch {
       console.error(
-        `Ignoring invalid experiment group parameter "${req.query.group}".`,
+        `Ignoring invalid experiment group parameter "${req.query.group}".`
       );
       return null;
     }
@@ -26,7 +26,7 @@ function getExperimentGroupFromCookie(req) {
       return ExperimentGroup.fromString(req.cookies.experimentGroup);
     } catch {
       console.error(
-        `Invalid experiment group cookie parameter "${req.cookies.experimentGroup}".`,
+        `Invalid experiment group cookie parameter "${req.cookies.experimentGroup}".`
       );
       return null;
     }
@@ -42,20 +42,20 @@ function getExperimentGroup(req, res) {
   const experimentGroupFromQuery = getExperimentGroupFromQuery(req);
   if (experimentGroupFromQuery) {
     console.log(
-      `Using experiment group from query: ${experimentGroupFromQuery}`,
+      `Using experiment group from query: ${experimentGroupFromQuery}`
     );
     return experimentGroupFromQuery;
   } else {
     const experimentGroupFromCookie = getExperimentGroupFromCookie(req);
     if (experimentGroupFromCookie) {
       console.log(
-        `Using experiment group from cookie: ${experimentGroupFromCookie}`,
+        `Using experiment group from cookie: ${experimentGroupFromCookie}`
       );
       return experimentGroupFromCookie;
     } else {
       const randomExperimentGroup = ExperimentGroup.random();
       console.log(
-        `Using randomly selected experiment group: ${randomExperimentGroup}`,
+        `Using randomly selected experiment group: ${randomExperimentGroup}`
       );
       res.cookie('experimentGroup', randomExperimentGroup.toString());
       return randomExperimentGroup;
@@ -71,7 +71,7 @@ export function showDonateForm(req, res) {
       experimentGroup: experimentGroup,
       contexts: contexts,
       ...getLanguageMessages(req.lang),
-    },
+    }
   );
 }
 

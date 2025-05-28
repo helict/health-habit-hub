@@ -19,8 +19,8 @@ async function libreTranslate(text, from, to) {
         format: 'text',
       }),
     })
-    .then(console.debug)
-    .catch(console.error);
+      .then(console.debug)
+      .catch(console.error);
 
     if (!response.ok) {
       throw new Error(`Translation failed: ${response.statusText}`);
@@ -33,7 +33,6 @@ async function libreTranslate(text, from, to) {
     throw err;
   }
 }
-
 
 class DbClient {
   constructor(config) {
@@ -92,7 +91,7 @@ class DbClient {
                             hhh:value "${await libreTranslate(
                               context.value,
                               data.language,
-                              'en',
+                              'en'
                             )}".
       `;
       }

@@ -65,7 +65,7 @@ function handleEmptyFieldError() {
       alert(fehlerText);
     })
     .catch((error) =>
-      console.error('Error loading language data file:', error),
+      console.error('Error loading language data file:', error)
     );
 }
 
@@ -81,7 +81,7 @@ function loadContentContact() {
       updateGreybox(GreyboxData);
     })
     .catch((error) =>
-      console.error('Error loading language data file:', error),
+      console.error('Error loading language data file:', error)
     );
 }
 

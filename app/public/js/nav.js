@@ -9,7 +9,7 @@ function changeLanguage(lang) {
   console.log('Changing Language to:', lang);
   const targetUrl = window.location.pathname.replace(
     /\/\w{2}\//,
-    '/' + lang + '/',
+    '/' + lang + '/'
   );
   console.log('new URL:', targetUrl);
   window.location.href = targetUrl;

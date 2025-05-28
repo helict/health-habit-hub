@@ -1,24 +1,22 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
 <head>
-    <%- include('header') %>
+<meta name="generator" content=
+"HTML Tidy for Mac OS X (vers 31 October 2006 - Apple Inc. build 1155), see www.w3.org">
+<%- include('header') %>
+<title></title>
 </head>
-    
-   <body class="d-flex flex-column min-vh-100">
-
-    <%- include('nav', navigation) %>
-
-
-   <div class="container" id="datadonationheader">
-    <div class="row">
-        <div class="col-12">
-            <h5 id="about_text"><strong><%= aboutText || 'Standardtext für Über uns' %></strong></h5>
-            <p id="step3"><%= step3Text || 'Standardtext für Schritt 3' %></p>
-        </div>
-    </div>
+<body class="d-flex flex-column min-vh-100">
+<%- include('nav', navigation) %>
+<div class="container" id="datadonationheader">
+<div class="row">
+<div class="col-12">
+<h5 id="about_text">
+<strong><%= aboutText || 'Standardtext für �Sber uns' %></strong></h5>
+<p id="step3"><%= step3Text || 'Standardtext für Schritt 3' %></p>
 </div>
-
+</div>
+</div>
 <%- include('footer') %>
-
 </body>
 </html>

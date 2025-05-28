@@ -16,28 +16,28 @@ staticFileMiddleware.use(
   '/:lng(' + validLanguageCodes + ')?/css',
   express.static(path.join(__dirname, '..', 'public', 'css'), {
     extensions: ['css'],
-  }),
+  })
 );
 
 staticFileMiddleware.use(
   '/:lng(' + validLanguageCodes + ')?/js',
   express.static(path.join(__dirname, '..', 'public', 'js'), {
     extensions: ['js'],
-  }),
+  })
 );
 
 staticFileMiddleware.use(
   '/utils',
   express.static(path.join(__dirname, '..', 'public', 'utils'), {
     extensions: ['js'],
-  }),
+  })
 );
 
 // Serve language files with the 'application/json' MIME type
 staticFileMiddleware.use(
   express.static(path.join(__dirname, '..', 'public'), {
     extensions: ['json'],
-  }),
+  })
 );
 
 export { staticFileMiddleware };

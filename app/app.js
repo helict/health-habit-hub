@@ -79,7 +79,7 @@ router.use('/:lng(' + validLanguageCodes + ')/imprint', imprintRouter);
 router.use('/:lng(' + validLanguageCodes + ')/privacy', privacyRouter);
 router.use(
   '/:lng(' + validLanguageCodes + ')/accessibility',
-  accessibilityRouter,
+  accessibilityRouter
 );
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.

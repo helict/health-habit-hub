@@ -5,6 +5,6 @@ import { getLanguageMessages } from '../utils/localization.js';
 export function renderContactPage(req, res) {
   res.render(
     url.fileURLToPath(new URL('../views/contact.ejs', import.meta.url)),
-    getLanguageMessages(req.lang),
+    getLanguageMessages(req.lang)
   );
 }

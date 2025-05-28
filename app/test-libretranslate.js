@@ -7,9 +7,9 @@ fetch('http://libretranslate:5000/translate', {
     q: 'Hallo Welt',
     source: 'de',
     target: 'en',
-    format: 'text'
-  })
+    format: 'text',
+  }),
 })
-.then(res => res.json())
-.then(console.log)
-.catch(console.error);
+  .then((res) => res.json())
+  .then(console.log)
+  .catch(console.error);

@@ -5,7 +5,7 @@ import { getLanguageMessages } from '../utils/localization.js';
 export function renderDemoPage(req, res) {
   res.render(
     url.fileURLToPath(new URL('../views/demo.ejs', import.meta.url)),
-    getLanguageMessages(req.lang),
+    getLanguageMessages(req.lang)
   );
 }
 
