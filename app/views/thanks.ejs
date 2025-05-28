@@ -7,26 +7,32 @@
 
 <body>
     <%- include('nav', navigation) %>
+        <div class="container d-flex justify-content-center mt-5" id="thanks">
+        <h2 id="thanks_text">
+            <%- thanks %>
+        </h2>
+        </div>
 
-    <div class="container d-flex justify-content-center mb-5"></div>
+        <div
+        id="slogan-wrapper"
+        class="d-flex justify-content-center align-items-center"
+        style="min-height: 5vh;"
+        >
+        <h4 id="slogan" class="text-center">
+            <%- slogan %>
+        </h4>
+        </div>
 
-    <div class="container d-flex justify-content-center">
-        <h4 id="slogan"><%= slogan || 'You brought YOUR habit on the way to be become a common good.' %></h4>
-    </div>
-
-    <div class="container d-flex justify-content-center" id="thanks">
-        <h2 id="thanks_text"><%- thanks || '🎉 Thank you for YOUR donation and for YOUR contribution!' %></h2>
-    </div>
-
-    <div class="container">
+    <div class="container mb-5">
         <!-- <button type="" id="donate_again" onclick="navigateHomePage('<%= navigation.languageCode %>')"><%= donate_again || 'Donate again!' %></button> -->
-        <button type="" id="donate_again" onclick="location.href='<%= process.env.APP_BASE_PATH %><%= navigation.languageCode %>/donate'"><%= donate_again || 'Donate again!' %></button>
+        <button type="submit" class="button" id="donate_again" onclick="location.href='<%= process.env.APP_BASE_PATH %><%= navigation.languageCode %>/donate'"><%= donate_again || 'Donate again!' %></button>
     </div>
 
+    <!--
     <div class="container mb-5">
         <a href='<%= process.env.APP_BASE_PATH %><%= navigation.languageCode %>/reward'><button type="" id="reward"><%= reward || 'Get your reward' %></button></a>
     </div>
-
+    -->
     <%- include('footer') %>
 </body>
 </html>

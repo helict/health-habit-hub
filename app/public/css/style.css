@@ -422,11 +422,11 @@ a {
 #globus {
   height: 25px;
 }
-#slogan {
+/* #slogan {
   color: #e679ab;
-}
+} */
 
-#thanks {
+/* #thanks {
   margin-top: 3%;
   padding: 30px;
   width: 100%;
@@ -437,9 +437,9 @@ a {
   border-radius: 20px;
   color: #e679ab;
   border: 4px solid #e679ab;
-}
+} */
 
-#donate_again {
+/* #donate_again {
   --primary-color: #e679ab;
   --secondary-color: #fff;
   --hover-color: #111;
@@ -448,7 +448,7 @@ a {
   justify-content: center;
   width: 100%;
   height: 69px;
-}
+} */
 
 #reward {
   color: #e679ab;
@@ -584,4 +584,8 @@ a {
 a:hover,
 a:focus {
   color: #2e7d32 !important;
+}
+
+.caps-green {
+  color: #50b034;  /* or any green you like */
 }
