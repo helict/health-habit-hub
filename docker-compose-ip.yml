@@ -110,25 +110,33 @@ services:
       - traefik.http.routers.fuseki.tls=true
       - traefik.http.routers.fuseki.tls.certresolver=letencrypt
       - traefik.http.services.fuseki.loadbalancer.server.port=3030
-      - 'traefik.http.middlewares.fuseki-prefixstripper.stripprefix.prefixes=/${FUSEKI_PATH:-fuseki}'
-      - 'traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].header=Location'
-      - 'traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].regex=^(.+)$$'
-      - 'traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].replacement=/${FUSEKI_PATH:-fuseki}$$1'
-      - 'traefik.http.routers.fuseki.middlewares=fuseki-prefixstripper,fuseki-redirect'
+      - traefik.http.middlewares.fuseki-prefixstripper.stripprefix.prefixes=/${FUSEKI_PATH:-fuseki}
+      - traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].header=Location
+      - traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].regex=^(.+)$$
+      - traefik.http.middlewares.fuseki-redirect.plugin.rewriteHeaders.rewrites[0].replacement=/${FUSEKI_PATH:-fuseki}$$1
+      - traefik.http.routers.fuseki.middlewares=fuseki-prefixstripper,fuseki-redirect
 
-  libretranslate:
-    image: libretranslate/libretranslate
-    container_name: libretranslate
+  translate:
+    image: libretranslate/libretranslate:latest
+    container_name: translate
     restart: always
     ports:
-      - '5001:5000'
+      - ${TRANSLATE_PORT:-5000}:5000
     volumes:
-      - libretranslate-models:/root/.local/share/argos-translate/packages
+      - translate-data:/root/.local/share/argos-translate/packages
     networks:
-      - proxy
-    environment:
-      - LT_HOST=0.0.0.0
-      - LT_REQ_LIMIT=0
+      - h3-proxy
+    env_file:
+      - .env
+    tty: true
+    depends_on:
+      - app
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.translate.rule=Host(`${TRANSLATE_HOST:-translate}.${PATH_SUFFIX:-localhost}`)
+      - traefik.http.routers.translate.entrypoints=web
+      - traefik.http.routers.translate.service=translate
+      - traefik.http.services.translate.loadbalancer.server.port=5000
 
 networks:
   proxy:
@@ -138,7 +146,7 @@ networks:
 volumes:
   fuseki-data:
     name: fuseki-data
+  translate-data:
+    name: translate-data
   treafik-certs:
     name: treafik-certs
-  libretranslate-models:
-    name: libretranslate-models

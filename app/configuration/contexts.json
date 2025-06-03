@@ -1,6 +1,6 @@
 [
   {
-    "id": "time",
+    "id": "TimeReference",
     "labels": {
       "en": "Time Reference",
       "de": "Zeitbezug",
@@ -9,7 +9,7 @@
     "color": "#85c99b"
   },
   {
-    "id": "physical",
+    "id": "PhysicalSetting",
     "labels": {
       "en": "Physical Setting",
       "de": "Physische Umgebung",
@@ -18,7 +18,7 @@
     "color": "#83b0d6"
   },
   {
-    "id": "prior",
+    "id": "PriorBehavior",
     "labels": {
       "en": "Prior Behavior",
       "de": "Vorheriges Verhalten",
@@ -27,7 +27,7 @@
     "color": "#d8a573"
   },
   {
-    "id": "people",
+    "id": "People",
     "labels": {
       "en": "People",
       "de": "Menschen",
@@ -36,7 +36,7 @@
     "color": "#ae8ec0"
   },
   {
-    "id": "internal",
+    "id": "InternalState",
     "labels": {
       "en": "Internal State",
       "de": "Interner Zustand",
@@ -45,7 +45,7 @@
     "color": "#e2cd71"
   },
   {
-    "id": "behavior",
+    "id": "Behavior",
     "labels": {
       "en": "Behavior",
       "de": "Verhalten",

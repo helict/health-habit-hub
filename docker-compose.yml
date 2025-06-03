@@ -1,7 +1,7 @@
 services:
   proxy:
     image: traefik:v3.0
-    container_name: proxy
+    container_name: h3-proxy
     command:
       - --api.insecure=true
       - --api.dashboard=true
@@ -10,14 +10,14 @@ services:
       - --accesslog=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
-      - --providers.docker.network=proxy
+      - --providers.docker.network=h3-proxy
       - --entrypoints.web.address=:80
     restart: always
     ports:
       - ${TRAEFIK_HOST_PORT80:-80}:80
       - ${TRAEFIK_HOST_PORT8080:-8080}:8080
     networks:
-      - proxy
+      - h3-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
@@ -29,7 +29,7 @@ services:
 
   app:
     image: hhh/app
-    container_name: app
+    container_name: h3-app
     build: ./app
     restart: on-failure:3
     env_file:
@@ -41,7 +41,7 @@ services:
     ports:
       - ${APP_HOST_PORT:-3000}:3000
     networks:
-      - proxy
+      - h3-proxy
     depends_on:
       - fuseki
       - proxy
@@ -58,15 +58,17 @@ services:
 
   fuseki:
     image: hhh/fuseki
-    container_name: fuseki
+    container_name: h3-fuseki
     build: ./fuseki
     restart: always
+    env_file:
+      - .env
     environment:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
     ports:
       - ${FUSEKI_HOST_PORT:-3030}:3030
     networks:
-      - proxy
+      - h3-proxy
     volumes:
       - fuseki-data:/fuseki
     depends_on:
@@ -79,36 +81,33 @@ services:
       - traefik.http.services.fuseki.loadbalancer.server.port=3030
 
   translate:
-    image: libretranslate/libretranslate
-    container_name: translate
+    image: libretranslate/libretranslate:latest
+    container_name: h3-translate
     restart: always
     ports:
-      - ${TRANSLATE_HOST_PORT:-5000}:5000
+      - ${LT_PORT:-5000}:5000
     volumes:
       - translate-data:/root/.local/share/argos-translate/packages
     networks:
-      - proxy
-    environment:
-      - LT_HOST=0.0.0.0
-      - LT_DEBUG=${TRANSLATE_DEBUG:-false}
-      - LT_REQ_LIMIT=0
-      - LT_LOAD_ONLY=${TRANSLATE_LANG:-de,en}
-    tty: ${TRANSLATE_DEBUG:-false}
+      - h3-proxy
+    env_file:
+      - .env
+    tty: true
     depends_on:
       - app
     labels:
       - traefik.enable=true
-      - traefik.http.routers.translate.rule=Host(`${TRANSLATE_PATH:-translate}.${PATH_SUFFIX:-localhost}`)
+      - traefik.http.routers.translate.rule=Host(`${TRANSLATE_HOST:-translate}.${PATH_SUFFIX:-localhost}`)
       - traefik.http.routers.translate.entrypoints=web
       - traefik.http.routers.translate.service=translate
       - traefik.http.services.translate.loadbalancer.server.port=5000
 
 networks:
-  proxy:
-    name: proxy
+  h3-proxy:
+    name: h3-proxy
 
 volumes:
   fuseki-data:
-    name: fuseki-data
+    name: h3-fuseki-data
   translate-data:
-    name: translate-data
+    name: h3-translate-data
