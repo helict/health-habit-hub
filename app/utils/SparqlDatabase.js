@@ -113,6 +113,11 @@ class Donation {
     this.source = source ? source : "user";
   }
 
+  hasLabels() {
+    return this.labels && (this.labels.length > 0);
+  }
+
+  // TODO: Refactor
   async translate(targetLanguage) {
     // Translation functions
     const translateValue = async () => 
@@ -120,11 +125,12 @@ class Donation {
     const translateLabels = async () =>
       await Promise.all(this.labels.map(async (label) =>
         await translate(label.data, this.language, targetLanguage)));
+    
     // Perform translation
     const translatedValue = await translateValue();
-    const translatedLabels = await translateLabels();
-    // TODO: Refactor label constructor
+    const translatedLabels = this.hasLabels() ? await translateLabels() : [];
     const labelsCopy = this.labels.map((label, index) => Object.assign({name: label.value, value: translatedLabels[index]}));
+
     // Remember translated donation
     this.translation = new Donation(translatedValue, targetLanguage, labelsCopy, "translation");
     return this.translation;
@@ -174,8 +180,16 @@ class DbClient {
     insertQuery = this.addExperimentalSetting(insertQuery, experimentalSetting);
     insertQuery = this.addDonor(insertQuery, donor);
     insertQuery = this.addHabit(insertQuery, donation);
-    insertQuery = this.addContext(insertQuery, donation, experimentalSetting);
-    insertQuery = this.addBehavior(insertQuery, donation, experimentalSetting);
+
+    if (donation.translation) {
+      insertQuery = this.addHabit(insertQuery, donation.translation);
+    }
+   
+    if (donation.hasLabels()) {
+      insertQuery = this.addContext(insertQuery, donation, experimentalSetting);
+      insertQuery = this.addBehavior(insertQuery, donation, experimentalSetting);
+    }
+
     insertQuery = this.addEnvelope(insertQuery);
 
     // Execute SPARQL query
@@ -215,9 +229,10 @@ class DbClient {
   addHabit(query, donation) {
     const behaviors = donation.labels
       .filter(label => label.type === "behavior");
+    const behaviorStatement = ((behaviors && behaviors.length > 0) ? `hhh:hasBehavior ${behaviors.map(behavior => `hhh:Behavior-${behavior.id}`).join(", ")} ;` : "");
     return query += `
       hhh:Habit-${donation.id} rdf:type owl:NamedIndividual , hhh:Habit ;
-        hhh:hasBehavior ${behaviors.map(behavior => `hhh:Behavior-${behavior.id}`).join(", ")} ;
+        ${behaviorStatement}
         hhh:id "${donation.id}"^^xsd:token ;
         hhh:language "${donation.language}" ;
         hhh:source "${donation.source}"^^rdfs:Literal ;
