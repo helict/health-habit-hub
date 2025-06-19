@@ -1,0 +1,11 @@
+<!-- disclaimer.ejs -->
+ <%- include('header') %>
+<div class="container">
+  <h2><%= disclaimer.title %></h2>
+  <p><%= disclaimer.text %></p>
+<form action="<%= contextPath %><%= lang %>/disclaimer" method="POST">
+  <input type="hidden" name="nextUrl" value="<%= nextUrl %>">
+  <button type="submit"><%= disclaimer.confirm %></button>
+</form>
+</div>
+<%- include('footer') %>

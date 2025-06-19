@@ -196,5 +196,10 @@
     "available_time": "Select the option that best describes how much time you have available for your habits.",
     "relationship_context": "Select the option that best describes your partner's attitude towards health and physical activity.",
     "pets": "Select the option that best describes your relationship with pets and their influence on your physical activity."
+  },
+  "disclaimer" :{
+    "title": "Age Disclaimer",
+    "text": "You must be over 18 years old to use this site.",
+    "confirm": "I confirm I am 18 years old or older"
   }
 }
