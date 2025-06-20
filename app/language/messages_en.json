@@ -197,9 +197,10 @@
     "relationship_context": "Select the option that best describes your partner's attitude towards health and physical activity.",
     "pets": "Select the option that best describes your relationship with pets and their influence on your physical activity."
   },
-  "disclaimer" :{
-    "title": "Age Disclaimer",
-    "text": "You must be over 18 years old to use this site.",
-    "confirm": "I confirm I am 18 years old or older"
-  }
+   "disclaimer": {
+      "title": "Age Disclaimer",
+      "text": "Welcome! This site is intended for users aged 18 and over. We use a small cookie to remember your confirmation and improve your experience. By clicking 'Enter site', you confirm that you are over 18 and agree to our Privacy Policy.",
+      "confirm": "Enter site",
+      "leave": "Leave site"
+    }
 }
