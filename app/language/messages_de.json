@@ -199,9 +199,11 @@
   },
   
   "disclaimer": {
-      "title": "Altersbestätigung",
-      "text": "Willkommen! Diese Seite richtet sich an Nutzerinnen und Nutzer ab 18 Jahren. Wir verwenden ein kleines Cookie, um Ihre Bestätigung zu speichern und die Nutzung zu verbessern. Mit Klick auf 'Webseite betreten' bestätigen Sie, dass Sie über 18 sind und unserer Datenschutzerklärung zustimmen.",
+
+      "title": "",
+      "text": "<h2>Willkommen!</h2><p>Diese Seite richtet sich an Nutzerinnen und Nutzer ab <strong>18 Jahren</strong>. Wir verwenden ein kleines Cookie, um Ihre Bestätigung zu speichern und die Nutzung zu verbessern.</p><p>Mit Klick auf <strong>„Webseite betreten“</strong> bestätigen Sie, dass Sie über 18 sind und unserer Datenschutzerklärung zustimmen.</p>",
       "confirm": "Webseite betreten",
       "leave": "Seite verlassen"
     }
-}
+  }
+

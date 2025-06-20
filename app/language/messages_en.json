@@ -198,9 +198,9 @@
     "pets": "Select the option that best describes your relationship with pets and their influence on your physical activity."
   },
    "disclaimer": {
-      "title": "Age Disclaimer",
-      "text": "Welcome! This site is intended for users aged 18 and over. We use a small cookie to remember your confirmation and improve your experience. By clicking 'Enter site', you confirm that you are over 18 and agree to our Privacy Policy.",
-      "confirm": "Enter site",
-      "leave": "Leave site"
+      "title": "",
+      "text": "<h2>Welcome!</h2><p>This site is intended for users aged <strong>18 and over</strong>. We use a small cookie to store your confirmation and improve your experience.</p><p>By clicking <strong>“Enter Website”</strong>, you confirm that you are over 18 and accept our privacy policy.</p>",
+      "confirm": "Enter Website",
+      "leave": "Leave Site"
     }
 }
