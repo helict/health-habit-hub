@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('header') %>
+    <!-- TODO: Refactor to package.json -->
+    <link href="https://unpkg.com/survey-core/survey-core.min.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/survey-core/survey.core.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/survey-js-ui/survey-js-ui.min.js"></script>
+    <!-- TODO: Refactor to load specific language dynamically (instead of all or given language)
+    <script type="text/javascript" src="https://unpkg.com/survey-core/survey.i18n.min.js"></script>
+    -->
+    <script src="https://unpkg.com/survey-core/i18n/english.js"></script>
+    <script src="https://unpkg.com/survey-core/i18n/german.js"></script>
+    <script src="https://unpkg.com/survey-core/i18n/japanese.js"></script>
+
+    <!--
+    <script>
+      const survey = new Survey.Model(< - JSON.stringify(surveyJson) %>);
+      document.addEventListener("DOMContentLoaded", function () {
+        survey.render(document.getElementById("surveyContainer"));
+      });
+    </script>
+    -->
+</head>
+
+<body>
+  <%- include('nav', navigation) %>
+    <div id="surveyContainer"></div>
+    <script>
+      // TODO: Refactor and move to controller if possible
+      const surveyModel = new Survey.Model(<%- JSON.stringify(survey) %>);
+      surveyModel.locale = <%- JSON.stringify(locale) %>;
+      surveyModel.onComplete.add(function (sender) {
+        // Submit survey data to the controller via POST
+        fetch('/survey/<%= survey.id %>/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(sender.data)
+        })
+          .then(res => res.json())
+          .then(data => {
+            alert("Survey submitted! " + JSON.stringify(data));
+            // Optionally redirect or show a thank you message
+          });
+      });
+      document.addEventListener("DOMContentLoaded", function () {
+        surveyModel.render(document.getElementById("surveyContainer"));
+      });
+    </script>
+    <% - include('footer') %>
+</body>
+
+</html>

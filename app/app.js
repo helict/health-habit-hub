@@ -17,13 +17,15 @@ import rewardRouter from './routes/rewardRouter.js';
 import imprintRouter from './routes/imprintRouter.js';
 import privacyRouter from './routes/privacyRouter.js';
 import accessibilityRouter from './routes/accessibilityRouter.js';
+import surveyRouter from './routes/surveyRouter.js';
 
 const app = express();
 const port = config.port;
 const contextPath = process.env.APP_BASE_PATH || '/';
-console.log('ContextPath: ', contextPath);
-
 const router = express.Router();
+
+// Set template engine
+app.set("view engine", "ejs");
 
 // Enable language functions
 loadLanguageFiles();
@@ -77,10 +79,8 @@ router.use('/:lng(' + validLanguageCodes + ')/demo', demoRouter); //Probably nee
 router.use('/:lng(' + validLanguageCodes + ')/thanks', thanksRouter);
 router.use('/:lng(' + validLanguageCodes + ')/imprint', imprintRouter);
 router.use('/:lng(' + validLanguageCodes + ')/privacy', privacyRouter);
-router.use(
-  '/:lng(' + validLanguageCodes + ')/accessibility',
-  accessibilityRouter
-);
+router.use('/:lng(' + validLanguageCodes + ')/accessibility', accessibilityRouter);
+router.use('/:lng(' + validLanguageCodes + ')/survey', surveyRouter);
 
 // Intercepts all calls of '/' and checks whether a language (req.lang) is already set. If not, this parameter is set.
 router.use((req, res, next) => {

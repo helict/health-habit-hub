@@ -21,6 +21,7 @@
     "express-recaptcha": "^5.1.0",
     "fs": "^0.0.1-security",
     "jquery": "^3.7.1",
+    "mongodb": "^6.17.0",
     "node-sessionstorage": "^1.0.0",
     "path": "^0.12.7",
     "sparql-http-client": "^2.4.2",
