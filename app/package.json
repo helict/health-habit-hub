@@ -24,8 +24,7 @@
     "node-sessionstorage": "^1.0.0",
     "path": "^0.12.7",
     "sparql-http-client": "^2.4.2",
-    "uuid": "^9.0.1",
-    "marked": "^16.0.0"
+    "uuid": "^9.0.1"
   },
   "type": "module",
   "devDependencies": {
