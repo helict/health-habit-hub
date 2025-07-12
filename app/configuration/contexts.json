@@ -44,6 +44,16 @@
     },
     "color": "#e2cd71"
   },
+
+ {
+    "id": "Reasoning",
+    "labels": {
+      "en": "Reasoning",
+      "de": "Begründung",
+      "ja": "推論"
+    },
+    "color": "#d975b9"
+  },
   {
     "id": "Behavior",
     "labels": {
