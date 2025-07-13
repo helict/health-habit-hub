@@ -1,5 +1,6 @@
 import { loadMarkdown } from '../utils/markdown.js';
 import { renderLocalizedView } from './defaultController.js';
+import { getLanguageMessages } from '../utils/localization.js';
 
 export async function renderImprint(req, res, next) {
   try {
