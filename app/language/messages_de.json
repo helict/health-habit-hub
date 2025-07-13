@@ -182,6 +182,14 @@
     "available_time": "Wähle die Option, die beschreibt, wie viel Zeit dir für deine Gewohnheiten zur Verfügung steht.",
     "relationship_context": "Wähle die Option, die die Einstellung deines Partners zu Gesundheit und körperlicher Aktivität am besten beschreibt.",
     "pets": "Wähle die Option, die deine Beziehung zu Haustieren und deren Einfluss auf deine körperliche Aktivität am besten beschreibt."
+  },
+  
+  "disclaimer": {
+
+      "title": "",
+      "text": "<h2>Willkommen!</h2><p>Diese Seite richtet sich an Nutzerinnen und Nutzer ab <strong>18 Jahren</strong>. Wir verwenden ein kleines Cookie, um Ihre Bestätigung zu speichern und die Nutzung zu verbessern.</p><p>Mit Klick auf <strong>„Webseite betreten“</strong> bestätigen Sie, dass Sie über 18 sind und unserer Datenschutzerklärung zustimmen.</p>",
+      "confirm": "Webseite betreten",
+      "leave": "Seite verlassen"
+    }
   }
-}
 
