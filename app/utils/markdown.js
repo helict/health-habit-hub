@@ -1,9 +1,9 @@
-import fs from 'fs';
+import { readFile } from 'fs/promises';
 import path from 'path';
 import { marked } from 'marked';
 
-export function loadMarkdown(lang, page) {
-  const file = path.join('app', 'content', lang, `${page}.md`);
-  const md = fs.readFileSync(file, 'utf8');
+export async function loadMarkdown(lang, name) {
+  const filePath = path.join('app', 'language', lang, `${name}.md`);
+  const md = await readFile(filePath, 'utf-8');
   return marked.parse(md);
 }
