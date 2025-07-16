@@ -88,6 +88,7 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
 
 function sendData(data, language) {
   console.log('Sending data to database');
+  console.debug(data);
   fetch('donate/data', {
     method: 'POST',
     headers: {
@@ -114,6 +115,7 @@ function sendData(data, language) {
 }
 
 function parseInput(editable, experimentGroup, language) {
+  console.debug(editable);
   const habitText = editable.innerText;
   const habitData = {
     inputValue: habitText,
@@ -133,15 +135,17 @@ function getContexts(editable) {
     };
     contexts.push(context);
   }
+  console.debug(contexts);
   return contexts;
 }
 
 function validate(data) {
+  console.debug(data);
   return {
-    empty: data.text === '',
+    empty: data.inputValue === '',
     noBehavior:
       data.experimentGroup.closedTask &&
-      !data.contexts.find((context) => context.name === 'behavior'),
+      !data.contexts.find((context) => context.name === 'Behavior'),
   };
 }
 
