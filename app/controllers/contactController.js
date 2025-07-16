@@ -46,10 +46,10 @@ ${message}
   // Step 4: Attempt to send the email
   try {
     await transporter.sendMail(mailOptions);
-    res.send('Vielen Dank! Ihre Nachricht wurde erfolgreich versendet.');
+    res.send('Looking good! Message sent successfully.');
   } catch (error) {
-    console.error('Fehler beim E-Mail-Versand:', error);
-    res.status(500).send('Beim Versenden der Nachricht ist ein Fehler aufgetreten.');
+    console.error('Error sending email:', error);
+    res.status(500).send('Oh oh. There was an error while sending your message. Please try again later.');
   }
 }
 
