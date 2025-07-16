@@ -23,6 +23,7 @@
     "jquery": "^3.7.1",
     "marked": "^16.0.0",
     "node-sessionstorage": "^1.0.0",
+    "nodemailer": "^7.0.5",
     "path": "^0.12.7",
     "sparql-http-client": "^2.4.2",
     "uuid": "^9.0.1"
