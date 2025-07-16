@@ -25,6 +25,9 @@ app.set('views', path.join(path.resolve(), 'views'));
 const port = config.port;
 const contextPath = process.env.APP_BASE_PATH || '/';
 console.log('ContextPath: ', contextPath);
+// Serve static files from the public directory
+const publicPath = path.join(process.cwd(), 'app/public');
+app.use(express.static(publicPath));
 
 const router = express.Router();
 

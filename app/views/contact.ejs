@@ -7,6 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="js/contact.js"></script>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+
 </head>
 
 <body>
@@ -21,7 +23,7 @@
             <h3 class="mb-4 text-center" id="send_us">
               <%= contact.send_us %>
             </h3>
-            <form action="submit-form" method="POST" id="contactForm" name="contactForm" class="contactForm">
+            <form id="contactForm" name="contactForm" class="contactForm">
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group mb-3">
@@ -73,17 +75,14 @@
                 </div>
                 <div class="col-md-12 text-center">
                   <div class="form-group">
-                    <button
-                      type="button"
-                      id="submit"
-                      class="button"
-                      onclick="checkTextfeld()"
-                    >
+                    <button type="submit" id="submit" class="button">
                       <%= contact.submit %>
                     </button>
+                    
                   </div>
                 </div>
               </div>
+              <div id="formMessage" class="text-center mt-3" style="display: none;"></div>
             </form>
           </div>
         </div>
