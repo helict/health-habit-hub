@@ -98,12 +98,7 @@ function sendData(data, language) {
   })
     .then((response) => {
       if (response.ok) {
-        if (Cookies.get('demographicsCompleted') === 'true') {
-          window.location.href = language + '/thanks';
-        } else {
-          window.location.href = language + '/demo';
-        }
-        console.log('Data saved successfully.');
+        window.location.href = response.url;
       } else {
         alert('Server Error while saving data.');
       }
@@ -117,11 +112,13 @@ function sendData(data, language) {
 function parseInput(editable, experimentGroup, language) {
   console.debug(editable);
   const habitText = editable.innerText;
+  const habitStrength = document.getElementById('habitStrength').value;
   const habitData = {
     inputValue: habitText,
     experimentGroup: experimentGroup,
     language: language,
     contexts: getContexts(editable),
+    habitStrength: habitStrength
   };
   return habitData;
 }

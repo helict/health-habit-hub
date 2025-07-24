@@ -92,8 +92,9 @@ class Donation {
   language;
   source;
   translation;
+  habitStrength;
 
-  constructor(value, language, labels, source) {
+  constructor(value, language, labels, source, habitStrength) {
     this.id = uuid();
     this.value = value;
     this.language = language;
@@ -110,7 +111,8 @@ class Donation {
       label.name,
       label.value
     ));
-    this.source = source ? source : "user";
+    this.source = source;
+    this.habitStrength = habitStrength;
   }
 
   hasLabels() {
@@ -132,7 +134,7 @@ class Donation {
     const labelsCopy = this.labels.map((label, index) => Object.assign({name: label.value, value: translatedLabels[index]}));
 
     // Remember translated donation
-    this.translation = new Donation(translatedValue, targetLanguage, labelsCopy, "translation");
+    this.translation = new Donation(translatedValue, targetLanguage, labelsCopy, "translation", this.habitStrength);
     return this.translation;
   }
 }
@@ -157,14 +159,14 @@ class DbClient {
     }
   }
 
-  async insertDonateData(data) {
+  async insertDonateData(data, userId) {
     // TODO: Move to config/env
     const NORMALIZE_LANG = 'en';
 
     // Input data
     const mustTranslate = !data.language.toLowerCase().startsWith(NORMALIZE_LANG);
     const experimentalSetting = new ExperimentalSetting(data.experimentGroup);
-    const donation = new Donation(data.inputValue, data.language, data.contexts);
+    const donation = new Donation(data.inputValue, data.language, data.contexts, userId, parseInt(data.habitStrength, 10));
     const donor = new Donor(donation);
     let insertQuery = "";
 
@@ -175,11 +177,10 @@ class DbClient {
     // TOOO: Remove (check delay)
     new Promise(r => setTimeout(r, 4000)).then(console.debug(donation));
 
-    // TODO: Refactor to model/ builder
     // Create SPARQL query
     insertQuery = this.addExperimentalSetting(insertQuery, experimentalSetting);
-    insertQuery = this.addDonor(insertQuery, donor);
     insertQuery = this.addHabit(insertQuery, donation);
+    insertQuery = this.addDonor(insertQuery, donor, userId);
 
     if (donation.translation) {
       insertQuery = this.addHabit(insertQuery, donation.translation);
@@ -218,10 +219,10 @@ class DbClient {
     `;
   }
 
-  addDonor(query, donor) {
+  addDonor(query, donor, userId) {
     return query += `
       hhh:Donor-${donor.id} rdf:type owl:NamedIndividual , hhh:Donor ;
-        hhh:donates hhh:Habit-${donor.donation.id} ;
+        hhh:donates hhh:Habit-${donor.donation.id} ; hhh:userId "${userId}"^^xsd:token ;
         hhh:id "${donor.id}"^^xsd:token .
     `;
   }
@@ -233,6 +234,7 @@ class DbClient {
     return query += `
       hhh:Habit-${donation.id} rdf:type owl:NamedIndividual , hhh:Habit ;
         ${behaviorStatement}
+        hhh:habitStrength "${donation.habitStrength}"^^xsd:integer ;
         hhh:id "${donation.id}"^^xsd:token ;
         hhh:language "${donation.language}" ;
         hhh:source "${donation.source}"^^rdfs:Literal ;

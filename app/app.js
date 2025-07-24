@@ -1,6 +1,8 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import cookieParser from 'cookie-parser';
 
 import { jsonBodyParser } from './middleware/requestParser.js';
 import { staticFileMiddleware } from './middleware/staticFileMiddleware.js';
@@ -24,6 +26,12 @@ const port = config.port;
 const contextPath = process.env.APP_BASE_PATH || '/';
 const router = express.Router();
 
+app.set('basepath', contextPath);
+router.use((req, res, next) => {
+  res.locals.contextPath = contextPath;
+  next();
+});
+
 // Set template engine
 app.set("view engine", "ejs");
 
@@ -35,8 +43,27 @@ const validLanguageCodes = getLanguageCodes().join('|');
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json()); // Added to parse JSON bodies
 
+router.use(cookieParser());
+
 // Middleware for parsing form data in the request body
 router.use(jsonBodyParser);
+
+// Middleware for reading/writing of user IDs in cookies
+router.use((req, res, next) => {
+  let userId = req.cookies.userId;
+
+  if (!userId) {
+    userId = uuidv4();
+    res.cookie('userId', userId, {
+      maxAge: 365 * 24 * 60 * 60 * 1000, 
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+  }
+
+  req.userId = userId;
+  next();
+});
 
 // Middleware for serving static files
 router.use(staticFileMiddleware);
@@ -67,8 +94,8 @@ router.use('/:lng(' + validLanguageCodes + ')?/', (req, res, next) => {
 // Redirects all requests to '/donate' if the language parameter (lng) is already set
 router.get('/:lng(' + validLanguageCodes + ')?/', (req, res) => {
   console.log('Redirecting to donate');
-  console.log(contextPath + req.lang + '/donate');
-  res.redirect(301, contextPath + req.lang + '/donate');
+  const targetPath = path.join(contextPath, req.lang, 'donate');
+  res.redirect(301, targetPath);
 });
 
 router.use('/:lng(' + validLanguageCodes + ')/reward', rewardRouter);

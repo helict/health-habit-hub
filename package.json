@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "node-fetch": "^3.3.2"
+    "cookie-parser": "^1.4.7",
+    "node-fetch": "^3.3.2",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "prettier": "3.5.3"

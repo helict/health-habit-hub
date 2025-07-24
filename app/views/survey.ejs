@@ -26,6 +26,8 @@
 
 <body>
   <%- include('nav', navigation) %>
+  
+  <!--
     <div id="surveyContainer"></div>
     <script>
       // TODO: Refactor and move to controller if possible
@@ -48,6 +50,47 @@
         surveyModel.render(document.getElementById("surveyContainer"));
       });
     </script>
+    -->
+
+  <div id="surveyContainer"></div>
+
+  <script>
+    const surveyModel = new Survey.Model(<%- JSON.stringify(survey) %>);
+    surveyModel.locale = <%- JSON.stringify(locale) %>; // eg 'de'
+
+    // on complete function
+    surveyModel.onComplete.add(function (sender) {
+      // create full submission url
+      // needs contextpath language and survey id
+      const contextPath = "<%= contextPath %>";
+      const surveyId = "<%= survey.id %>"; // eg '1'
+      const language = "<%= locale %>"; // eg 'de'
+      // handle root contextpath
+      const submissionUrl = `${contextPath === '/' ? '' : contextPath}/${language}/survey/${surveyId}/complete`;
+
+      console.log(`sending survey data to: ${submissionUrl}`);
+
+      // send survey results to server
+      fetch(submissionUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sender.data)
+      })
+      .then(response => {
+        // server responds with a redirect
+        // response url has the final url so navigate there
+        if (response.ok) {
+          window.location.href = response.url;
+        } else {
+          alert('error sending survey');
+        }
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      surveyModel.render(document.getElementById("surveyContainer"));
+    });
+  </script>
     <% - include('footer') %>
 </body>
 

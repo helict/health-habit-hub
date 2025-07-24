@@ -108,6 +108,18 @@
 
 <!-- Form with reCAPTCHA -->
   <form action="<%= navigation.languageCode %>/donate/submit-form" method="POST">
+ 
+  <div class="form-group mb-4">
+    <div id="slider-outer-container">
+      <label for="habitStrength" class="slider-label" style="font-weight:bold; font-size:1.1em; display:block; margin-bottom:1em;">
+        <%= typeof habitStrengthLabel !== 'undefined' ? habitStrengthLabel : 'Wie sehr möchtest du diese Gewohnheit beibehalten oder abstellen?' %>
+      </label>
+      <div id="slider-container"></div>
+      <div id="slider-numbers"></div>
+    </div>
+    <input type="hidden" id="habitStrength" name="habitStrength" value="">
+  </div>
+
   <div class="recaptcha-container">
      <%- recaptcha || '' %>
   </div>
@@ -121,6 +133,83 @@
 
   <!-- Footer -->
   <%- include('footer') %>
+
+<script>
+  // todo: scale optional only 5 steps
+  const scaleType = <%= typeof scaleType !== 'undefined' ? scaleType : 7 %>;
+  const scales = {
+    7: [
+      { value: 1, label: "Unbedingt abstellen" },
+      { value: 2, label: "Eher abstellen" },
+      { value: 3, label: "Tendenziell abstellen" },
+      { value: 4, label: "Neutral / Unentschieden" },
+      { value: 5, label: "Tendenziell beibehalten" },
+      { value: 6, label: "Eher beibehalten" },
+      { value: 7, label: "Unbedingt beibehalten" }
+    ],
+    5: [
+      { value: 1, label: "Unbedingt abstellen" },
+      { value: 2, label: "Eher abstellen" },
+      { value: 3, label: "Neutral / Unentschieden" },
+      { value: 4, label: "Eher beibehalten" },
+      { value: 5, label: "Unbedingt beibehalten" }
+    ]
+  };
+
+function renderSlider(scale) {
+  const outer = document.getElementById('slider-container');
+  outer.innerHTML = '';
+
+  const trackDiv = document.createElement('div');
+  trackDiv.id = 'slider-track-container';
+
+  const leftLabel = document.createElement('span');
+  leftLabel.id = 'left-label';
+  leftLabel.textContent = scale[0].label;
+
+  const sliderWrapper = document.createElement('div');
+  sliderWrapper.id = 'slider-inner-wrapper';
+  sliderWrapper.style.position = 'relative';
+
+  const slider = document.createElement('input');
+  slider.type = 'range';
+  slider.min = 1;
+  slider.max = scale.length;
+  slider.step = 1;
+  slider.value = Math.ceil(scale.length / 2);
+  slider.id = 'habitStrengthSlider';
+  sliderWrapper.appendChild(slider);
+
+  const numbersDiv = document.createElement('div');
+  numbersDiv.id = 'slider-numbers';
+  for (let i = 1; i <= scale.length; i++) {
+    const num = document.createElement('span');
+    num.textContent = i;
+    numbersDiv.appendChild(num);
+  }
+  sliderWrapper.appendChild(numbersDiv);
+
+  const rightLabel = document.createElement('span');
+  rightLabel.id = 'right-label';
+  rightLabel.textContent = scale[scale.length - 1].label;
+
+  trackDiv.append(leftLabel, sliderWrapper, rightLabel);
+  outer.appendChild(trackDiv);
+
+  const currentLabel = document.createElement('div');
+  currentLabel.id = 'current-label';
+  currentLabel.textContent = scale[slider.value - 1].label;
+  outer.appendChild(currentLabel);
+
+  slider.addEventListener('input', () => {
+    document.getElementById('habitStrength').value = slider.value;
+    currentLabel.textContent = scale[slider.value - 1].label;
+  });
+  document.getElementById('habitStrength').value = slider.value;
+}
+
+  renderSlider(scales[scaleType]);
+</script>
   
 </body>
 </html>

@@ -1,655 +1,1411 @@
 db = new Mongo().getDB("surveyjs");
 
 db.createCollection("surveys");
-db.surveys.insert([{
-    "id": "1",
-    "title": {
-        "default": "Product Feedback Survey",
-        "de": "Fragebogen zum Produkt-Feedback",
-        "ja": "製品フィードバック調査"
-    },
-    "description": {
-        "default": "Place survey description here",
-        "de": "Beschreibung der Umfrage hier einfügen",
-        "ja": "調査の説明をここに置く"
-    },
-    "name": "product_feedback_survey",
-    "pages": [{
-        "name": "questionnaire_1_page_1",
-        "title": {
-            "default": "Questionnaire Page 1",
-            "de": "Fragebogen Seite 1",
-            "ja": "アンケート1ページ目"
+console.log("Collection 'surveys' created.");
+db.surveys.insert([
+{
+  "id": "1", 
+  "completedHtml": {
+    "default": "<h4>Thank you for your participation!</h4>",
+    "de": "<h4>Vielen Dank für Ihre Teilnahme!</h4>",
+    "ja": "<h4>ご参加いただきありがとうございます！</h4>"
+  },
+  "showProgressBar": true,
+  "progressBarLocation": "top",
+  "pages": [
+    {
+      "name": "demographics",
+      "title": {
+        "default": "About You",
+        "de": "Über Sie",
+        "ja": "あなたについて"
+      },
+      "description": {
+        "default": "Please provide some information about yourself.",
+        "de": "Bitte machen Sie einige Angaben zu Ihrer Person.",
+        "ja": "ご自身に関する情報をご提供ください。"
+      },
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "gender",
+          "title": {
+            "default": "Gender",
+            "de": "Geschlecht",
+            "ja": "性別"
+          },
+          "description": {
+            "default": "Please select your gender.",
+            "de": "Bitte wählen Sie Ihr Geschlecht.",
+            "ja": "性別を選択してください。"
+          },
+          "choices": [
+            {
+              "value": "männlich",
+              "text": {
+                "default": "Male",
+                "de": "Männlich",
+                "ja": "男性"
+              }
+            },
+            {
+              "value": "weiblich",
+              "text": {
+                "default": "Female",
+                "de": "Weiblich",
+                "ja": "女性"
+              }
+            },
+            {
+              "value": "divers",
+              "text": {
+                "default": "Other",
+                "de": "Divers",
+                "ja": "その他"
+              }
+            }
+          ]
         },
-        "elements": [{
-            "type": "matrix",
-            "name": "Quality",
-            "title": {
-                "default": "Please indicate if you agree or disagree with the following statements",
-                "de": "Bitte geben Sie an, ob Sie den folgenden Aussagen zustimmen oder nicht zustimmen",
-                "ja": "以下の記述に賛成か反対かをお答えください。"
+        {
+          "type": "dropdown",
+          "name": "country",
+          "title": {
+            "default": "Country of Origin",
+            "de": "Herkunft",
+            "ja": "出身国"
+          },
+          "description": {
+            "default": "Please specify your country of origin.",
+            "de": "Geben Sie Ihr Herkunftsland an.",
+            "ja": "出身国を選択してください。"
+          },
+          "choicesByUrl": {
+            "url": "https://restcountries.com/v2/all?fields=name",
+            "valueName": "name",
+            "titleName": "name"
+          },
+          "placeholder": {
+            "default": "Please select",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "education",
+          "title": {
+            "default": "Highest Education",
+            "de": "Schulabschluss",
+            "ja": "学歴"
+          },
+          "description": {
+            "default": "Please select your highest level of education.",
+            "de": "Wählen Sie Ihren höchsten Schulabschluss.",
+            "ja": "最終学歴を選択してください。"
+          },
+          "choices": [
+            {
+              "value": "abitur",
+              "text": {
+                "default": "Abitur",
+                "de": "Abitur",
+                "ja": "アビトゥーア"
+              }
             },
-            "columns": [{
-                "value": 1,
-                "text": {
-                    "default": "Strongly disagree",
-                    "de": "Stimme überhaupt nicht zu",
-                    "ja": "強く反対"
-                }
-            }, {
-                "value": 2,
-                "text": "Disagree"
-            }, {
-                "value": 3,
-                "text": "Neutral"
-            }, {
-                "value": 4,
-                "text": "Agree"
-            }, {
-                "value": 5,
-                "text": "Strongly agree"
-            }],
-            "rows": [{
-                "value": "affordable",
-                "text": {
-                    "default": "Product is affordable",
-                    "de": "Das Produkt ist erschwinglich",
-                    "ja": "製品は手頃な価格"
-                }
-            }, {
-                "value": "does what it claims",
-                "text": "Product does what it claims"
-            }, {
-                "value": "better then others",
-                "text": "Product is better than other products on the market"
-            }, {
-                "value": "easy to use",
-                "text": "Product is easy to use"
-            }]
-        }, {
-            "type": "rating",
-            "name": "satisfaction",
-            "title": {
-                "default": "How satisfied are you with the product?",
-                "de": "Wie zufrieden sind Sie mit dem Produkt?",
-                "ja": "製品の満足度は？"
+            {
+              "value": "fachabitur",
+              "text": {
+                "default": "Fachabitur",
+                "de": "Fachabitur",
+                "ja": "ファッハアビトゥーア"
+              }
             },
-            "mininumRateDescription": {
-                "default": "Not satisfied",
-                "de": "Unzufrieden",
-                "ja": "満足していない"
+            {
+              "value": "hauptschulabschluss",
+              "text": {
+                "default": "Hauptschulabschluss",
+                "de": "Hauptschulabschluss",
+                "ja": "ハウプトシューレ卒業"
+              }
+            }
+          ],
+          "placeholder": {
+            "default": "Please select",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        },
+        {
+          "type": "text",
+          "name": "age",
+          "title": {
+            "default": "Age",
+            "de": "Alter",
+            "ja": "年齢"
+          },
+          "description": {
+            "default": "Please enter your age.",
+            "de": "Geben Sie Ihr Alter an.",
+            "ja": "年齢を入力してください。"
+          },
+          "validators": [
+            {
+              "type": "numeric",
+              "minValue": 0,
+              "maxValue": 122
+            }
+          ],
+          "inputType": "number",
+          "placeholder": {
+            "default": "Please select",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "weight",
+          "title": {
+            "default": "Weight Category",
+            "de": "Gewichtsklasse",
+            "ja": "体重カテゴリ"
+          },
+          "description": {
+            "default": "Please select your weight category.",
+            "de": "Wählen Sie Ihre Gewichtsklasse.",
+            "ja": "体重カテゴリを選択してください。"
+          },
+          "choices": [
+            {
+              "value": "untergewichtig",
+              "text": {
+                "default": "Underweight",
+                "de": "Untergewichtig",
+                "ja": "低体重"
+              }
             },
-            "maximumRateDescription": "Completely satisfied"
-        }, {
-            "type": "rating",
-            "name": "recommend friends",
-            "visibleIf": "{satisfaction} > 3",
-            "title": "How likely are you to recommend the product to a friend or colleague?",
-            "mininumRateDescription": "Won't recommend",
-            "maximumRateDescription": "Will recommend"
-        }, {
-            "type": "comment",
-            "name": "suggestions",
-            "title": "What would make you more satisfied with the product?"
-        }]
-    }, {
-        "elements": [{
-            "type": "radiogroup",
-            "name": "price to competitors",
-            "title": "Compared to our competitors, do you feel the product is",
-            "choices": [
-                "Less expensive",
-                "Priced about the same",
-                "More expensive",
-                "Not sure"
-            ]
-        }, {
-            "type": "radiogroup",
-            "name": "price",
-            "title": "Do you feel our current price is merited by our product?",
-            "choices": [
-                "correct|Yes, the price is about right",
-                "low|No, the price is too low",
-                "high|No, the price is too high"
-            ]
-        }, {
-            "type": "multipletext",
-            "name": "pricelimit",
-            "title": "What is the... ",
-            "items": [{
-                "name": "mostamount",
-                "title": "Most amount you would pay for a product like ours"
-            }, {
-                "name": "leastamount",
-                "title": "The least amount you would feel comfortable paying"
-            }]
-        }]
-    }, {
-        "elements": [{
-            "type": "text",
-            "name": "email",
-            "title": 'Thank you for taking our survey. Please enter your email address and press the "Submit" button.'
-        }]
-    }]
-}, {
-    "id": "2",
-    "title": "Customer and their partner income survey",
-    "name": "income_survey",
-    "completeText": "Finish",
-    "pageNextText": "Continue",
-    "pagePrevText": "Previous",
-    "pages": [{
-        "elements": [{
-            "type": "panel",
-            "elements": [{
-                "type": "html",
-                "name": "income_intro",
-                "html":
-                    "Income. In this section, you will be asked about your current employment status and other ways you and your partner receive income. It will be handy to have the following in front of you: payslip (for employment details), latest statement from any payments (from Centrelink or other authority), a current Centrelink Schedule for any account-based pension from super, annuities, or other income stream products that you may own. If you don't have a current one, you can get these schedules by contacting your income stream provider."
-            }],
-            "name": "panel1"
-        }],
-        "name": "page0"
-    }, {
-        "elements": [{
-            "type": "panel",
-            "elements": [{
-                "type": "radiogroup",
-                "choices": [
-                    "Married",
-                    "In a registered relationship",
-                    "Living with my partner",
-                    "Widowed",
-                    "Single"
-                ],
-                "name": "maritalstatus_c",
-                "title": " "
-            }],
-            "name": "panel13",
-            "title": "What is your marital status?"
-        }],
-        "name": "page1"
-    }, {
-        "elements": [{
-            "type": "panel",
-            "elements": [{
-                "type": "panel",
-                "elements": [{
-                    "type": "radiogroup",
-                    "choices": [{
-                        "value": "1",
-                        "text": "Yes"
-                    }, {
-                        "value": "0",
-                        "text": "No"
-                    }],
-                    "colCount": 2,
-                    "isRequired": true,
-                    "name": "member_receives_income_from_employment",
-                    "title": " "
-                }, {
-                    "type": "checkbox",
-                    "name": "member_type_of_employment",
-                    "visible": false,
-                    "visibleIf": "{member_receives_income_from_employment} =1",
-                    "title": "  ",
-                    "isRequired": true,
-                    "choices": [
-                        "Self-employed",
-                        "Other types of employment"
-                    ]
-                }],
-                "name": "panel2",
-                "title": "You"
-            }, {
-                "type": "panel",
-                "elements": [{
-                    "type": "radiogroup",
-                    "choices": [{
-                        "value": "1",
-                        "text": "Yes"
-                    }, {
-                        "value": "0",
-                        "text": "No"
-                    }],
-                    "colCount": 2,
-                    "isRequired": true,
-                    "name": "partner_receives_income_from_employment",
-                    "title": " "
-                }, {
-                    "type": "checkbox",
-                    "name": "partner_type_of_employment",
-                    "visible": false,
-                    "visibleIf": "{partner_receives_income_from_employment} =1",
-                    "title": " ",
-                    "isRequired": true,
-                    "choices": [
-                        "Self-employed",
-                        "Other types of employment"
-                    ]
-                }],
-                "name": "panel1",
-                "startWithNewLine": false,
-                "title": "Your Partner",
-                "visibleIf":
-                    "{maritalstatus_c} = 'Married' or {maritalstatus_c} = 'In a registered relationship' or {maritalstatus_c} = 'Living with my partner'"
-            }],
-            "name": "panel5",
-            "title": "Do you and/or your partner currently receive income from employment?"
-        }],
-        "name": "page2"
-    }, {
-        "elements": [{
-            "type": "panel",
-            "elements": [{
-                "type": "panel",
-                "elements": [{
-                    "type": "paneldynamic",
-                    "minPanelCount": 1,
-                    "name": "member_array_employer_names",
-                    "valueName": "member_array_employer",
-                    "title": "Enter information about your employers",
-                    "panelAddText": "Add another employer",
-                    "panelCount": 1,
-                    "templateElements": [{
-                        "type": "text",
-                        "name": "member_employer_name",
-                        "valueName": "name",
-                        "title": "Employer name"
-                    }]
-                }],
-                "name": "panel2",
-                "title": "You",
-                "visible": false,
-                "visibleIf": "{member_type_of_employment} contains 'Other types of employment'"
-            }, {
-                "type": "panel",
-                "elements": [{
-                    "type": "paneldynamic",
-                    "minPanelCount": 1,
-                    "name": "partner_array_employer_names",
-                    "valueName": "partner_array_employer",
-                    "title": "Enter information about employers of your partner",
-                    "panelAddText": "Add another employer",
-                    "panelCount": 1,
-                    "templateElements": [{
-                        "type": "text",
-                        "name": "partner_employer_name",
-                        "valueName": "name",
-                        "title": "Employer name"
-                    }]
-                }],
-                "name": "panel8",
-                "startWithNewLine": false,
-                "title": "Your Partner",
-                "visible": false,
-                "visibleIf":
-                    "{partner_type_of_employment} contains 'Other types of employment'"
-            }],
-            "name": "panel6",
-            "title": "Employers"
-        }],
-        "name": "page3.1",
-        "visible": false,
-        "visibleIf":
-            "{member_type_of_employment} contains 'Other types of employment' or {partner_type_of_employment} contains 'Other types of employment'"
-    }, {
-        "elements": [{
-            "type": "panel",
-            "elements": [{
-                "type": "panel",
-                "elements": [{
-                    "type": "paneldynamic",
-                    "renderMode": "progressTop",
-                    "allowAddPanel": false,
-                    "allowRemovePanel": false,
-                    "name": "member_array_employer_info",
-                    "title": "Your employers",
-                    "valueName": "member_array_employer",
-                    "panelCount": 1,
-                    "templateElements": [{
-                        "type": "panel",
-                        "name": "panel_member_employer_address",
-                        "title": "Contacts",
-                        "elements": [{
-                            "type": "text",
-                            "name": "member_employer_address",
-                            "valueName": "address",
-                            "title": "Address:"
-                        }, {
-                            "type": "text",
-                            "name": "member_employer_phone",
-                            "valueName": "phone",
-                            "title": "Phone number:"
-                        }, {
-                            "type": "text",
-                            "name": "member_employer_abn",
-                            "valueName": "abn",
-                            "title": "ABN:"
-                        }]
-                    }, {
-                        "type": "panel",
-                        "name": "panel_member_employer_role",
-                        "title": "Are you a full time worker?",
-                        "elements": [{
-                            "type": "radiogroup",
-                            "choices": [
-                                "Full-time",
-                                "Part-time",
-                                "Casual",
-                                "Seasonal"
-                            ],
-                            "name": "member_employer_role",
-                            "title": " ",
-                            "valueName": "role"
-                        }]
-                    }, {
-                        "type": "panel",
-                        "name": "panel_member_employer_hours_work",
-                        "title": "How many hours do you work?",
-                        "elements": [{
-                            "type": "text",
-                            "inputType": "number",
-                            "name": "member_employer_hours_worked",
-                            "valueName": "hours_worked",
-                            "title": "Hours:"
-                        }, {
-                            "type": "dropdown",
-                            "name": "member_employer_hours_worked_frequency",
-                            "title": "Work frequency:",
-                            "valueName": "hours_worked_frequency",
-                            "startWithNewLine": false,
-                            "defaultValue": "Day",
-                            "choices": [
-                                "Day",
-                                "Week",
-                                "Fortnight",
-                                "Month",
-                                "Year"
-                            ]
-                        }]
-                    }, {
-                        "type": "panel",
-                        "name": "panel_member_employer_income",
-                        "title": "What is your income?",
-                        "elements": [{
-                            "type": "text",
-                            "inputType": "number",
-                            "name": "member_employer_income",
-                            "valueName": "income",
-                            "title": "Income:"
-                        }, {
-                            "type": "dropdown",
-                            "name": "member_employer_income_frequency",
-                            "title": "Income frequency:",
-                            "valueName": "income_frequency",
-                            "startWithNewLine": false,
-                            "defaultValue": "Month",
-                            "choices": [
-                                "Day",
-                                "Week",
-                                "Fortnight",
-                                "Month",
-                                "Year"
-                            ]
-                        }]
-                    }],
-                    "templateTitle": "Employer name: {panel.name}"
-                }],
-                "name": "panel17",
-                "title": "You",
-                "visibleIf": "{member_type_of_employment} contains 'Other types of employment'"
-            }, {
-                "type": "panel",
-                "elements": [{
-                    "type": "paneldynamic",
-                    "renderMode": "progressTop",
-                    "allowAddPanel": false,
-                    "allowRemovePanel": false,
-                    "name": "partner_array_employer_info",
-                    "title": "Employers",
-                    "valueName": "partner_array_employer",
-                    "panelCount": 1,
-                    "templateElements": [{
-                        "type": "panel",
-                        "name": "panel_partner_employer_address",
-                        "title": "Contacts",
-                        "elements": [{
-                            "type": "text",
-                            "name": "partner_employer_address",
-                            "valueName": "address",
-                            "title": "Address:"
-                        }, {
-                            "type": "text",
-                            "name": "partner_employer_phone",
-                            "valueName": "phone",
-                            "title": "Phone number:"
-                        }, {
-                            "type": "text",
-                            "name": "partner_employer_abn",
-                            "valueName": "abn",
-                            "title": "ABN:"
-                        }]
-                    }, {
-                        "type": "panel",
-                        "name": "panel_partner_employer_role",
-                        "title": "Are you a full time worker?",
-                        "elements": [{
-                            "type": "radiogroup",
-                            "choices": [
-                                "Full-time",
-                                "Part-time",
-                                "Casual",
-                                "Seasonal"
-                            ],
-                            "name": "partner_employer_role",
-                            "title": "Your role",
-                            "valueName": "role"
-                        }]
-                    }, {
-                        "type": "panel",
-                        "name": "panel_partner_employer_hours_work",
-                        "title": "How many hours do you work?",
-                        "elements": [{
-                            "type": "text",
-                            "inputType": "number",
-                            "name": "partner_employer_hours_worked",
-                            "valueName": "hours_worked",
-                            "title": "Hours:"
-                        }, {
-                            "type": "dropdown",
-                            "name": "partner_employer_hours_worked_frequency",
-                            "valueName": "hours_worked_frequency",
-                            "title": "Work frequency:",
-                            "startWithNewLine": false,
-                            "defaultValue": "Day",
-                            "choices": [
-                                "Day",
-                                "Week",
-                                "Fortnight",
-                                "Month",
-                                "Year"
-                            ]
-                        }]
-                    }, {
-                        "type": "panel",
-                        "name": "panel_partner_employer_income",
-                        "title": "What is your income?",
-                        "elements": [{
-                            "type": "text",
-                            "inputType": "number",
-                            "name": "partner_employer_income",
-                            "valueName": "income",
-                            "title": "Income:"
-                        }, {
-                            "type": "dropdown",
-                            "name": "partner_employer_income_frequency",
-                            "valueName": "income_frequency",
-                            "title": "Income frequency:",
-                            "startWithNewLine": false,
-                            "defaultValue": "Month",
-                            "choices": [
-                                "Day",
-                                "Week",
-                                "Fortnight",
-                                "Month",
-                                "Year"
-                            ]
-                        }]
-                    }],
-                    "templateTitle": "Employer name: {panel.name}"
-                }],
-                "name": "panel18",
-                "startWithNewLine": false,
-                "title": "You partner",
-                "visibleIf": "{partner_type_of_employment} contains 'Other types of employment'"
-            }],
-            "name": "panel16",
-            "title": "Enter information about your employers"
-        }],
-        "name": "page3.2",
-        "visibleIf":
-            "{member_type_of_employment} contains 'Other types of employment' or {partner_type_of_employment} contains 'Other types of employment'"
-    }, {
-        "elements": [{
-            "type": "panel",
-            "elements": [{
-                "type": "panel",
-                "elements": [{
-                    "type": "radiogroup",
-                    "choices": [{
-                        "value": "1",
-                        "text": "Yes"
-                    }, {
-                        "value": "0",
-                        "text": "No"
-                    }],
-                    "colCount": 2,
-                    "isRequired": true,
-                    "name": "member_receive_fringe_benefits",
-                    "title": " "
-                }, {
-                    "type": "panel",
-                    "elements": [{
-                        "type": "text",
-                        "name": "member_fringe_benefits_type"
-                    }, {
-                        "type": "text",
-                        "name": "member_fringe_benefits_value"
-                    }, {
-                        "type": "radiogroup",
-                        "choices": ["Grossed up", "Not grossed up"],
-                        "name": "member_fringe_benefits_grossing"
-                    }],
-                    "name": "panel11",
-                    "visible": false,
-                    "visibleIf": "{member_receive_fringe_benefits} = 1"
-                }],
-                "name": "panel2",
-                "title": "You",
-                "visible": false,
-                "visibleIf": "{member_type_of_employment} contains 'Other types of employment'"
-            }, {
-                "type": "panel",
-                "elements": [{
-                    "type": "radiogroup",
-                    "choices": [{
-                        "value": "1",
-                        "text": "Yes"
-                    }, {
-                        "value": "0",
-                        "text": "No"
-                    }],
-                    "colCount": 2,
-                    "isRequired": true,
-                    "name": "partner_receive_fringe_benefits",
-                    "title": " "
-                }, {
-                    "type": "panel",
-                    "elements": [{
-                        "type": "text",
-                        "name": "partner_fringe_benefits_type"
-                    }, {
-                        "type": "text",
-                        "name": "partner_fringe_benefits_value"
-                    }, {
-                        "type": "radiogroup",
-                        "choices": ["Grossed up", "Not grossed up"],
-                        "name": "partner_fringe_benefits_grossing"
-                    }],
-                    "name": "panel12",
-                    "visible": false,
-                    "visibleIf": "{partner_receive_fringe_benefits} = 1"
-                }],
-                "name": "panel1",
-                "startWithNewLine": false,
-                "title": "Your Partner",
-                "visible": false,
-                "visibleIf": "{partner_type_of_employment} contains 'Other types of employment'"
-            }],
-            "name": "panel9",
-            "title": "Do any of your employers provide you with fringe benefits?"
-        }],
-        "name": "page4",
-        "visible": false,
-        "visibleIf":
-            "{member_type_of_employment} contains 'Other types of employment' or {partner_type_of_employment} contains 'Other types of employment'"
-    }, {
-        "elements": [{
-            "type": "panel",
-            "elements": [{
-                "type": "panel",
-                "elements": [{
-                    "type": "radiogroup",
-                    "choices": [{
-                        "value": "1",
-                        "text": "Yes"
-                    }, {
-                        "value": "0",
-                        "text": "No"
-                    }],
-                    "colCount": 2,
-                    "isRequired": true,
-                    "name": "member_seasonal_intermittent_or_contract_work",
-                    "title": " "
-                }],
-                "name": "panel2",
-                "title": "You",
-                "visible": false,
-                "visibleIf": "{member_receives_income_from_employment} = 1"
-            }, {
-                "type": "panel",
-                "elements": [{
-                    "type": "radiogroup",
-                    "choices": [{
-                        "value": "1",
-                        "text": "Yes"
-                    }, {
-                        "value": "0",
-                        "text": "No"
-                    }],
-                    "colCount": 2,
-                    "isRequired": true,
-                    "name": "partner_seasonal_intermittent_or_contract_work",
-                    "title": " "
-                }],
-                "name": "panel1",
-                "startWithNewLine": false,
-                "title": "Your Partner",
-                "visible": false,
-                "visibleIf": "{partner_receives_income_from_employment} =1 "
-            }],
-            "name": "panel10",
-            "title": "In the last 6 months, have you done any seasonal, intermittent or contract work?"
-        }],
-        "name": "page5",
-        "visible": false,
-        "visibleIf": "{member_receives_income_from_employment} = 1 or {partner_receives_income_from_employment} =1 "
-    }],
-    "requiredText": "",
-    "showQuestionNumbers": "off",
-    "storeOthersAsComment": false
-}]);
+            {
+              "value": "normalgewichtig",
+              "text": {
+                "default": "Normal weight",
+                "de": "Normalgewichtig",
+                "ja": "標準体重"
+              }
+            },
+            {
+              "value": "übergewichtig",
+              "text": {
+                "default": "Overweight",
+                "de": "Übergewichtig",
+                "ja": "過体重"
+              }
+            },
+            {
+              "value": "stark-übergewichtig",
+              "text": {
+                "default": "Obese",
+                "de": "Stark übergewichtig",
+                "ja": "肥満"
+              }
+            }
+          ],
+          "placeholder": {
+            "default": "Please select",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "employment_context",
+          "title": {
+            "default": "Employment Status",
+            "de": "Berufliche Situation",
+            "ja": "雇用状況"
+          },
+          "description": {
+            "default": "Please select your employment status.",
+            "de": "Wählen Sie Ihre berufliche Situation.",
+            "ja": "雇用状況を選択してください。"
+          },
+          "choices": [
+            {
+              "value": "im-studium",
+              "text": {
+                "default": "Student",
+                "de": "Im Studium",
+                "ja": "学生"
+              }
+            },
+            {
+              "value": "in-ausbildung",
+              "text": {
+                "default": "In vocational training",
+                "de": "In Ausbildung",
+                "ja": "職業訓練中"
+              }
+            },
+            {
+              "value": "angestellt-vollzeit",
+              "text": {
+                "default": "Employed full‑time",
+                "de": "Vollzeit angestellt",
+                "ja": "フルタイム雇用"
+              }
+            },
+            {
+              "value": "angestellt-teilzeit",
+              "text": {
+                "default": "Employed part‑time",
+                "de": "Teilzeit angestellt",
+                "ja": "パートタイム雇用"
+              }
+            },
+            {
+              "value": "selbstständig",
+              "text": {
+                "default": "Self‑employed",
+                "de": "Selbstständig",
+                "ja": "自営業"
+              }
+            },
+            {
+              "value": "arbeitssuchend",
+              "text": {
+                "default": "Unemployed",
+                "de": "Arbeitssuchend",
+                "ja": "失業中"
+              }
+            },
+            {
+              "value": "in-rente",
+              "text": {
+                "default": "Retired",
+                "de": "In Rente",
+                "ja": "退職"
+              }
+            },
+            {
+              "value": "hausarbeit-familienpflege",
+              "text": {
+                "default": "Housework / Family care",
+                "de": "Hausarbeit / Familienpflege",
+                "ja": "家事／家族ケア"
+              }
+            }
+          ],
+          "placeholder": {
+            "default": "Please select",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "working_hours",
+          "title": {
+            "default": "Working Hours",
+            "de": "Arbeitszeiten",
+            "ja": "勤務時間"
+          },
+          "description": {
+            "default": "Please select your working hours system.",
+            "de": "Wählen Sie Ihr Arbeitszeitsystem.",
+            "ja": "勤務時間体系を選択してください。"
+          },
+          "choices": [
+            {
+              "value": "schichtsystem-mit-nachtschicht",
+              "text": {
+                "default": "Shift with night shifts",
+                "de": "Schichtsystem mit Nachtschicht",
+                "ja": "夜勤ありシフト制"
+              }
+            },
+            {
+              "value": "schichtsystem-ohne-nachtschichten",
+              "text": {
+                "default": "Shift without night shifts",
+                "de": "Schichtsystem ohne Nachtschicht",
+                "ja": "夜勤なしシフト制"
+              }
+            },
+            {
+              "value": "wochenende-oft-im-dienst",
+              "text": {
+                "default": "Often on duty weekends",
+                "de": "Oft am Wochenende im Dienst",
+                "ja": "週末よく勤務"
+              }
+            },
+            {
+              "value": "wochenende-meistens-frei",
+              "text": {
+                "default": "Mostly free on weekends",
+                "de": "Meistens am Wochenende frei",
+                "ja": "週末は主に休み"
+              }
+            },
+            {
+              "value": "wochenende-immer-frei",
+              "text": {
+                "default": "Always free on weekends",
+                "de": "Immer am Wochenende frei",
+                "ja": "週末は常に休み"
+              }
+            },
+            {
+              "value": "flexible-arbeitszeiten",
+              "text": {
+                "default": "Flexible working hours",
+                "de": "Flexible Arbeitszeiten",
+                "ja": "フレックスタイム"
+              }
+            },
+            {
+              "value": "unflexible-arbeitszeiten",
+              "text": {
+                "default": "Fixed working hours",
+                "de": "Unflexible Arbeitszeiten",
+                "ja": "固定勤務時間"
+              }
+            },
+            {
+              "value": "homeoffice",
+              "text": {
+                "default": "Home office",
+                "de": "Homeoffice",
+                "ja": "在宅勤務"
+              }
+            }
+          ],
+          "placeholder": {
+            "default": "Please select",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "commute_mode",
+          "title": {
+            "default": "Commute Mode",
+            "de": "Arbeitsweg",
+            "ja": "通勤手段"
+          },
+          "description": {
+            "default": "How do you commute to work?",
+            "de": "Wie kommen Sie zur Arbeit?",
+            "ja": "通勤手段を選択してください。"
+          },
+          "choices": [
+            {
+              "value": "autofahrt",
+              "text": {
+                "default": "By car",
+                "de": "Autofahrt",
+                "ja": "自動車"
+              }
+            },
+            {
+              "value": "fußweg",
+              "text": {
+                "default": "On foot",
+                "de": "Fußweg",
+                "ja": "徒歩"
+              }
+            },
+            {
+              "value": "fahrradfahrt",
+              "text": {
+                "default": "By bicycle",
+                "de": "Fahrradfahrt",
+                "ja": "自転車"
+              }
+            },
+            {
+              "value": "öffentliche-verkehrsmittel",
+              "text": {
+                "default": "Public transport",
+                "de": "Öffentliche Verkehrsmittel",
+                "ja": "公共交通機関"
+              }
+            },
+            {
+              "value": "motorradfahrt",
+              "text": {
+                "default": "By motorcycle",
+                "de": "Motorradfahrt",
+                "ja": "バイク"
+              }
+            },
+            {
+              "value": "mitfahrgelegenheit",
+              "text": {
+                "default": "Carpooling",
+                "de": "Mitfahrgelegenheit",
+                "ja": "相乗り"
+              }
+            },
+            {
+              "value": "telecommuting",
+              "text": {
+                "default": "Telecommuting",
+                "de": "Telecommuting",
+                "ja": "テレコミューティング"
+              }
+            },
+            {
+              "value": "other",
+              "text": {
+                "default": "Other",
+                "de": "Sonstiges",
+                "ja": "その他"
+              }
+            }
+          ],
+          "placeholder": {
+            "default": "Please select",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "personal_context",
+          "title": {
+            "default": "Personal Situation",
+            "de": "Private Situation",
+            "ja": "プライベート状況"
+          },
+          "description": {
+            "default": "Please select your personal situation.",
+            "de": "Wählen Sie Ihre private Situation.",
+            "ja": "プライベート状況を選択してください。"
+          },
+          "choices": [
+            {
+              "value": "partnerschaft-ohne-kind",
+              "text": {
+                "default": "Partnership without child",
+                "de": "Partnerschaft ohne Kind",
+                "ja": "子供なしパートナーシップ"
+              }
+            },
+            {
+              "value": "partnerschaft-mit-kind",
+              "text": {
+                "default": "Partnership with child",
+                "de": "Partnerschaft mit Kind",
+                "ja": "子供ありパートナーシップ"
+              }
+            },
+            {
+              "value": "alleinerziehend",
+              "text": {
+                "default": "Single parent",
+                "de": "Alleinerziehend",
+                "ja": "シングル親"
+              }
+            },
+            {
+              "value": "single-ohne-kind",
+              "text": {
+                "default": "Single without child",
+                "de": "Single ohne Kind",
+                "ja": "子供なしシングル"
+              }
+            },
+            {
+              "value": "getrennt-lebend-partnerschaft-kind",
+              "text": {
+                "default": "Separated with partner & child",
+                "de": "Getrennt lebend mit Partner & Kind",
+                "ja": "離別・パートナー＆子供あり"
+              }
+            },
+            {
+              "value": "getrennt-lebend-single-kind",
+              "text": {
+                "default": "Separated single with child",
+                "de": "Getrennt lebend als Single mit Kind",
+                "ja": "離別・シングル＆子供あり"
+              }
+            },
+            {
+              "value": "getrennt-lebend-single-ohne-kind",
+              "text": {
+                "default": "Separated single without child",
+                "de": "Getrennt lebend als Single ohne Kind",
+                "ja": "離別・シングル＆子供なし"
+              }
+            },
+            {
+              "value": "andere-familienkonstellation",
+              "text": {
+                "default": "Other family constellation",
+                "de": "Andere Familienkonstellation",
+                "ja": "その他の家族構成"
+              }
+            }
+          ],
+          "placeholder": {
+            "default": "Bitte auswählen",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "available_time",
+          "title": {
+            "default": "Available Time per Day",
+            "de": "Verfügbare Zeit pro Tag",
+            "ja": "1日あたりの利用可能時間"
+          },
+          "description": {
+            "default": "How much time is available to you daily?",
+            "de": "Wie viel Zeit steht Ihnen täglich zur Verfügung?",
+            "ja": "1日に利用できる時間を選択してください。"
+          },
+          "choices": [
+            {
+              "value": "mehr-als-3-stunden",
+              "text": {
+                "default": "More than 3 hours",
+                "de": "Mehr als 3 Stunden",
+                "ja": "3時間以上"
+              }
+            },
+            {
+              "value": "2-3-stunden",
+              "text": {
+                "default": "2–3 hours",
+                "de": "2–3 Stunden",
+                "ja": "2～3時間"
+              }
+            },
+            {
+              "value": "1-2-stunden",
+              "text": {
+                "default": "1–2 hours",
+                "de": "1–2 Stunden",
+                "ja": "1～2時間"
+              }
+            },
+            {
+              "value": "0-5-1-stunde",
+              "text": {
+                "default": "0.5–1 hour",
+                "de": "0,5–1 Stunde",
+                "ja": "0.5～1時間"
+              }
+            },
+            {
+              "value": "weniger-als-0-5-stunden",
+              "text": {
+                "default": "Less than 0.5 hour",
+                "de": "Weniger als 0,5 Stunden",
+                "ja": "0.5時間未満"
+              }
+            }
+          ],
+          "placeholder": {
+            "default": "Bitte auswählen",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "relationship_context",
+          "title": {
+            "default": "Partner’s Health Context",
+            "de": "Beziehungskontext",
+            "ja": "パートナーの健康状況"
+          },
+          "description": {
+            "default": "Please select your partner’s health context.",
+            "de": "Wählen Sie den Gesundheitskontext Ihres Partners.",
+            "ja": "パートナーの健康状況を選択してください。"
+          },
+          "choices": [
+            {
+              "value": "gesundheitsbewusster-partner",
+              "text": {
+                "default": "Health‑conscious partner",
+                "de": "Gesundheitsbewusster Partner",
+                "ja": "健康志向のパートナー"
+              }
+            },
+            {
+              "value": "mäßig-gesundheitsbewusster-partner",
+              "text": {
+                "default": "Moderately health‑conscious partner",
+                "de": "Mäßig gesundheitsbewusster Partner",
+                "ja": "やや健康志向のパートナー"
+              }
+            },
+            {
+              "value": "unterstützender-partner",
+              "text": {
+                "default": "Supportive partner",
+                "de": "Unterstützender Partner",
+                "ja": "サポートしてくれるパートナー"
+              }
+            },
+            {
+              "value": "wenig-gesundheitsbewusster-partner",
+              "text": {
+                "default": "Not very health‑conscious partner",
+                "de": "Wenig gesundheitsbewusster Partner",
+                "ja": "あまり健康志向でないパートナー"
+              }
+            },
+            {
+              "value": "überwiegend-inaktiver-partner",
+              "text": {
+                "default": "Mostly inactive partner",
+                "de": "Überwiegend inaktiver Partner",
+                "ja": "主に不活発なパートナー"
+              }
+            },
+            {
+              "value": "kein-partner",
+              "text": {
+                "default": "No partner",
+                "de": "Kein Partner",
+                "ja": "パートナーなし"
+              }
+            }
+          ],
+          "placeholder": {
+            "default": "Bitte auswählen",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "pet_influence",
+          "title": {
+            "default": "Pets Influence",
+            "de": "Haustiere",
+            "ja": "ペットの影響"
+          },
+          "description": {
+            "default": "Please select how pets influence your activity.",
+            "de": "Wählen Sie den Einfluss von Haustieren auf Ihre Aktivität.",
+            "ja": "ペットが活動に与える影響を選択してください。"
+          },
+          "choices": [
+            {
+              "value": "regelmäßige-bewegung",
+              "text": {
+                "default": "Regular exercise thanks to pet",
+                "de": "Regelmäßige Bewegung durch Haustier",
+                "ja": "ペットのおかげで定期的に運動"
+              }
+            },
+            {
+              "value": "mehr-aktivität-im-alltag",
+              "text": {
+                "default": "More daily activity",
+                "de": "Mehr Aktivität im Alltag",
+                "ja": "日常での活動量増加"
+              }
+            },
+            {
+              "value": "kein-einfluss",
+              "text": {
+                "default": "No influence",
+                "de": "Kein Einfluss",
+                "ja": "影響なし"
+              }
+            },
+            {
+              "value": "keine-haustiere",
+              "text": {
+                "default": "No pets",
+                "de": "Keine Haustiere",
+                "ja": "ペットなし"
+              }
+            }
+          ],
+          "placeholder": {
+            "default": "Bitte auswählen",
+            "de": "Bitte auswählen",
+            "ja": "選択してください"
+          }
+        }
+      ]
+    },
+    {
+      "name": "sus",
+      "title": {
+        "default": "System Usability",
+        "de": "System-Benutzerfreundlichkeit",
+        "ja": "システムの使いやすさ"
+      },
+      "description": {
+        "default": "For each of the following statements, please select a point on the scale to indicate the extent to which you agree or disagree.",
+        "de": "Bitte wählen Sie für jede der folgenden Aussagen einen Punkt auf der Skala, um anzugeben, inwieweit Sie zustimmen oder nicht zustimmen.",
+        "ja": "以下の各項目について、同意するかしないかの度合いをスケール上で選択してください。"
+      },
+      "elements": [
+        {
+          "type": "rating",
+          "name": "sus_q1",
+          "title": {
+            "default": "I think that I would like to use this system frequently.",
+            "de": "Ich denke, ich würde dieses System häufig nutzen wollen.",
+            "ja": "このシステムを頻繁に使用したいと思います。"
+          },
+          "minRateDescription": {
+            "default": "Strongly disagree",
+            "de": "Stimme überhaupt nicht zu",
+            "ja": "全くそう思わない"
+          },
+          "maxRateDescription": {
+            "default": "Strongly agree",
+            "de": "Stimme voll und ganz zu",
+            "ja": "非常にそう思う"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "sus_q2",
+          "title": {
+            "default": "I found the system unnecessarily complex.",
+            "de": "Ich fand das System unnötig komplex.",
+            "ja": "このシステムは不必要に複雑だと思いました。"
+          },
+          "minRateDescription": {
+            "default": "Strongly disagree",
+            "de": "Stimme überhaupt nicht zu",
+            "ja": "全くそう思わない"
+          },
+          "maxRateDescription": {
+            "default": "Strongly agree",
+            "de": "Stimme voll und ganz zu",
+            "ja": "非常にそう思う"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "sus_q3",
+          "title": {
+            "default": "I thought the system was easy to use.",
+            "de": "Ich fand das System einfach zu benutzen.",
+            "ja": "このシステムは使いやすいと思いました。"
+          },
+          "minRateDescription": {
+            "default": "Strongly disagree",
+            "de": "Stimme überhaupt nicht zu",
+            "ja": "全くそう思わない"
+          },
+          "maxRateDescription": {
+            "default": "Strongly agree",
+            "de": "Stimme voll und ganz zu",
+            "ja": "非常にそう思う"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "sus_q4",
+          "title": {
+            "default": "I think that I would need the support of a technical person to be able to use this system.",
+            "de": "Ich denke, ich würde Unterstützung durch eine technisch versierte Person benötigen, um das System zu nutzen.",
+            "ja": "このシステムを使うには技術者の支援が必要だと思いました。"
+          },
+          "minRateDescription": {
+            "default": "Strongly disagree",
+            "de": "Stimme überhaupt nicht zu",
+            "ja": "全くそう思わない"
+          },
+          "maxRateDescription": {
+            "default": "Strongly agree",
+            "de": "Stimme voll und ganz zu",
+            "ja": "非常にそう思う"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "sus_q5",
+          "title": {
+            "default": "I found the various functions in this system were well integrated.",
+            "de": "Ich fand, die verschiedenen Funktionen im System waren gut integriert.",
+            "ja": "このシステムの様々な機能はうまく統合されていると感じました。"
+          },
+          "minRateDescription": {
+            "default": "Strongly disagree",
+            "de": "Stimme überhaupt nicht zu",
+            "ja": "全くそう思わない"
+          },
+          "maxRateDescription": {
+            "default": "Strongly agree",
+            "de": "Stimme voll und ganz zu",
+            "ja": "非常にそう思う"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "sus_q6",
+          "title": {
+            "default": "I thought there was too much inconsistency in this system.",
+            "de": "Ich fand, es gab zu viele Inkonsistenzen im System.",
+            "ja": "このシステムには一貫性がないと感じました。"
+          },
+          "minRateDescription": {
+            "default": "Strongly disagree",
+            "de": "Stimme überhaupt nicht zu",
+            "ja": "全くそう思わない"
+          },
+          "maxRateDescription": {
+            "default": "Strongly agree",
+            "de": "Stimme voll und ganz zu",
+            "ja": "非常にそう思う"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "sus_q7",
+          "title": {
+            "default": "I would imagine that most people would learn to use this system very quickly.",
+            "de": "Ich kann mir vorstellen, dass die meisten Menschen das System sehr schnell lernen würden.",
+            "ja": "ほとんどの人がこのシステムの使い方をすぐに学べると思います。"
+          },
+          "minRateDescription": {
+            "default": "Strongly disagree",
+            "de": "Stimme überhaupt nicht zu",
+            "ja": "全くそう思わない"
+          },
+          "maxRateDescription": {
+            "default": "Strongly agree",
+            "de": "Stimme voll und ganz zu",
+            "ja": "非常にそう思う"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "sus_q8",
+          "title": {
+            "default": "I found the system very cumbersome to use.",
+            "de": "Ich fand das System sehr umständlich in der Nutzung.",
+            "ja": "このシステムはとても使いにくいと感じました。"
+          },
+          "minRateDescription": {
+            "default": "Strongly disagree",
+            "de": "Stimme überhaupt nicht zu",
+            "ja": "全くそう思わない"
+          },
+          "maxRateDescription": {
+            "default": "Strongly agree",
+            "de": "Stimme voll und ganz zu",
+            "ja": "非常にそう思う"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "sus_q9",
+          "title": {
+            "default": "I felt very confident using the system.",
+            "de": "Ich fühlte mich bei der Nutzung des Systems sehr sicher.",
+            "ja": "このシステムの使用に自信がありました。"
+          },
+          "minRateDescription": {
+            "default": "Strongly disagree",
+            "de": "Stimme überhaupt nicht zu",
+            "ja": "全くそう思わない"
+          },
+          "maxRateDescription": {
+            "default": "Strongly agree",
+            "de": "Stimme voll und ganz zu",
+            "ja": "非常にそう思う"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "sus_q10",
+          "title": {
+            "default": "I needed to learn a lot of things before I could get going with this system.",
+            "de": "Ich musste viel lernen, bevor ich mit diesem System arbeiten konnte.",
+            "ja": "このシステムを使い始める前に多くのことを学ぶ必要がありました。"
+          },
+          "minRateDescription": {
+            "default": "Strongly disagree",
+            "de": "Stimme überhaupt nicht zu",
+            "ja": "全くそう思わない"
+          },
+          "maxRateDescription": {
+            "default": "Strongly agree",
+            "de": "Stimme voll und ganz zu",
+            "ja": "非常にそう思う"
+          }
+        }
+      ]
+    },
+    {
+      "name": "semantic",
+      "title": {
+        "default": "User Experience",
+        "de": "Benutzererfahrung",
+        "ja": "ユーザーエクスペリエンス"
+      },
+      "description": {
+        "default": "Please rate your experience with the system on the following scales.",
+        "de": "Bitte bewerten Sie Ihre Erfahrung mit dem System auf den folgenden Skalen.",
+        "ja": "以下の尺度でシステムのご利用体験を評価してください。"
+      },
+      "elements": [
+        {
+          "type": "rating",
+          "name": "annoying_enjoyable",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Annoying",
+            "de": "Nervig",
+            "ja": "不快"
+          },
+          "maxRateDescription": {
+            "default": "Enjoyable",
+            "de": "Angenehm",
+            "ja": "楽しい"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "not_understandable_understandable",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Not understandable",
+            "de": "Unverständlich",
+            "ja": "わかりにくい"
+          },
+          "maxRateDescription": {
+            "default": "Understandable",
+            "de": "Verständlich",
+            "ja": "わかりやすい"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "dull_creative",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Dull",
+            "de": "Langweilig",
+            "ja": "退屈"
+          },
+          "maxRateDescription": {
+            "default": "Creative",
+            "de": "Kreativ",
+            "ja": "創造的"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "difficult_to_learn_easy_to_learn",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Difficult to learn",
+            "de": "Schwer zu lernen",
+            "ja": "学びにくい"
+          },
+          "maxRateDescription": {
+            "default": "Easy to learn",
+            "de": "Einfach zu lernen",
+            "ja": "学びやすい"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "inferior_valuable",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Inferior",
+            "de": "Minderwertig",
+            "ja": "価値が低い"
+          },
+          "maxRateDescription": {
+            "default": "Valuable",
+            "de": "Wertvoll",
+            "ja": "価値がある"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "boring_exciting",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Boring",
+            "de": "Langweilig",
+            "ja": "退屈"
+          },
+          "maxRateDescription": {
+            "default": "Exciting",
+            "de": "Spannend",
+            "ja": "興奮"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "not_interesting_interesting",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Not interesting",
+            "de": "Nicht interessant",
+            "ja": "面白くない"
+          },
+          "maxRateDescription": {
+            "default": "Interesting",
+            "de": "Interessant",
+            "ja": "面白い"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "unpredictable_predictable",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Unpredictable",
+            "de": "Unvorhersehbar",
+            "ja": "予測不能"
+          },
+          "maxRateDescription": {
+            "default": "Predictable",
+            "de": "Vorhersehbar",
+            "ja": "予測可能"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "slow_fast",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Slow",
+            "de": "Langsam",
+            "ja": "遅い"
+          },
+          "maxRateDescription": {
+            "default": "Fast",
+            "de": "Schnell",
+            "ja": "速い"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "conventional_inventive",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Conventional",
+            "de": "Konventionell",
+            "ja": "慣習的"
+          },
+          "maxRateDescription": {
+            "default": "Inventive",
+            "de": "Erfinderisch",
+            "ja": "独創的"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "obstructive_supportive",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Obstructive",
+            "de": "Hinderlich",
+            "ja": "妨げる"
+          },
+          "maxRateDescription": {
+            "default": "Supportive",
+            "de": "Unterstützend",
+            "ja": "支援的"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "bad_good",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Bad",
+            "de": "Schlecht",
+            "ja": "悪い"
+          },
+          "maxRateDescription": {
+            "default": "Good",
+            "de": "Gut",
+            "ja": "良い"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "complicated_easy",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Complicated",
+            "de": "Kompliziert",
+            "ja": "複雑"
+          },
+          "maxRateDescription": {
+            "default": "Easy",
+            "de": "Einfach",
+            "ja": "簡単"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "unlikable_pleasing",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Unlikable",
+            "de": "Unsympathisch",
+            "ja": "好感が持てない"
+          },
+          "maxRateDescription": {
+            "default": "Pleasing",
+            "de": "Angenehm",
+            "ja": "好感が持てる"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "usual_leading_edge",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Usual",
+            "de": "Gewöhnlich",
+            "ja": "一般的"
+          },
+          "maxRateDescription": {
+            "default": "Leading edge",
+            "de": "Innovativ",
+            "ja": "最先端"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "unpleasant_pleasant",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Unpleasant",
+            "de": "Unangenehm",
+            "ja": "不快"
+          },
+          "maxRateDescription": {
+            "default": "Pleasant",
+            "de": "Angenehm",
+            "ja": "快適"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "not_secure_secure",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Not secure",
+            "de": "Unsicher",
+            "ja": "不安"
+          },
+          "maxRateDescription": {
+            "default": "Secure",
+            "de": "Sicher",
+            "ja": "安全"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "demotivating_motivating",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Demotivating",
+            "de": "Demotivierend",
+            "ja": "やる気がなくなる"
+          },
+          "maxRateDescription": {
+            "default": "Motivating",
+            "de": "Motivierend",
+            "ja": "やる気が出る"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "does_not_meet_expectations_meets_expectations",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Does not meet expectations",
+            "de": "Erwartungen nicht erfüllt",
+            "ja": "期待に応えない"
+          },
+          "maxRateDescription": {
+            "default": "Meets expectations",
+            "de": "Erwartungen erfüllt",
+            "ja": "期待に応える"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "inefficient_efficient",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Inefficient",
+            "de": "Ineffizient",
+            "ja": "非効率"
+          },
+          "maxRateDescription": {
+            "default": "Efficient",
+            "de": "Effizient",
+            "ja": "効率的"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "confusing_clear",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Confusing",
+            "de": "Verwirrend",
+            "ja": "混乱"
+          },
+          "maxRateDescription": {
+            "default": "Clear",
+            "de": "Klar",
+            "ja": "明確"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "impractical_practical",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Impractical",
+            "de": "Unpraktisch",
+            "ja": "非実用的"
+          },
+          "maxRateDescription": {
+            "default": "Practical",
+            "de": "Praktisch",
+            "ja": "実用的"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "cluttered_organized",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Cluttered",
+            "de": "Unübersichtlich",
+            "ja": "ごちゃごちゃ"
+          },
+          "maxRateDescription": {
+            "default": "Organized",
+            "de": "Organisiert",
+            "ja": "整理されている"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "unattractive_attractive",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Unattractive",
+            "de": "Unattraktiv",
+            "ja": "魅力がない"
+          },
+          "maxRateDescription": {
+            "default": "Attractive",
+            "de": "Attraktiv",
+            "ja": "魅力的"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "unfriendly_friendly",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Unfriendly",
+            "de": "Unfreundlich",
+            "ja": "冷たい"
+          },
+          "maxRateDescription": {
+            "default": "Friendly",
+            "de": "Freundlich",
+            "ja": "親しみやすい"
+          }
+        },
+        {
+          "type": "rating",
+          "name": "conservative_innovative",
+          "titleLocation": "hidden",
+          "rateCount": 7,
+          "rateMax": 7,
+          "minRateDescription": {
+            "default": "Conservative",
+            "de": "Konservativ",
+            "ja": "保守的"
+          },
+          "maxRateDescription": {
+            "default": "Innovative",
+            "de": "Innovativ",
+            "ja": "革新的"
+          }
+        }
+      ]
+    }
+  ]
+}
+
+]);
 
 db.createCollection("results");
 db.results.insert([

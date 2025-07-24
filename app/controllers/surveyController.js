@@ -1,25 +1,25 @@
 import { getLanguageMessages } from '../utils/localization.js';
+import path from 'path';
 import { connect, ObjectId } from '../models/survey.js';
 
 export async function renderSurvey(req, res) {
   try {
     const db = await connect();
-    db.collection("surveys")
-        .find()
-        .toArray()
-        .then(console.log);
+    const surveyId = req.params.id;
+    console.log(`Attempting to find survey with id: "${surveyId}" (Type: ${typeof surveyId})`);
 
     const survey = await db
         .collection('surveys')
-        .findOne({ id: req.params.id });
+        .findOne({ id: surveyId });
     if (!survey) {
+        console.error(`Survey with id "${surveyId}" not found in MongoDB.`);
         return res.status(404).send('Survey not found');
     }
 
     res.render(
         "survey",
         {
-            survey: survey,
+            survey,
             locale: req.lang,
             ...getLanguageMessages(req.lang)
         }
@@ -33,14 +33,21 @@ export async function renderSurvey(req, res) {
 export async function submitSurvey(req, res) {
   try {
     const db = await connect();
-    await db
-        .collection('results')
-        .insertOne({
-            surveyId: req.params.id,
-            data: req.body,
-            submittedAt: new Date()
-        });
-    res.render("/thanks")
+      const submission = {
+          surveyId: req.params.id,
+          data: req.body,
+          submittedAt: new Date(),
+          userId: req.userId
+      };
+      await db.collection('results').insertOne(submission);
+      console.log("Survey submission with user ID:", submission);
+    res.cookie('demographicsCompleted', 'true', {
+        maxAge: 365 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        path: '/' 
+    });
+    const basepath = req.app.get('basepath');
+    res.redirect(`${basepath}/${req.lang}/thanks`);
   } catch (err) {
     res.status(500).json({
         status: 'error',

@@ -605,3 +605,60 @@ input.form-check-input[type="radio"] {
   text-align: justify;
   text-justify: inter-word;
 }
+
+#slider-outer-container {
+  margin-top: 20px;
+  padding: 30px;
+  width: 100%;
+  max-width: 800px;
+  background: #dadada;
+  box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+  border-radius: 20px;
+  border: 2px solid #50b034;
+  margin-left: auto;
+  margin-right: auto;
+}
+#slider-track-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+#left-label, #right-label {
+  flex: 0 0 auto;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+#slider-inner-wrapper {
+  flex: 1 1 auto;
+  position: relative;
+  margin: 0 1em;
+  max-width: 500px;
+}
+#habitStrengthSlider {
+  width: 100%;
+  display: block;
+  margin: 0;
+}
+#slider-inner-wrapper #slider-numbers {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.3em;
+  font-size: 1em;
+  color: #50b034;
+  width: 110%; 
+  left: -5%; 
+}
+#slider-inner-wrapper #slider-numbers span {
+  flex: 1;
+  text-align: center;
+}
+#current-label {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 3em;
+}
