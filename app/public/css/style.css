@@ -662,3 +662,101 @@ input.form-check-input[type="radio"] {
   font-weight: bold;
   margin-top: 3em;
 }
+
+/* SurveyJS Farb-Anpassungen */
+:root {
+  --sjs-primary-backcolor: #50b034;
+  --sjs-primary-backcolor-light: #7bc95f;
+  --sjs-primary-backcolor-dark: #3a8527;
+  --sjs-primary-forecolor: #fff;
+  --sjs-general-backcolor-bright: #50b034;
+  --sjs-secondary-backcolor: #50b034;
+  --sjs-secondary-backcolor-light: #7bc95f;
+  --sjs-secondary-backcolor-semi-light: #65c549;
+  --sjs-special-green: #50b034;
+  --sjs-special-blue: #50b034;
+  --sjs-special-main-color: #50b034;
+}
+
+/* Buttons */
+.sd-btn--action,
+.sd-navigation__complete-btn,
+.sd-navigation__next-btn,
+.sv-btn--primary,
+.sv_complete_btn,
+.sv_next_btn {
+  background-color: var(--sjs-primary-backcolor) !important;
+  border-color: var(--sjs-primary-backcolor) !important;
+  color: var(--sjs-primary-forecolor) !important;
+}
+.sd-btn--action:hover,
+.sd-navigation__complete-btn:hover,
+.sd-navigation__next-btn:hover,
+.sv-btn--primary:hover {
+  background-color: var(--sjs-primary-backcolor-dark) !important;
+  border-color: var(--sjs-primary-backcolor-dark) !important;
+  color: var(--sjs-primary-forecolor) !important;
+}
+
+/* Checkbox & Radio */
+.sd-checkbox--checked .sd-checkbox__decorator,
+.sv-checkbox--checked .sv-checkbox__decorator {
+  background-color: var(--sjs-primary-backcolor) !important;
+  border-color: var(--sjs-primary-backcolor) !important;
+}
+.sd-radiogroup__item--checked .sd-radiogroup__decorator,
+.sv-radiogroup__item--checked .sv-radiogroup__decorator {
+  border-color: var(--sjs-primary-backcolor) !important;
+}
+.sd-radiogroup__item--checked .sd-radiogroup__decorator::after,
+.sv-radiogroup__item--checked .sv-radiogroup__decorator::after {
+  background-color: var(--sjs-primary-backcolor) !important;
+}
+
+/* Progress Bar */
+.sd-progress__bar,
+.sv-progress__bar {
+  background-color: var(--sjs-primary-backcolor) !important;
+}
+
+/* Fokus-Rahmen */
+.sd-input:focus,
+.sd-textarea:focus,
+.sv-input:focus,
+.sv-textarea:focus,
+select:focus {
+  border-color: var(--sjs-primary-backcolor) !important;
+  box-shadow: 0 0 0 1px var(--sjs-primary-backcolor) !important;
+}
+
+/* 1) Container als Flex-Box */
+.sd-q-rating__container,
+.sv-q-rating__container {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* 2) Min-Label: fix/min-width, damit die Skala rechts davon immer gleich anfängt */
+.sd-rating__min-text,
+.sv-rating__min-text {
+  flex: 0 0 auto !important;
+  min-width: 200px !important;   /* oder eine andere Wunsch-Basis */
+  text-align: right !important;
+  padding-right: 0.5em !important;
+}
+
+/* 3) Max-Label: auto, bleibt nur so breit wie der Text */
+.sd-rating__max-text,
+.sv-rating__max-text {
+  flex: 0 0 auto !important;
+  text-align: left !important;
+  padding-left: 0.5em !important;
+}
+
+/* 4) Items-Container: füllt den Rest und verteilt alle Buttons gleichmäßig */
+.sd-q-rating__items,
+.sv-q-rating__items {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  justify-content: space-between !important;
+}

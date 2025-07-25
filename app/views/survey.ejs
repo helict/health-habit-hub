@@ -1,97 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <%- include('header') %>
-    <!-- TODO: Refactor to package.json -->
-    <link href="https://unpkg.com/survey-core/survey-core.min.css" type="text/css" rel="stylesheet">
-    <script type="text/javascript" src="https://unpkg.com/survey-core/survey.core.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/survey-js-ui/survey-js-ui.min.js"></script>
-    <!-- TODO: Refactor to load specific language dynamically (instead of all or given language)
-    <script type="text/javascript" src="https://unpkg.com/survey-core/survey.i18n.min.js"></script>
-    -->
-    <script src="https://unpkg.com/survey-core/i18n/english.js"></script>
-    <script src="https://unpkg.com/survey-core/i18n/german.js"></script>
-    <script src="https://unpkg.com/survey-core/i18n/japanese.js"></script>
-
-    <!--
-    <script>
-      const survey = new Survey.Model(< - JSON.stringify(surveyJson) %>);
-      document.addEventListener("DOMContentLoaded", function () {
-        survey.render(document.getElementById("surveyContainer"));
-      });
-    </script>
-    -->
+  <!-- SurveyJS Core CSS -->
+  <link
+    href="https://unpkg.com/survey-core/survey-core.min.css"
+    rel="stylesheet"
+  >
+  <!-- Eigene Styles -->
+  <link href="<%= contextPath %>/css/style.css" rel="stylesheet" />
+  <!-- SurveyJS Scripts -->
+  <script src="https://unpkg.com/survey-core/survey.core.min.js"></script>
+  <script src="https://unpkg.com/survey-js-ui/survey-js-ui.min.js"></script>
+  <script src="https://unpkg.com/survey-core/i18n/english.js"></script>
+  <script src="https://unpkg.com/survey-core/i18n/german.js"></script>
+  <script src="https://unpkg.com/survey-core/i18n/japanese.js"></script>
 </head>
-
 <body>
   <%- include('nav', navigation) %>
-  
-  <!--
-    <div id="surveyContainer"></div>
-    <script>
-      // TODO: Refactor and move to controller if possible
-      const surveyModel = new Survey.Model(<%- JSON.stringify(survey) %>);
-      surveyModel.locale = <%- JSON.stringify(locale) %>;
-      surveyModel.onComplete.add(function (sender) {
-        // Submit survey data to the controller via POST
-        fetch('/survey/<%= survey.id %>/complete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(sender.data)
-        })
-          .then(res => res.json())
-          .then(data => {
-            alert("Survey submitted! " + JSON.stringify(data));
-            // Optionally redirect or show a thank you message
-          });
-      });
-      document.addEventListener("DOMContentLoaded", function () {
-        surveyModel.render(document.getElementById("surveyContainer"));
-      });
-    </script>
-    -->
-
   <div id="surveyContainer"></div>
-
+  
   <script>
-    const surveyModel = new Survey.Model(<%- JSON.stringify(survey) %>);
-    surveyModel.locale = <%- JSON.stringify(locale) %>; // eg 'de'
-
-    // on complete function
-    surveyModel.onComplete.add(function (sender) {
-      // create full submission url
-      // needs contextpath language and survey id
-      const contextPath = "<%= contextPath %>";
-      const surveyId = "<%= survey.id %>"; // eg '1'
-      const language = "<%= locale %>"; // eg 'de'
-      // handle root contextpath
-      const submissionUrl = `${contextPath === '/' ? '' : contextPath}/${language}/survey/${surveyId}/complete`;
-
-      console.log(`sending survey data to: ${submissionUrl}`);
-
-      // send survey results to server
-      fetch(submissionUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(sender.data)
-      })
-      .then(response => {
-        // server responds with a redirect
-        // response url has the final url so navigate there
-        if (response.ok) {
-          window.location.href = response.url;
-        } else {
-          alert('error sending survey');
+    // Hilfsfunktion für mehrsprachige Nachrichten
+    function getLocalizedMessage(key, locale) {
+      const messages = {
+        incompleteWarning: {
+          en: "Please answer either all questions or none – partial completion is not allowed for final submission.",
+          de: "Bitte beantworten Sie entweder alle Fragen oder keine – teilweises Ausfüllen ist für die finale Abgabe nicht erlaubt.",
+          ja: "最終送信では、すべての質問に回答するか、何も回答しないでください。"
+        },
+        requiredError: {
+          en: "Please answer this question.",
+          de: "Bitte beantworten Sie diese Frage.",
+          ja: "この質問に回答してください。"
+        },
+        submitError: {
+          en: "Error submitting survey. Please try again.",
+          de: "Fehler beim Senden der Umfrage. Bitte versuchen Sie es erneut.",
+          ja: "アンケートの送信でエラーが発生しました。もう一度お試しください。"
         }
+      };
+      return messages[key][locale] || messages[key]['en'];
+    }
+
+    // 1) Survey initialisieren
+    const surveyModel = new Survey.Model(<%- JSON.stringify(survey) %>);
+    const currentLocale = <%- JSON.stringify(locale) %>;
+    surveyModel.locale = currentLocale;
+
+    // 2) Theme Settings
+    surveyModel.applyTheme({
+      themeName: "default",
+      colorPalette: "light",
+      isPanelless: false,
+      cssVariables: {
+        "--sv-color-primary": "#50b034",
+        "--sv-color-primary-light": "#7bc95f",
+        "--sv-color-primary-dark": "#3a8527"
+      }
+    });
+
+    // 3) Rating-Fragen NICHT als required setzen (das blockiert Navigation)
+    surveyModel.onAfterRenderQuestion.add((sender, options) => {
+      const q = options.question;
+      if (q.getType() === "rating") {
+        // NICHT required setzen, damit Navigation funktioniert
+        q.isRequired = false;
+      }
+    });
+
+    // 4) Seitenwechsel erlauben, aber warnen bei unvollständigen Rating-Fragen
+    surveyModel.onCurrentPageChanging.add((sender, options) => {
+      // Nur Rating-Fragen auf aktueller Seite prüfen
+      const currentPageQuestions = options.oldCurrentPage.questions.filter(q => q.getType() === "rating");
+      
+      if (currentPageQuestions.length === 0) {
+        // Keine Rating-Fragen auf dieser Seite - immer erlauben
+        options.allowChanging = true;
+        return;
+      }
+
+      const answeredOnPage = currentPageQuestions.filter(q => {
+        const value = sender.getValue(q.name);
+        return value !== undefined && value !== null && value !== "";
+      }).length;
+
+      const totalOnPage = currentPageQuestions.length;
+
+      // Wenn auf dieser Seite Rating-Fragen teilweise beantwortet wurden, warnen aber erlauben
+      if (answeredOnPage > 0 && answeredOnPage < totalOnPage) {
+        const proceed = confirm(
+          `${answeredOnPage} von ${totalOnPage} Fragen beantwortet. ` +
+          `Unvollständige Antworten können nicht ausgewertet werden. Fortfahren?`
+        );
+        options.allowChanging = proceed;
+        return;
+      }
+
+      // Sonst immer erlauben (komplett leer oder komplett ausgefüllt)
+      options.allowChanging = true;
+    });
+
+    // 4b) Validierung nur beim finalen Submit
+    surveyModel.onCompleting.add((sender, options) => {
+      // Alle Rating-Fragen im gesamten Survey prüfen
+      const allRatingQuestions = sender.getAllQuestions().filter(q => q.getType() === "rating");
+      
+      if (allRatingQuestions.length === 0) {
+        options.allowComplete = true;
+        return;
+      }
+
+      const answeredQuestions = allRatingQuestions.filter(q => {
+        const value = sender.getValue(q.name);
+        return value !== undefined && value !== null && value !== "";
+      });
+
+      const answeredCount = answeredQuestions.length;
+      const totalCount = allRatingQuestions.length;
+
+      // Komplett leer oder komplett ausgefüllt erlauben
+      if (answeredCount === 0 || answeredCount === totalCount) {
+        options.allowComplete = true;
+        return;
+      }
+
+      // Teilweise ausgefüllt - nur beim finalen Submit blockieren
+      options.allowComplete = false;
+      
+      let message = getLocalizedMessage('incompleteWarning', currentLocale);
+      alert(message);
+    });
+
+    // 5) Submit Handler mit verbesserter Fehlerbehandlung
+    surveyModel.onComplete.add(function (sender) {
+      const ctx = "<%= contextPath %>";
+      const id = "<%= survey.id %>";
+      const lang = "<%= locale %>";
+      const url = `${ctx === '/' ? '' : ctx}/${lang}/survey/${id}/complete`;
+
+      // Loading-State anzeigen (optional)
+      sender.showLoadingIndicator = true;
+
+      fetch(url, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          data: sender.data,
+          completedAt: new Date().toISOString(),
+          surveyId: id
+        })
+      })
+      .then(async res => {
+        sender.showLoadingIndicator = false;
+        
+        if (res.ok) {
+          // Prüfen ob Response JSON ist
+          const contentType = res.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const result = await res.json();
+            if (result.redirectUrl) {
+              window.location.href = result.redirectUrl;
+            } else {
+              // Fallback zur ursprünglichen Methode
+              window.location.href = res.url;
+            }
+          } else {
+            window.location.href = res.url || `${ctx === '/' ? '' : ctx}/${lang}/survey/complete`;
+          }
+        } else {
+          try {
+            const errorData = await res.json();
+            console.error('Survey submission failed:', errorData);
+          } catch (e) {
+            console.error('Survey submission failed with status:', res.status);
+          }
+          alert(getLocalizedMessage('submitError', currentLocale));
+        }
+      })
+      .catch(error => {
+        sender.showLoadingIndicator = false;
+        console.error('Network error:', error);
+        alert(getLocalizedMessage('submitError', currentLocale));
       });
     });
 
-    document.addEventListener("DOMContentLoaded", function () {
-      surveyModel.render(document.getElementById("surveyContainer"));
+    // 6) Survey rendern wenn DOM bereit ist
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("surveyContainer");
+      if (container) {
+        surveyModel.render(container);
+      } else {
+        console.error('Survey container not found');
+      }
     });
   </script>
-    <% - include('footer') %>
+  
+  <%- include('footer') %>
 </body>
-
 </html>

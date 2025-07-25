@@ -107,7 +107,7 @@ db.surveys.insert([
             {
               "value": "abitur",
               "text": {
-                "default": "Abitur",
+                "default": "university entrance diploma",
                 "de": "Abitur",
                 "ja": "アビトゥーア"
               }
@@ -115,13 +115,13 @@ db.surveys.insert([
             {
               "value": "fachabitur",
               "text": {
-                "default": "Fachabitur",
+                "default": "vocational diploma",
                 "de": "Fachabitur",
                 "ja": "ファッハアビトゥーア"
               }
             },
             {
-              "value": "hauptschulabschluss",
+              "value": "Lower Secondary School Certificate",
               "text": {
                 "default": "Hauptschulabschluss",
                 "de": "Hauptschulabschluss",
@@ -157,8 +157,8 @@ db.surveys.insert([
           ],
           "inputType": "number",
           "placeholder": {
-            "default": "Please select",
-            "de": "Bitte auswählen",
+            "default": "Please enter",
+            "de": "Bitte eingeben",
             "ja": "選択してください"
           }
         },
@@ -550,7 +550,7 @@ db.surveys.insert([
             }
           ],
           "placeholder": {
-            "default": "Bitte auswählen",
+            "default": "Please select",
             "de": "Bitte auswählen",
             "ja": "選択してください"
           }
@@ -611,7 +611,7 @@ db.surveys.insert([
             }
           ],
           "placeholder": {
-            "default": "Bitte auswählen",
+            "default": "Please select",
             "de": "Bitte auswählen",
             "ja": "選択してください"
           }
@@ -680,7 +680,7 @@ db.surveys.insert([
             }
           ],
           "placeholder": {
-            "default": "Bitte auswählen",
+            "default": "Please select",
             "de": "Bitte auswählen",
             "ja": "選択してください"
           }
@@ -733,7 +733,7 @@ db.surveys.insert([
             }
           ],
           "placeholder": {
-            "default": "Bitte auswählen",
+            "default": "Please select",
             "de": "Bitte auswählen",
             "ja": "選択してください"
           }

@@ -23,7 +23,7 @@ import surveyRouter from './routes/surveyRouter.js';
 
 const app = express();
 const port = config.port;
-const contextPath = process.env.APP_BASE_PATH || '/';
+const contextPath = process.env.APP_BASE_PATH || '';
 const router = express.Router();
 
 app.set('basepath', contextPath);
