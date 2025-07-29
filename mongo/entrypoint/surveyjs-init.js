@@ -758,7 +758,7 @@ db.surveys.insert([
           "name": "sus_q1",
           "title": {
             "default": "I think that I would like to use this system frequently.",
-            "de": "Ich denke, ich würde dieses System häufig nutzen wollen.",
+            "de": "Ich denke, dass ich dieses Produkt häufig verwenden möchte.",
             "ja": "このシステムを頻繁に使用したいと思います。"
           },
           "minRateDescription": {
@@ -777,7 +777,7 @@ db.surveys.insert([
           "name": "sus_q2",
           "title": {
             "default": "I found the system unnecessarily complex.",
-            "de": "Ich fand das System unnötig komplex.",
+            "de": "Ich fand das Produkt unnötig komplex.",
             "ja": "このシステムは不必要に複雑だと思いました。"
           },
           "minRateDescription": {
@@ -796,7 +796,7 @@ db.surveys.insert([
           "name": "sus_q3",
           "title": {
             "default": "I thought the system was easy to use.",
-            "de": "Ich fand das System einfach zu benutzen.",
+            "de": "Ich dachte, das Produkt war einfach zu bedienen.",
             "ja": "このシステムは使いやすいと思いました。"
           },
           "minRateDescription": {
@@ -815,7 +815,7 @@ db.surveys.insert([
           "name": "sus_q4",
           "title": {
             "default": "I think that I would need the support of a technical person to be able to use this system.",
-            "de": "Ich denke, ich würde Unterstützung durch eine technisch versierte Person benötigen, um das System zu nutzen.",
+            "de": "Ich denke, dass ich die Unterstützung einer technischen Person brauche, um dieses Produkt nutzen zu können.",
             "ja": "このシステムを使うには技術者の支援が必要だと思いました。"
           },
           "minRateDescription": {
@@ -834,7 +834,7 @@ db.surveys.insert([
           "name": "sus_q5",
           "title": {
             "default": "I found the various functions in this system were well integrated.",
-            "de": "Ich fand, die verschiedenen Funktionen im System waren gut integriert.",
+            "de": "Ich fand, die verschiedenen Funktionen in diesem Produkt waren gut integriert.",
             "ja": "このシステムの様々な機能はうまく統合されていると感じました。"
           },
           "minRateDescription": {
@@ -853,7 +853,7 @@ db.surveys.insert([
           "name": "sus_q6",
           "title": {
             "default": "I thought there was too much inconsistency in this system.",
-            "de": "Ich fand, es gab zu viele Inkonsistenzen im System.",
+            "de": "Ich dachte, dass dieses Produkt nicht konsistent genug war.",
             "ja": "このシステムには一貫性がないと感じました。"
           },
           "minRateDescription": {
@@ -872,7 +872,7 @@ db.surveys.insert([
           "name": "sus_q7",
           "title": {
             "default": "I would imagine that most people would learn to use this system very quickly.",
-            "de": "Ich kann mir vorstellen, dass die meisten Menschen das System sehr schnell lernen würden.",
+            "de": "Ich würde mir vorstellen, dass die meisten Leute sehr schnell lernen würden, dieses Produkt zu benutzen.",
             "ja": "ほとんどの人がこのシステムの使い方をすぐに学べると思います。"
           },
           "minRateDescription": {
@@ -891,7 +891,7 @@ db.surveys.insert([
           "name": "sus_q8",
           "title": {
             "default": "I found the system very cumbersome to use.",
-            "de": "Ich fand das System sehr umständlich in der Nutzung.",
+            "de": "Ich fand dieses Produkt sehr umständlich zu benutzen.",
             "ja": "このシステムはとても使いにくいと感じました。"
           },
           "minRateDescription": {
@@ -910,7 +910,7 @@ db.surveys.insert([
           "name": "sus_q9",
           "title": {
             "default": "I felt very confident using the system.",
-            "de": "Ich fühlte mich bei der Nutzung des Systems sehr sicher.",
+            "de": "Ich habe mich sehr selbstsicher gefühlt, dieses Produkt zu verwenden.",
             "ja": "このシステムの使用に自信がありました。"
           },
           "minRateDescription": {
@@ -929,7 +929,7 @@ db.surveys.insert([
           "name": "sus_q10",
           "title": {
             "default": "I needed to learn a lot of things before I could get going with this system.",
-            "de": "Ich musste viel lernen, bevor ich mit diesem System arbeiten konnte.",
+            "de": "Ich musste eine Menge Dinge lernen, bevor ich mit diesem Produkt loslegen konnte.",
             "ja": "このシステムを使い始める前に多くのことを学ぶ必要がありました。"
           },
           "minRateDescription": {
