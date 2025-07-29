@@ -966,13 +966,13 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Annoying",
-            "de": "Nervig",
-            "ja": "不快"
+            "default": "annoying",
+            "de": "unerfreulich",
+            "ja": "楽しくない"
           },
           "maxRateDescription": {
-            "default": "Enjoyable",
-            "de": "Angenehm",
+            "default": "enjoyable",
+            "de": "erfreulich",
             "ja": "楽しい"
           }
         },
@@ -983,65 +983,65 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Not understandable",
-            "de": "Unverständlich",
+            "default": "not understandable",
+            "de": "unverständlich",
             "ja": "わかりにくい"
           },
           "maxRateDescription": {
-            "default": "Understandable",
-            "de": "Verständlich",
+            "default": "understandable",
+            "de": "verständlich",
             "ja": "わかりやすい"
           }
         },
         {
           "type": "rating",
-          "name": "dull_creative",
+          "name": "creative_dull",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Dull",
-            "de": "Langweilig",
-            "ja": "退屈"
-          },
-          "maxRateDescription": {
-            "default": "Creative",
-            "de": "Kreativ",
+            "default": "creative",
+            "de": "kreativ",
             "ja": "創造的"
+          },
+          "maxRateDescription": {
+            "default": "dull",
+            "de": "phantasielos",
+            "ja": "創造的でない"
           }
         },
         {
           "type": "rating",
-          "name": "difficult_to_learn_easy_to_learn",
+          "name": "easy_to_learn_difficult_to_learn",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Difficult to learn",
-            "de": "Schwer zu lernen",
-            "ja": "学びにくい"
+            "default": "easy to learn",
+            "de": "leicht zu lernen",
+            "ja": "覚えやすい"
           },
           "maxRateDescription": {
-            "default": "Easy to learn",
-            "de": "Einfach zu lernen",
-            "ja": "学びやすい"
+            "default": "difficult to learn",
+            "de": "schwer zu lernen",
+            "ja": "覚えにくい"
           }
         },
         {
           "type": "rating",
-          "name": "inferior_valuable",
+          "name": "valuable_inferior",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Inferior",
-            "de": "Minderwertig",
-            "ja": "価値が低い"
-          },
-          "maxRateDescription": {
-            "default": "Valuable",
-            "de": "Wertvoll",
+            "default": "valuable",
+            "de": "wertvoll",
             "ja": "価値がある"
+          },
+          "maxRateDescription": {
+            "default": "inferior",
+            "de": "minderwertig",
+            "ja": "価値がない"
           }
         },
         {
@@ -1051,14 +1051,14 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Boring",
-            "de": "Langweilig",
-            "ja": "退屈"
+            "default": "boring",
+            "de": "langweilig",
+            "ja": "退屈だ"
           },
           "maxRateDescription": {
-            "default": "Exciting",
-            "de": "Spannend",
-            "ja": "興奮"
+            "default": "exciting",
+            "de": "spannend",
+            "ja": "エキサイティングだ"
           }
         },
         {
@@ -1068,14 +1068,14 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Not interesting",
-            "de": "Nicht interessant",
-            "ja": "面白くない"
+            "default": "not interesting",
+            "de": "uninteressant",
+            "ja": "おもしろくない"
           },
           "maxRateDescription": {
-            "default": "Interesting",
-            "de": "Interessant",
-            "ja": "面白い"
+            "default": "interesting",
+            "de": "interessant",
+            "ja": "おもしろい"
           }
         },
         {
@@ -1085,48 +1085,48 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Unpredictable",
-            "de": "Unvorhersehbar",
-            "ja": "予測不能"
+            "default": "unpredictable",
+            "de": "unberechenbar",
+            "ja": "予想がつかない"
           },
           "maxRateDescription": {
-            "default": "Predictable",
-            "de": "Vorhersehbar",
-            "ja": "予測可能"
+            "default": "predictable",
+            "de": "voraussagbar",
+            "ja": "予想がつきやすい"
           }
         },
         {
           "type": "rating",
-          "name": "slow_fast",
+          "name": "fast_slow",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Slow",
-            "de": "Langsam",
-            "ja": "遅い"
-          },
-          "maxRateDescription": {
-            "default": "Fast",
-            "de": "Schnell",
+            "default": "fast",
+            "de": "schnell",
             "ja": "速い"
+          },
+          "maxRateDescription": {
+            "default": "slow",
+            "de": "langsam",
+            "ja": "遅い"
           }
         },
         {
           "type": "rating",
-          "name": "conventional_inventive",
+          "name": "inventive_conventional",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Conventional",
-            "de": "Konventionell",
-            "ja": "慣習的"
+            "default": "inventive",
+            "de": "originell",
+            "ja": "独特だ"
           },
           "maxRateDescription": {
-            "default": "Inventive",
-            "de": "Erfinderisch",
-            "ja": "独創的"
+            "default": "conventional",
+            "de": "konventionell",
+            "ja": "従来どおり"
           }
         },
         {
@@ -1136,31 +1136,31 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Obstructive",
-            "de": "Hinderlich",
-            "ja": "妨げる"
+            "default": "obstructive",
+            "de": "behindernd",
+            "ja": "妨げになる"
           },
           "maxRateDescription": {
-            "default": "Supportive",
-            "de": "Unterstützend",
-            "ja": "支援的"
+            "default": "supportive",
+            "de": "unterstützend",
+            "ja": "助けられる"
           }
         },
         {
           "type": "rating",
-          "name": "bad_good",
+          "name": "good_bad",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Bad",
-            "de": "Schlecht",
-            "ja": "悪い"
+            "default": "good",
+            "de": "gut",
+            "ja": "良い"
           },
           "maxRateDescription": {
-            "default": "Good",
-            "de": "Gut",
-            "ja": "良い"
+            "default": "bad",
+            "de": "schlecht",
+            "ja": "悪い"
           }
         },
         {
@@ -1170,13 +1170,13 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Complicated",
-            "de": "Kompliziert",
+            "default": "complicated",
+            "de": "kompliziert",
             "ja": "複雑"
           },
           "maxRateDescription": {
-            "default": "Easy",
-            "de": "Einfach",
+            "default": "easy",
+            "de": "einfach",
             "ja": "簡単"
           }
         },
@@ -1187,14 +1187,14 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Unlikable",
-            "de": "Unsympathisch",
-            "ja": "好感が持てない"
+            "default": "unlikable",
+            "de": "abstoßend",
+            "ja": "嫌いだ"
           },
           "maxRateDescription": {
-            "default": "Pleasing",
-            "de": "Angenehm",
-            "ja": "好感が持てる"
+            "default": "pleasing",
+            "de": "anziehend",
+            "ja": "好きだ"
           }
         },
         {
@@ -1204,14 +1204,14 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Usual",
-            "de": "Gewöhnlich",
-            "ja": "一般的"
+            "default": "usual",
+            "de": "herkömmlich",
+            "ja": "普通"
           },
           "maxRateDescription": {
-            "default": "Leading edge",
-            "de": "Innovativ",
-            "ja": "最先端"
+            "default": "leading edge",
+            "de": "neuartig",
+            "ja": "斬新的"
           }
         },
         {
@@ -1221,65 +1221,65 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Unpleasant",
-            "de": "Unangenehm",
-            "ja": "不快"
+            "default": "unpleasant",
+            "de": "unangenehm",
+            "ja": "嬉しくない"
           },
           "maxRateDescription": {
-            "default": "Pleasant",
-            "de": "Angenehm",
-            "ja": "快適"
+            "default": "pleasant",
+            "de": "angenehm",
+            "ja": "嬉しい"
           }
         },
         {
           "type": "rating",
-          "name": "not_secure_secure",
+          "name": "secure_not_secure",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Not secure",
-            "de": "Unsicher",
-            "ja": "不安"
+            "default": "secure",
+            "de": "sicher",
+            "ja": "安全だ"
           },
           "maxRateDescription": {
-            "default": "Secure",
-            "de": "Sicher",
-            "ja": "安全"
+            "default": "not secure",
+            "de": "unsicher",
+            "ja": "安全でない"
           }
         },
         {
           "type": "rating",
-          "name": "demotivating_motivating",
+          "name": "motivating_demotivating",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Demotivating",
-            "de": "Demotivierend",
-            "ja": "やる気がなくなる"
+            "default": "motivating",
+            "de": "aktivierend",
+            "ja": "モチベーションを高める"
           },
           "maxRateDescription": {
-            "default": "Motivating",
-            "de": "Motivierend",
-            "ja": "やる気が出る"
+            "default": "demotivating",
+            "de": "einschläfernd",
+            "ja": "モチベーションを下げる"
           }
         },
         {
           "type": "rating",
-          "name": "does_not_meet_expectations_meets_expectations",
+          "name": "meets_expectations_does_not_meet_expectations",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Does not meet expectations",
-            "de": "Erwartungen nicht erfüllt",
-            "ja": "期待に応えない"
+            "default": "meets expectations",
+            "de": "erwartungskonform",
+            "ja": "期待に合う"
           },
           "maxRateDescription": {
-            "default": "Meets expectations",
-            "de": "Erwartungen erfüllt",
-            "ja": "期待に応える"
+            "default": "does not meet expectations",
+            "de": "nicht erwartungskonform",
+            "ja": "期待に合わない"
           }
         },
         {
@@ -1289,31 +1289,31 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Inefficient",
-            "de": "Ineffizient",
-            "ja": "非効率"
+            "default": "inefficient",
+            "de": "ineffizient",
+            "ja": "効率が悪い"
           },
           "maxRateDescription": {
-            "default": "Efficient",
-            "de": "Effizient",
-            "ja": "効率的"
+            "default": "efficient",
+            "de": "effizient",
+            "ja": "効率が良い"
           }
         },
         {
           "type": "rating",
-          "name": "confusing_clear",
+          "name": "clear_confusing",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Confusing",
-            "de": "Verwirrend",
-            "ja": "混乱"
+            "default": "clear",
+            "de": "übersichtlich",
+            "ja": "すっきりしている"
           },
           "maxRateDescription": {
-            "default": "Clear",
-            "de": "Klar",
-            "ja": "明確"
+            "default": "confusing",
+            "de": "verwirrend",
+            "ja": "ごちゃごちゃしている"
           }
         },
         {
@@ -1323,65 +1323,65 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Impractical",
-            "de": "Unpraktisch",
-            "ja": "非実用的"
+            "default": "impractical",
+            "de": "unpragmatisch",
+            "ja": "実用的でない"
           },
           "maxRateDescription": {
-            "default": "Practical",
-            "de": "Praktisch",
-            "ja": "実用的"
+            "default": "practical",
+            "de": "pragmatisch",
+            "ja": "実用的だ"
           }
         },
         {
           "type": "rating",
-          "name": "cluttered_organized",
+          "name": "organized_cluttered",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Cluttered",
-            "de": "Unübersichtlich",
-            "ja": "ごちゃごちゃ"
-          },
-          "maxRateDescription": {
-            "default": "Organized",
-            "de": "Organisiert",
+            "default": "organized",
+            "de": "aufgeräumt",
             "ja": "整理されている"
+          },
+          "maxRateDescription": {
+            "default": "cluttered",
+            "de": "überladen",
+            "ja": "整理されていない"
           }
         },
         {
           "type": "rating",
-          "name": "unattractive_attractive",
+          "name": "attractive_unattractive",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Unattractive",
-            "de": "Unattraktiv",
+            "default": "attractive",
+            "de": "attraktiv",
+            "ja": "魅力がある"
+          },
+          "maxRateDescription": {
+            "default": "unattractive",
+            "de": "unattraktiv",
             "ja": "魅力がない"
-          },
-          "maxRateDescription": {
-            "default": "Attractive",
-            "de": "Attraktiv",
-            "ja": "魅力的"
           }
         },
         {
           "type": "rating",
-          "name": "unfriendly_friendly",
+          "name": "friendly_unfriendly",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Unfriendly",
-            "de": "Unfreundlich",
-            "ja": "冷たい"
+            "default": "friendly",
+            "de": "sympathisch",
+            "ja": "感じがいい"
           },
           "maxRateDescription": {
-            "default": "Friendly",
-            "de": "Freundlich",
-            "ja": "親しみやすい"
+            "default": "unfriendly",
+            "de": "unsympathisch",
+            "ja": "感じが悪い"
           }
         },
         {
@@ -1391,13 +1391,13 @@ db.surveys.insert([
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Conservative",
-            "de": "Konservativ",
+            "default": "conservative",
+            "de": "konservativ",
             "ja": "保守的"
           },
           "maxRateDescription": {
-            "default": "Innovative",
-            "de": "Innovativ",
+            "default": "innovative",
+            "de": "innovativ",
             "ja": "革新的"
           }
         }
