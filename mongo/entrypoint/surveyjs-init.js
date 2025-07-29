@@ -759,7 +759,8 @@ db.surveys.insert([
           "title": {
             "default": "I think that I would like to use this system frequently.",
             "de": "Ich denke, dass ich dieses Produkt häufig verwenden möchte.",
-            "ja": "このシステムを頻繁に使用したいと思います。"
+            "ja": "私はこのシステムを頻繁に使いたいと思う。"
+
           },
           "minRateDescription": {
             "default": "Strongly disagree",
@@ -778,7 +779,7 @@ db.surveys.insert([
           "title": {
             "default": "I found the system unnecessarily complex.",
             "de": "Ich fand das Produkt unnötig komplex.",
-            "ja": "このシステムは不必要に複雑だと思いました。"
+            "ja": "このシステムは不必要に複雑だと思う。"
           },
           "minRateDescription": {
             "default": "Strongly disagree",
@@ -797,7 +798,7 @@ db.surveys.insert([
           "title": {
             "default": "I thought the system was easy to use.",
             "de": "Ich dachte, das Produkt war einfach zu bedienen.",
-            "ja": "このシステムは使いやすいと思いました。"
+            "ja": "このシステムは使いやすいと感じる。"
           },
           "minRateDescription": {
             "default": "Strongly disagree",
@@ -816,7 +817,7 @@ db.surveys.insert([
           "title": {
             "default": "I think that I would need the support of a technical person to be able to use this system.",
             "de": "Ich denke, dass ich die Unterstützung einer technischen Person brauche, um dieses Produkt nutzen zu können.",
-            "ja": "このシステムを使うには技術者の支援が必要だと思いました。"
+            "ja": "このシステムを使うには、専門的なサポートが必要だと思う。"
           },
           "minRateDescription": {
             "default": "Strongly disagree",
@@ -835,7 +836,7 @@ db.surveys.insert([
           "title": {
             "default": "I found the various functions in this system were well integrated.",
             "de": "Ich fand, die verschiedenen Funktionen in diesem Produkt waren gut integriert.",
-            "ja": "このシステムの様々な機能はうまく統合されていると感じました。"
+            "ja": "このシステムの機能はよく統合されていると感じる。"
           },
           "minRateDescription": {
             "default": "Strongly disagree",
@@ -854,7 +855,7 @@ db.surveys.insert([
           "title": {
             "default": "I thought there was too much inconsistency in this system.",
             "de": "Ich dachte, dass dieses Produkt nicht konsistent genug war.",
-            "ja": "このシステムには一貫性がないと感じました。"
+            "ja": "このシステムには一貫性が欠けている部分があると思う。"
           },
           "minRateDescription": {
             "default": "Strongly disagree",
@@ -873,7 +874,7 @@ db.surveys.insert([
           "title": {
             "default": "I would imagine that most people would learn to use this system very quickly.",
             "de": "Ich würde mir vorstellen, dass die meisten Leute sehr schnell lernen würden, dieses Produkt zu benutzen.",
-            "ja": "ほとんどの人がこのシステムの使い方をすぐに学べると思います。"
+            "ja": "多くの人はこのシステムをすぐに使えるようになると思う。"
           },
           "minRateDescription": {
             "default": "Strongly disagree",
@@ -892,7 +893,7 @@ db.surveys.insert([
           "title": {
             "default": "I found the system very cumbersome to use.",
             "de": "Ich fand dieses Produkt sehr umständlich zu benutzen.",
-            "ja": "このシステムはとても使いにくいと感じました。"
+            "ja": "このシステムを使う前に多くのことを学ぶ必要があると思う。"
           },
           "minRateDescription": {
             "default": "Strongly disagree",
@@ -911,7 +912,7 @@ db.surveys.insert([
           "title": {
             "default": "I felt very confident using the system.",
             "de": "Ich habe mich sehr selbstsicher gefühlt, dieses Produkt zu verwenden.",
-            "ja": "このシステムの使用に自信がありました。"
+            "ja": "このシステムを使っていると、自信を持って操作できる。"
           },
           "minRateDescription": {
             "default": "Strongly disagree",
@@ -930,7 +931,7 @@ db.surveys.insert([
           "title": {
             "default": "I needed to learn a lot of things before I could get going with this system.",
             "de": "Ich musste eine Menge Dinge lernen, bevor ich mit diesem Produkt loslegen konnte.",
-            "ja": "このシステムを使い始める前に多くのことを学ぶ必要がありました。"
+            "ja": "このシステムの利用にあたって、戸惑うことが多かった。"
           },
           "minRateDescription": {
             "default": "Strongly disagree",
