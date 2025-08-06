@@ -38,3 +38,9 @@ DB_PATH=hhh
 RECAPTCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
 RECAPTCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 RECAPTCHA_USE_RECAPTCHA_DOMAIN=true
+
+#Mail Setup for contact form (Using Mailjet API and Secret Key)
+MAIL_USER=M#ailjet API Key
+MAIL_PASS=#Mailjet Secret Key
+MAIL_FROM=noreply@felixreinsch.de   # must match verified domain
+MAIL_RECEIVER=felix.reinsch@tu-dresden.de

@@ -106,6 +106,7 @@ class Donation {
         "People": "context",
         "InternalState": "context",
         "PriorBehavior": "context",
+        "Reasoning": "context",
         "Behavior": "behavior"
       }[label.name],
       label.name,

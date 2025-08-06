@@ -146,6 +146,12 @@ hhh:InternalState rdf:type owl:Class ;
                   rdfs:subClassOf hhh:Context ;
                   rdfs:label "Internal State" .
 
+###  http://example.com/hhh#Reasoning
+hhh:Reasoning rdf:type owl:Class ;
+                  rdfs:subClassOf hhh:Context ;
+                  rdfs:label "Reasoning" .
+
+
 
 ###  http://example.com/hhh#People
 hhh:People rdf:type owl:Class ;
