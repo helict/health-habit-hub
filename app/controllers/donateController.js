@@ -98,10 +98,10 @@ export async function saveDonateData(req, res) {
 
     if (req.cookies.demographicsCompleted === 'true') {
       console.log("Entscheidung: Cookie ist gesetzt. Leite weiter zur Dankesseite.");
-      res.redirect(`${basepath}/${redirectLang}/thanks`);
+      res.redirect(`${basepath}${redirectLang}/thanks`);
     } else {
       console.log("Entscheidung: Cookie ist NICHT gesetzt oder falsch. Leite weiter zur Umfrage.");
-      res.redirect(`${basepath}/${redirectLang}/survey/1`);
+      res.redirect(`${basepath}${redirectLang}/survey/1`);
     }
   } catch (error) {
     console.log(data, userId)
