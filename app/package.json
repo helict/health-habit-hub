@@ -27,9 +27,8 @@
     "nodemailer": "^7.0.5",
     "path": "^0.12.7",
     "sparql-http-client": "^2.4.2",
-    "survey-core": "^1.12.47",
-    "survey-jquery": "^1.12.47",
-    "survey-knockout-ui": "^1.12.47",
+    "survey-core": "^2.3.1",
+    "survey-js-ui": "^2.3.1",
     "uuid": "^9.0.1"
   },
   "type": "module",

@@ -31,6 +31,14 @@ console.log('ContextPath: ', contextPath);
 const publicPath = path.join(process.cwd(), 'app/public');
 app.use(express.static(publicPath));
 
+
+// Serve survey js core and ui files
+const vendorSurveyCoreLangMount = path.join(contextPath, ':lng', 'vendor', 'survey-core');
+const vendorSurveyJsUiLangMount = path.join(contextPath, ':lng', 'vendor', 'survey-js-ui');
+
+app.use(vendorSurveyCoreLangMount,  express.static(path.join(process.cwd(), 'node_modules/survey-core')));
+app.use(vendorSurveyJsUiLangMount, express.static(path.join(process.cwd(), 'node_modules/survey-js-ui')));
+
 const router = express.Router();
 
 app.set('basepath', contextPath);
