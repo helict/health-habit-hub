@@ -16,16 +16,17 @@ sequenceDiagram
     API-->>HHH: uuid,habit,language,habit_class (0/1), confidence
 
     alt habit_class == 0 (not a habit)
+        HHH->>DB: store_habit_data(uuid,habit,language,habit_class (0/1), confidence)
         HHH-->>Donator: msg("try again")
     else habit_class == 1 (is a habit)
-        HHH->>DB: store(uuid,habit,language,habit_class (0/1), confidence)
+        HHH->>DB: store_habit_data(uuid,habit,language,habit_class (0/1), confidence)
         HHH->>API: classifyContext(uuid, habit, language)
         API->>API: generatePrompt(habit)
         API->>LLM: classifyContext(prompt,habit,provider,model)
         LLM-->>API: Output {uuid, input, result[Context...] }
         API->>API: cache(uuid, input, result[Context...])
         API-->>HHH: Output { uuid, input, result[Context...] }
-        HHH->>DB: store(Output)
+        HHH->>DB: store_context_data(Output)
         HHH-->>Donator: stored successfully (ack)
     end
 ```
