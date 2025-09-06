@@ -7,7 +7,7 @@ const loading = ref(false);
 const error = ref("");
 const result = ref(null);
 
-// 后端 HHH-service /seed 地址：优先取环境变量，没配则默认本地
+
 const API_URL = import.meta.env.VITE_SEED_URL || "http://127.0.0.1:8081/seed";
 
 const jsonData = computed(() =>
@@ -69,7 +69,7 @@ async function submit() {
       <div>
         <strong>Result: </strong>
         <span :style="{color: result.ok ? '#16a34a' : '#dc2626'}">
-          {{ result.ok ? "✅ is a habit" : "❌ not a habit — try again" }}
+          {{ result.ok ? "is a habit" : "not a habit — try again" }}
         </span>
       </div>
       <div style="margin-top:6px;"><strong>Message:</strong> {{ result.message }}</div>

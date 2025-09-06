@@ -1,0 +1,438 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Habit Classifier",
+    "description": "A habit classification system leveraging an LLM to decide if a sentence constitutes a habit and to extract its contextual information. Data is cached in Redis, with results persisted to MongoDB",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/classify_context": {
+      "post": {
+        "tags": [
+          "Classify Context"
+        ],
+        "summary": "Determine the context of the sentence describing the habit entered by the user",
+        "operationId": "classify_context_classify_context_post_classify_context_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassifyContextIn",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassifyContextOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classify_habit": {
+      "post": {
+        "tags": [
+          "Classify Habit"
+        ],
+        "summary": "Determine whether the sentence entered by the user is a habit",
+        "operationId": "classify_habit_classify_habit_post_classify_habit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HabitIn",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HabitOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Health Check",
+        "description": "Checks if the API is running properly and returns whether the OpenAI/SCADS key has been loaded",
+        "operationId": "health_health_get_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClassifyContextIn": {
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Uuid"
+          },
+          "habit": {
+            "type": "string",
+            "title": "Habit",
+            "description": "Original habit sentence"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "Language code, such as en/de/zh",
+            "default": "en"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uuid",
+          "habit"
+        ],
+        "title": "ClassifyContextIn",
+        "description": "ClassifyContextIn"
+      },
+      "ClassifyContextOut": {
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Uuid"
+          },
+          "habit": {
+            "type": "string",
+            "title": "Habit"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language"
+          },
+          "result": {
+            "items": {
+              "$ref": "#/components/schemas/Context"
+            },
+            "type": "array",
+            "title": "Result"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uuid",
+          "habit",
+          "language",
+          "result"
+        ],
+        "title": "ClassifyContextOut",
+        "description": "ClassifyContextOut"
+      },
+      "Context": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/HabitContext"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value",
+            "description": "The extracted sentence string; may be empty"
+          },
+          "classification": {
+            "type": "integer",
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Classification",
+            "description": "0/1: Whether the context is hit"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "integer",
+                "maximum": 1,
+                "minimum": 0
+              }
+            ],
+            "title": "Confidence",
+            "description": "Confidence [0,1]"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "classification",
+          "confidence"
+        ],
+        "title": "Context",
+        "description": "Context"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ValidationError"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError",
+        "description": "HTTPValidationError"
+      },
+      "HabitContext": {
+        "type": "string",
+        "enum": [
+          "TIME",
+          "PHYSICAL SETTING",
+          "PRIOR BEHAVIOR",
+          "OTHER PEOPLE",
+          "INTERNAL STATE",
+          "BEHAVIOR"
+        ],
+        "title": "HabitContext",
+        "description": "HabitContext"
+      },
+      "HabitIn": {
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Uuid"
+          },
+          "habit": {
+            "type": "string",
+            "title": "Habit",
+            "description": "Original habit sentence"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "description": "Language code, such as en/de/zh",
+            "default": "en"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uuid",
+          "habit"
+        ],
+        "title": "HabitIn",
+        "description": "HabitIn"
+      },
+      "HabitOut": {
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Uuid"
+          },
+          "habit": {
+            "type": "string",
+            "title": "Habit",
+            "description": "Original habit sentence"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "description": "Language code, such as en/de/zh"
+          },
+          "habit_class": {
+            "type": "integer",
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Habit Class",
+            "description": "Is it a habit?: 1 means it is a habit, 0 means it is not a habit"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "integer",
+                "maximum": 1,
+                "minimum": 0
+              }
+            ],
+            "title": "Confidence",
+            "description": "Confidence [0,1]"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uuid",
+          "habit",
+          "language",
+          "habit_class",
+          "confidence"
+        ],
+        "title": "HabitOut",
+        "description": "HabitOut"
+      },
+      "HealthStatus": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "openai_key_loaded": {
+            "type": "boolean",
+            "title": "Openai Key Loaded"
+          },
+          "scads_key_loaded": {
+            "type": "boolean",
+            "title": "Scads Key Loaded"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "openai_key_loaded",
+          "scads_key_loaded"
+        ],
+        "title": "HealthStatus",
+        "description": "HealthStatus"
+      },
+      "LocationInner": {
+        "properties": {
+          "anyof_schema_1_validator": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anyof Schema 1 Validator"
+          },
+          "anyof_schema_2_validator": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anyof Schema 2 Validator"
+          },
+          "actual_instance": {
+            "title": "Actual Instance"
+          },
+          "any_of_schemas": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Any Of Schemas"
+          }
+        },
+        "type": "object",
+        "title": "LocationInner",
+        "description": "LocationInner"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "$ref": "#/components/schemas/LocationInner"
+            },
+            "type": "array",
+            "title": "Loc"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Msg"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "description": "ValidationError"
+      }
+    }
+  }
+}

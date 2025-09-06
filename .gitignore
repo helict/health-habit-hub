@@ -1,2 +1,2 @@
-services/API-service/.env
-services/HHH-service/.env
+API-service/src/openapi_server/.env
+API-service/API-serve
