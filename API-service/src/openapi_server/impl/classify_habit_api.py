@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Optional
-
+import os,re,unicodedata
 from dotenv import load_dotenv
 from pydantic import BaseModel, ValidationError, conint, confloat
 
@@ -14,7 +14,7 @@ from openapi_server.models.habit_out import HabitOut
 
 from openapi_server.services.llm_habit_service import classify_habit_via_llm_prompt
 
-from openapi_server.services.redis_service import RedisCache, habit_cache_key
+from openapi_server.services.redis_service import RedisCache, habit_cache_key_from_habit
 
 
 FEW_SHOT_PROMPT = """
@@ -77,13 +77,17 @@ def _validate_habit_output(output_dict: dict) -> Optional[LLMHabitOutput]:
     except ValidationError:
         return None
 
+def _normalize(txt: str) -> str:
+    s = unicodedata.normalize("NFC", txt).strip()
+    return re.sub(r"\s+", " ", s)
 
 
 class ClassifyHabitApi(BaseClassifyHabitApi):
     async def classify_habit_classify_habit_post(self, habit_in: HabitIn) -> HabitOut:
         max_retries = 6
         cache = RedisCache.default()
-        key = habit_cache_key(habit_in.uuid)
+        clean_habit=_normalize(habit_in.habit)
+        key = habit_cache_key_from_habit(clean_habit)
         cached = await cache.get_json(key)
         if cached:
             return HabitOut(**cached)
@@ -94,13 +98,12 @@ class ClassifyHabitApi(BaseClassifyHabitApi):
 
                 raw_output = classify_habit_via_llm_prompt(
                     prompt_str,
-                    habit_in.habit,
+                    clean_habit,
                     # provider="openai",
-                    provider="scads",
-                    model="meta-llama/Llama-3.3-70B-Instruct",
-                    # model="gpt-4.1",
-                    temperature=0.0,
-                    max_tokens=1024,
+                    provider=os.getenv("PROVIDER"),
+                    model=os.getenv("MODEL"),
+                    temperature=os.getenv("TEMPERATURE"),
+                    max_tokens=os.getenv("MAX_TOKENS"),
                 )
 
                 parsed = _clean_llm_output(raw_output)
@@ -113,7 +116,7 @@ class ClassifyHabitApi(BaseClassifyHabitApi):
 
                 out = HabitOut(
                     uuid=habit_in.uuid,
-                    habit=habit_in.habit,
+                    habit=clean_habit,
                     language=habit_in.language,
                     habit_class=validated.label,
                     confidence=validated.confidence,

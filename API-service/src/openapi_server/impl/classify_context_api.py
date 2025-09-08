@@ -5,6 +5,7 @@ import json
 import re
 from pathlib import Path
 from typing import List, Optional
+import os,re,unicodedata
 
 from dotenv import load_dotenv
 from pydantic import ValidationError
@@ -16,7 +17,7 @@ from openapi_server.models.context import Context
 
 from openapi_server.services.llm_habit_service import classify_habit_via_llm_prompt
 
-from openapi_server.services.redis_service import RedisCache, context_cache_key
+from openapi_server.services.redis_service import RedisCache, context_cache_key_from_habit
 
 
 FEW_SHOT_PROMPT = """You are a behavioral scientist LLM specializing in habit context recognition.
@@ -152,6 +153,10 @@ def _lang_name(lang_code: str) -> str:
     return "English"
 
 
+def _normalize(txt: str) -> str:
+    s = unicodedata.normalize("NFC", txt).strip()
+    return re.sub(r"\s+", " ", s)
+
 class ClassifyContextApi(BaseClassifyContextApi):
     async def classify_context_classify_context_post(
         self, classify_context_in: ClassifyContextIn
@@ -159,7 +164,8 @@ class ClassifyContextApi(BaseClassifyContextApi):
         max_retries = 3
 
         cache = RedisCache.default()
-        key = context_cache_key(classify_context_in.uuid)
+        clean_habit=_normalize(classify_context_in.habit)
+        key = context_cache_key_from_habit(clean_habit)
         cached = await cache.get_json(key)
         if cached:
             return ClassifyContextOut(**cached)
@@ -169,13 +175,11 @@ class ClassifyContextApi(BaseClassifyContextApi):
                 prompt = FEW_SHOT_PROMPT.format(language=_lang_name(classify_context_in.language))
                 raw_output = classify_habit_via_llm_prompt(
                     prompt,
-                    classify_context_in.habit,
-                    # provider="openai",
-                    provider="scads",
-                    model="meta-llama/Llama-3.3-70B-Instruct",
-                    # model="gpt-4.1",
-                    temperature=0.0,
-                    max_tokens=1024,
+                    clean_habit,
+                    provider=os.getenv("PROVIDER"),
+                    model=os.getenv("MODEL"),
+                    temperature=os.getenv("TEMPERATURE"),
+                    max_tokens=os.getenv("MAX_TOKENS"),
                 )
 
                 cleaned = _clean_llm_output(raw_output)
@@ -186,7 +190,7 @@ class ClassifyContextApi(BaseClassifyContextApi):
 
                 out = ClassifyContextOut(
                     uuid=classify_context_in.uuid,
-                    habit=classify_context_in.habit,
+                    habit=clean_habit,
                     language=classify_context_in.language,
                     result=validated,
                 )

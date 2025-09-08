@@ -138,7 +138,7 @@ async def store_context_data(context_data: dict) -> bool:
 
 @app.post("/seed", response_model=SeedOut, summary="Minimum seed: If it is not a habit, prompt to try again")
 async def seed(body: SeedIn):
-    uuid_str = make_sentence_uuid(body.habit, body.language)
+    uuid_str = str(uuid.uuid4())
     clean_habit=_normalize(body.habit)
     habit_out = await run_in_threadpool(
         lambda: call_api_classify_habit(clean_habit, body.language, uuid_str)

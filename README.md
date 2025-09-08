@@ -45,11 +45,10 @@ sequenceDiagram
 This is mainly for the startup of Docker of the core component [API-service](API-service)
 To run the server, go to the [API-service](API-service) directory and do the following:
 
-The first step is to find [example.env](API-service/src/openapi_server/example.env), change its name to .env, and then enter your own __REPLACE_WITH_YOUR_OPENAI_API_KEY__ and __REPLACE_WITH_YOUR_SCADS_API_KEY__
+The first step is to find [example.env](API-service/src/openapi_server/example.env), change its name to .env, and then enter your own __REPLACE_WITH_YOUR_OPENAI_API_KEY__ and __REPLACE_WITH_YOUR_SCADS_API_KEY__, you can also choose the model you want to use.
 
 
 ```bash
-docker compose down -v
 docker compose up --build
 ```
 
