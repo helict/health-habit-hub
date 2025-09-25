@@ -171,7 +171,7 @@
   },
 
   "habitStrengthSlider": {
-    "title": "Wie sehr möchtest du diese Gewohnheit beibehalten oder abstellen?",
+    "title": "Wie sehr möchtest du diese Gewohnheit abstellen oder beibehalten?",
     "minDescription": "Unbedingt abstellen",
     "maxDescription": "Unbedingt beibehalten",
     "labels": [

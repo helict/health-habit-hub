@@ -185,7 +185,7 @@
   },
 
   "habitStrengthSlider": {
-    "title": "How much do you want to keep or stop this habit?",
+    "title": "How much do you want to stop or keep this habit?",
     "minDescription": "Definitely stop",
     "maxDescription": "Definitely keep",
     "labels": [
