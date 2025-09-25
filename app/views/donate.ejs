@@ -186,23 +186,23 @@
       }
     });
 
-    // Set default value to middle (4)
-    surveyModel.setValue("habitStrength", 4);
+    // // Set default value to middle (4)
+    // surveyModel.setValue("habitStrength", 4);
     
     // Update hidden input when value changes
     surveyModel.onValueChanged.add((sender, options) => {
       if (options.name === "habitStrength") {
         const hiddenInput = document.getElementById('habitStrength');
         if (hiddenInput) {
-          hiddenInput.value = options.value;
+          hiddenInput.value = (options.value === undefined || options.value === null || options.value === "") ? -1 : options.value;
         }
       }
     });
 
-    // Initialize hidden input with default value
+    // Initialize hidden input with default value (-1 for not answered)
     const hiddenInput = document.getElementById('habitStrength');
     if (hiddenInput) {
-      hiddenInput.value = 4;
+      hiddenInput.value = -1;
     }
     
     // Render survey

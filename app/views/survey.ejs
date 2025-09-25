@@ -137,6 +137,23 @@
       options.allowComplete = true; // Allow submit afterwards
     });
 
+    // Build a complete answers object: unanswered -> -1
+    function buildCompleteAnswers(model) {
+      const result = {};
+      const questions = model.getAllQuestions();
+      for (const q of questions) {
+        if (!q || !q.name) continue;
+        // Consider only visible questions for completion purposes
+        if (typeof q.isVisible === 'boolean' && !q.isVisible) continue;
+        const val = model.getValue(q.name);
+        const isEmptyArray = Array.isArray(val) && val.length === 0;
+        const isEmptyObject = val && typeof val === 'object' && !Array.isArray(val) && Object.keys(val).length === 0;
+        const isEmptyScalar = val === undefined || val === null || val === '';
+        result[q.name] = (isEmptyScalar || isEmptyArray || isEmptyObject) ? -1 : val;
+      }
+      return result;
+    }
+
     // 5) Submit Handler mit verbesserter Fehlerbehandlung
     surveyModel.onComplete.add(function (sender) {
       const ctx = "<%= contextPath %>";
@@ -146,6 +163,7 @@
 
       // Loading-State anzeigen (optional)
       sender.showLoadingIndicator = true;
+      const completeAnswers = buildCompleteAnswers(sender);
 
       fetch(url, {
         method: 'POST',
@@ -154,7 +172,7 @@
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          data: sender.data,
+          data: completeAnswers,
           completedAt: new Date().toISOString(),
           surveyId: id
         })
