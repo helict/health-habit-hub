@@ -43,6 +43,5 @@ RECAPTCHA_USE_RECAPTCHA_DOMAIN=true
 MAIL_USER=M#ailjet API Key
 MAIL_PASS=#Mailjet Secret Key
 MAIL_FROM=noreply@felixreinsch.de   # must match verified domain
-MAIL_RECEIVER=felix.reinsch@tu-dresden.de
-
+MAIL_RECEIVER=felix.reinsch@tu-dresden.de # where contact form messages are sent to
 
