@@ -60,14 +60,15 @@
   "step2": "Mark the parts of your sentence and assign the context or situation listed below to each part.",
   "step3": "Confirm your habit you want to donate by pressing \"Donate\".",
 
-  "example1": "<p><strong>Example:</strong> If I <mark class=mark_physical>enter the kitchen</mark> and <mark class=mark_prior>see a fruit basket</mark>, I am <mark class=mark_behavior>taking an apple</mark> and <mark class=mark_behavior>eat it</mark>.</p>",
+  "example1": "<p><strong>Example:</strong> If I <mark class=mark_PhysicalSetting>enter the kitchen</mark> and <mark class=mark_PriorBehavior>see a fruit basket</mark>, I am <mark class=mark_Behavior>taking an apple</mark> and <mark class=mark_Behavior>eat it</mark>.</p>",
   "clear": "↺",
-  "time": "time",
-  "physical": "physical setting",
-  "prior": "prior behavior",
-  "people": "people",
-  "internal": "internal state",
-  "behavior": "behavior",
+  "TimeReference": "TimeReference",
+  "PhysicalSetting": "physical setting",
+  "PriorBehavior": "prior behavior",
+  "People": "People",
+  "InternalState": "internal state",
+  "Reasoning": "reasoning",
+  "Behavior": "Behavior",
   "example2": "<h5>Placeholder: I drink a glass of water before bedtime.<h5>",
   "submit": "Donate",
   "add": "+ add another habit",
@@ -183,6 +184,21 @@
     "noContextError": "Please confirm that you are not a robot."
   },
 
+  "habitStrengthSlider": {
+    "title": "How much do you want to stop or keep this habit?",
+    "minDescription": "Definitely stop",
+    "maxDescription": "Definitely keep",
+    "labels": [
+      "Definitely stop",
+      "Rather stop",
+      "Tend to stop",
+      "Neutral / Undecided",
+      "Tend to keep",
+      "Rather keep",
+      "Definitely keep"
+    ]
+  },
+
   "form_descriptions":{
     "sex": "Choose the gender you identify with the most.",
     "origin": "Select the country you are from.",
@@ -196,5 +212,11 @@
     "available_time": "Select the option that best describes how much time you have available for your habits.",
     "relationship_context": "Select the option that best describes your partner's attitude towards health and physical activity.",
     "pets": "Select the option that best describes your relationship with pets and their influence on your physical activity."
-  }
+  },
+   "disclaimer": {
+      "title": "",
+      "text": "<h2>Welcome!</h2><p>This site is intended for users aged <strong>18 and over</strong>. We use a small cookie to store your confirmation and improve your experience.</p><p>By clicking <strong>“Enter Website”</strong>, you confirm that you are over 18 and accept our privacy policy.</p>",
+      "confirm": "Enter Website",
+      "leave": "Leave Site"
+    }
 }

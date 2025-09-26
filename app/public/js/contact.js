@@ -111,3 +111,50 @@ function updateGreybox(data) {
 }
 
 //loadContentContact();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('contactForm');
+  const formMessage = document.getElementById('formMessage');
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Optional: Validate fields before sending
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (!name || !email || !subject || !message) {
+        handleEmptyFieldError(); // already defined by you
+        return;
+      }
+
+      const data = { name, email, subject, message };
+
+      try {
+        const response = await fetch(window.location.pathname + '/submit-form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const responseText = await response.text();
+
+        formMessage.style.display = 'block';
+        formMessage.className = 'alert alert-success';
+        formMessage.textContent = responseText;
+
+        form.reset();
+      } catch (err) {
+        console.error('❌ Error sending message:', err);
+        formMessage.style.display = 'block';
+        formMessage.className = 'alert alert-danger';
+        formMessage.textContent = 'Es gab ein Problem beim Senden.';
+      }
+    });
+  }
+});

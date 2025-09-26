@@ -88,6 +88,7 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
 
 function sendData(data, language) {
   console.log('Sending data to database');
+  console.debug(data);
   fetch('donate/data', {
     method: 'POST',
     headers: {
@@ -97,12 +98,7 @@ function sendData(data, language) {
   })
     .then((response) => {
       if (response.ok) {
-        if (Cookies.get('demographicsCompleted') === 'true') {
-          window.location.href = language + '/thanks';
-        } else {
-          window.location.href = language + '/demo';
-        }
-        console.log('Data saved successfully.');
+        window.location.href = response.url;
       } else {
         alert('Server Error while saving data.');
       }
@@ -114,12 +110,15 @@ function sendData(data, language) {
 }
 
 function parseInput(editable, experimentGroup, language) {
+  console.debug(editable);
   const habitText = editable.innerText;
+  const habitStrength = document.getElementById('habitStrength').value;
   const habitData = {
     inputValue: habitText,
     experimentGroup: experimentGroup,
     language: language,
     contexts: getContexts(editable),
+    habitStrength: habitStrength
   };
   return habitData;
 }
@@ -133,15 +132,17 @@ function getContexts(editable) {
     };
     contexts.push(context);
   }
+  console.debug(contexts);
   return contexts;
 }
 
 function validate(data) {
+  console.debug(data);
   return {
-    empty: data.text === '',
+    empty: data.inputValue === '',
     noBehavior:
       data.experimentGroup.closedTask &&
-      !data.contexts.find((context) => context.name === 'behavior'),
+      !data.contexts.find((context) => context.name === 'Behavior'),
   };
 }
 

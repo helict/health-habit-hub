@@ -47,7 +47,7 @@
       ]
     },
     {
-      "name": "prior",
+      "name": "PriorBehavior",
       "children": [
         {
           "name": "After I wake up",
@@ -102,7 +102,7 @@
       ]
     },
     {
-      "name": "time",
+      "name": "TimeReference",
       "children": [
         {
           "name": "In the morning",
@@ -147,7 +147,7 @@
       ]
     },
     {
-      "name": "physical",
+      "name": "PhysicalSetting",
       "children": [
         {
           "name": "In my bathroom",
@@ -192,7 +192,7 @@
       ]
     },
     {
-      "name": "people",
+      "name": "People",
       "children": [
         {
           "name": "With my brother",
@@ -237,7 +237,7 @@
       ]
     },
     {
-      "name": "internal",
+      "name": "InternalState",
       "children": [
         {
           "name": "Feeling refreshed",

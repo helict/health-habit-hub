@@ -261,6 +261,7 @@ button {
   height: 70%;
   margin-top: 30px;
 
+  border: 2px solid var(--primary-color); 
   text-align: center;
   box-sizing: border-box;
   border: 0;
@@ -290,8 +291,17 @@ button .arrow::before {
   transform: rotate(-45deg);
 }
 
-button:hover {
-  background-color: var(--hover-color);
+.button:hover {
+
+  background-color: white;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.button-outline-green:hover {
+  background-color: #9e9e9e !important;
+  color: white !important;
+  border-color: #9e9e9e !important;
 }
 
 .button-container {
@@ -312,6 +322,7 @@ button:hover {
   color: white;
   border-color: transparent;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  
 }
 
 .button-container {
@@ -605,3 +616,174 @@ input.form-check-input[type="radio"] {
   text-align: justify;
   text-justify: inter-word;
 }
+
+#slider-outer-container {
+  margin-top: 20px;
+  padding: 0px;
+  width: 100%;
+  background: #dadada;
+  box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+  border-radius: 20px;
+  border: 2px solid #50b034;
+}
+#slider-track-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+#left-label, #right-label {
+  flex: 0 0 auto;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+#slider-inner-wrapper {
+  flex: 1 1 auto;
+  position: relative;
+  margin: 0 1em;
+  max-width: 500px;
+}
+#habitStrengthSlider {
+  width: 100%;
+  display: block;
+  margin: 0;
+}
+#slider-inner-wrapper #slider-numbers {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.3em;
+  font-size: 1em;
+  color: #50b034;
+  width: 110%; 
+  left: -5%; 
+}
+#slider-inner-wrapper #slider-numbers span {
+  flex: 1;
+  text-align: center;
+}
+#current-label {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 3em;
+}
+
+/* SurveyJS Farb-Anpassungen */
+:root {
+  --sjs-primary-backcolor: #50b034;
+  --sjs-primary-backcolor-light: #7bc95f;
+  --sjs-primary-backcolor-dark: #3a8527;
+  --sjs-primary-forecolor: #fff;
+  --sjs-general-backcolor-bright: #50b034;
+  --sjs-secondary-backcolor: #50b034;
+  --sjs-secondary-backcolor-light: #7bc95f;
+  --sjs-secondary-backcolor-semi-light: #65c549;
+  --sjs-special-green: #50b034;
+  --sjs-special-blue: #50b034;
+  --sjs-special-main-color: #50b034;
+}
+
+/* Buttons */
+.sd-btn--action,
+.sd-navigation__complete-btn,
+.sd-navigation__next-btn,
+.sv-btn--primary,
+.sv_complete_btn,
+.sv_next_btn {
+  background-color: var(--sjs-primary-backcolor) !important;
+  border-color: var(--sjs-primary-backcolor) !important;
+  color: var(--sjs-primary-forecolor) !important;
+}
+.sd-btn--action:hover,
+.sd-navigation__complete-btn:hover,
+.sd-navigation__next-btn:hover,
+.sv-btn--primary:hover {
+  background-color: var(--sjs-primary-backcolor-dark) !important;
+  border-color: var(--sjs-primary-backcolor-dark) !important;
+  color: var(--sjs-primary-forecolor) !important;
+}
+
+/* Checkbox & Radio */
+.sd-checkbox--checked .sd-checkbox__decorator,
+.sv-checkbox--checked .sv-checkbox__decorator {
+  background-color: var(--sjs-primary-backcolor) !important;
+  border-color: var(--sjs-primary-backcolor) !important;
+}
+.sd-radiogroup__item--checked .sd-radiogroup__decorator,
+.sv-radiogroup__item--checked .sv-radiogroup__decorator {
+  border-color: var(--sjs-primary-backcolor) !important;
+}
+.sd-radiogroup__item--checked .sd-radiogroup__decorator::after,
+.sv-radiogroup__item--checked .sv-radiogroup__decorator::after {
+  background-color: var(--sjs-primary-backcolor) !important;
+}
+
+/* Progress Bar */
+.sd-progress__bar,
+.sv-progress__bar {
+  background-color: var(--sjs-primary-backcolor) !important;
+}
+
+/* Fokus-Rahmen */
+.sd-input:focus,
+.sd-textarea:focus,
+.sv-input:focus,
+.sv-textarea:focus,
+select:focus {
+  border-color: var(--sjs-primary-backcolor) !important;
+  box-shadow: 0 0 0 1px var(--sjs-primary-backcolor) !important;
+}
+
+/* 1) Container als Flex-Box */
+.sd-q-rating__container,
+.sv-q-rating__container {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* 2) Min-Label: fix/min-width, damit die Skala rechts davon immer gleich anfängt */
+.sd-rating__min-text,
+.sv-rating__min-text {
+  flex: 0 0 auto !important;
+  min-width: 200px !important;   /* oder eine andere Wunsch-Basis */
+  text-align: right !important;
+  padding-right: 0.5em !important;
+}
+
+/* 3) Max-Label: auto, bleibt nur so breit wie der Text */
+.sd-rating__max-text,
+.sv-rating__max-text {
+  flex: 0 0 auto !important;
+  text-align: left !important;
+  padding-left: 0.5em !important;
+}
+
+/* 4) Items-Container: füllt den Rest und verteilt alle Buttons gleichmäßig */
+.sd-q-rating__items,
+.sv-q-rating__items {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  justify-content: space-between !important;
+}
+.button-outline-green {
+  background-color: transparent;
+  border: 2px solid #50b034;
+  color: #50b034 !important;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 1.5em;
+  padding: 1em 1.8em;
+  height: 100px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+ 
