@@ -125,6 +125,34 @@ services:
       - traefik.http.routers.translate.service=translate
       - traefik.http.services.translate.loadbalancer.server.port=5000
 
+  neo4j:
+    image: neo4j:5
+    container_name: h3-neo4j
+    restart: unless-stopped
+    environment:
+      - NEO4J_AUTH=${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-neo4j_password_change_me}
+      - NEO4J_PLUGINS=["n10s"]
+      - NEO4J_server_directories_import=/import
+      - NEO4J_dbms_security_procedures_unrestricted=n10s.*
+      - NEO4J_dbms_security_procedures_allowlist=n10s.*
+    ports:
+      - ${NEO4J_HTTP_PORT:-7474}:7474
+      - ${NEO4J_BOLT_PORT:-7687}:7687
+    networks:
+      - h3-proxy
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+      - ./fuseki/init:/import:ro
+    depends_on:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.neo4j.rule=Host(`neo4j.${PATH_SUFFIX:-localhost}`)
+      - traefik.http.routers.neo4j.entrypoints=web
+      - traefik.http.routers.neo4j.service=neo4j
+      - traefik.http.services.neo4j.loadbalancer.server.port=7474
+
 networks:
   h3-proxy:
     name: h3-proxy
@@ -134,3 +162,7 @@ volumes:
     name: h3-fuseki-data
   translate-data:
     name: h3-translate-data
+  neo4j-data:
+    name: h3-neo4j-data
+  neo4j-logs:
+    name: h3-neo4j-logs

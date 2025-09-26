@@ -18,6 +18,12 @@ const config = {
     protocol: process.env.DB_PROTOCOL || 'http',
     port: process.env.DB_PORT || 5432,
   },
+  graphBackend: process.env.GRAPH_BACKEND || 'fuseki', // 'fuseki' | 'neo4j'
+  neo4j: {
+    uri: process.env.NEO4J_URI || 'bolt://neo4j:7687',
+    user: process.env.NEO4J_USER || 'neo4j',
+    password: process.env.NEO4J_PASSWORD || 'password',
+  },
   translateApi: {
     host: process.env.TRANSLATE_HOST || 'localhost',
     port: process.env.TRANSLATE_PORT || '5000',

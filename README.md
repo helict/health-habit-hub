@@ -81,18 +81,24 @@ The application follows a microservices architecture with the following componen
                        └─────────────────┘             │
                                                         │
                        ┌─────────────────┐             │
-                       │   Apache Fuseki │◄────────────┘
-                       │   (RDF Store)   │
+                       │   Apache Fuseki │◄────────────┤
+                       │   (RDF Store)   │             │
+                       └─────────────────┘             │
+                                                       │
+                       ┌─────────────────┐             │
+                       │     Neo4j       │◄────────────┘
+                       │ (Graph Store)   │
                        └─────────────────┘
 ```
 
 ### Service Components
 
 1. **App Service** - Main Node.js/Express application
-2. **Fuseki Service** - Apache Jena Fuseki RDF triple store
-3. **MongoDB Service** - Document database for survey responses
-4. **Traefik Proxy** - Reverse proxy and load balancer
-5. **LibreTranslate** - Open-source translation service
+2. **Fuseki Service** - Apache Jena Fuseki RDF triple store (default habit storage)
+3. **Neo4j Service** - Optional graph database for habit storage
+4. **MongoDB Service** - Document database for survey responses
+5. **Traefik Proxy** - Reverse proxy and load balancer
+6. **LibreTranslate** - Open-source translation service
 
 ## Prerequisites
 
@@ -141,7 +147,19 @@ Disable Rosetta emulation in Docker Desktop settings to ensure proper Fuseki con
 1. **Navigate to the donation page**: `/donate` or `/{language}/donate`
 2. **Automatic group assignment**: Users are randomly assigned to one of four experimental groups
 3. **Complete the habit entry**: Fill out the form according to your assigned interface
-4. **Submit your data**: Data is automatically stored in the RDF database
+4. **Submit your data**: Habit data is stored in the configured graph backend (Fuseki by default, Neo4j optional)
+
+### Graph Backend (Fuseki vs Neo4j)
+
+You can switch the habit-donation storage between Fuseki (RDF) and Neo4j (property graph) without affecting surveys (MongoDB) or cookies.
+
+- Toggle via env var: `GRAPH_BACKEND=fuseki|neo4j`
+- Env for Neo4j: `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD`
+- Docker Compose includes a `neo4j` service (ports 7474/7687)
+
+When `GRAPH_BACKEND=neo4j`, the app writes donation nodes and relationships:
+- Nodes: `Habit`, `Context`, `Behavior`, `Donor`, `ExperimentalSetting`
+- Rels: `DONATES`, `HAS_BEHAVIOR`, `HAS_CONTEXT`, `PART_OF`, `HAS_TRANSLATION`
 
 ### Language Support
 
@@ -308,6 +326,10 @@ ex:entry_123456 a ex:HabitEntry ;
 | `ADMIN_PASSWORD` | Fuseki admin password | `admin` |
 | `MONGO_USER` | MongoDB username | `admin` |
 | `MONGO_PASSWORD` | MongoDB password | `admin` |
+| `GRAPH_BACKEND` | Habit storage backend | `fuseki` |
+| `NEO4J_URI` | Neo4j Bolt URI | `bolt://neo4j:7687` |
+| `NEO4J_USER` | Neo4j username | `neo4j` |
+| `NEO4J_PASSWORD` | Neo4j password | `password` |
 
 ## Contributing
 
