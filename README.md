@@ -1,90 +1,405 @@
 # Health Habit Hub
 
-[<img src="./app/public/pics/h3-logo.png" width="250"/>](./app/public/pics/h3-logo.png)
+<img src="./app/public/pics/h3-logo.png" width="250" alt="Health Habit Hub Logo"/>
 
-## About
+## Table of Contents
 
-Welcome to our web application, designed to empower users to willingly contribute valuable data pertaining to their habits for research purposes. Our platform offers a seamless experience, allowing users to input data through a randomized selection of four different entry types:
+- [Overview](#overview)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Installation & Setup](#installation--setup)
+- [Usage](#usage)
+- [Development](#development)
+- [API Documentation](#api-documentation)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [Technical Stack](#technical-stack)
+- [License](#license)
 
-- Closed: Predefined tasks and labels guide users to provide structured data
-- Open: An empty text field encourages users to share unstructured information without any influence
-- Closed-Task, Open data entry: Predefined task to ensure the right data is submitted but no labeling functionality to leave to user some freedom
-- Open-Task, Closed data entry: No Task, just a textfield with the buttons to label the provided data for well sturctured but less influenced data
+## Overview
 
-#### Data Storage
+Health Habit Hub is a research-focused web application designed to collect valuable habit data from users for scientific purposes. The platform employs a sophisticated 2×2 experimental design that randomly assigns users to different data entry experiences, enabling researchers to study the impact of various interface designs on data quality and user behavior.
 
-The data is securely stored in a RDF database hosted on an [Apache Jena Fuseki](https://jena.apache.org/documentation/fuseki2/index.html) SPARQL server. This strategic approach not only ensures efficient data management but also paves the way for easier training of machine learning algorithms using the acquired data.
+### Research Purpose
 
-## Installation
+This application serves as a data collection platform for studying:
+- How participants define and report their habits
+- The impact of instruction specificity on response quality
+- Context-dependent habit formation patterns
+- Behavioral change intervention strategies
 
-1. Install [Docker](https://www.docker.com/) on your local system.
-2. Clone the repository.
-3. From within the repository root, start the application with:
+The collected data is stored in a semantic RDF database to facilitate machine learning analysis and habit research.
+
+## Features
+
+### Core Functionality
+
+- **Multi-modal Data Entry**: Four distinct experimental conditions
+  - **Closed Task, Closed Description**: Predefined tasks with structured labeling
+  - **Closed Task, Open Description**: Specific tasks with free-form responses
+  - **Open Task, Closed Description**: Free choice tasks with structured labeling
+  - **Open Task, Open Description**: Complete freedom in task and description
+
+- **Habit Context Analysis**: Comprehensive context categorization including:
+  - Temporal contexts (time-based triggers)
+  - Physical settings (location-based cues)
+  - Social contexts (interpersonal influences)
+  - Prior behaviors (behavioral chains)
+  - Internal states (emotional/physiological triggers)
+
+- **Internationalization**: Full multilingual support (English, German, Japanese)
+- **Survey Integration**: SurveyJS-powered dynamic questionnaires
+- **Real-time Translation**: LibreTranslate integration for multilingual content
+
+### Technical Features
+
+- **Semantic Data Storage**: RDF triples in Apache Jena Fuseki
+- **Containerized Architecture**: Docker-based microservices
+- **Reverse Proxy**: Traefik for service routing and load balancing
+- **Data Persistence**: MongoDB for survey data, Fuseki for semantic data
+- **Development Workflow**: Hot-reload with Docker Compose Watch
+
+## Architecture
+
+The application follows a microservices architecture with the following components:
 
 ```
-docker compose watch
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Web Browser   │    │   Traefik       │    │   Node.js App   │
+│   (Client)      │◄──►│   (Proxy)       │◄──►│   (Express)     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                                        │
+                       ┌─────────────────┐             │
+                       │   LibreTranslate│◄────────────┤
+                       │   (Translation) │             │
+                       └─────────────────┘             │
+                                                        │
+                       ┌─────────────────┐             │
+                       │   MongoDB       │◄────────────┤
+                       │   (Survey Data) │             │
+                       └─────────────────┘             │
+                                                        │
+                       ┌─────────────────┐             │
+                       │   Apache Fuseki │◄────────────┘
+                       │   (RDF Store)   │
+                       └─────────────────┘
 ```
 
-[Compose Watch](https://docs.docker.com/compose/file-watch/) watches the `./app` directory for changes and will automatically rebuild and restart the `app` Docker container.
+### Service Components
 
-**Note:** If you are using a [Mac with Apple silicon](https://support.apple.com/116943), you may need to disable Rosetta emulation in Docker to get the `fuseki` service to run properly.
+1. **App Service** - Main Node.js/Express application
+2. **Fuseki Service** - Apache Jena Fuseki RDF triple store
+3. **MongoDB Service** - Document database for survey responses
+4. **Traefik Proxy** - Reverse proxy and load balancer
+5. **LibreTranslate** - Open-source translation service
+
+## Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) (version 20.10+)
+- [Docker Compose](https://docs.docker.com/compose/install/) (version 2.0+)
+- Git
+
+### Platform-Specific Notes
+
+**macOS with Apple Silicon (M1/M2)**: 
+Disable Rosetta emulation in Docker Desktop settings to ensure proper Fuseki container operation.
+
+## Installation & Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/health-habit-hub.git
+   cd health-habit-hub
+   ```
+
+2. **Environment configuration**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your specific configuration
+   ```
+
+3. **Start the application**
+   ```bash
+   # Development mode with file watching
+   docker compose watch
+   
+   # Or standard mode
+   docker compose up -d
+   ```
+
+4. **Access the services**
+   - **Main Application**: http://app.localhost or http://localhost:3000
+   - **Fuseki Database**: http://fuseki.localhost or http://localhost:3030
+   - **Traefik Dashboard**: http://proxy.localhost or http://localhost:8080
+   - **Translation Service**: http://translate.localhost or http://localhost:5000
 
 ## Usage
 
-### Location
+### Basic Usage
 
-#### Online
+1. **Navigate to the donation page**: `/donate` or `/{language}/donate`
+2. **Automatic group assignment**: Users are randomly assigned to one of four experimental groups
+3. **Complete the habit entry**: Fill out the form according to your assigned interface
+4. **Submit your data**: Data is automatically stored in the RDF database
 
-When inside the TU-Dresden Network you can access the website under:
-[http://swdev.wiwi.tu-dresden.de:3000](http://swdev.wiwi.tu-dresden.de:3000)
-And the database under:
-[http://swdev.wiwi.tu-dresden.de:3001](http://swdev.wiwi.tu-dresden.de:3001)
+### Language Support
 
-#### Running the app locally
+Access the application in different languages:
+- English: `/en/donate`
+- German: `/de/donate`
+- Japanese: `/ja/donate`
 
-After running `docker-compose up` you can access the following sites:
+### Manual Group Testing
 
-Open [app.localhost](https://app.localhost) to use the main application \
-Open [fuseki.localhost](http://fuseki.localhost) to see/use the database \
-Open [proxy.localhost](http://proxy.localhost) to see the dashboard
-
-Alternatively on Mac Docker Desktop run `docker ps` to check where the traffic is routet. You can then access the sites e.g., with `http://localhost:3000/en/donate`
-
-### Donate a habit
-
-To donate a habit, go to `/donate`. You will be randomly assigned to one of the four experiment groups mentioned above. For the duration of your browser session, Health Habit Hub will remember to which experiment group you have been assigned and only show you the corresponding version of the habit entry form.
-
-For debugging, you can also manually select an entry mode by adding a query parameter. Doing so will not change to which experiment group you are assigned to.
-
+For development and testing purposes, you can manually specify a group:
 - `/donate?group=closed_task_closed_desc`
 - `/donate?group=closed_task_open_desc`
 - `/donate?group=open_task_closed_desc`
 - `/donate?group=open_task_open_desc`
 
-## Repository
+### Survey System
 
-The repository contains two services:
-
-- `app` – the _Health Habit Hub_ Node.js app.
-- `fuseki` – an Apache Jena Fuseki server instance, initialized with example data and the appropriate schema.
+Dynamic surveys can be created and accessed via:
+- Survey creation interface
+- Direct survey access: `/survey/{survey-id}`
+- Multi-language survey support
 
 ## Development
 
-### Overview
+### Development Environment
 
-![Architecture diagram](docs/assets/Architecture.svg)
+The project uses Docker Compose with file watching for rapid development:
 
-### Utility scripts for development
+```bash
+# Start development environment
+docker compose watch
 
-- `npm run format:check` – Check code format with _Prettier_.
-- `npm run lint` – Check for code problems with _ESLint_.
-- `npm run test:unitTests` – Run unit tests.
+# View logs
+docker compose logs -f app
 
-To run all of the above in sequence:
+# Access a container shell
+docker exec -it h3-app bash
+```
 
-- `npm run test`
+### Code Quality Tools
 
-To fix code problems:
+```bash
+# Navigate to app directory
+cd app
 
-- `npm run format:fix` – Run _Prettier_ to automatically format code.
-- `npm run lint:fix` – Run _ESLint_ to fix all automatically fixable problems.
+# Format checking
+npm run format:check
+
+# Auto-format code
+npm run format:fix
+
+# Lint checking
+npm run lint
+
+# Auto-fix lint issues
+npm run lint:fix
+
+# Run unit tests
+npm run test:unitTests
+
+# Run all checks (format, lint, tests)
+npm run test
+```
+
+### Project Structure
+
+```
+health-habit-hub/
+├── app/                    # Main Node.js application
+│   ├── controllers/        # Route controllers
+│   ├── models/            # Data models
+│   ├── routes/            # Express routes
+│   ├── views/             # EJS templates
+│   ├── public/            # Static assets
+│   ├── middleware/        # Custom middleware
+│   ├── utils/             # Utility functions
+│   └── language/          # Internationalization files
+├── fuseki/                # RDF database configuration
+│   ├── Dockerfile
+│   └── init/              # Initial data and schema
+├── mongo/                 # MongoDB configuration
+│   ├── config/
+│   ├── data/
+│   └── entrypoint/
+├── docs/                  # Documentation
+└── docker-compose.yml     # Service orchestration
+```
+
+### Key Development Files
+
+- `app/app.js` - Main application entry point
+- `app/controllers/surveyController.js` - Survey handling logic
+- `app/models/survey.js` - MongoDB survey model
+- `app/utils/localization.js` - Internationalization utilities
+- `docker-compose.yml` - Service configuration
+
+## API Documentation
+
+### Core Endpoints
+
+#### Habit Donation
+- `GET /{lang}/donate` - Render habit donation form
+- `POST /{lang}/donate` - Submit habit data
+
+#### Survey System
+- `GET /survey/{id}` - Render specific survey
+- `POST /survey/{id}` - Submit survey response
+
+#### Utility Endpoints
+- `GET /{lang}/about` - About page
+- `GET /{lang}/contact` - Contact page
+- `GET /{lang}/privacy` - Privacy policy
+- `GET /{lang}/accessibility` - Accessibility information
+
+### SPARQL Integration
+
+The application stores habit data as RDF triples using SPARQL queries. Example data structure:
+
+```turtle
+@prefix ex: <http://example.com/health-habits#> .
+
+ex:entry_123456 a ex:HabitEntry ;
+    ex:hasDescription "I drink water when I wake up"@en ;
+    ex:hasCategory ex:Hydration ;
+    ex:hasTimeContext ex:Morning ;
+    ex:assignedGroup "open_task_closed_desc" ;
+    ex:submittedAt "2025-08-26T10:30:00Z"^^xsd:dateTime .
+```
+
+## Deployment
+
+### Production Deployment
+
+1. **Configure environment variables**
+   ```bash
+   # Create production .env file
+   NODE_ENV=production
+   ADMIN_PASSWORD=secure_password
+   APP_HOST_PORT=3000
+   FUSEKI_HOST_PORT=3030
+   ```
+
+2. **Deploy with Docker Compose**
+   ```bash
+   # Production deployment
+   docker compose -f docker-compose.yml up -d
+   ```
+
+3. **Security Considerations**
+   - Set strong admin passwords
+   - Configure firewall rules
+   - Use HTTPS in production
+   - Restrict Fuseki access
+   - Regular backups of data volumes
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NODE_ENV` | Application environment | `development` |
+| `APP_HOST_PORT` | App container port | `3000` |
+| `FUSEKI_HOST_PORT` | Fuseki container port | `3030` |
+| `ADMIN_PASSWORD` | Fuseki admin password | `admin` |
+| `MONGO_USER` | MongoDB username | `admin` |
+| `MONGO_PASSWORD` | MongoDB password | `admin` |
+
+## Contributing
+
+### Getting Started
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes
+4. Run tests: `npm run test`
+5. Commit changes: `git commit -m 'Add amazing feature'`
+6. Push to branch: `git push origin feature/amazing-feature`
+7. Open a Pull Request
+
+### Development Guidelines
+
+- Follow the existing code style (enforced by Prettier/ESLint)
+- Write comprehensive tests for new features
+- Update documentation for significant changes
+- Ensure all experimental groups work with your changes
+- Test in multiple languages when applicable
+
+### Code Style
+
+- Use ESLint and Prettier configurations
+- Follow Node.js best practices
+- Write semantic, accessible HTML
+- Use meaningful commit messages
+
+## Technical Stack
+
+### Backend Technologies
+- **Node.js** - Runtime environment
+- **Express.js** - Web application framework
+- **EJS** - Templating engine
+- **Apache Jena Fuseki** - RDF triple store
+- **MongoDB** - Document database
+- **SPARQL** - RDF query language
+
+### Frontend Technologies
+- **HTML5/CSS3** - Structure and styling
+- **Bootstrap** - UI framework
+- **JavaScript** - Client-side functionality
+- **SurveyJS** - Dynamic survey generation
+- **D3.js** - Data visualization
+
+### DevOps & Tools
+- **Docker & Docker Compose** - Containerization
+- **Traefik** - Reverse proxy
+- **LibreTranslate** - Translation service
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+- **Jest/Mocha** - Testing framework
+
+### External Services
+- **DeepL** - Professional translation API
+- **reCAPTCHA** - Spam protection
+- **Nodemailer** - Email functionality
+
+## Research & Academic Use
+
+This application is designed for academic research in habit formation and behavioral science. Key research features:
+
+- **Experimental Design**: 2×2 factorial design for comparing interface effects
+- **Data Integrity**: Consistent group assignment per session
+- **Semantic Storage**: RDF format for advanced analysis
+- **Privacy Compliance**: Anonymous data collection
+- **Multilingual Support**: Cross-cultural research capability
+
+### Citations
+
+When using this tool for research, please cite:
+
+```bibtex
+@software{health_habit_hub,
+  title={Health Habit Hub: A Research Platform for Habit Data Collection},
+  author={[Authors]},
+  year={2025},
+  url={https://github.com/yourusername/health-habit-hub}
+}
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- TU Dresden for research support
+- Apache Foundation for Jena Fuseki
+- SurveyJS team for survey components
+- LibreTranslate project for translation services
+
+---
+
+For additional information, please refer to the [detailed documentation](docs/) or contact the development team.

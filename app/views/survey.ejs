@@ -2,19 +2,13 @@
 <html lang="en">
 <head>
   <%- include('header') %>
-  <!-- SurveyJS Core CSS -->
-  <link
-    href="https://unpkg.com/survey-core/survey-core.min.css"
-    rel="stylesheet"
-  >
   <!-- Eigene Styles -->
   <link href="<%= contextPath %>/css/style.css" rel="stylesheet" />
   <!-- SurveyJS Scripts -->
-  <script src="https://unpkg.com/survey-core/survey.core.min.js"></script>
-  <script src="https://unpkg.com/survey-js-ui/survey-js-ui.min.js"></script>
-  <script src="https://unpkg.com/survey-core/i18n/english.js"></script>
-  <script src="https://unpkg.com/survey-core/i18n/german.js"></script>
-  <script src="https://unpkg.com/survey-core/i18n/japanese.js"></script>
+  <link rel="stylesheet" href="<%= contextPath %>/vendor/survey-core/survey-core.css" />
+  <script src="<%= contextPath %>/vendor/survey-core/survey.core.min.js"></script>
+  <script src="<%= contextPath %>/vendor/survey-js-ui/survey-js-ui.min.js"></script>
+  <script src="<%= contextPath %>/vendor/survey-core/survey.i18n.min.js"></script>
 </head>
 <body>
   <%- include('nav', navigation) %>
@@ -60,77 +54,105 @@
       }
     });
 
-    // 3) Rating-Fragen NICHT als required setzen (das blockiert Navigation)
+    // 3) One-time alerts for missing answers (simple, page-scoped)
+    const shownPageWarnings = new Set();
+    let shownCompleteWarning = false;
+
+    // Localized warning copy
+    const WARNING_TEXTS = {
+      page: {
+        en: 'Some questions on this page are unanswered. You can leave them blank, but we recommend completing all fields.\n\nClick Next again to continue.',
+        de: 'Einige Fragen auf dieser Seite sind unbeantwortet. Sie können diese leer lassen, wir empfehlen jedoch, alle Felder auszufüllen.\n\nKlicken Sie erneut auf Weiter, um fortzufahren.',
+        ja: 'このページには未回答の質問があります。空欄のままでも構いませんが、すべての項目の回答を推奨します。\n\n続行するにはもう一度［次へ］をクリックしてください。'
+      },
+      complete: {
+        en: 'Some survey questions are unanswered. You can submit anyway, but we recommend completing all fields.\n\nClick Submit again to finish.',
+        de: 'Einige Fragen der Umfrage sind unbeantwortet. Sie können trotzdem abschließen, wir empfehlen jedoch, alle Felder auszufüllen.\n\nKlicken Sie erneut auf Absenden, um zu beenden.',
+        ja: '未回答の質問があります。送信は可能ですが、すべての項目の回答を推奨します。\n\n完了するにはもう一度［送信］をクリックしてください。'
+      }
+    };
+
+    function tWarning(type) {
+      const group = WARNING_TEXTS[type] || {};
+      return group[currentLocale] || group.en || '';
+    }
+
+    // Treat a question as missing if it's visible, has a name and no value
+    function isAnswerMissing(sender, question) {
+      if (!question || typeof question.getType !== 'function') return false;
+      const t = question.getType();
+      // Ignore non-input/static content
+      if (t === 'html' || t === 'expression' || t === 'image') return false;
+      if (!question.name || !question.isVisible) return false;
+      const value = sender.getValue(question.name);
+      return Array.isArray(value) ? value.length === 0 : (value === undefined || value === null || value === '');
+    }
+
+    function countMissingOnPage(sender, page) {
+      if (!page || !Array.isArray(page.questions)) return 0;
+      return page.questions.reduce((acc, q) => acc + (isAnswerMissing(sender, q) ? 1 : 0), 0);
+    }
+
+    function countMissingOverall(sender) {
+      return sender.getAllQuestions().reduce((acc, q) => acc + (isAnswerMissing(sender, q) ? 1 : 0), 0);
+    }
+
+    // Do NOT make questions required so navigation remains possible
     surveyModel.onAfterRenderQuestion.add((sender, options) => {
       const q = options.question;
-      if (q.getType() === "rating") {
-        // NICHT required setzen, damit Navigation funktioniert
+      if (q && typeof q.getType === 'function' && q.getType() === 'rating') {
         q.isRequired = false;
       }
     });
 
-    // 4) Seitenwechsel erlauben, aber warnen bei unvollständigen Rating-Fragen
+    // Warn once per page if there are missing answers on navigation
     surveyModel.onCurrentPageChanging.add((sender, options) => {
-      // Nur Rating-Fragen auf aktueller Seite prüfen
-      const currentPageQuestions = options.oldCurrentPage.questions.filter(q => q.getType() === "rating");
-      
-      if (currentPageQuestions.length === 0) {
-        // Keine Rating-Fragen auf dieser Seite - immer erlauben
-        options.allowChanging = true;
+      const page = options.oldCurrentPage;
+      if (!page) { options.allowChanging = true; return; }
+
+      const pageKey = page.name || String(sender.pages.indexOf(page));
+      const missing = countMissingOnPage(sender, page);
+
+      if (missing > 0 && !shownPageWarnings.has(pageKey)) {
+        // One-time warning for this page, block current navigation
+        alert(tWarning('page'));
+        shownPageWarnings.add(pageKey);
+        options.allowChanging = false;
         return;
       }
 
-      const answeredOnPage = currentPageQuestions.filter(q => {
-        const value = sender.getValue(q.name);
-        return value !== undefined && value !== null && value !== "";
-      }).length;
-
-      const totalOnPage = currentPageQuestions.length;
-
-      // Wenn auf dieser Seite Rating-Fragen teilweise beantwortet wurden, warnen aber erlauben
-      if (answeredOnPage > 0 && answeredOnPage < totalOnPage) {
-        const proceed = confirm(
-          `${answeredOnPage} von ${totalOnPage} Fragen beantwortet. ` +
-          `Unvollständige Antworten können nicht ausgewertet werden. Fortfahren?`
-        );
-        options.allowChanging = proceed;
-        return;
-      }
-
-      // Sonst immer erlauben (komplett leer oder komplett ausgefüllt)
+      // After first warning, allow navigation even if incomplete
       options.allowChanging = true;
     });
 
-    // 4b) Validierung nur beim finalen Submit
+    // Warn once on final submit if there are missing answers
     surveyModel.onCompleting.add((sender, options) => {
-      // Alle Rating-Fragen im gesamten Survey prüfen
-      const allRatingQuestions = sender.getAllQuestions().filter(q => q.getType() === "rating");
-      
-      if (allRatingQuestions.length === 0) {
-        options.allowComplete = true;
+      const missing = countMissingOverall(sender);
+      if (missing > 0 && !shownCompleteWarning) {
+        alert(tWarning('complete'));
+        shownCompleteWarning = true;
+        options.allowComplete = false; // Block only the first submit attempt
         return;
       }
-
-      const answeredQuestions = allRatingQuestions.filter(q => {
-        const value = sender.getValue(q.name);
-        return value !== undefined && value !== null && value !== "";
-      });
-
-      const answeredCount = answeredQuestions.length;
-      const totalCount = allRatingQuestions.length;
-
-      // Komplett leer oder komplett ausgefüllt erlauben
-      if (answeredCount === 0 || answeredCount === totalCount) {
-        options.allowComplete = true;
-        return;
-      }
-
-      // Teilweise ausgefüllt - nur beim finalen Submit blockieren
-      options.allowComplete = false;
-      
-      let message = getLocalizedMessage('incompleteWarning', currentLocale);
-      alert(message);
+      options.allowComplete = true; // Allow submit afterwards
     });
+
+    // Build a complete answers object: unanswered -> -1
+    function buildCompleteAnswers(model) {
+      const result = {};
+      const questions = model.getAllQuestions();
+      for (const q of questions) {
+        if (!q || !q.name) continue;
+        // Consider only visible questions for completion purposes
+        if (typeof q.isVisible === 'boolean' && !q.isVisible) continue;
+        const val = model.getValue(q.name);
+        const isEmptyArray = Array.isArray(val) && val.length === 0;
+        const isEmptyObject = val && typeof val === 'object' && !Array.isArray(val) && Object.keys(val).length === 0;
+        const isEmptyScalar = val === undefined || val === null || val === '';
+        result[q.name] = (isEmptyScalar || isEmptyArray || isEmptyObject) ? -1 : val;
+      }
+      return result;
+    }
 
     // 5) Submit Handler mit verbesserter Fehlerbehandlung
     surveyModel.onComplete.add(function (sender) {
@@ -141,6 +163,7 @@
 
       // Loading-State anzeigen (optional)
       sender.showLoadingIndicator = true;
+      const completeAnswers = buildCompleteAnswers(sender);
 
       fetch(url, {
         method: 'POST',
@@ -149,7 +172,7 @@
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          data: sender.data,
+          data: completeAnswers,
           completedAt: new Date().toISOString(),
           surveyId: id
         })

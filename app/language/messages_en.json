@@ -184,6 +184,21 @@
     "noContextError": "Please confirm that you are not a robot."
   },
 
+  "habitStrengthSlider": {
+    "title": "How much do you want to stop or keep this habit?",
+    "minDescription": "Definitely stop",
+    "maxDescription": "Definitely keep",
+    "labels": [
+      "Definitely stop",
+      "Rather stop",
+      "Tend to stop",
+      "Neutral / Undecided",
+      "Tend to keep",
+      "Rather keep",
+      "Definitely keep"
+    ]
+  },
+
   "form_descriptions":{
     "sex": "Choose the gender you identify with the most.",
     "origin": "Select the country you are from.",

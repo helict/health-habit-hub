@@ -169,6 +169,21 @@
     "emptyBehaviorError": "Bitte markieren Sie ein Verhalten im Text, bevor Sie fortfahren.",
     "noCaptchaError": "Bitte bestätigen Sie, dass Sie kein Roboter sind."
   },
+
+  "habitStrengthSlider": {
+    "title": "Wie sehr möchtest du diese Gewohnheit abstellen oder beibehalten?",
+    "minDescription": "Unbedingt abstellen",
+    "maxDescription": "Unbedingt beibehalten",
+    "labels": [
+      "Unbedingt abstellen",
+      "Eher abstellen",
+      "Tendenziell abstellen",
+      "Neutral / Unentschieden",
+      "Tendenziell beibehalten",
+      "Eher beibehalten",
+      "Unbedingt beibehalten"
+    ]
+  },
   "form_descriptions": {
     "sex": "Wähle das Geschlecht, mit dem du dich am meisten identifizierst.",
     "origin": "Wähle das Land, aus dem du kommst.",
