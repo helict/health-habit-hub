@@ -84,10 +84,15 @@
 
   "origin": "Country of origin:",
 
-  "graduation": "School-leaving certificate:",
-  "g_1": "GCSE: General Certificate of Secondary Education",
-  "g_2": "A-Level: General Certificate of Education Advanced Level",
-  "g_3": "university degree",
+  "graduation": "Highest level of education:",
+  "g_primary": "Primary/elementary school",
+  "g_lower_secondary": "Lower secondary (middle school)",
+  "g_upper_secondary": "Upper secondary (high school diploma)",
+  "g_vocational": "Vocational/technical education",
+  "g_bachelor": "Bachelor's degree",
+  "g_master": "Master's degree",
+  "g_doctorate": "Doctorate (PhD/MD/EdD)",
+  "g_other": "Other / Prefer not to say",
 
   "age": "Age:",
   "weight": "Weight:",
@@ -202,7 +207,7 @@
   "form_descriptions":{
     "sex": "Choose the gender you identify with the most.",
     "origin": "Select the country you are from.",
-    "graduation": "Select the highest school-leaving certificate you have obtained.",
+    "graduation": "Select the highest level you have completed.",
     "age": "Type in your current age in years.", 
     "weight": "Select the weight category that best describes you.",
     "occupation": "Select the option that best describes your current professional situation.",
