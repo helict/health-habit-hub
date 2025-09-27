@@ -171,25 +171,24 @@ class Neo4jDbClient {
       // ignore
     }
 
-    // Import the schema (idempotent for n10s; it merges on subjects)
+    // Import only the schema (classes/properties) to avoid example individuals.
+    // We prefer schema.ttl; only if it's missing, we fall back to Ontology.ttl (which may include examples).
     try {
-      // Prefer the full ontology if available in the container's import dir.
-      // docker-compose mounts ./fuseki/init to /import.
-      const resOnt = await session.run(
+      const resSchema = await session.run(
         `CALL n10s.rdf.import.fetch($url,'Turtle')`,
-        { url: 'file:///import/Ontology.ttl' }
+        { url: 'file:///import/schema.ttl' }
       );
-      // console.log('n10s: imported Ontology.ttl', resOnt.summary?.counters ?? '');
+      // console.log('n10s: imported schema.ttl', resSchema.summary?.counters ?? '');
     } catch (e1) {
-      // console.warn('n10s: Ontology.ttl import failed, trying schema.ttl:', e1.message);
+      // console.warn('n10s: schema.ttl import failed, trying Ontology.ttl:', e1.message);
       try {
-        const resSchema = await session.run(
+        const resOnt = await session.run(
           `CALL n10s.rdf.import.fetch($url,'Turtle')`,
-          { url: 'file:///import/schema.ttl' }
+          { url: 'file:///import/Ontology.ttl' }
         );
-        // console.log('n10s: imported schema.ttl', resSchema.summary?.counters ?? '');
+        // console.log('n10s: imported Ontology.ttl', resOnt.summary?.counters ?? '');
       } catch (e2) {
-        // console.warn('n10s: schema.ttl import also failed:', e2.message);
+        // console.warn('n10s: Ontology.ttl import also failed:', e2.message);
       }
     } finally {
       await session.close();
@@ -236,12 +235,14 @@ class Neo4jDbClient {
       const res = await session.run(`CALL n10s.rdf.import.inline($payload, 'Turtle')`, { payload });
       const first = res.records?.[0]?.toObject?.() ?? {};
       const status = first.terminationStatus || first['terminationStatus'] || 'UNKNOWN';
-      // console.log(`n10s inline import [${label}]:`, {
+      /*
+      console.log(`n10s inline import [${label}]:`, {
         terminationStatus: status,
         triplesLoaded: first.triplesLoaded,
         triplesParsed: first.triplesParsed,
         namespaces: first.namespaces,
-      // });
+      });
+      */
       // console.debug(`n10s inline raw [${label}]:`, first);
       if (status !== 'OK') {
         const preview = await session.run(`CALL n10s.rdf.preview.inline($payload, 'Turtle')`, { payload });
