@@ -1,2 +1,19 @@
 LLMs_Analyse/Aufgabenstellung.md
-**/__pycache__/
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment / secrets
+.env
+*.env
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
