@@ -1,0 +1,30 @@
+sequenceDiagram
+    autonumber
+    actor Donator as Donator (User)
+    participant HHH as HHH Orchestrator
+    participant API as API (OpenAPI/Swagger)
+    participant LLM as Calling external services (LLMs, Redis)
+    participant DB as Storage (MongoDB)
+
+    Donator->>HHH: send(sentence, language)
+    HHH->>API: classifyHabit(uuid, sentence, language)
+    API->>API: generatePrompt()
+    API->>LLM: classifyHabit(prompt,sentence,provider,model,temperature...)
+    LLM-->>API: uuid,sentence,language,habit_class (0/1), confidence
+    API->>LLM: cache(uuid,sentence,language,habit_class (0/1), confidence)
+    API-->>HHH: uuid,sentence,language,habit_class (0/1), confidence
+
+    alt habit_class == 0 (not a habit)
+        HHH->>DB: store_habit_data(uuid,sentence,language,habit_class (0/1), confidence)
+        HHH-->>Donator: msg("This sentence does not describe a habit, please try again.")
+    else habit_class == 1 (is a habit)
+        HHH->>DB: store_habit_data(uuid,sentence,language,habit_class (0/1), confidence)
+        HHH->>API: classifyContext(uuid,sentence,language)
+        API->>API: generatePrompt()
+        API->>LLM: classifyContext(prompt,sentence,provider,model)
+        LLM-->>API: Output {uuid, sentence,language, [Context...] }
+        API->>LLM: cache(uuid, sentence,language, [Context...])
+        API-->>HHH: Output { uuid, sentence,language, [Context...] }
+        HHH->>DB: store_context_data( uuid, sentence,language, [Context...] )
+        HHH-->>Donator: msg("stored successfully！")
+    end

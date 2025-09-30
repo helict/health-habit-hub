@@ -8,9 +8,7 @@ __pycache__/
 .venv/
 venv/
 
-# Environment / secrets
-.env
-*.env
+
 
 # OS / editors
 .DS_Store

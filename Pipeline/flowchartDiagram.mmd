@@ -1,0 +1,14 @@
+flowchart LR
+    A["Unstructured text (multilingual)"]
+    B["Component K1: Habit recognition"]
+    C{"Text identified as habit?"}
+    D["Component K2: Context classification"]
+    E["Text as non-habitual"]
+    F["Storage in database"]
+
+    A --> B
+    B --> C
+    C -- "Yes" --> D
+    C -- "No" --> E
+    D --> F
+    E --> F
