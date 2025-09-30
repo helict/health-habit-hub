@@ -4,28 +4,49 @@ import { v4 as uuid } from 'uuid';
 import { config } from './config.js';
 
 // function to translate text using LibreTranslate API
-async function translate(text, from, to) {
-  const response = await fetch(config.getTranslateApiEndpoint(), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      q: text,
-      source: from,
-      target: to,
-      format: "text",
-      alternatives: 0
-    }),
-  });
+async function translate(text, from, to, retries = 3) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
+      const response = await fetch(config.getTranslateApiEndpoint(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          q: text,
+          source: from,
+          target: to,
+          format: "text",
+          alternatives: 0
+        }),
+        signal: controller.signal
+      });
 
-  if (response.ok) {
-    const translation = await response.json();
-    return translation.translatedText;
+      clearTimeout(timeout);
+
+      if (response.ok) {
+        const translation = await response.json();
+        return translation.translatedText;
+      }
+
+      throw new Error(`Translation failed: ${response.status} ${response.statusText}`);
+    } catch (error) {
+      console.warn(`Translation attempt ${attempt}/${retries} failed:`, error.message);
+      
+      // If this is the last attempt, or it's not a connection error, throw
+      if (attempt === retries || !error.message.includes('ECONNREFUSED')) {
+        console.error(`Translation service unavailable after ${retries} attempts. Returning original text.`);
+        return text; // Return original text as fallback
+      }
+      
+      // Wait before retrying (exponential backoff)
+      const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
   }
-
-  // TODO: Implement proper error handling
-  throw new Error(`Translation failed: ${response.statusText}`);
 }
 
 class ExperimentalSetting {
@@ -99,7 +120,7 @@ class Donation {
     this.value = value;
     this.language = language;
     // TODO: Refactor label constructor
-    this.labels = labels.map(label => 
+    this.labels = (labels || []).map(label => 
       new Label({
         "TimeReference": "context",
         "PhysicalSetting": "context",
@@ -113,7 +134,8 @@ class Donation {
       label.value
     ));
     this.source = source;
-    this.habitStrength = habitStrength;
+    const hs = parseInt(habitStrength, 10);
+    this.habitStrength = Number.isFinite(hs) ? hs : 0;
   }
 
   hasLabels() {
@@ -175,8 +197,7 @@ class DbClient {
       await donation.translate(NORMALIZE_LANG);
     }
 
-    // TOOO: Remove (check delay)
-    new Promise(r => setTimeout(r, 4000)).then(console.debug(donation));
+    // Removed debug delay that could keep event loop alive during tests
 
     // Create SPARQL query
     insertQuery = this.addExperimentalSetting(insertQuery, experimentalSetting);
@@ -304,10 +325,10 @@ class DbClient {
             .find(label => label.value === behavior.value)
           : undefined;
         const translationStatement = translation ? `hhh:hasTranslation hhh:Behavior-${translation.id} ;` : "";
+        const maybeHasContext = contextStatement ? `hhh:hasContext ${contextStatement} ;\n            ` : "";
         return `
           hhh:Behavior-${behavior.id} rdf:type owl:NamedIndividual , hhh:Behavior;
-            hhh:hasContext ${contextStatement} ;
-            ${translationStatement}
+            ${maybeHasContext}${translationStatement}
             hhh:partOf hhh:ExperimentalSetting-${experimentalSetting.id} ;
             hhh:id "${behavior.id}"^^xsd:token ;
             hhh:language "${donation.language}" ;

@@ -5,19 +5,41 @@ import { v4 as uuid } from 'uuid';
 // Share the same shape as SparqlDatabase but target Neo4j
 
 // function to translate text using LibreTranslate API
-async function translate(text, from, to, config) {
-  const response = await fetch(config.getTranslateApiEndpoint(), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ q: text, source: from, target: to, format: 'text', alternatives: 0 }),
-  });
+async function translate(text, from, to, config, retries = 3) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
+      const response = await fetch(config.getTranslateApiEndpoint(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ q: text, source: from, target: to, format: 'text', alternatives: 0 }),
+        signal: controller.signal
+      });
 
-  if (response.ok) {
-    const translation = await response.json();
-    return translation.translatedText;
+      clearTimeout(timeout);
+
+      if (response.ok) {
+        const translation = await response.json();
+        return translation.translatedText;
+      }
+
+      throw new Error(`Translation failed: ${response.status} ${response.statusText}`);
+    } catch (error) {
+      console.warn(`Translation attempt ${attempt}/${retries} failed:`, error.message);
+      
+      // If this is the last attempt, or it's not a connection error, return original text
+      if (attempt === retries || !error.message.includes('ECONNREFUSED')) {
+        console.error(`Translation service unavailable after ${retries} attempts. Returning original text.`);
+        return text; // Return original text as fallback
+      }
+      
+      // Wait before retrying (exponential backoff)
+      const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
   }
-
-  throw new Error(`Translation failed: ${response.statusText}`);
 }
 
 class ExperimentalSetting {
@@ -102,7 +124,8 @@ class Donation {
         ),
     );
     this.source = source;
-    this.habitStrength = habitStrength;
+    const hs = parseInt(habitStrength, 10);
+    this.habitStrength = Number.isFinite(hs) ? hs : 0;
   }
 
   hasLabels() {

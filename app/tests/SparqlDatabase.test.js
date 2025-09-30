@@ -4,6 +4,8 @@ import { DbClient } from '../utils/SparqlDatabase.js';
 import SparqlClient from 'sparql-http-client';
 import { ExperimentGroup } from '../models/experimentGroup.js';
 
+const INTEGRATION = /^1|true$/i.test(process.env.ENABLE_INTEGRATION || '');
+
 const sparqlClientTestConfig = {
   getDbEndpoint: () => 'http://localhost:3030/hhh',
   db: {
@@ -40,42 +42,44 @@ test('Create instance of DbClient', () => {
   );
 });
 
-// Skip test, because test case is only partially completed
-test.skip('Insert open data', async () => {
+test('Insert open data (integration)', async (t) => {
+  if (!INTEGRATION) return t.skip('Integration disabled (set ENABLE_INTEGRATION=1)');
   const openExperimentGroup = new ExperimentGroup(false, false);
   const data = {
-    //   language: 'en',
-    language: 'de',
+    language: 'en',
     source: 'user',
-    //   inputValue: 'I eat a banana',
-    inputValue: 'Ich esse eine Pflaume',
+    inputValue: 'I eat a banana',
     experimentGroup: openExperimentGroup,
   };
   const dbClient = new DbClient(sparqlClientTestConfig);
-  await dbClient.insertDonateData(data);
+  try {
+    await dbClient.insertDonateData(data, 'sparql-open-test-user');
+  } finally {
+    if (dbClient && typeof dbClient.close === 'function') {
+      await dbClient.close();
+    }
+  }
 });
 
-// Skip test, because test case is only partially completed
-test.skip('Insert closed data', async () => {
+test('Insert closed data (integration)', async (t) => {
+  if (!INTEGRATION) return t.skip('Integration disabled (set ENABLE_INTEGRATION=1)');
   const closedExperimentGroup = new ExperimentGroup(true, true);
   const data = {
-    //   language: 'en',
-    language: 'de',
+    language: 'en',
     source: 'user',
-    //   inputValue: 'I eat a banana',
-    inputValue: 'Morgens esse ich einen Kuchen.',
+    inputValue: 'In the morning I eat cake.',
     experimentGroup: closedExperimentGroup,
     contexts: [
-      {
-        name: 'Behavior',
-        value: 'esse',
-      },
-      {
-        name: 'Time',
-        value: 'Morgens',
-      },
+      { name: 'Behavior', value: 'eat' },
+      { name: 'TimeReference', value: 'morning' },
     ],
   };
   const dbClient = new DbClient(sparqlClientTestConfig);
-  await dbClient.insertDonateData(data);
+  try {
+    await dbClient.insertDonateData(data, 'sparql-closed-test-user');
+  } finally {
+    if (dbClient && typeof dbClient.close === 'function') {
+      await dbClient.close();
+    }
+  }
 });
