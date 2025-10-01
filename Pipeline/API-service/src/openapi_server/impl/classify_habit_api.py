@@ -100,7 +100,7 @@ class ClassifyHabitApi(BaseClassifyHabitApi):
                     prompt_str,
                     clean_habit,
                     # provider="openai",
-                    provider=os.getenv("PROVIDER"),
+                    provider=os.getenv("PROVIDER_CLASSIFY_HABIT"),
                     model=os.getenv("CLASSIFY_HABIT_MODEL"),
                     temperature=os.getenv("TEMPERATURE"),
                     max_tokens=os.getenv("MAX_TOKENS"),

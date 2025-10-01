@@ -176,7 +176,7 @@ class ClassifyContextApi(BaseClassifyContextApi):
                 raw_output = classify_habit_via_llm_prompt(
                     prompt,
                     clean_habit,
-                    provider=os.getenv("PROVIDER"),
+                    provider=os.getenv("PROVIDER_CLASSIFY_CONTEXT"),
                     model=os.getenv("CLASSIFY_HABIT_CONTEXT_MODEL"),
                     temperature=os.getenv("TEMPERATURE"),
                     max_tokens=os.getenv("MAX_TOKENS"),
