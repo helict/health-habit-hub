@@ -35,12 +35,12 @@ CONTEXTS_COLL = DB.get_collection("contexts")
 SESSION = requests.Session()
 
 
-class SeedIn(BaseModel):
+class SendIn(BaseModel):
     habit: str
     language: str = "en"
 
 
-class SeedOut(BaseModel):
+class SendOut(BaseModel):
     ok: bool
     message: str
     data: dict
@@ -136,8 +136,8 @@ async def store_context_data(context_data: dict) -> bool:
         return False
 
 
-@app.post("/seed", response_model=SeedOut, summary="Minimum seed: If it is not a habit, prompt to try again")
-async def seed(body: SeedIn):
+@app.post("/send", response_model=SendOut, summary="Minimum send: If it is not a habit, prompt to try again")
+async def send(body: SendIn):
     uuid_str = str(uuid.uuid4())
     clean_habit=_normalize(body.habit)
     habit_out = await run_in_threadpool(
@@ -158,9 +158,9 @@ async def seed(body: SeedIn):
         success = await store_context_data(context_out)
         if not success:
             print(f"Warning: Context data storage failed (UUID: {uuid_str})")
-        return SeedOut(ok=True, message="ok", data=context_out)
+        return SendOut(ok=True, message="ok", data=context_out)
 
-    return SeedOut(
+    return SendOut(
         ok=False,
         message="Not a habit. Please try again.",
         data=habit_out,
