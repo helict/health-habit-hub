@@ -92,48 +92,49 @@ async def store_habit_data(habit_data: dict) -> bool:
     try:
         update_doc = {
             "$setOnInsert": {
-                "uuid": habit_data.get("uuid"),
+                "habit": habit_data.get("habit"),
             },
             "$set": {
-                "habit": habit_data.get("habit"),
+                "uuid": habit_data.get("uuid"),
                 "language": habit_data.get("language"),
                 "habit_class": habit_data.get("habit_class", 0),
                 "confidence": habit_data.get("confidence", None),
             }
         }
-        
         await HABITS_COLL.update_one(
-            {"uuid": habit_data.get("uuid")},
+            {"habit": habit_data.get("habit")},
             update_doc,
             upsert=True
         )
         return True
     except Exception as e:
-        print(f"Failed to store habit data (UUID: {habit_data.get('uuid')}): {e}")
+        print(f"Failed to store habit data (habit: {habit_data.get('habit')}): {e}")
         return False
+
 
 
 async def store_context_data(context_data: dict) -> bool:
     try:
         update_doc = {
             "$setOnInsert": {
-                "uuid": context_data.get("uuid"),
+                "habit": context_data.get("habit"),
             },
             "$set": {
-                "habit": context_data.get("habit"),
+                "uuid": context_data.get("uuid"),
                 "language": context_data.get("language"),
                 "result": context_data.get("result", []),
             }
         }
         await CONTEXTS_COLL.update_one(
-            {"uuid": context_data.get("uuid")},
+            {"habit": context_data.get("habit")},
             update_doc,
             upsert=True
         )
         return True
     except Exception as e:
-        print(f"Failed to store context data (UUID: {context_data.get('uuid')}): {e}")
+        print(f"Failed to store context data (habit: {context_data.get('habit')}): {e}")
         return False
+
 
 
 @app.post("/send", response_model=SendOut, summary="Minimum send: If it is not a habit, prompt to try again")
