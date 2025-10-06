@@ -153,6 +153,27 @@ services:
       - traefik.http.routers.neo4j.service=neo4j
       - traefik.http.services.neo4j.loadbalancer.server.port=7474
 
+  backup:
+    image: hhh/backup
+    build: ./backup-service
+    container_name: h3-backup
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-7}
+    volumes:
+      - ./backups:/backups
+      - fuseki-data:/fuseki:ro
+      - neo4j-data:/neo4j-data:ro
+    networks:
+      - h3-proxy
+    depends_on:
+      - mongo
+      - fuseki
+      - neo4j
+    command: /bin/bash -c "while true; do /backup.sh && sleep 86400; done"
+
 networks:
   h3-proxy:
     name: h3-proxy

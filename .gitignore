@@ -8,4 +8,8 @@ mongo/data
 .env.local
 .env*.local
 
+# Backup files
+backups/*.tar.gz
+backups/*.manifest
+
 
