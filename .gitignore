@@ -3,4 +3,9 @@ node_modules/
 mongo/config
 mongo/data
 
+# Environment files with credentials
+.env.production
+.env.local
+.env*.local
+
 
