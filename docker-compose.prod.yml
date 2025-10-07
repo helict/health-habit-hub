@@ -1,0 +1,198 @@
+services:
+  proxy:
+    image: traefik:v3.0
+    container_name: h3-proxy
+    command:
+      - --api.dashboard=true
+      - --log.level=INFO
+      - --accesslog=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=h3-proxy
+      # HTTP entrypoint
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      # HTTPS entrypoint
+      - --entrypoints.websecure.address=:443
+      # Let's Encrypt configuration
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - h3-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-certs:/letsencrypt
+    labels:
+      - traefik.enable=true
+      # Dashboard
+      - traefik.http.routers.dashboard.rule=Host(`${DOMAIN}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      - traefik.http.routers.dashboard.entrypoints=websecure
+      - traefik.http.routers.dashboard.tls=true
+      - traefik.http.routers.dashboard.tls.certresolver=letsencrypt
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.middlewares=dashboard-auth
+      # Basic auth for dashboard (user: admin, password: change-this-password)
+      # Generate with: echo $(htpasswd -nb admin your-password) | sed -e s/\\$/\\$\\$/g
+      - traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH:-admin:$$apr1$$8EVjn/nj$$GiLUZqcbueTFeD23SuB6x0}
+
+  app:
+    image: hhh/app
+    container_name: h3-app
+    build: ./app
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - NODE_OPTIONS=--no-warnings
+      - MONGO_DB=surveyjs
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_HOST=mongo
+    # Dockerfile already sets USER node, no need to override
+    networks:
+      - h3-proxy
+    depends_on:
+      - fuseki
+      - mongo
+      - neo4j
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.app.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.app.entrypoints=websecure
+      - traefik.http.routers.app.tls=true
+      - traefik.http.routers.app.tls.certresolver=letsencrypt
+      - traefik.http.routers.app.service=app
+      - traefik.http.services.app.loadbalancer.server.port=3000
+
+  fuseki:
+    image: hhh/fuseki
+    container_name: h3-fuseki
+    build: ./fuseki
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    # Fuseki base image runs as 'fuseki' user (UID 9008)
+    networks:
+      - h3-proxy
+    volumes:
+      - fuseki-data:/fuseki
+    depends_on:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.fuseki.rule=Host(`${DOMAIN}`) && PathPrefix(`/fuseki`)
+      - traefik.http.routers.fuseki.entrypoints=websecure
+      - traefik.http.routers.fuseki.tls=true
+      - traefik.http.routers.fuseki.tls.certresolver=letsencrypt
+      - traefik.http.routers.fuseki.service=fuseki
+      - traefik.http.services.fuseki.loadbalancer.server.port=3030
+      - traefik.http.middlewares.fuseki-stripprefix.stripprefix.prefixes=/fuseki
+      - traefik.http.routers.fuseki.middlewares=fuseki-stripprefix
+
+  mongo:
+    image: mongo:latest
+    container_name: h3-mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_DATABASE=surveyjs
+    # MongoDB runs as 'mongodb' user (UID 999) by default
+    networks:
+      - h3-proxy
+    volumes:
+      - ./mongo/entrypoint:/docker-entrypoint-initdb.d:ro
+      - mongo-data:/data/db
+      - mongo-config:/data/configdb
+
+  translate:
+    image: libretranslate/libretranslate:latest
+    container_name: h3-translate
+    restart: always
+    # LibreTranslate runs as 'libretranslate' user (UID 1032)
+    # Volume must be created with proper permissions for UID 1032
+    volumes:
+      - translate-data:/home/libretranslate/.local/share/argos-translate/packages
+    networks:
+      - h3-proxy
+    env_file:
+      - .env
+    environment:
+      - LT_LOAD_ONLY=${LT_LOAD_ONLY:-de,en,ja}
+      - LT_REQ_LIMIT=${LT_REQ_LIMIT:-0}
+    depends_on:
+      - app
+    # Initialize volume with correct permissions on first run
+    user: "1032:1032"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.translate.rule=Host(`${DOMAIN}`) && PathPrefix(`/translate`)
+      - traefik.http.routers.translate.entrypoints=websecure
+      - traefik.http.routers.translate.tls=true
+      - traefik.http.routers.translate.tls.certresolver=letsencrypt
+      - traefik.http.routers.translate.service=translate
+      - traefik.http.services.translate.loadbalancer.server.port=5000
+      - traefik.http.middlewares.translate-stripprefix.stripprefix.prefixes=/translate
+      - traefik.http.routers.translate.middlewares=translate-stripprefix
+
+  neo4j:
+    image: neo4j:5
+    container_name: h3-neo4j
+    restart: always
+    environment:
+      - NEO4J_AUTH=${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD}
+      - NEO4J_PLUGINS=["n10s"]
+      - NEO4J_server_directories_import=/import
+      - NEO4J_dbms_security_procedures_unrestricted=n10s.*
+      - NEO4J_dbms_security_procedures_allowlist=n10s.*
+    # Neo4j runs as 'neo4j' user (UID 7474)
+    networks:
+      - h3-proxy
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+      - ./fuseki/init:/import:ro
+    depends_on:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.neo4j.rule=Host(`${DOMAIN}`) && PathPrefix(`/neo4j`)
+      - traefik.http.routers.neo4j.entrypoints=websecure
+      - traefik.http.routers.neo4j.tls=true
+      - traefik.http.routers.neo4j.tls.certresolver=letsencrypt
+      - traefik.http.routers.neo4j.service=neo4j
+      - traefik.http.services.neo4j.loadbalancer.server.port=7474
+      - traefik.http.middlewares.neo4j-stripprefix.stripprefix.prefixes=/neo4j
+      - traefik.http.routers.neo4j.middlewares=neo4j-stripprefix
+
+networks:
+  h3-proxy:
+    name: h3-proxy
+    driver: bridge
+
+volumes:
+  fuseki-data:
+    name: h3-fuseki-data
+  translate-data:
+    name: h3-translate-data
+  neo4j-data:
+    name: h3-neo4j-data
+  neo4j-logs:
+    name: h3-neo4j-logs
+  mongo-data:
+    name: h3-mongo-data
+  mongo-config:
+    name: h3-mongo-config
+  traefik-certs:
+    name: h3-traefik-certs
