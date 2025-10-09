@@ -8,7 +8,7 @@ const error = ref("");
 const result = ref(null);
 
 
-const API_URL = import.meta.env.VITE_SEED_URL || "http://127.0.0.1:8081/seed";
+const API_URL = import.meta.env.VITE_SEED_URL || "http://127.0.0.1:8081/send";
 
 const jsonData = computed(() =>
   result.value?.data ? JSON.stringify(result.value.data, null, 2) : ""
