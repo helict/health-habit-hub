@@ -604,9 +604,9 @@ db.surveys.insert([
             "ja": "1日あたりの利用可能時間"
           },
           "description": {
-            "default": "How much time is available to you daily?",
-            "de": "Wie viel Zeit steht Ihnen täglich zur Verfügung?",
-            "ja": "1日に利用できる時間を選択してください。"
+            "default": "How much free time is available to you daily?",
+            "de": "Wie viel Freizeit steht Ihnen täglich zur Verfügung?",
+            "ja": "1日に利用できる自由時間を選択してください。"
           },
           "choices": [
             {

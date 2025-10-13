@@ -4,9 +4,7 @@ mongo/config
 mongo/data
 
 # Environment files with credentials
-.env.production
-.env.local
-.env*.local
+.env
 
 # Backup files
 backups/*.tar.gz

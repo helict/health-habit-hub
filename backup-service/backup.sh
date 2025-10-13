@@ -23,9 +23,20 @@ send_alert() {
       2>/dev/null || echo "Warning: Failed to send webhook alert"
   fi
 
-  # Send email alert (if configured)
-  if [ -n "$ALERT_EMAIL" ] && command -v mail >/dev/null 2>&1; then
-    echo "$message" | mail -s "Health Habit Hub Backup $status" "$ALERT_EMAIL" 2>/dev/null || true
+  # Send email alert via Mailjet API (if configured)
+  if [ -n "$ALERT_EMAIL" ] && [ -n "$MAIL_USER" ] && [ -n "$MAIL_PASS" ]; then
+    curl -X POST https://api.mailjet.com/v3.1/send \
+      -u "$MAIL_USER:$MAIL_PASS" \
+      -H "Content-Type: application/json" \
+      -d "{
+        \"Messages\": [{
+          \"From\": {\"Email\": \"${MAIL_FROM:-noreply@example.com}\", \"Name\": \"Health Habit Hub Backup\"},
+          \"To\": [{\"Email\": \"$ALERT_EMAIL\"}],
+          \"Subject\": \"🚨 Health Habit Hub Backup $status\",
+          \"TextPart\": \"$message\",
+          \"HTMLPart\": \"<h3>Health Habit Hub Backup $status</h3><pre>$message</pre>\"
+        }]
+      }" 2>/dev/null && echo "  Email alert sent to $ALERT_EMAIL" || echo "  Warning: Failed to send email alert"
   fi
 }
 
@@ -80,15 +91,32 @@ echo "  Stopping Neo4j for consistent backup..."
 if docker stop h3-neo4j >/dev/null 2>&1; then
   sleep 2  # Give it a moment to shut down cleanly
 
-  # Perform Neo4j dump
-  if docker run --rm \
+  # Create a temporary volume and set permissions
+  docker volume create neo4j-backup-temp >/dev/null 2>&1
+  docker run --rm -v neo4j-backup-temp:/backup alpine:latest chmod 777 /backup
+
+  # Perform the Neo4j dump
+  NEO4J_DUMP_OUTPUT=$(docker run --rm \
     --volumes-from h3-neo4j \
-    -v "$BACKUP_DIR/$DATE:/backup" \
+    -v neo4j-backup-temp:/backup \
     neo4j:5 \
-    neo4j-admin database dump neo4j --to-path=/backup --overwrite-destination=true 2>/dev/null; then
+    neo4j-admin database dump neo4j --to-path=/backup --overwrite-destination=true 2>&1)
+
+  if echo "$NEO4J_DUMP_OUTPUT" | grep -q "Dump completed successfully"; then
+
+    # Copy the dump directly using tar (to avoid Docker-in-Docker mount issues)
+    docker run --rm \
+      -v neo4j-backup-temp:/source:ro \
+      alpine:latest \
+      tar -czf - -C /source neo4j.dump | tar -xzf - -C "$BACKUP_DIR/$DATE/"
+
+    # Clean up the temporary volume
+    docker volume rm neo4j-backup-temp >/dev/null 2>&1
+
     echo "✓ Neo4j dump completed"
   else
     log_error "Neo4j" "neo4j-admin dump failed"
+    docker volume rm neo4j-backup-temp >/dev/null 2>&1 || true
   fi
 
   # Restart Neo4j
