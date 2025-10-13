@@ -194,25 +194,16 @@ class Neo4jDbClient {
       // ignore
     }
 
-    // Import only the schema (classes/properties) to avoid example individuals.
-    // We prefer schema.ttl; only if it's missing, we fall back to Ontology.ttl (which may include examples).
+    // Import the ontology (classes/properties) for schema awareness.
+    // Using Ontology.ttl as the primary ontology file.
     try {
-      const resSchema = await session.run(
+      const resOnt = await session.run(
         `CALL n10s.rdf.import.fetch($url,'Turtle')`,
-        { url: 'file:///import/schema.ttl' }
+        { url: 'file:///import/Ontology.ttl' }
       );
-      // console.log('n10s: imported schema.ttl', resSchema.summary?.counters ?? '');
-    } catch (e1) {
-      // console.warn('n10s: schema.ttl import failed, trying Ontology.ttl:', e1.message);
-      try {
-        const resOnt = await session.run(
-          `CALL n10s.rdf.import.fetch($url,'Turtle')`,
-          { url: 'file:///import/Ontology.ttl' }
-        );
-        // console.log('n10s: imported Ontology.ttl', resOnt.summary?.counters ?? '');
-      } catch (e2) {
-        // console.warn('n10s: Ontology.ttl import also failed:', e2.message);
-      }
+      // console.log('n10s: imported Ontology.ttl', resOnt.summary?.counters ?? '');
+    } catch (e) {
+      // console.warn('n10s: Ontology.ttl import failed:', e.message);
     } finally {
       await session.close();
     }
