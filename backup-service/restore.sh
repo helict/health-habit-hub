@@ -73,10 +73,34 @@ fi
 # Restore Neo4j
 echo ""
 echo "3/3 Restoring Neo4j..."
-if [ -f "$RESTORE_DIR/neo4j-data.tar.gz" ] && [ -s "$RESTORE_DIR/neo4j-data.tar.gz" ]; then
-  echo "Note: Neo4j must be stopped before restore. Please stop the neo4j container manually."
-  echo "Then extract: tar -xzf $RESTORE_DIR/neo4j-data.tar.gz -C /neo4j-data/"
-  echo "✓ Neo4j backup ready (manual restore required)"
+
+# Check for new format (neo4j.dump) or old format (tar.gz)
+if [ -f "$RESTORE_DIR/neo4j.dump" ]; then
+  echo "  Stopping Neo4j for restore..."
+  if docker stop h3-neo4j >/dev/null 2>&1; then
+    sleep 2
+
+    echo "  Loading Neo4j dump..."
+    if docker run --rm \
+      --volumes-from h3-neo4j \
+      -v "$RESTORE_DIR:/backup" \
+      neo4j:5 \
+      neo4j-admin database load neo4j --from-path=/backup --overwrite-destination=true 2>/dev/null; then
+      echo "✓ Neo4j restored from dump"
+    else
+      echo "ERROR: Neo4j restore failed"
+    fi
+
+    echo "  Restarting Neo4j..."
+    docker start h3-neo4j >/dev/null 2>&1
+    echo "✓ Neo4j restarted"
+  else
+    echo "ERROR: Failed to stop Neo4j container"
+  fi
+elif [ -f "$RESTORE_DIR/neo4j-data.tar.gz" ] && [ -s "$RESTORE_DIR/neo4j-data.tar.gz" ]; then
+  echo "⚠ Old backup format detected (file copy)"
+  echo "Note: Neo4j must be stopped before restore."
+  echo "Manual restore required: tar -xzf $RESTORE_DIR/neo4j-data.tar.gz -C /neo4j-data/"
 else
   echo "Warning: No Neo4j backup found in archive"
 fi

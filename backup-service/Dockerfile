@@ -5,7 +5,8 @@ RUN apk add --no-cache \
     curl \
     tar \
     gzip \
-    bash
+    bash \
+    docker-cli
 
 COPY backup.sh /backup.sh
 COPY restore.sh /restore.sh
