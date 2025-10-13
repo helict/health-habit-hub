@@ -79,7 +79,14 @@ export function showDonateForm(req, res) {
 export async function saveDonateData(req, res) {
   const userId = req.userId;  // User-ID direkt aus req holen
   console.log(`Received donate data for user ${userId}:`, req.body);
-  const dbClient = new DbClient(config);
+  // Choose backend for graph storage without affecting surveys/cookies
+  let dbClient;
+  if (config.graphBackend === 'neo4j') {
+    const { Neo4jDbClient } = await import('../utils/Neo4jDatabase.js');
+    dbClient = new Neo4jDbClient(config);
+  } else {
+    dbClient = new DbClient(config);
+  }
   const data = {
     ...req.body,
     habitStrength: req.body.habitStrength,

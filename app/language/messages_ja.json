@@ -85,9 +85,14 @@
   "origin": "出身地:",
 
   "graduation": "最終学歴:",
-  "g_1": "中学校",
-  "g_2": "高等学校",
-  "g_3": "大学",
+  "g_primary": "初等教育（小学校）",
+  "g_lower_secondary": "中等教育前期（中学校）",
+  "g_upper_secondary": "中等教育後期（高校卒業）",
+  "g_vocational": "専門学校・職業訓練",
+  "g_bachelor": "学士（Bachelor）",
+  "g_master": "修士（Master）",
+  "g_doctorate": "博士（Doctor）",
+  "g_other": "その他／無回答",
 
   "age": "年齢:",
   "weight": "体重:",
@@ -203,7 +208,7 @@
   "form_descriptions": {
     "sex": "あなたが最も自認する性別を選択してください。",
     "origin": "あなたの出身国を選択してください。",
-    "graduation": "あなたが取得した最終学歴を選択してください。",
+    "graduation": "最終的に修了した学歴を選択してください。",
     "age": "現在の年齢を年単位で入力してください。",
     "weight": "あなたに最も当てはまる体重カテゴリーを選択してください。",
     "occupation": "あなたの現在の職業状況を最もよく表す項目を選択してください。",

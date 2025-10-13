@@ -1,0 +1,296 @@
+@prefix hhh: <http://example.com/hhh#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.w3.org/2002/07/owl#> .
+
+[ rdf:type owl:Ontology
+ ] .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://example.com/hhh#donates
+hhh:donates rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf owl:topObjectProperty ;
+            rdfs:domain hhh:Donor ;
+            rdfs:range hhh:Habit .
+
+
+###  http://example.com/hhh#hasBehavior
+hhh:hasBehavior rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf owl:topObjectProperty ;
+                rdfs:domain hhh:Habit ;
+                rdfs:range hhh:Behavior .
+
+
+###  http://example.com/hhh#hasContext
+hhh:hasContext rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf owl:topObjectProperty ;
+               rdfs:domain hhh:Behavior ;
+               rdfs:range hhh:Context .
+
+
+###  http://example.com/hhh#hasTranslation
+hhh:hasTranslation rdf:type owl:ObjectProperty ;
+                   rdfs:subPropertyOf owl:topObjectProperty ;
+                   rdfs:domain hhh:Behavior ;
+                   rdfs:range hhh:Behavior .
+
+
+###  http://example.com/hhh#partOf
+hhh:partOf rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf owl:topObjectProperty .
+
+
+###  http://www.w3.org/2002/07/owl#topObjectProperty
+owl:topObjectProperty rdfs:domain hhh:Behavior ,
+                                  hhh:Context ,
+                                  hhh:Donor ,
+                                  hhh:Habit ;
+                      rdfs:range hhh:ExperimentalSetting .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://example.com/hhh#id
+hhh:id rdf:type owl:DatatypeProperty ;
+       rdfs:subPropertyOf owl:topDataProperty ;
+       rdfs:range xsd:token .
+
+
+###  http://example.com/hhh#language
+hhh:language rdf:type owl:DatatypeProperty ;
+             rdfs:subPropertyOf owl:topDataProperty ;
+             rdfs:range rdf:langString ;
+             rdfs:label "language" .
+
+
+###  http://example.com/hhh#source
+hhh:source rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty ;
+           rdfs:range rdfs:Literal .
+
+
+###  http://example.com/hhh#timestamp
+hhh:timestamp rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf owl:topDataProperty ;
+              rdfs:range xsd:dateTime .
+
+
+###  http://example.com/hhh#value
+hhh:value rdf:type owl:DatatypeProperty ;
+          rdfs:subPropertyOf owl:topDataProperty ;
+          rdfs:range xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://example.com/hhh#Behavior
+hhh:Behavior rdf:type owl:Class ;
+             rdfs:label "Behavior" .
+
+
+###  http://example.com/hhh#Context
+hhh:Context rdf:type owl:Class ;
+            rdfs:label "Context" .
+
+
+###  http://example.com/hhh#Donor
+hhh:Donor rdf:type owl:Class ;
+          rdfs:label "Donor" .
+
+
+###  http://example.com/hhh#ExperimentalSetting
+hhh:ExperimentalSetting rdf:type owl:Class ;
+                        rdfs:label "Experimental Setting" .
+
+
+###  http://example.com/hhh#Group1
+hhh:Group1 rdf:type owl:Class ;
+           rdfs:subClassOf hhh:ExperimentalSetting ;
+           rdfs:comment "Closed-Ended" .
+
+
+###  http://example.com/hhh#Group2
+hhh:Group2 rdf:type owl:Class ;
+           rdfs:subClassOf hhh:ExperimentalSetting ;
+           rdfs:comment "Closed-Ended Task, Opened-Ended General" .
+
+
+###  http://example.com/hhh#Group3
+hhh:Group3 rdf:type owl:Class ;
+           rdfs:subClassOf hhh:ExperimentalSetting ;
+           rdfs:comment "Opened-Ended Task, Closed-Ended General" .
+
+
+###  http://example.com/hhh#Group4
+hhh:Group4 rdf:type owl:Class ;
+           rdfs:subClassOf hhh:ExperimentalSetting ;
+           rdfs:comment "Opened-Ended" .
+
+
+###  http://example.com/hhh#Habit
+hhh:Habit rdf:type owl:Class .
+
+
+###  http://example.com/hhh#InternalState
+hhh:InternalState rdf:type owl:Class ;
+                  rdfs:subClassOf hhh:Context ;
+                  rdfs:label "Internal State" .
+
+###  http://example.com/hhh#Reasoning
+hhh:Reasoning rdf:type owl:Class ;
+                  rdfs:subClassOf hhh:Context ;
+                  rdfs:label "Reasoning" .
+
+
+
+###  http://example.com/hhh#People
+hhh:People rdf:type owl:Class ;
+           rdfs:subClassOf hhh:Context ;
+           rdfs:label "People" .
+
+
+###  http://example.com/hhh#PhysicalSetting
+hhh:PhysicalSetting rdf:type owl:Class ;
+                    rdfs:subClassOf hhh:Context ;
+                    rdfs:label "Physical Setting" .
+
+
+###  http://example.com/hhh#PriorBehavior
+hhh:PriorBehavior rdf:type owl:Class ;
+                  rdfs:subClassOf hhh:Context ;
+                  rdfs:label "Prior Behavior" .
+
+
+###  http://example.com/hhh#TimeReference
+hhh:TimeReference rdf:type owl:Class ;
+                  rdfs:subClassOf hhh:Context ;
+                  rdfs:label "Time Reference" .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://example.com/hhh#Behavior1
+hhh:Behavior1 rdf:type owl:NamedIndividual ,
+                       hhh:Behavior ;
+              hhh:hasContext hhh:Context1 ;
+              hhh:hasTranslation hhh:Behavior1_DE ;
+              hhh:partOf hhh:ExperimentalSetting1 ;
+              hhh:id "46343ea8-50fd-4750-a492-393b9d0e040e"^^xsd:token ;
+              hhh:language "en" ;
+              hhh:source "user"^^rdfs:Literal ;
+              hhh:value "eat it" .
+
+
+###  http://example.com/hhh#Behavior1-2
+hhh:Behavior1-2 rdf:type owl:NamedIndividual ,
+                         hhh:Behavior ;
+                hhh:hasTranslation hhh:Behavior1-2_DE ;
+                hhh:partOf hhh:ExperimentalSetting1 ;
+                hhh:id "ef0f823c-cdcf-4743-a790-d6599d23e23a"^^xsd:token ;
+                hhh:language "en" ;
+                hhh:source "user"^^rdfs:Literal ;
+                hhh:value "take an apple" .
+
+
+###  http://example.com/hhh#Behavior1-2_DE
+hhh:Behavior1-2_DE rdf:type owl:NamedIndividual ,
+                            hhh:Behavior ;
+                   hhh:hasTranslation hhh:Behavior1-2 ;
+                   hhh:partOf hhh:ExperimentalSetting1 ;
+                   hhh:id "40282606-1fc0-4f09-a125-34fbdd9fdf28"^^xsd:token ;
+                   hhh:language "de" ;
+                   hhh:source "deepl"^^rdfs:Literal ;
+                   hhh:value "einen Apfel nehmen" .
+
+
+###  http://example.com/hhh#Behavior1_DE
+hhh:Behavior1_DE rdf:type owl:NamedIndividual ,
+                          hhh:Behavior ;
+                 hhh:hasContext hhh:Context1_DE ;
+                 hhh:hasTranslation hhh:Behavior1 ;
+                 hhh:partOf hhh:ExperimentalSetting1 ;
+                 hhh:id "3335160d-6fcb-4f95-a97e-bdacc8414bef"^^xsd:token ;
+                 hhh:language "de" ;
+                 hhh:source "deepl"^^rdfs:Literal ;
+                 hhh:value "esse es" .
+
+
+###  http://example.com/hhh#Context1
+hhh:Context1 rdf:type owl:NamedIndividual ,
+                      hhh:PhysicalSetting ;
+             hhh:hasTranslation hhh:Context1_DE ;
+             hhh:partOf hhh:ExperimentalSetting1 ;
+             hhh:id "7949e632-e363-479d-9d27-4571aca89e11"^^xsd:token ;
+             hhh:language "en" ;
+             hhh:source "user"^^rdfs:Literal ;
+             hhh:value "enter the kitchen" .
+
+
+###  http://example.com/hhh#Context1-2
+hhh:Context1-2 rdf:type owl:NamedIndividual ;
+               hhh:hasTranslation hhh:Context1-2_DE ;
+               hhh:partOf hhh:ExperimentalSetting1 ;
+               hhh:id "77e15c5d-8980-41d6-930b-a01a86c8370b"^^xsd:token ;
+               hhh:language "en" ;
+               hhh:source "user"^^rdfs:Literal ;
+               hhh:value "see a fruit basket" .
+
+
+###  http://example.com/hhh#Context1-2_DE
+hhh:Context1-2_DE rdf:type owl:NamedIndividual ;
+                  hhh:hasTranslation hhh:Context1-2 ;
+                  hhh:partOf hhh:ExperimentalSetting1 ;
+                  hhh:id "656aef63-bcfc-4279-9ae2-b6f4cd082d4d"^^xsd:token ;
+                  hhh:language "de" ;
+                  hhh:source "deepl"^^rdfs:Literal ;
+                  hhh:value "einen Obstkorb sehen" .
+
+
+###  http://example.com/hhh#Context1_DE
+hhh:Context1_DE rdf:type owl:NamedIndividual ,
+                         hhh:PhysicalSetting ;
+                hhh:hasTranslation hhh:Context1 ;
+                hhh:partOf hhh:ExperimentalSetting1 ;
+                hhh:id "6aa570ba-353d-44bf-9440-b2850d8dbd29"^^xsd:token ;
+                hhh:language "de" ;
+                hhh:source "deepl"^^rdfs:Literal ;
+                hhh:value "die Küche betreten" .
+
+
+###  http://example.com/hhh#Donor1
+hhh:Donor1 rdf:type owl:NamedIndividual ,
+                    hhh:Donor ;
+           hhh:donates hhh:Habit1 ;
+           hhh:id "1d8fa0b9-9fdb-476b-bbc8-c78f557bbaf5"^^xsd:token .
+
+
+###  http://example.com/hhh#ExperimentalSetting1
+hhh:ExperimentalSetting1 rdf:type owl:NamedIndividual ,
+                                  hhh:Group1 .
+
+
+###  http://example.com/hhh#Habit1
+hhh:Habit1 rdf:type owl:NamedIndividual ,
+                    hhh:Habit ;
+           hhh:hasBehavior hhh:Behavior1 ,
+                           hhh:Behavior1_DE ;
+           hhh:id "c99f6f9f-cec6-431d-8c7d-3e2988794822"^^xsd:token ;
+           hhh:language "en" ;
+           hhh:source "user"^^rdfs:Literal ;
+           hhh:value "When I enter the kitch and see a fruit basked, I take an apple and eat it." .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi
+
