@@ -867,7 +867,7 @@ sudo systemctl stop nginx
    RECAPTCHA_SITEKEY=your-production-site-key
    RECAPTCHA_SECRETKEY=your-production-secret-key
 
-   # Mailjet Configuration
+   # Mailjet Configuration (for contact form AND backup alerts)
    # Get credentials from: https://app.mailjet.com/account/api_keys
    MAIL_USER=your-mailjet-api-key
    MAIL_PASS=your-mailjet-secret-key
@@ -876,7 +876,7 @@ sudo systemctl stop nginx
 
    # Backup Alerts (Optional)
    ALERT_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
-   ALERT_EMAIL=admin@example.com
+   ALERT_EMAIL=admin@example.com  # Requires MAIL_USER and MAIL_PASS for Mailjet API
    ```
 
 #### Step 2: Deploy via Portainer
@@ -1117,9 +1117,10 @@ Health Habit Hub includes an automated backup system that runs daily and backs u
 **Key Features:**
 - Automated daily backups via Docker container
 - 14-day retention policy (configurable)
-- Neo4j native dumps for consistency
+- Neo4j native dumps using temporary volumes for consistency
+- Unified backup archives with manifests
 - Webhook alerts (Slack/Discord/Teams)
-- Email notifications on failure
+- Email notifications via Mailjet API
 - Per-component error tracking
 - Docker-based restore capability
 
@@ -1209,8 +1210,13 @@ BACKUP_RETENTION_DAYS=14
 # Webhook alert (optional) - Slack/Discord/Microsoft Teams
 ALERT_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
 
-# Email alert (optional)
+# Email alert (optional) - Requires Mailjet credentials
 ALERT_EMAIL=admin@example.com
+
+# Mailjet credentials (required for email alerts)
+MAIL_USER=your-mailjet-api-key
+MAIL_PASS=your-mailjet-secret-key
+MAIL_FROM=noreply@example.com
 ```
 
 **Webhook Setup**:
@@ -1244,29 +1250,36 @@ docker exec h3-backup /backup.sh
 
 ### Backup Location
 
-Backups are stored in `./backups/` with date-based subdirectories:
+Backups are stored in `./backups/` with timestamped archives:
 
 ```
 backups/
-├── 2025-10-01/
-│   ├── mongo-dump.tar.gz      # MongoDB dump
-│   ├── fuseki-data.tar.gz     # Fuseki RDF data
-│   └── neo4j.dump             # Neo4j database dump
-├── 2025-10-02/
-│   ├── mongo-dump.tar.gz
-│   ├── fuseki-data.tar.gz
-│   └── neo4j.dump
+├── full_backup_20251001_120000.tar.gz  # Unified backup archive
+├── backup_20251001_120000.manifest     # Backup manifest
+├── full_backup_20251002_120000.tar.gz
+├── backup_20251002_120000.manifest
 ...
-└── 2025-10-14/
-    ├── mongo-dump.tar.gz
-    ├── fuseki-data.tar.gz
-    └── neo4j.dump
+└── full_backup_20251014_120000.tar.gz
+    └── backup_20251014_120000.manifest
 ```
 
-**File sizes** (approximate):
-- MongoDB: 10-100MB (depends on survey data)
-- Fuseki: 50-500MB (depends on RDF triples)
-- Neo4j: 10-100MB (depends on graph size)
+**Each unified archive contains:**
+- `mongodb/` - MongoDB dump
+- `fuseki-data.tar.gz` - Fuseki RDF data
+- `neo4j.dump` - Neo4j database dump
+
+**Each manifest file contains:**
+- Backup timestamp
+- Component status
+- Archive size
+- Retention period
+- Error count
+
+**Archive sizes** (approximate):
+- Unified backup: 50-500MB (depends on data volume)
+  - MongoDB: 10-100MB (depends on survey data)
+  - Fuseki: 50-500MB (depends on RDF triples)
+  - Neo4j: 10-100MB (depends on graph size)
 
 ### Restoration
 
@@ -1276,43 +1289,65 @@ backups/
 # List available backups
 ls -lh backups/
 
-# Restore from specific date
-docker exec -it h3-backup /restore.sh 2025-10-13
+# Restore from specific backup archive
+docker exec -it h3-backup /restore.sh 20251013_120000
 
-# Or if you prefer to specify the full path
-docker exec -it h3-backup /restore.sh /backups/2025-10-13
+# Or specify the full archive name
+docker exec -it h3-backup /restore.sh full_backup_20251013_120000.tar.gz
 ```
 
 **Restoration process**:
-1. Stops all database containers
-2. Restores MongoDB from `mongorestore`
-3. Restores Fuseki from volume copy
-4. Restores Neo4j from `neo4j-admin database load`
-5. Restarts all containers
+1. Extracts unified backup archive
+2. Stops all database containers
+3. Restores MongoDB from `mongorestore`
+4. Restores Fuseki from volume copy
+5. Restores Neo4j from `neo4j-admin database load`
+6. Restarts all containers
 
 **⚠️ WARNING**: Restoration will **overwrite all current data**. Make sure you have a recent backup before restoring!
 
 ### Neo4j Backup Details
 
-The backup system uses **Neo4j native dump** for consistent backups:
+The backup system uses **Neo4j native dump with temporary volumes** for consistent backups:
 
 ```bash
-neo4j-admin database dump neo4j --to-path=/backup --overwrite-destination=true
+# Create temporary volume
+docker volume create neo4j-backup-temp
+
+# Run neo4j-admin dump to temporary volume
+docker run --rm \
+  --volumes-from h3-neo4j \
+  -v neo4j-backup-temp:/backup \
+  neo4j:5 \
+  neo4j-admin database dump neo4j --to-path=/backup --overwrite-destination=true
+
+# Extract dump from temporary volume
+docker run --rm \
+  -v neo4j-backup-temp:/source:ro \
+  alpine:latest \
+  tar -czf - -C /source neo4j.dump | tar -xzf - -C /backups/
+
+# Clean up temporary volume
+docker volume rm neo4j-backup-temp
 ```
 
-**Why native dump?**
+**Why native dump with temporary volumes?**
 - Ensures data consistency
 - Includes indexes and constraints
-- Faster than file copy
+- Avoids Docker-in-Docker mount issues
+- No permission problems
 - Official Neo4j method
 
 **Downtime**: Neo4j is stopped briefly during backup (~5-10 seconds):
 1. Container stopped
-2. Dump created
-3. Container restarted automatically
+2. Temporary volume created
+3. Dump created to temporary volume
+4. Dump extracted from volume
+5. Temporary volume removed
+6. Container restarted automatically
 
 **Automatic restart**:
-The backup script guarantees Neo4j restarts after backup completes (lines 96-100 in backup.sh):
+The backup script guarantees Neo4j restarts after backup completes:
 
 ```bash
 # Restart Neo4j
@@ -1365,19 +1400,30 @@ Location: /backups/2025-10-13
 If backup fails, you'll receive:
 1. **Webhook notification** (if configured):
    ```
-   🚨 Health Habit Hub Backup Failed
+   🚨 Health Habit Hub Backup FAILED
 
-   Backup encountered errors:
-   - Neo4j: neo4j-admin dump failed
+   ⚠ Backup completed with errors:
+   ❌ Neo4j: neo4j-admin dump failed
+
+   File: full_backup_20251013_000001.tar.gz
 
    Please check backup logs immediately.
-   Server: production
-   Time: 2025-10-13 00:00:45
    ```
 
-2. **Email notification** (if configured)
+2. **Email notification via Mailjet API** (if configured with ALERT_EMAIL, MAIL_USER, and MAIL_PASS):
+   - Subject: "🚨 Health Habit Hub Backup FAILED"
+   - Contains error details and backup file name
+   - Sent to address specified in ALERT_EMAIL
 
 3. **Exit code != 0** for monitoring systems
+
+**Example error output**:
+```
+⚠ Backup completed with 1 error(s)
+
+❌ Neo4j: neo4j-admin dump failed
+  Email alert sent to admin@example.com
+```
 
 ### Troubleshooting
 
@@ -1416,7 +1462,7 @@ df -h
 # Manually clean old backups
 cd backups/
 ls -lh
-rm -rf 2025-09-*
+rm -f full_backup_202509*.tar.gz backup_202509*.manifest
 ```
 
 **Webhook alerts not working**:
@@ -1429,13 +1475,14 @@ curl -X POST "YOUR_WEBHOOK_URL" \
 
 **Restore fails**:
 ```bash
-# Check backup directory exists
-ls -lh backups/2025-10-13/
+# List available backups
+ls -lh backups/
 
-# Check all backup files are present
-ls -lh backups/2025-10-13/mongo-dump.tar.gz
-ls -lh backups/2025-10-13/fuseki-data.tar.gz
-ls -lh backups/2025-10-13/neo4j.dump
+# Check backup archive exists
+ls -lh backups/full_backup_20251013_*.tar.gz
+
+# Check manifest
+cat backups/backup_20251013_*.manifest
 
 # View restore logs
 docker logs h3-backup
@@ -1498,7 +1545,15 @@ rclone sync backups/ remote:backups/
 
 4. **Credentials**: Backup scripts read database credentials from environment variables (never hardcoded).
 
-### What's New in v2.0
+### What's New in v2.1
+
+**Latest improvements:**
+- ✅ Neo4j backup using temporary volumes (no mount issues)
+- ✅ Unified backup archives (single .tar.gz per backup)
+- ✅ Backup manifest files with metadata
+- ✅ Email notifications via Mailjet API (no SMTP required)
+- ✅ Improved cleanup with manifest tracking
+- ✅ Better error reporting in alerts
 
 **Improvements over v1.0:**
 - ✅ Neo4j native dump (previously file copy)
@@ -1508,7 +1563,6 @@ rclone sync backups/ remote:backups/
 - ✅ Increased retention from 7 to 14 days
 - ✅ Better error handling and logging
 - ✅ Automatic Neo4j restart guarantee
-- ✅ Backward-compatible restore script
 
 ---
 
@@ -2388,10 +2442,12 @@ docker exec h3-backup /backup.sh
 - `1` - Partial or complete failure (check logs)
 
 **Output**:
-Creates directory `/backups/YYYY-MM-DD/` with:
-- `mongo-dump.tar.gz` - MongoDB dump
+Creates unified backup archive `/backups/full_backup_YYYYMMDD_HHMMSS.tar.gz` containing:
+- `mongodb/` - MongoDB dump directory
 - `fuseki-data.tar.gz` - Fuseki volume copy
 - `neo4j.dump` - Neo4j database dump
+
+Also creates manifest file `/backups/backup_YYYYMMDD_HHMMSS.manifest` with metadata
 
 #### restore.sh
 
@@ -2399,21 +2455,22 @@ Creates directory `/backups/YYYY-MM-DD/` with:
 
 **Usage**:
 ```bash
-# Restore from specific date
-docker exec -it h3-backup /restore.sh 2025-10-13
+# Restore from specific timestamp
+docker exec -it h3-backup /restore.sh 20251013_120000
 
-# Restore from specific path
-docker exec -it h3-backup /restore.sh /backups/2025-10-13
+# Restore from specific archive
+docker exec -it h3-backup /restore.sh full_backup_20251013_120000.tar.gz
 ```
 
 **⚠️ Warning**: Overwrites all current data!
 
 **Process**:
-1. Stops database containers
-2. Restores MongoDB from `mongorestore`
-3. Restores Fuseki from volume copy
-4. Restores Neo4j from `neo4j-admin database load`
-5. Restarts all containers
+1. Extracts unified backup archive
+2. Stops database containers
+3. Restores MongoDB from `mongorestore`
+4. Restores Fuseki from volume copy
+5. Restores Neo4j from `neo4j-admin database load`
+6. Restarts all containers
 
 ### Environment Variables Reference
 
@@ -2477,7 +2534,7 @@ MONGO_AUTH_SOURCE=admin
 MONGO_SERVER_SELECTION_TIMEOUT_MS=5000
 MONGO_SOCKET_TIMEOUT_MS=5000
 
-# Mail (Mailjet)
+# Mail (Mailjet) - Used for contact form AND backup alerts
 MAIL_USER=your-mailjet-api-key
 MAIL_PASS=your-mailjet-secret-key
 MAIL_FROM=noreply@felixreinsch.de
@@ -2486,7 +2543,7 @@ MAIL_RECEIVER=felix.reinsch@tu-dresden.de
 # Backup
 BACKUP_RETENTION_DAYS=14
 ALERT_WEBHOOK_URL=  # Optional: Slack/Discord webhook
-ALERT_EMAIL=        # Optional: Email for alerts
+ALERT_EMAIL=        # Optional: Email for alerts (requires MAIL_USER/MAIL_PASS)
 
 # Production Only (docker-compose.prod.yml)
 ACME_EMAIL=felix.reinsch@tu-dresden.de
@@ -2561,6 +2618,16 @@ This project is proprietary software developed for research purposes at TU Dresd
 ---
 
 ## Changelog
+
+### Version 2.1 (October 2025)
+
+**Backup System v2.1**:
+- Neo4j backup using temporary volumes (eliminates mount issues)
+- Unified backup archives (single .tar.gz file per backup)
+- Backup manifest files with metadata tracking
+- Email alerts via Mailjet API (no SMTP configuration needed)
+- Improved cleanup with manifest deletion
+- Enhanced error reporting in alerts
 
 ### Version 2.0 (October 2025)
 
