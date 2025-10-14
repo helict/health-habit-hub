@@ -94,38 +94,78 @@ db.surveys.insert([
           "type": "dropdown",
           "name": "education",
           "title": {
-            "default": "Highest Education",
-            "de": "Schulabschluss",
-            "ja": "学歴"
+            "default": "Highest level of education",
+            "de": "Höchster Bildungsabschluss",
+            "ja": "最終学歴"
           },
           "description": {
-            "default": "Please select your highest level of education.",
-            "de": "Wählen Sie Ihren höchsten Schulabschluss.",
-            "ja": "最終学歴を選択してください。"
+            "default": "Select the highest level you have completed.",
+            "de": "Bitte wählen Sie Ihren höchsten abgeschlossenen Bildungsabschluss.",
+            "ja": "最終的に修了した学歴を選択してください。"
           },
           "choices": [
             {
-              "value": "abitur",
+              "value": "primary",
               "text": {
-                "default": "university entrance diploma",
-                "de": "Abitur",
-                "ja": "アビトゥーア"
+                "default": "Primary/elementary school",
+                "de": "Primar-/Grundschule",
+                "ja": "初等教育（小学校）"
               }
             },
             {
-              "value": "fachabitur",
+              "value": "lower_secondary",
               "text": {
-                "default": "vocational diploma",
-                "de": "Fachabitur",
-                "ja": "ファッハアビトゥーア"
+                "default": "Lower secondary (middle school)",
+                "de": "Sekundarstufe I (Haupt-/Realschulabschluss)",
+                "ja": "中等教育前期（中学校）"
               }
             },
             {
-              "value": "Lower Secondary School Certificate",
+              "value": "upper_secondary",
               "text": {
-                "default": "Hauptschulabschluss",
-                "de": "Hauptschulabschluss",
-                "ja": "ハウプトシューレ卒業"
+                "default": "Upper secondary (high school diploma)",
+                "de": "Sekundarstufe II (Abitur/Fachhochschulreife)",
+                "ja": "中等教育後期（高校卒業）"
+              }
+            },
+            {
+              "value": "vocational",
+              "text": {
+                "default": "Vocational/technical education",
+                "de": "Berufsausbildung / Fachschule",
+                "ja": "専門学校・職業訓練"
+              }
+            },
+            {
+              "value": "bachelor",
+              "text": {
+                "default": "Bachelor's degree",
+                "de": "Bachelorabschluss",
+                "ja": "学士（Bachelor）"
+              }
+            },
+            {
+              "value": "master",
+              "text": {
+                "default": "Master's degree",
+                "de": "Masterabschluss",
+                "ja": "修士（Master）"
+              }
+            },
+            {
+              "value": "doctorate",
+              "text": {
+                "default": "Doctorate (PhD/MD/EdD)",
+                "de": "Promotion (Dr.)",
+                "ja": "博士（Doctor）"
+              }
+            },
+            {
+              "value": "other",
+              "text": {
+                "default": "Other / Prefer not to say",
+                "de": "Sonstiges / Keine Angabe",
+                "ja": "その他／無回答"
               }
             }
           ],
@@ -564,9 +604,9 @@ db.surveys.insert([
             "ja": "1日あたりの利用可能時間"
           },
           "description": {
-            "default": "How much time is available to you daily?",
-            "de": "Wie viel Zeit steht Ihnen täglich zur Verfügung?",
-            "ja": "1日に利用できる時間を選択してください。"
+            "default": "How much free time is available to you daily?",
+            "de": "Wie viel Freizeit steht Ihnen täglich zur Verfügung?",
+            "ja": "1日に利用できる自由時間を選択してください。"
           },
           "choices": [
             {

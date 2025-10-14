@@ -5,7 +5,13 @@
     "format:fix": "npx prettier --write .",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint --fix .",
-    "test:unitTests": "node --test tests/*",
+    "test:unitTests": "node --test \"tests/**/*.test.js\"",
+    "test:backup": "node --test tests/BackupConfiguration.test.js",
+    "test:neo4j": "ENABLE_INTEGRATION=1 node --test tests/Neo4jDatabase.test.js",
+    "test:fuseki": "ENABLE_INTEGRATION=1 node --test tests/FusekiDatabase.integration.test.js",
+    "test:mongo": "ENABLE_INTEGRATION=1 node --test tests/Mongo.test.js",
+    "test:translate": "ENABLE_INTEGRATION=1 node --test tests/TranslateService.test.js",
+    "test:integration": "npm run test:neo4j && npm run test:fuseki && npm run test:mongo && npm run test:translate",
     "test": "npm run format:check && npm run lint && npm run test:unitTests"
   },
   "dependencies": {
@@ -23,6 +29,7 @@
     "jquery": "^3.7.1",
     "marked": "^16.0.0",
     "mongodb": "^6.17.0",
+    "neo4j-driver": "^5.22.1",
     "node-sessionstorage": "^1.0.0",
     "nodemailer": "^7.0.5",
     "path": "^0.12.7",

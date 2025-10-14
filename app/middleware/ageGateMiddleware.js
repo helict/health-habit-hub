@@ -20,8 +20,8 @@ export function requireAgeConsent(req, res, next) {
       contextPath,
       req.lang,
       'disclaimer'
-    ) + `?next=${encodeURIComponent(req.originalUrl)}`;
-    
+    );
+
     console.log('🔴 No consent — redirecting to:', redirectUrl);
     return res.redirect(302, redirectUrl);
   }

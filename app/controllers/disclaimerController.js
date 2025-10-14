@@ -3,7 +3,7 @@ import { renderLocalizedView } from './defaultController.js';
 export function renderDisclaimer(req, res) {
   const contextPath = process.env.APP_BASE_PATH || '/';
   const lang = req.lang;
-  const nextUrl = req.query.next || `${contextPath}${lang}/donate`;
+  const nextUrl = `${contextPath}${lang}/donate`;
 
   renderLocalizedView(req, res, 'disclaimer', { nextUrl, contextPath });
 }

@@ -3,4 +3,11 @@ node_modules/
 mongo/config
 mongo/data
 
+# Environment files with credentials
+.env
+
+# Backup files
+backups/*.tar.gz
+backups/*.manifest
+
 

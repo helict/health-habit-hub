@@ -69,10 +69,15 @@
 
   "origin": "Herkunft:",
 
-  "graduation": "Schulabschluss:",
-  "g_1": "Abitur",
-  "g_2": "Fachabitur",
-  "g_3": "Hochschulabschluss",
+  "graduation": "Höchster Bildungsabschluss:",
+  "g_primary": "Primar-/Grundschule",
+  "g_lower_secondary": "Sekundarstufe I (Haupt-/Realschulabschluss)",
+  "g_upper_secondary": "Sekundarstufe II (Abitur/Fachhochschulreife)",
+  "g_vocational": "Berufsausbildung / Fachschule",
+  "g_bachelor": "Bachelorabschluss",
+  "g_master": "Masterabschluss",
+  "g_doctorate": "Promotion (Dr.)",
+  "g_other": "Sonstiges / Keine Angabe",
 
   "age": "Alter:",
   "weight": "Gewicht:",
@@ -187,7 +192,7 @@
   "form_descriptions": {
     "sex": "Wähle das Geschlecht, mit dem du dich am meisten identifizierst.",
     "origin": "Wähle das Land, aus dem du kommst.",
-    "graduation": "Wähle den höchsten Schulabschluss, den du erreicht hast.",
+    "graduation": "Bitte wählen Sie Ihren höchsten abgeschlossenen Bildungsabschluss.",
     "age": "Gib dein aktuelles Alter in Jahren ein.",
     "weight": "Wähle die Gewichtskategorie, die dich am besten beschreibt.",
     "occupation": "Wähle die Option, die deine aktuelle berufliche Situation am besten beschreibt.",
@@ -207,4 +212,3 @@
       "leave": "Seite verlassen"
     }
   }
-
