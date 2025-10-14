@@ -1,14 +1,21 @@
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+// Get the directory of this file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from project root (two levels up from utils/)
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const config = {
   path: process.env.PATH || './',
   port: process.env.PORT || 3000,
   recaptcha: {
-    siteKey: process.env.RECAPTCHA_SITEKEY || '',
-    secretKey: process.env.RECAPTCHA_SECRETKEY || '',
-    useRecaptchaDomain: process.env.RECAPTCHA_USE_RECAPTCHA_DOMAIN || false,
+    siteKey: (process.env.RECAPTCHA_SITEKEY || '').trim(),
+    secretKey: (process.env.RECAPTCHA_SECRETKEY || '').trim(),
+    useRecaptchaDomain: process.env.RECAPTCHA_USE_RECAPTCHA_DOMAIN === 'true',
   },
   db: {
     host: process.env.DB_HOST || 'localhost',
