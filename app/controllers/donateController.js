@@ -71,6 +71,7 @@ export function showDonateForm(req, res) {
       experimentGroup: experimentGroup,
       contexts: contexts,
       locale: req.lang,
+      recaptchaSiteKey: config.recaptcha.siteKey,
       ...getLanguageMessages(req.lang),
     }
   );
