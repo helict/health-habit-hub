@@ -368,7 +368,7 @@ NEO4J_PASSWORD=your-password
 - Fuseki: Admin authentication
 - Neo4j: Password-protected
 - MongoDB: Authentication enabled
-- ReCAPTCHA for contact form
+- ReCAPTCHA v2 for donation form (server-side verification)
 
 **SSL/TLS:**
 - Automatic Let's Encrypt certificates
@@ -1856,19 +1856,26 @@ Your donated habit data will be anonymized and used for research purposes.
 
 This feature helps you discover popular habits and gain inspiration.
 
-#### 4. Contact Form
+#### 4. Donate Your Habit (with reCAPTCHA Protection)
 
-**To contact the research team**:
-1. Navigate to "Contact"
-2. Fill out the form:
-   - Name
-   - Email
-   - Subject
-   - Message
-3. Complete reCAPTCHA
-4. Click "Send"
+**When submitting a habit donation**:
+1. Fill in your habit details in the editable field
+2. Mark contexts (Behavior, Location, Time, etc.) if required
+3. Set habit strength using the slider
+4. **Complete the reCAPTCHA challenge** - required for submission
+5. Click "Submit Habit"
 
-**Note**: The contact form is protected by reCAPTCHA to prevent spam.
+**reCAPTCHA Protection**:
+- The donation form uses Google reCAPTCHA v2 for spam protection
+- Both client-side and server-side verification are performed
+- You must complete the reCAPTCHA before submission
+- Failed verification will show an error message
+
+**Error Messages**:
+- "Please fill in all fields" - Habit text is empty
+- "Please mark the behavior" - Behavior context is required but missing
+- "Please complete the reCAPTCHA" - reCAPTCHA challenge not completed
+- "Captcha verification failed" - Server rejected the reCAPTCHA response
 
 ### Privacy and Data Protection
 
@@ -2134,33 +2141,86 @@ grep -E 'DB_|FUSEKI_' .env
    docker restart h3-translate
    ```
 
-#### Contact Form Not Sending Emails
+#### reCAPTCHA Verification Issues
 
-**Symptoms**: Contact form submits but no email received
+**Symptoms**: "Captcha verification failed" error when submitting donations
 
 **Solutions**:
 
-1. **Check Mailjet credentials**:
+1. **Check reCAPTCHA configuration in logs**:
    ```bash
-   grep MAIL_ .env
+   docker logs h3-app | grep "🔑 reCAPTCHA Config"
    ```
 
-2. **Check application logs**:
-   ```bash
-   docker logs h3-app | grep -i mail
+   Should show:
+   ```
+   🔑 reCAPTCHA Config: {
+     siteKey: '6LeIxAcTAA...',
+     secretKey: '6LeIxAcTAA...',
+     useRecaptchaDomain: true,
+     siteKeyLength: 40,
+     secretKeyLength: 40
+   }
    ```
 
-3. **Verify reCAPTCHA is working**:
-   - Ensure you're using production keys (not test keys)
-   - Check browser console for reCAPTCHA errors
-
-4. **Test email sending manually**:
+2. **Verify reCAPTCHA keys are valid**:
    ```bash
-   # Inside app container
-   docker exec -it h3-app node
-   > const nodemailer = require('nodemailer');
-   > // Test email sending code
+   grep RECAPTCHA_ .env
    ```
+
+   - **Development**: Use test keys (work on localhost only)
+     ```
+     RECAPTCHA_SITEKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+     RECAPTCHA_SECRETKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+     ```
+
+   - **Production**: Use real keys from https://www.google.com/recaptcha/admin
+     - Must register domain: `habit.wiwi.tu-dresden.de`
+     - Select reCAPTCHA v2 (Checkbox)
+
+3. **Check server-side verification logs**:
+   ```bash
+   docker logs h3-app | grep -E "📨|✅|❌"
+   ```
+
+   Success flow:
+   ```
+   📨 Received reCAPTCHA token: Present
+   ✅ reCAPTCHA verification passed
+   ```
+
+   Failure flow:
+   ```
+   📨 Received reCAPTCHA token: MISSING
+   ❌ reCAPTCHA verification failed: missing-input-response
+   ```
+
+4. **Common reCAPTCHA errors**:
+   - `missing-input-response` - Token not sent from client
+   - `invalid-input-response` - Token expired or invalid
+   - `missing-input-secret` - Secret key not configured
+   - `invalid-input-secret` - Secret key is incorrect
+   - `timeout-or-duplicate` - Token already used or expired
+
+5. **Test in browser console**:
+   ```javascript
+   // Check if reCAPTCHA loaded
+   console.log(typeof grecaptcha !== 'undefined');
+
+   // Get response token
+   console.log(grecaptcha.getResponse());
+   // Should return long token string if completed
+   ```
+
+6. **Verify client-side integration**:
+   - Check reCAPTCHA widget appears on page
+   - Complete the challenge before submitting
+   - Token expires after 2 minutes - resubmit if needed
+
+7. **Production-specific issues**:
+   - Test keys WILL NOT work in production
+   - Domain must match registered domain exactly
+   - Check for localhost vs production domain mismatch
 
 #### Performance Issues
 
@@ -2265,6 +2325,94 @@ sudo systemctl stop nginx
 ---
 
 ## API Reference
+
+### Donation Routes
+
+#### Donate Router
+
+**Location**: `app/routes/donateRouter.js`
+
+**Routes**:
+
+**`GET /donate`**: Display donation form
+```javascript
+router.get('/', showDonateForm);
+```
+
+**`POST /donate/data`**: Submit habit donation with reCAPTCHA verification
+```javascript
+router.post(
+  '/data',
+  (req, res, next) => {
+    // Log received reCAPTCHA token
+    console.log('📨 Received reCAPTCHA token:',
+      req.body['g-recaptcha-response'] ? 'Present' : 'MISSING');
+    next();
+  },
+  recaptcha.middleware.verify,
+  (req, res, next) => {
+    if (!req.recaptcha.error) {
+      // Success - proceed to save data
+      console.log('✅ reCAPTCHA verification passed');
+      next();
+    } else {
+      // Failure - return error
+      console.error('❌ reCAPTCHA verification failed:', req.recaptcha.error);
+      res.status(400).json({
+        error: 'Captcha verification failed. Please try again.',
+        details: req.recaptcha.error
+      });
+    }
+  },
+  saveDonateData
+);
+```
+
+**reCAPTCHA Configuration**:
+```javascript
+const recaptcha = new Recaptcha(
+  config.recaptcha.siteKey,    // From RECAPTCHA_SITEKEY env var
+  config.recaptcha.secretKey,  // From RECAPTCHA_SECRETKEY env var
+  {
+    useRecaptchaDomain: config.recaptcha.useRecaptchaDomain
+  }
+);
+```
+
+**Middleware Flow**:
+1. **User ID Middleware**: Assigns UUID to user via cookie
+2. **reCAPTCHA Render**: Adds reCAPTCHA widget to response context
+3. **Request Logging**: Logs reCAPTCHA token presence
+4. **reCAPTCHA Verification**: Server-side verification with Google
+5. **Error Handling**: Returns JSON error on verification failure
+6. **Data Saving**: Proceeds to `saveDonateData` controller on success
+
+**Request Body**:
+```json
+{
+  "inputValue": "Exercise every morning",
+  "experimentGroup": { "donation": true, "visibility": true },
+  "language": "en",
+  "contexts": [
+    { "name": "Behavior", "value": "Exercise" },
+    { "name": "Time", "value": "morning" }
+  ],
+  "habitStrength": 7,
+  "g-recaptcha-response": "03AGdBq25..."
+}
+```
+
+**Success Response**:
+- Status: `302 Found`
+- Redirects to success page
+
+**Error Response**:
+```json
+{
+  "error": "Captcha verification failed. Please try again.",
+  "details": "missing-input-response"
+}
+```
 
 ### Database Utilities
 
@@ -2618,6 +2766,25 @@ This project is proprietary software developed for research purposes at TU Dresd
 ---
 
 ## Changelog
+
+### Version 2.2 (October 14, 2025)
+
+**Donation Form Enhancement**:
+- Added server-side reCAPTCHA verification for donation submissions
+- Enhanced logging with emoji indicators for debugging:
+  - 🔑 reCAPTCHA configuration at startup
+  - 📨 Request logging for token presence
+  - ✅ Successful verification
+  - ❌ Failed verification with error details
+- Improved error responses with JSON format including error details
+- Client-side reCAPTCHA token now sent in request body
+- Better validation flow with multiple middleware steps
+
+**Security Improvements**:
+- Server-side reCAPTCHA verification prevents bot submissions
+- Token validation before data processing
+- Detailed error logging for troubleshooting
+- Configuration validation at startup
 
 ### Version 2.1 (October 2025)
 

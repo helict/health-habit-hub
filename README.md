@@ -3,6 +3,7 @@
 <img src="./app/public/pics/h3-logo.png" width="250" alt="Health Habit Hub Logo"/>
 
 **Production URL**: https://habit.wiwi.tu-dresden.de
+**Version**: 2.2 (October 2025)
 
 A research-focused web application for collecting and analyzing health habit data using a 2×2 experimental design with multi-database architecture.
 
