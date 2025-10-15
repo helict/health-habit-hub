@@ -209,7 +209,7 @@ services:
       - mongo
       - fuseki
       - neo4j
-    command: /bin/bash -c "while true; do /backup.sh; sleep 86400; done"
+    command: /bin/bash -c "echo 'Waiting 2 minutes for services to stabilize...'; sleep 120; while true; do /backup.sh; sleep 86400; done"
 
 networks:
   h3-proxy:
