@@ -15,9 +15,10 @@ services:
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
       # HTTPS entrypoint
       - --entrypoints.websecure.address=:443
-      # Let's Encrypt configuration
+      # TU Dresden ACME configuration (instead of Let's Encrypt)
       - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
       - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.caserver=https://acme.pki.cert.tu-dresden.de/directory
       - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
       - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
     restart: always
