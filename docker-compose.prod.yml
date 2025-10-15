@@ -53,6 +53,7 @@ services:
     environment:
       - NODE_ENV=production
       - NODE_OPTIONS=--no-warnings
+      - APP_BASE_PATH=${APP_BASE_PATH:-/}
       - MONGO_DB=surveyjs
       - MONGO_USER=${MONGO_USER}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
