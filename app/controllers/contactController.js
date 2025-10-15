@@ -77,8 +77,12 @@ ${message}
 
 // GET Handler: Renders Contact Page
 export function renderContactPage(req, res) {
+  const messages = getLanguageMessages(req.lang);
   res.render(
     url.fileURLToPath(new URL('../views/contact.ejs', import.meta.url)),
-    getLanguageMessages(req.lang)
+    {
+      ...messages,
+      recaptchaSiteKey: config.recaptcha.siteKey
+    }
   );
 }
