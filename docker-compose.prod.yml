@@ -176,6 +176,34 @@ services:
       - traefik.http.middlewares.neo4j-stripprefix.stripprefix.prefixes=/neo4j
       - traefik.http.routers.neo4j.middlewares=neo4j-stripprefix
 
+  backup:
+    image: hhh/backup
+    container_name: h3-backup
+    build: ./backup-service
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-14}
+      - ALERT_WEBHOOK_URL=${ALERT_WEBHOOK_URL:-}
+      - ALERT_EMAIL=${ALERT_EMAIL:-}
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MAIL_USER=${MAIL_USER:-}
+      - MAIL_PASS=${MAIL_PASS:-}
+      - MAIL_FROM=${MAIL_FROM:-}
+    volumes:
+      - ./backups:/backups
+      - fuseki-data:/fuseki:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - h3-proxy
+    depends_on:
+      - mongo
+      - fuseki
+      - neo4j
+    command: /bin/bash -c "while true; do /backup.sh; sleep 86400; done"
+
 networks:
   h3-proxy:
     name: h3-proxy

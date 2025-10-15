@@ -235,17 +235,158 @@ habit:habit_456 a habit:Habit ;
     habit:startDate "2025-01-01"^^xsd:date .
 ```
 
-#### Neo4j Graph Database
+#### Neo4j Graph Database with n10s (Neosemantics)
 
-Property graph model for habit relationships:
+The Neo4j database uses the **n10s (Neosemantics)** plugin to import RDF/OWL ontologies as property graphs. This bridges semantic web standards with graph database technology.
+
+**What is n10s?**
+
+n10s is a Neo4j plugin that:
+- Imports RDF triples into Neo4j as nodes and relationships
+- Maintains semantic ontology structure
+- Enables SPARQL-like queries using Cypher
+- Supports OWL ontologies and RDF vocabularies
+
+**Configuration** (`Neo4jDatabase.js:170-211`):
+
+```javascript
+// Create required constraint for n10s
+CREATE CONSTRAINT n10s_unique_uri IF NOT EXISTS
+FOR (r:Resource) REQUIRE r.uri IS UNIQUE
+
+// Initialize n10s configuration
+CALL n10s.graphconfig.init({
+  handleVocabUris: 'SHORTEN',  // Shorten URIs to prefixes
+  keepLangTag: true,            // Keep language tags
+  handleMultival: 'ARRAY'       // Store multiple values as arrays
+})
+
+// Register namespace prefix
+CALL n10s.nsprefixes.add('hhh', 'http://example.com/hhh#')
+
+// Import ontology from Turtle file
+CALL n10s.rdf.import.fetch('file:///import/Ontology.ttl', 'Turtle')
+```
+
+**Graph Schema Structure:**
+
+Every RDF entity becomes a Neo4j node with:
+- Base label: `Resource` (required by n10s)
+- Type-specific labels: `hhh__Habit`, `hhh__Behavior`, etc.
+- Unique `uri` property for RDF identification
+
+**Node Types (Classes):**
+
+| Neo4j Label | RDF Class | Description |
+|------------|-----------|-------------|
+| `Resource` | Base class | All RDF entities (n10s requirement) |
+| `hhh__Donor` | `hhh:Donor` | User who donated habit data |
+| `hhh__Habit` | `hhh:Habit` | Health habit instance |
+| `hhh__Behavior` | `hhh:Behavior` | Specific behavior within a habit |
+| `hhh__Context` | `hhh:Context` | Base context class |
+| `hhh__TimeReference` | `hhh:TimeReference` | Time context (e.g., "in the morning") |
+| `hhh__PhysicalSetting` | `hhh:PhysicalSetting` | Location context (e.g., "at home") |
+| `hhh__People` | `hhh:People` | Social context (e.g., "alone") |
+| `hhh__InternalState` | `hhh:InternalState` | Emotional/physical state (e.g., "thirsty") |
+| `hhh__PriorBehavior` | `hhh:PriorBehavior` | Preceding action (e.g., "after brushing teeth") |
+| `hhh__Reasoning` | `hhh:Reasoning` | Motivation (e.g., "for hydration") |
+| `hhh__Group1-4` | `hhh:Group1-4` | Experimental group assignments |
+
+**Relationship Types:**
+
+| Relationship | From | To | Description |
+|-------------|------|-----|-------------|
+| `hhh__donates` | Donor | Habit | Links donor to their habit |
+| `hhh__hasBehavior` | Habit | Behavior | Habit contains specific behaviors |
+| `hhh__hasContext` | Behavior | Context | Behavior has contextual factors |
+| `hhh__partOf` | Behavior/Context | ExperimentalSetting | Part of experimental group |
+| `hhh__hasTranslation` | Habit/Behavior | Habit/Behavior | Links original to translated version |
+
+**Node Properties:**
+
+Each node contains:
+- `uri` - Unique RDF URI (required by n10s constraint)
+- `hhh__id` - UUID identifier
+- `hhh__value` - Text content (habit description, behavior text, etc.)
+- `hhh__language` - Language code (en, de, ja)
+- `hhh__source` - Origin (user ID or "translation")
+- `hhh__habitStrength` - Numeric strength rating (for Habit nodes)
+- `hhh__timestamp` - When donated (for Donor nodes)
+- `hhh__userId` - User identifier (for Donor nodes)
+
+**Example Data Flow:**
+
+When you donate a habit like "I drink water after waking up", Neo4j creates:
 
 ```cypher
-(:Person {id: "123"})-[:HAS_HABIT]->(:Habit {
-  name: "Morning Exercise",
-  frequency: "Daily",
-  startDate: "2025-01-01"
+(:Resource:hhh__Donor {
+  uri: "http://example.com/hhh#Donor-abc123",
+  hhh__userId: ["user123"],
+  hhh__timestamp: ["2025-10-15T10:00:00Z"]
+})
+  -[:hhh__donates]->
+(:Resource:hhh__Habit {
+  uri: "http://example.com/hhh#Habit-def456",
+  hhh__id: ["def456"],
+  hhh__value: ["I drink water after waking up"],
+  hhh__habitStrength: [4],
+  hhh__language: ["en"]
+})
+  -[:hhh__hasBehavior]->
+(:Resource:hhh__Behavior {
+  uri: "http://example.com/hhh#Behavior-ghi789",
+  hhh__value: ["drink water"]
+})
+  -[:hhh__hasContext]->
+(:Resource:hhh__TimeReference {
+  uri: "http://example.com/hhh#Context-jkl012",
+  hhh__value: ["in the morning"]
 })
 ```
+
+**Useful Cypher Queries:**
+
+View habit donation structure:
+```cypher
+MATCH (d:hhh__Donor)-[:hhh__donates]->(h:hhh__Habit)-[:hhh__hasBehavior]->(b:hhh__Behavior)
+OPTIONAL MATCH (b)-[:hhh__hasContext]->(c)
+RETURN d, h, b, c
+LIMIT 50
+```
+
+View only domain classes (hide base Resource):
+```cypher
+MATCH (n)
+WHERE n:hhh__Habit OR n:hhh__Behavior OR n:hhh__Donor
+RETURN n
+LIMIT 100
+```
+
+Count nodes by type:
+```cypher
+MATCH (n)
+RETURN labels(n) as type, count(*) as count
+ORDER BY count DESC
+```
+
+Find habits with specific contexts:
+```cypher
+MATCH (h:hhh__Habit)-[:hhh__hasBehavior]->(b:hhh__Behavior)
+      -[:hhh__hasContext]->(c:hhh__TimeReference)
+WHERE any(v IN c.hhh__value WHERE v CONTAINS 'morning')
+RETURN h.hhh__value as habit, c.hhh__value as context
+```
+
+**Understanding the Schema Visualization:**
+
+When you run `CALL db.schema.visualization()` in Neo4j, you'll see:
+- A large **`Resource`** node with many self-referencing arrows
+  - This represents the base class for all RDF entities
+  - Arrows show inheritance relationships from the ontology
+- Additional labels like `hhh__Habit`, `hhh__Behavior` combined with `Resource`
+- The n10s constraint: `n10s_unique_uri` ensures each Resource has a unique URI
+
+This is normal behavior for n10s - it preserves the RDF/OWL ontology structure while mapping it to Neo4j's property graph model.
 
 #### MongoDB Document Store
 
