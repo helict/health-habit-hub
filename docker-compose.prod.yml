@@ -15,9 +15,10 @@ services:
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
       # HTTPS entrypoint
       - --entrypoints.websecure.address=:443
-      # Let's Encrypt configuration
+      # TU Dresden ACME configuration (instead of Let's Encrypt)
       - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
       - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.caserver=https://acme.pki.cert.tu-dresden.de/directory
       - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
       - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
     restart: always
@@ -52,6 +53,7 @@ services:
     environment:
       - NODE_ENV=production
       - NODE_OPTIONS=--no-warnings
+      - APP_BASE_PATH=${APP_BASE_PATH:-/}
       - MONGO_DB=surveyjs
       - MONGO_USER=${MONGO_USER}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
@@ -78,11 +80,13 @@ services:
     container_name: h3-fuseki
     build: ./fuseki
     restart: always
+    user: root
     env_file:
       - .env
     environment:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     # Fuseki base image runs as 'fuseki' user (UID 9008)
+    # Running as root temporarily to initialize volume
     networks:
       - h3-proxy
     volumes:

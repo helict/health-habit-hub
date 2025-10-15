@@ -131,7 +131,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const data = { name, email, subject, message };
+      // Get reCAPTCHA response
+      const recaptchaResponse = grecaptcha.getResponse();
+
+      const data = {
+        name,
+        email,
+        subject,
+        message,
+        'g-recaptcha-response': recaptchaResponse
+      };
 
       try {
         const response = await fetch(window.location.pathname + '/submit-form', {
@@ -149,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formMessage.textContent = responseText;
 
         form.reset();
+        grecaptcha.reset(); // Reset reCAPTCHA
       } catch (err) {
         console.error('❌ Error sending message:', err);
         formMessage.style.display = 'block';
