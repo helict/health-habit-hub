@@ -78,11 +78,13 @@ services:
     container_name: h3-fuseki
     build: ./fuseki
     restart: always
+    user: root
     env_file:
       - .env
     environment:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     # Fuseki base image runs as 'fuseki' user (UID 9008)
+    # Running as root temporarily to initialize volume
     networks:
       - h3-proxy
     volumes:
