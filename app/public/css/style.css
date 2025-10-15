@@ -1,3 +1,11 @@
+/* Global Theme Variables */
+:root {
+  --theme-color: #FF00CC;
+  --theme-color-light: #F7B1E9;
+  --theme-color-dark: #7F4D75;
+}
+
+
 html {
   height: 100%;
   box-sizing: border-box;
@@ -109,7 +117,7 @@ footer {
   /*box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);*/
   border-radius: 20px;
   color: black;
-  border: 2px solid #50b034;
+  border: 2px solid var(--theme-color);
 }
 
 #datadonationheader {
@@ -120,7 +128,7 @@ footer {
   /* box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); */
   border-radius: 20px;
   color: black;
-  border: 2px solid #50b034;
+  border: 2px solid var(--theme-color);
 }
 
 #bubble-chart {
@@ -208,7 +216,7 @@ button#clear {
 }
 
 #clear {
-  color: #50b034;
+  color: var(--theme-color);
   background-color: transparent;
   border: 0 none;
   height: auto;
@@ -251,7 +259,7 @@ button#clear {
 }
 
 button {
-  --primary-color: #50b034;
+  --primary-color: var(--theme-color);
   --secondary-color: #fff;
   --hover-color: #9e9e9e;
 
@@ -571,7 +579,7 @@ input {
 
 /* Navbar brand color */
 .navbar-brand > b {
-  color: #50b034 !important;
+  color: var(--theme-color) !important;
 }
 
 .btn.context-btn {
@@ -589,7 +597,7 @@ input {
 
 /* Make all hyperlinks green so the user knows these are clickable */
 a {
-  color: #50b034 !important;
+  color: var(--theme-color) !important;
 }
 
 a:hover,
@@ -598,17 +606,17 @@ a:focus {
 }
 
 .caps-green {
-  color: #50b034; 
+  color: var(--theme-color);
 }
 
 /* target every Bootstrap radio and give it a green check */
 input.form-check-input[type="radio"] {
-  accent-color: #50b034;
+  accent-color: var(--theme-color);
 }
 
 .custom-radio .form-check-input:checked {
-  background-color: #50b034;
-  border-color: #50b034;
+  background-color: var(--theme-color);
+  border-color: var(--theme-color);
   box-shadow: 0 0 0 .25rem rgba(0, 0, 0, 0.25);
 }
 
@@ -624,7 +632,7 @@ input.form-check-input[type="radio"] {
   background: #dadada;
   box-shadow: 0 4px 4px rgba(0,0,0,0.25);
   border-radius: 20px;
-  border: 2px solid #50b034;
+  border: 2px solid var(--theme-color);
 }
 #slider-track-container {
   display: flex;
@@ -657,9 +665,9 @@ input.form-check-input[type="radio"] {
   justify-content: space-between;
   margin-top: 0.3em;
   font-size: 1em;
-  color: #50b034;
-  width: 110%; 
-  left: -5%; 
+  color: var(--theme-color);
+  width: 110%;
+  left: -5%;
 }
 #slider-inner-wrapper #slider-numbers span {
   flex: 1;
@@ -673,17 +681,17 @@ input.form-check-input[type="radio"] {
 
 /* SurveyJS Farb-Anpassungen */
 :root {
-  --sjs-primary-backcolor: #50b034;
-  --sjs-primary-backcolor-light: #7bc95f;
-  --sjs-primary-backcolor-dark: #3a8527;
+  --sjs-primary-backcolor: var(--theme-color);
+  --sjs-primary-backcolor-light: var(--theme-color-light);
+  --sjs-primary-backcolor-dark: var(--theme-color-dark);
   --sjs-primary-forecolor: #fff;
-  --sjs-general-backcolor-bright: #50b034;
-  --sjs-secondary-backcolor: #50b034;
-  --sjs-secondary-backcolor-light: #7bc95f;
+  --sjs-general-backcolor-bright: var(--theme-color);
+  --sjs-secondary-backcolor: var(--theme-color);
+  --sjs-secondary-backcolor-light: var(--theme-color-light);
   --sjs-secondary-backcolor-semi-light: #65c549;
-  --sjs-special-green: #50b034;
-  --sjs-special-blue: #50b034;
-  --sjs-special-main-color: #50b034;
+  --sjs-special-green: var(--theme-color);
+  --sjs-special-blue: var(--theme-color);
+  --sjs-special-main-color: var(--theme-color);
 }
 
 /* Buttons */
@@ -770,8 +778,8 @@ select:focus {
 }
 .button-outline-green {
   background-color: transparent;
-  border: 2px solid #50b034;
-  color: #50b034 !important;
+  border: 2px solid var(--theme-color);
+  color: var(--theme-color) !important;
   border-radius: 20px;
   font-weight: bold;
   font-size: 1.5em;
