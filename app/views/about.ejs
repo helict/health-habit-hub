@@ -12,8 +12,49 @@
 <div class="row">
 <div class="col-12 text-justify">
 <h5 id="about_text">
-<strong><%= aboutText || 'Standardtext für �Sber uns' %></strong></h5>
-<p id="step3"><%= step3Text || 'Standardtext für Schritt 3' %></p>
+<strong><%= aboutText || 'Why Data Sharing Matters in Habit Research' %></strong></h5>
+<div id="step3"><%- step3Text || '<p>Sharing habit data is crucial for advancing our understanding of human behavior.</p>' %></div>
+</div>
+</div>
+</div>
+
+<div class="container" id="datadonationheader">
+<div class="row">
+<div class="col-12">
+<h5><strong><%= contextExplanationTitle || 'Understanding Context Categories' %></strong></h5>
+<%- contextExplanationText || '<p>When you share a habit, you mark different parts with context categories.</p>' %>
+<div class="mt-4">
+<%
+const contextDescriptions = {
+  TimeReference: contextTimeReferenceDesc,
+  PhysicalSetting: contextPhysicalSettingDesc,
+  PriorBehavior: contextPriorBehaviorDesc,
+  People: contextPeopleDesc,
+  InternalState: contextInternalStateDesc,
+  Reasoning: contextReasoningDesc,
+  Behavior: contextBehaviorDesc
+};
+for (const context of contexts) {
+%>
+  <div class="row mb-3 align-items-center">
+    <div class="col-md-3 col-12 mb-2 mb-md-0">
+      <button
+        class="btn context-btn w-100"
+        style="
+          --btn-color: <%= context.color %>;
+          --btn-bg: <%= context.color %>66;
+        "
+        disabled
+      >
+        <%= context.labels[navigation.languageCode] || context.labels.en %>
+      </button>
+    </div>
+    <div class="col-md-9 col-12">
+      <%- contextDescriptions[context.id] || '' %>
+    </div>
+  </div>
+<% } %>
+</div>
 </div>
 </div>
 </div>

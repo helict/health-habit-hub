@@ -84,8 +84,42 @@
         </div>
       </div>
 
+      <!-- Behavior Button Section -->
+      <%
+        const behaviorContext = contexts.find(c => c.id === 'Behavior');
+        const otherContexts = contexts.filter(c => c.id !== 'Behavior');
+      %>
+
+      <% if (behaviorContext) { %>
+      <div class="row mt-3">
+        <div class="col-12 text-center">
+          <div class="d-flex justify-content-center">
+            <button
+              class="btn context-btn"
+              id="<%= behaviorContext.id %>"
+              style="
+                --btn-color: <%= behaviorContext.color %>;
+                --btn-bg:    <%= behaviorContext.color %>66;
+                min-width: 200px;
+              "
+            >
+              <%= behaviorContext.labels[navigation.languageCode] %>
+            </button>
+          </div>
+        </div>
+      </div>
+      <% } %>
+
+      <!-- Separator Line -->
+      <div class="row mt-3 mb-2">
+        <div class="col-12">
+          <hr style="border: 0; height: 2px; background-color: var(--theme-color); margin: 10px 0;">
+        </div>
+      </div>
+
+      <!-- Context Buttons Section -->
       <div class="d-flex flex-wrap">
-        <% for (const context of contexts) { %>
+        <% for (const context of otherContexts) { %>
           <div class="m-1 flex-grow-1">
             <button
               class="btn context-btn mt-0 h-100"
