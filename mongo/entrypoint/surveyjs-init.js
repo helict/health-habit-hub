@@ -1,8 +1,8 @@
-db = new Mongo().getDB("surveyjs");
+db = db.getSiblingDB("surveyjs");
 
 db.createCollection("surveys");
 console.log("Collection 'surveys' created.");
-db.surveys.insert([
+db.surveys.insertMany([
 {
   "id": "1", 
   "completedHtml": {
@@ -1449,7 +1449,7 @@ db.surveys.insert([
 ]);
 
 db.createCollection("results");
-db.results.insert([
+db.results.insertMany([
     { id: 1, postid: "1", json: { "Quality": { "affordable": "5", "better then others": "5", "does what it claims": "5", "easy to use": "5" }, "satisfaction": 5, "recommend friends": 5, "suggestions": "I am happy!", "price to competitors": "Not sure", "price": "low", "pricelimit": { "mostamount": "100", "leastamount": "100" } } },
     { id: 2, postid: "1", json: { "Quality": { "affordable": "3", "does what it claims": "2", "better then others": "2", "easy to use": "3" }, "satisfaction": 3, "suggestions": "better support", "price to competitors": "Not sure", "price": "high", "pricelimit": { "mostamount": "60", "leastamount": "10" } } },
     { id: 3, postid: "2", json: { "member_array_employer": [{}], "partner_array_employer": [{}], "maritalstatus_c": "Married", "member_receives_income_from_employment": "0", "partner_receives_income_from_employment": "0" } },
