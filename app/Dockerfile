@@ -7,13 +7,13 @@ ENV NODE_ENV=production
 WORKDIR /usr/src/app
 
 # Install dependencies first (leverages Docker layer cache)
-COPY package*.json ./
+COPY --chown=node:node package*.json ./
 RUN npm ci --omit=dev --verbose
 
 
 
 # Copy the rest of the source files into the image.
-COPY . .
+COPY --chown=node:node . .
 
 # Run the application as a non-root user.
 USER node
