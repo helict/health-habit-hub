@@ -1448,10 +1448,16 @@ db.surveys.insertMany([
 
 ]);
 
+console.log("Survey data inserted successfully. Survey count:", db.surveys.countDocuments());
+
 db.createCollection("results");
+console.log("Collection 'results' created.");
 db.results.insertMany([
     { id: 1, postid: "1", json: { "Quality": { "affordable": "5", "better then others": "5", "does what it claims": "5", "easy to use": "5" }, "satisfaction": 5, "recommend friends": 5, "suggestions": "I am happy!", "price to competitors": "Not sure", "price": "low", "pricelimit": { "mostamount": "100", "leastamount": "100" } } },
     { id: 2, postid: "1", json: { "Quality": { "affordable": "3", "does what it claims": "2", "better then others": "2", "easy to use": "3" }, "satisfaction": 3, "suggestions": "better support", "price to competitors": "Not sure", "price": "high", "pricelimit": { "mostamount": "60", "leastamount": "10" } } },
     { id: 3, postid: "2", json: { "member_array_employer": [{}], "partner_array_employer": [{}], "maritalstatus_c": "Married", "member_receives_income_from_employment": "0", "partner_receives_income_from_employment": "0" } },
     { id: 4, postid: "2", json: { "member_array_employer": [{}], "partner_array_employer": [{}], "maritalstatus_c": "Single", "member_receives_income_from_employment": "1", "member_type_of_employment": ["Self-employed"], "member_seasonal_intermittent_or_contract_work": "0" } },
 ]);
+
+console.log("Results data inserted successfully. Results count:", db.results.countDocuments());
+console.log("Initialization complete!");
