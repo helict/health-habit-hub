@@ -46,8 +46,9 @@ export async function submitSurvey(req, res) {
         httpOnly: true,
         path: '/' 
     });
-    const basepath = req.app.get('basepath');
-    res.redirect(`${basepath}/${req.lang}/thanks`);
+    const basepath = req.app.get('basepath') || '/';
+    const normalizedBasepath = basepath.endsWith('/') ? basepath : `${basepath}/`;
+    res.redirect(`${normalizedBasepath}${req.lang}/thanks`);
   } catch (err) {
     res.status(500).json({
         status: 'error',

@@ -99,17 +99,18 @@ export async function saveDonateData(req, res) {
   try {
     await dbClient.insertDonateData(data, userId); 
     const redirectLang = req.body.language || req.lang || 'en';
-    const basepath = req.app.get('basepath');
+    const basepath = req.app.get('basepath') || '/';
+    const normalizedBasepath = basepath.endsWith('/') ? basepath : `${basepath}/`;
 
     console.log('Cookies empfangen:', req.cookies);
     console.log(`Prüfe Cookie 'demographicsCompleted': Wert ist "${req.cookies.demographicsCompleted}"`);
 
     if (req.cookies.demographicsCompleted === 'true') {
       console.log("Entscheidung: Cookie ist gesetzt. Leite weiter zur Dankesseite.");
-      res.redirect(`${basepath}${redirectLang}/thanks`);
+      res.redirect(`${normalizedBasepath}${redirectLang}/thanks`);
     } else {
       console.log("Entscheidung: Cookie ist NICHT gesetzt oder falsch. Leite weiter zur Umfrage.");
-      res.redirect(`${basepath}${redirectLang}/survey/1`);
+      res.redirect(`${normalizedBasepath}${redirectLang}/survey/1`);
     }
   } catch (error) {
     console.log(data, userId)
