@@ -1,13 +1,18 @@
-node_modules/
-.DS_Store
-mongo/config
-mongo/data
+# Vistual Studio Code files
+.vscode/
 
-# Environment files with credentials
-.env
+# Node.js files
+node_modules/
+.npm/
+build/
+yarn.lock
+
+# MacOS specific files
+.DS_Store
+
+# Environment variables
+.env*
 
 # Backup files
 backups/*.tar.gz
 backups/*.manifest
-
-
