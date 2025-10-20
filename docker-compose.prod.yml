@@ -38,10 +38,10 @@ services:
       - traefik.http.routers.dashboard.tls=true
       - traefik.http.routers.dashboard.tls.certresolver=letsencrypt
       - traefik.http.routers.dashboard.service=api@internal
-      - traefik.http.routers.dashboard.middlewares=dashboard-auth
-      # Basic auth for dashboard (user: admin, password: change-this-password)
-      # Generate with: echo $(htpasswd -nb admin your-password) | sed -e s/\\$/\\$\\$/g
-      - traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH:-admin:$$apr1$$8EVjn/nj$$GiLUZqcbueTFeD23SuB6x0}
+      # - traefik.http.routers.dashboard.middlewares=dashboard-auth
+      # # Basic auth for dashboard (user: admin, password: change-this-password)
+      # # Generate with: echo $(htpasswd -nb admin your-password) | sed -e s/\\$/\\$\\$/g
+      # - traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH:-admin:$$apr1$$8EVjn/nj$$GiLUZqcbueTFeD23SuB6x0}
 
   app:
     image: hhh/app
