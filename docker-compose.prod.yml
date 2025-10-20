@@ -15,10 +15,10 @@ services:
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
       # HTTPS entrypoint
       - --entrypoints.websecure.address=:443
-      # TU Dresden ACME configuration (instead of Let's Encrypt)
+      # ACME configuration (TU Dresden by default, or Let's Encrypt as fallback)
       - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
       - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
-      - --certificatesresolvers.letsencrypt.acme.caserver=https://acme.pki.cert.tu-dresden.de/directory
+      - --certificatesresolvers.letsencrypt.acme.caserver=${ACME_CA_SERVER:-https://acme.pki.cert.tu-dresden.de/directory}
       - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
       - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
     restart: always
@@ -135,6 +135,7 @@ services:
       - ME_CONFIG_MONGODB_URL=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/
       - ME_CONFIG_BASICAUTH_USERNAME=${MONGO_EXPRESS_USER:-admin}
       - ME_CONFIG_BASICAUTH_PASSWORD=${MONGO_EXPRESS_PASSWORD}
+      - ME_CONFIG_SITE_BASEURL=/mongo/
     networks:
       - h3-proxy
     depends_on:
@@ -148,8 +149,6 @@ services:
       - traefik.http.routers.mongo-express.tls.certresolver=letsencrypt
       - traefik.http.routers.mongo-express.service=mongo-express
       - traefik.http.services.mongo-express.loadbalancer.server.port=8081
-      - traefik.http.middlewares.mongo-express-stripprefix.stripprefix.prefixes=/mongo
-      - traefik.http.routers.mongo-express.middlewares=mongo-express-stripprefix
 
   translate:
     image: libretranslate/libretranslate:latest
@@ -191,38 +190,16 @@ services:
       - NEO4J_server_directories_import=/import
       - NEO4J_dbms_security_procedures_unrestricted=n10s.*
       - NEO4J_dbms_security_procedures_allowlist=n10s.*
-      # Configure Neo4j Browser for reverse proxy
-      - NEO4J_server_http_enabled=true
-      - NEO4J_server_https_enabled=false
-      - NEO4J_browser_remote__content__hostname__whitelist=*
-      - NEO4J_browser_post__connect__cmd=config set browser.remote_content_hostname_whitelist "*"
     # Neo4j runs as 'neo4j' user (UID 7474)
     networks:
       - h3-proxy
+    ports:
+      - "7474:7474"  # Neo4j Browser HTTP
+      - "7687:7687"  # Bolt protocol
     volumes:
       - /mnt/data/appdata/hhh/neo4j/data:/data
       - /mnt/data/appdata/hhh/neo4j/logs:/logs
       - ./fuseki/init:/import:ro
-    depends_on:
-      - proxy
-    labels:
-      - traefik.enable=true
-      # HTTP Router for Neo4j Browser (port 7474)
-      - traefik.http.routers.neo4j-browser.rule=Host(`${DOMAIN}`) && PathPrefix(`/browser`)
-      - traefik.http.routers.neo4j-browser.entrypoints=websecure
-      - traefik.http.routers.neo4j-browser.tls=true
-      - traefik.http.routers.neo4j-browser.tls.certresolver=letsencrypt
-      - traefik.http.routers.neo4j-browser.service=neo4j-browser
-      - traefik.http.services.neo4j-browser.loadbalancer.server.port=7474
-      - traefik.http.middlewares.neo4j-browser-stripprefix.stripprefix.prefixes=/browser
-      - traefik.http.routers.neo4j-browser.middlewares=neo4j-browser-stripprefix
-      # Bolt Router for Neo4j connections (port 7687) - optional if needed externally
-      - traefik.http.routers.neo4j-bolt.rule=Host(`${DOMAIN}`) && PathPrefix(`/neo4j`)
-      - traefik.http.routers.neo4j-bolt.entrypoints=websecure
-      - traefik.http.routers.neo4j-bolt.tls=true
-      - traefik.http.routers.neo4j-bolt.tls.certresolver=letsencrypt
-      - traefik.http.routers.neo4j-bolt.service=neo4j-http
-      - traefik.http.services.neo4j-http.loadbalancer.server.port=7474
 
   backup:
     image: hhh/backup
