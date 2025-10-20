@@ -29,7 +29,7 @@ services:
       - h3-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik-certs:/letsencrypt
+      - /appdata/hhh/traefik-certs:/letsencrypt
     labels:
       - traefik.enable=true
       # Dashboard
@@ -87,17 +87,15 @@ services:
     container_name: h3-fuseki
     build: ./fuseki
     restart: always
-    user: root
     env_file:
       - .env
     environment:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     # Fuseki base image runs as 'fuseki' user (UID 9008)
-    # Running as root temporarily to initialize volume
     networks:
       - h3-proxy
     volumes:
-      - fuseki-data:/fuseki
+      - /appdata/hhh/fuseki:/fuseki
     depends_on:
       - proxy
     labels:
@@ -124,8 +122,8 @@ services:
       - h3-proxy
     volumes:
       - ./mongo/entrypoint:/docker-entrypoint-initdb.d:ro
-      - mongo-data:/data/db
-      - mongo-config:/data/configdb
+      - /appdata/hhh/mongo/db:/data/db
+      - /appdata/hhh/mongo/config:/data/configdb
 
   translate:
     image: libretranslate/libretranslate:latest
@@ -134,7 +132,7 @@ services:
     # LibreTranslate runs as 'libretranslate' user (UID 1032)
     # Volume must be created with proper permissions for UID 1032
     volumes:
-      - translate-data:/home/libretranslate/.local/share/argos-translate/packages
+      - /appdata/hhh/translate:/home/libretranslate/.local/share/argos-translate/packages
     networks:
       - h3-proxy
     env_file:
@@ -171,8 +169,8 @@ services:
     networks:
       - h3-proxy
     volumes:
-      - neo4j-data:/data
-      - neo4j-logs:/logs
+      - /appdata/hhh/neo4j/data:/data
+      - /appdata/hhh/neo4j/logs:/logs
       - ./fuseki/init:/import:ro
     depends_on:
       - proxy
@@ -205,7 +203,7 @@ services:
       - MAIL_FROM=${MAIL_FROM:-}
     volumes:
       - ./backups:/backups
-      - fuseki-data:/fuseki:ro
+      - /appdata/hhh/fuseki:/fuseki:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - h3-proxy
@@ -219,19 +217,3 @@ networks:
   h3-proxy:
     name: h3-proxy
     driver: bridge
-
-volumes:
-  fuseki-data:
-    name: h3-fuseki-data
-  translate-data:
-    name: h3-translate-data
-  neo4j-data:
-    name: h3-neo4j-data
-  neo4j-logs:
-    name: h3-neo4j-logs
-  mongo-data:
-    name: h3-mongo-data
-  mongo-config:
-    name: h3-mongo-config
-  traefik-certs:
-    name: h3-traefik-certs
