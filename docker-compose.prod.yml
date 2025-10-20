@@ -95,7 +95,7 @@ services:
     networks:
       - h3-proxy
     volumes:
-      - /appdata/hhh/fuseki:/fuseki
+      - fuseki-data:/fuseki
     depends_on:
       - proxy
     labels:
@@ -203,7 +203,7 @@ services:
       - MAIL_FROM=${MAIL_FROM:-}
     volumes:
       - ./backups:/backups
-      - /appdata/hhh/fuseki:/fuseki:ro
+      - fuseki-data:/fuseki:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - h3-proxy
@@ -217,3 +217,7 @@ networks:
   h3-proxy:
     name: h3-proxy
     driver: bridge
+
+volumes:
+  fuseki-data:
+    name: h3-fuseki-data
