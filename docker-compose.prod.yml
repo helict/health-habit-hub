@@ -29,7 +29,7 @@ services:
       - h3-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /appdata/hhh/traefik-certs:/letsencrypt
+      - /mnt/data/appdata/hhh/traefik-certs:/letsencrypt
     labels:
       - traefik.enable=true
       # Dashboard
@@ -122,8 +122,8 @@ services:
       - h3-proxy
     volumes:
       - ./mongo/entrypoint:/docker-entrypoint-initdb.d:ro
-      - /appdata/hhh/mongo/db:/data/db
-      - /appdata/hhh/mongo/config:/data/configdb
+      - /mnt/data/appdata/hhh/mongo/db:/data/db
+      - /mnt/data/appdata/hhh/mongo/config:/data/configdb
 
   translate:
     image: libretranslate/libretranslate:latest
@@ -132,7 +132,7 @@ services:
     # LibreTranslate runs as 'libretranslate' user (UID 1032)
     # Volume must be created with proper permissions for UID 1032
     volumes:
-      - /appdata/hhh/translate:/home/libretranslate/.local/share/argos-translate/packages
+      - /mnt/data/appdata/hhh/translate:/home/libretranslate/.local/share/argos-translate/packages
     networks:
       - h3-proxy
     env_file:
@@ -169,8 +169,8 @@ services:
     networks:
       - h3-proxy
     volumes:
-      - /appdata/hhh/neo4j/data:/data
-      - /appdata/hhh/neo4j/logs:/logs
+      - /mnt/data/appdata/hhh/neo4j/data:/data
+      - /mnt/data/appdata/hhh/neo4j/logs:/logs
       - ./fuseki/init:/import:ro
     depends_on:
       - proxy
