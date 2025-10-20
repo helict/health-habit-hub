@@ -18,3 +18,11 @@ yarn.lock
 # Backup files
 backups/*.tar.gz
 backups/*.manifest
+
+# Claude Files
+.claude
+
+# Mongo Data
+/mongo/data/
+
+

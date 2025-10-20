@@ -38,10 +38,10 @@ services:
       - traefik.http.routers.dashboard.tls=true
       - traefik.http.routers.dashboard.tls.certresolver=letsencrypt
       - traefik.http.routers.dashboard.service=api@internal
-      # - traefik.http.routers.dashboard.middlewares=dashboard-auth
-      # # Basic auth for dashboard (user: admin, password: change-this-password)
-      # # Generate with: echo $(htpasswd -nb admin your-password) | sed -e s/\\$/\\$\\$/g
-      # - traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH:-admin:$$apr1$$8EVjn/nj$$GiLUZqcbueTFeD23SuB6x0}
+      - traefik.http.routers.dashboard.middlewares=dashboard-auth
+      # Basic auth for dashboard (user: admin, password: change-this-password)
+      # Generate with: echo $(htpasswd -nb admin your-password) | sed -e s/\\$/\\$\\$/g
+      - traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH:-admin:$$apr1$$8EVjn/nj$$GiLUZqcbueTFeD23SuB6x0}
 
   app:
     image: hhh/app
@@ -125,6 +125,32 @@ services:
       - /mnt/data/appdata/hhh/mongo/db:/data/db
       - /mnt/data/appdata/hhh/mongo/config:/data/configdb
 
+  mongo-express:
+    image: mongo-express:latest
+    container_name: h3-mongo-express
+    restart: always
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_USER}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_PASSWORD}
+      - ME_CONFIG_MONGODB_URL=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGO_EXPRESS_USER:-admin}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGO_EXPRESS_PASSWORD}
+    networks:
+      - h3-proxy
+    depends_on:
+      - mongo
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mongo-express.rule=Host(`${DOMAIN}`) && PathPrefix(`/mongo`)
+      - traefik.http.routers.mongo-express.entrypoints=websecure
+      - traefik.http.routers.mongo-express.tls=true
+      - traefik.http.routers.mongo-express.tls.certresolver=letsencrypt
+      - traefik.http.routers.mongo-express.service=mongo-express
+      - traefik.http.services.mongo-express.loadbalancer.server.port=8081
+      - traefik.http.middlewares.mongo-express-stripprefix.stripprefix.prefixes=/mongo
+      - traefik.http.routers.mongo-express.middlewares=mongo-express-stripprefix
+
   translate:
     image: libretranslate/libretranslate:latest
     container_name: h3-translate
@@ -165,6 +191,11 @@ services:
       - NEO4J_server_directories_import=/import
       - NEO4J_dbms_security_procedures_unrestricted=n10s.*
       - NEO4J_dbms_security_procedures_allowlist=n10s.*
+      # Configure Neo4j Browser for reverse proxy
+      - NEO4J_server_http_enabled=true
+      - NEO4J_server_https_enabled=false
+      - NEO4J_browser_remote__content__hostname__whitelist=*
+      - NEO4J_browser_post__connect__cmd=config set browser.remote_content_hostname_whitelist "*"
     # Neo4j runs as 'neo4j' user (UID 7474)
     networks:
       - h3-proxy
@@ -176,14 +207,22 @@ services:
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.neo4j.rule=Host(`${DOMAIN}`) && PathPrefix(`/neo4j`)
-      - traefik.http.routers.neo4j.entrypoints=websecure
-      - traefik.http.routers.neo4j.tls=true
-      - traefik.http.routers.neo4j.tls.certresolver=letsencrypt
-      - traefik.http.routers.neo4j.service=neo4j
-      - traefik.http.services.neo4j.loadbalancer.server.port=7474
-      - traefik.http.middlewares.neo4j-stripprefix.stripprefix.prefixes=/neo4j
-      - traefik.http.routers.neo4j.middlewares=neo4j-stripprefix
+      # HTTP Router for Neo4j Browser (port 7474)
+      - traefik.http.routers.neo4j-browser.rule=Host(`${DOMAIN}`) && PathPrefix(`/browser`)
+      - traefik.http.routers.neo4j-browser.entrypoints=websecure
+      - traefik.http.routers.neo4j-browser.tls=true
+      - traefik.http.routers.neo4j-browser.tls.certresolver=letsencrypt
+      - traefik.http.routers.neo4j-browser.service=neo4j-browser
+      - traefik.http.services.neo4j-browser.loadbalancer.server.port=7474
+      - traefik.http.middlewares.neo4j-browser-stripprefix.stripprefix.prefixes=/browser
+      - traefik.http.routers.neo4j-browser.middlewares=neo4j-browser-stripprefix
+      # Bolt Router for Neo4j connections (port 7687) - optional if needed externally
+      - traefik.http.routers.neo4j-bolt.rule=Host(`${DOMAIN}`) && PathPrefix(`/neo4j`)
+      - traefik.http.routers.neo4j-bolt.entrypoints=websecure
+      - traefik.http.routers.neo4j-bolt.tls=true
+      - traefik.http.routers.neo4j-bolt.tls.certresolver=letsencrypt
+      - traefik.http.routers.neo4j-bolt.service=neo4j-http
+      - traefik.http.services.neo4j-http.loadbalancer.server.port=7474
 
   backup:
     image: hhh/backup
