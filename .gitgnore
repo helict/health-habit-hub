@@ -23,5 +23,6 @@ backups/*.manifest
 .claude
 
 # Mongo Data
-/mongo/data/*.*
+/mongo/data/
+
 
