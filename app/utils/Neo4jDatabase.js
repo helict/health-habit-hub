@@ -347,8 +347,10 @@ ${iri(`Behavior-${b.id}`)} rdf:type owl:NamedIndividual , hhh:Behavior ;${hasCtx
     if (donation.translation) {
       const t = donation.translation;
 
+      // Create bidirectional Habit-Habit translation links
       translationTriples += `
 ${iri(`Habit-${donation.id}`)} hhh:hasTranslation ${iri(`Habit-${t.id}`)} .
+${iri(`Habit-${t.id}`)} hhh:hasTranslation ${iri(`Habit-${donation.id}`)} .
 ${iri(`Habit-${t.id}`)} rdf:type owl:NamedIndividual , hhh:Habit ;
   hhh:habitStrength "${t.habitStrength}"^^xsd:integer ;
   hhh:id "${t.id}"^^xsd:string ;
@@ -357,39 +359,49 @@ ${iri(`Habit-${t.id}`)} rdf:type owl:NamedIndividual , hhh:Habit ;
   hhh:value "${this._esc(t.value)}" .
 `;
 
-      const origByValue = new Map(donation.labels.map((l) => [l.value, l]));
+      // Get original contexts and behaviors
+      const origContexts = donation.labels.filter((l) => l.type === 'context');
+      const origBehaviors = donation.labels.filter((l) => l.type === 'behavior');
 
-      const tContexts = t.labels.filter((l) => l.name !== 'Behavior');
-      const tBehaviors = t.labels.filter((l) => l.name === 'Behavior');
+      // Create a map of translated labels by their label value (type name)
+      const translatedLabelsByValue = new Map(
+        t.labels.map((l) => [l.value, l])
+      );
 
-      translationTriples += tContexts
-        .map((tc) => {
-          const orig = origByValue.get(tc.name);
+      // Translate each context's data separately - only the context description, not the full habit
+      translationTriples += origContexts
+        .map((origCtx) => {
           const tid = uuid();
+          const tLabel = translatedLabelsByValue.get(origCtx.value);
+          const translatedContextData = tLabel ? tLabel.data : origCtx.data;
           return `
-${iri(`Context-${tid}`)} rdf:type owl:NamedIndividual , hhh:${tc.name} ;
+${iri(`Context-${tid}`)} rdf:type owl:NamedIndividual , hhh:${origCtx.value} ;
   hhh:partOf ${iri(`ExperimentalSetting-${experimentalSetting.id}`)} ;
   hhh:id "${tid}"^^xsd:string ;
   hhh:language "${this._esc(t.language)}" ;
   hhh:source "${this._esc(t.source)}"^^xsd:string ;
-  hhh:value "${this._esc(tc.value)}" .
-${orig ? `${iri(`Context-${orig.id}`)} hhh:hasTranslation ${iri(`Context-${tid}`)} .` : ''}
+  hhh:value "${this._esc(translatedContextData)}" .
+${iri(`Context-${origCtx.id}`)} hhh:hasTranslation ${iri(`Context-${tid}`)} .
+${iri(`Context-${tid}`)} hhh:hasTranslation ${iri(`Context-${origCtx.id}`)} .
 `;
         })
         .join('');
 
-      translationTriples += tBehaviors
-        .map((tb) => {
-          const orig = origByValue.get(tb.name);
+      // Translate behavior - store ONLY the translated behavior value, not the full habit
+      translationTriples += origBehaviors
+        .map((origBeh) => {
           const tid = uuid();
+          const tLabel = translatedLabelsByValue.get(origBeh.value);
+          const translatedBehaviorData = tLabel ? tLabel.data : origBeh.data;
           return `
 ${iri(`Behavior-${tid}`)} rdf:type owl:NamedIndividual , hhh:Behavior ;
   hhh:partOf ${iri(`ExperimentalSetting-${experimentalSetting.id}`)} ;
   hhh:id "${tid}"^^xsd:string ;
   hhh:language "${this._esc(t.language)}" ;
   hhh:source "${this._esc(t.source)}"^^xsd:string ;
-  hhh:value "${this._esc(tb.value)}" .
-${orig ? `${iri(`Behavior-${orig.id}`)} hhh:hasTranslation ${iri(`Behavior-${tid}`)} .` : ''}
+  hhh:value "${this._esc(translatedBehaviorData)}" .
+${iri(`Behavior-${origBeh.id}`)} hhh:hasTranslation ${iri(`Behavior-${tid}`)} .
+${iri(`Behavior-${tid}`)} hhh:hasTranslation ${iri(`Behavior-${origBeh.id}`)} .
 `;
         })
         .join('');

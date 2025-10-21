@@ -388,6 +388,140 @@ When you run `CALL db.schema.visualization()` in Neo4j, you'll see:
 
 This is normal behavior for n10s - it preserves the RDF/OWL ontology structure while mapping it to Neo4j's property graph model.
 
+#### User Tracking: Linking MongoDB and Neo4j
+
+Both MongoDB and Neo4j use the same **userId** (a UUID) to track user donations across systems, enabling complete traceability of which user submitted what habits.
+
+**MongoDB Structure** (`surveyjs` database):
+- **`results` collection**: Survey responses
+  ```json
+  {
+    "_id": ObjectId("68f76b300b92c7be1f4f8801"),
+    "userId": "7c9b24c7-7d25-43b6-8a7c-2e59f60d32dc",
+    "surveyId": "1",
+    "data": { /* survey responses */ },
+    "submittedAt": ISODate("2024-10-21T10:30:00Z")
+  }
+  ```
+
+**Neo4j Donor Node** (RDF/n10s):
+```cypher
+(:Resource:hhh__Donor {
+  uri: "http://example.com/hhh#Donor-xyz",
+  hhh__userId: ["7c9b24c7-7d25-43b6-8a7c-2e59f60d32dc"],  // Same UUID!
+  hhh__timestamp: ["2024-10-21T10:30:00Z"],
+  hhh__donates: "Habit-abc123"
+})
+```
+
+**How to Find User Habits**:
+
+1. **Get userId from MongoDB**:
+   ```javascript
+   db.results.findOne({ _id: ObjectId("68f76b300b92c7be1f4f8801") })
+   // Extract: userId = "7c9b24c7-7d25-43b6-8a7c-2e59f60d32dc"
+   ```
+
+2. **Query Neo4j for all habits** (note: properties are arrays, use `IN` operator in Browser UI):
+   ```cypher
+   MATCH (habit:hhh__Habit)
+   WHERE '7c9b24c7-7d25-43b6-8a7c-2e59f60d32dc' IN habit.hhh__source
+   RETURN
+     habit.hhh__value[0] as habitText,
+     habit.hhh__language[0] as language,
+     habit.hhh__habitStrength[0] as strength
+   ```
+
+3. **Get habit with translations**:
+   ```cypher
+   MATCH (original:hhh__Habit)
+   WHERE '7c9b24c7-7d25-43b6-8a7c-2e59f60d32dc' IN original.hhh__source
+   MATCH (original)-[trans:hhh__hasTranslation]->(translated:hhh__Habit)
+   RETURN
+     original.hhh__value[0] as originalText,
+     original.hhh__language[0] as originalLanguage,
+     translated.hhh__value[0] as translatedText,
+     translated.hhh__language[0] as translatedLanguage
+   ```
+
+**Key Points**:
+- The **userId** is a UUID stored as an HTTP-only cookie (365-day expiration)
+- It persists across user sessions
+- Same value appears in both MongoDB `results.userId` and Neo4j `Donor.hhh__userId`
+- Every habit donation creates a Donor node linking the user to their habit
+- All data is anonymized for research purposes
+
+#### Neo4j Translation Storage Implementation
+
+The application stores multilingual habits with full translation support. When a non-English habit is submitted, the system:
+1. Stores the original habit in the submitted language
+2. Translates all components (habit text, behaviors, contexts) via LibreTranslate API
+3. Creates translation nodes linked bidirectionally in Neo4j with `hhh:hasTranslation` relationships
+
+**Storage Format**:
+
+All properties in Neo4j are stored as **arrays** (due to n10s RDF import). Labels use double underscores (`hhh__`). When querying, extract array elements using `[0]`:
+
+```cypher
+MATCH (habit:hhh__Habit)
+WHERE '7c9b24c7-7d25-43b6-8a7c-2e59f60d32dc' IN habit.hhh__source
+RETURN
+  habit.hhh__value[0] as habitText,
+  habit.hhh__language[0] as language,
+  habit.hhh__habitStrength[0] as strength,
+  habit.hhh__source[0] as donor
+```
+
+**Example: German Habit with English Translation**
+
+User submits "Nachdem ich aufgestanden bin zu Hause, dehne ich mich kurz":
+
+**German Nodes**:
+- Habit: `hhh__value: ["Nachdem ich aufgestanden bin zu Hause, dehne ich mich kurz."]`, `hhh__language: ["de"]`, `hhh__source: ["7c9b24c7-7d25-43b6-8a7c-2e59f60d32dc"]`
+- TimeReference Context: `hhh__value: ["Nachdem ich aufgestanden bin"]`, `hhh__language: ["de"]`
+- PhysicalSetting Context: `hhh__value: ["zu Hause"]`, `hhh__language: ["de"]`
+- Behavior: `hhh__value: ["dehne ich mich kurz"]`, `hhh__language: ["de"]`
+
+**English Translation Nodes** (created automatically):
+- Habit: `hhh__value: ["After waking up at home, I stretch briefly."]`, `hhh__language: ["en"]`, `hhh__source: ["translation"]`
+- TimeReference Context: `hhh__value: ["After waking up"]`, `hhh__language: ["en"]`, `hhh__source: ["translation"]`
+- PhysicalSetting Context: `hhh__value: ["at home"]`, `hhh__language: ["en"]`, `hhh__source: ["translation"]`
+- Behavior: `hhh__value: ["I stretch briefly"]`, `hhh__language: ["en"]`, `hhh__source: ["translation"]`
+
+**Translation Links** (bidirectional):
+```
+German Habit ←→ hasTranslation ←→ English Habit
+German Context ←→ hasTranslation ←→ English Context
+German Behavior ←→ hasTranslation ←→ English Behavior
+```
+
+**Code Location**: `/app/utils/Neo4jDatabase.js`, lines 346-408
+
+**Query for All Habits by User**:
+```cypher
+MATCH (h:hhh__Habit)
+WHERE 'USER_ID_HERE' IN h.hhh__source
+  AND h.hhh__language[0] = 'de'  // Original German habits only
+RETURN
+  h.hhh__value[0] as habitText,
+  h.hhh__language[0] as language,
+  h.hhh__habitStrength[0] as strength,
+  h.hhh__timestamp[0] as submittedAt
+ORDER BY h.hhh__timestamp DESC
+```
+
+**Query for Original + Translation Pair**:
+```cypher
+MATCH (original:hhh__Habit)
+WHERE 'USER_ID_HERE' IN original.hhh__source
+MATCH (original)-[trans:hhh__hasTranslation]->(translated:hhh__Habit)
+RETURN
+  original.hhh__value[0] as originalText,
+  original.hhh__language[0] as originalLanguage,
+  translated.hhh__value[0] as translatedText,
+  translated.hhh__language[0] as translatedLanguage
+```
+
 #### MongoDB Document Store
 
 Used for survey responses and transactional data:
