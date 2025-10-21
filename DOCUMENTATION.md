@@ -721,7 +721,13 @@ docker-compose logs -f neo4j
 - Main app: http://localhost
 - Traefik dashboard: http://localhost:8080
 - Fuseki UI: http://localhost/fuseki
-- Neo4j browser: http://localhost:7474/browser/
+- Neo4j browser: 
+````
+ssh -L 7475:localhost:7474 service@habitvm;
+````
+
+http://localhost:7474/browser/
+- then connect via neo4j://localhost:7687
 - Translation API: http://localhost/translate
 
 **Execute commands in containers**:
