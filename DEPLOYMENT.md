@@ -36,6 +36,7 @@ This guide covers deploying Health Habit Hub to production using Portainer on yo
 - [ ] Generate secure passwords for:
   - Fuseki admin password
   - MongoDB password
+  - Mongo Express password
   - Neo4j password
   - Traefik dashboard password (use `htpasswd -nb admin your-password`)
 
@@ -69,6 +70,7 @@ The `stack.env` file contains template values. Override these in Portainer:
 # Passwords (generate secure ones!)
 ADMIN_PASSWORD=<your-secure-fuseki-password>
 MONGO_PASSWORD=<your-secure-mongo-password>
+MONGO_EXPRESS_PASSWORD=<your-secure-mongo-express-password>
 NEO4J_PASSWORD=<your-secure-neo4j-password>
 
 # Traefik Dashboard (generate: htpasswd -nb admin your-password)
@@ -105,6 +107,7 @@ All containers should be running:
 - `h3-app` (Node.js application)
 - `h3-fuseki` (RDF database)
 - `h3-mongo` (MongoDB)
+- `h3-mongo-express` (MongoDB web UI)
 - `h3-neo4j` (Graph database)
 - `h3-translate` (LibreTranslate)
 - `h3-backup` (Backup service)
@@ -116,9 +119,10 @@ All containers should be running:
 
 ### 3. Test Services
 - [ ] Main application: https://habit.wiwi.tu-dresden.de
+- [ ] Mongo Express: https://habit.wiwi.tu-dresden.de/mongo
 - [ ] Fuseki (requires auth): https://habit.wiwi.tu-dresden.de/fuseki
 - [ ] Translation API: https://habit.wiwi.tu-dresden.de/translate
-- [ ] Neo4j browser: https://habit.wiwi.tu-dresden.de/neo4j
+- [ ] Neo4j browser: http://localhost:7474 (via SSH tunnel)
 - [ ] Traefik dashboard: https://habit.wiwi.tu-dresden.de/dashboard
 
 ### 4. Test Backup System
@@ -158,7 +162,8 @@ h3-proxy network (bridge)
    ├── h3-app (Node.js)
    ├── h3-fuseki (RDF)
    ├── h3-mongo (MongoDB)
-   ├── h3-neo4j (Graph)
+   ├── h3-mongo-express (MongoDB UI)
+   ├── h3-neo4j (Graph) - Port 7474/7687 exposed for SSH tunnel
    ├── h3-translate (LibreTranslate)
    └── h3-backup (Backup service)
 ```
@@ -314,14 +319,152 @@ docker volume ls | grep h3-
 | Service | URL | Authentication |
 |---------|-----|----------------|
 | Main App | https://habit.wiwi.tu-dresden.de | None |
+| Mongo Express | https://habit.wiwi.tu-dresden.de/mongo | Basic Auth (admin) |
 | Fuseki | https://habit.wiwi.tu-dresden.de/fuseki | Basic Auth (admin) |
 | Translation | https://habit.wiwi.tu-dresden.de/translate | None |
-| Neo4j | https://habit.wiwi.tu-dresden.de/neo4j | Neo4j Auth |
+| Neo4j Browser | via SSH tunnel (see below) | Neo4j Auth |
 | Traefik Dashboard | https://habit.wiwi.tu-dresden.de/dashboard | Basic Auth |
+
+### Accessing Neo4j Browser via SSH Tunnel
+
+Neo4j Browser requires an SSH tunnel for secure access. From your local machine:
+
+```bash
+# Create SSH tunnel (keeps connection open)
+ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@habit.wiwi.tu-dresden.de
+
+# Then access Neo4j Browser at:
+# http://localhost:7474
+# Username: neo4j
+# Password: (from NEO4J_PASSWORD in .env)
+```
+
+Keep the terminal with the SSH tunnel open while using Neo4j Browser.
+
+## Data Access and Management
+
+### MongoDB Data
+
+**Location on Server:**
+- Database files: `/mnt/data/appdata/hhh/mongo/db`
+- Config files: `/mnt/data/appdata/hhh/mongo/config`
+
+**Access via Mongo Express (Web UI):**
+- URL: https://habit.wiwi.tu-dresden.de/mongo
+- Username: `admin` (from MONGO_EXPRESS_USER)
+- Password: (from MONGO_EXPRESS_PASSWORD in .env)
+
+**Initialization:**
+MongoDB is automatically initialized on first run with:
+- Database: `surveyjs`
+- Collections: `surveys` (with sample survey), `results` (with sample responses)
+- Initialization script: `mongo/entrypoint/surveyjs-init.js`
+
+**Backup MongoDB:**
+```bash
+# Create backup
+docker exec h3-mongo mongodump --username admin --password ${MONGO_PASSWORD} --authenticationDatabase admin --out /tmp/backup
+
+# Copy backup to host
+docker cp h3-mongo:/tmp/backup ./mongo-backup-$(date +%Y%m%d)
+```
+
+**Restore MongoDB:**
+```bash
+# Copy backup to container
+docker cp ./mongo-backup-YYYYMMDD h3-mongo:/tmp/restore
+
+# Restore
+docker exec h3-mongo mongorestore --username admin --password ${MONGO_PASSWORD} --authenticationDatabase admin /tmp/restore
+```
+
+**Direct Access via CLI:**
+```bash
+# Connect to MongoDB shell
+docker exec -it h3-mongo mongosh -u admin -p ${MONGO_PASSWORD} --authenticationDatabase admin
+
+# List databases
+show dbs
+
+# Use surveyjs database
+use surveyjs
+
+# Show collections
+show collections
+
+# Query surveys
+db.surveys.find()
+
+# Query results
+db.results.find()
+```
+
+### Neo4j Data
+
+**Location on Server:**
+- Database files: `/mnt/data/appdata/hhh/neo4j/data`
+- Log files: `/mnt/data/appdata/hhh/neo4j/logs`
+
+**Access via Browser:**
+See "Accessing Neo4j Browser via SSH Tunnel" above.
+
+**Backup Neo4j:**
+```bash
+# Stop Neo4j container first
+docker stop h3-neo4j
+
+# Create backup
+sudo tar -czf neo4j-backup-$(date +%Y%m%d).tar.gz /mnt/data/appdata/hhh/neo4j/data
+
+# Restart Neo4j
+docker start h3-neo4j
+```
+
+**Restore Neo4j:**
+```bash
+# Stop Neo4j container
+docker stop h3-neo4j
+
+# Restore backup
+sudo tar -xzf neo4j-backup-YYYYMMDD.tar.gz -C /
+
+# Restart Neo4j
+docker start h3-neo4j
+```
+
+**Direct Access via Cypher Shell:**
+```bash
+# Connect to Neo4j Cypher shell
+docker exec -it h3-neo4j cypher-shell -u neo4j -p ${NEO4J_PASSWORD}
+
+# Example queries
+MATCH (n) RETURN count(n);  # Count all nodes
+MATCH (n) RETURN n LIMIT 10;  # Show first 10 nodes
+```
+
+### Fuseki Data
+
+**Location on Server:**
+- RDF data: Named volume `h3-fuseki-data`
+
+**Backup Fuseki:**
+```bash
+# Backup is included in automated daily backups
+# Manual backup:
+docker run --rm -v h3-fuseki-data:/data -v $(pwd):/backup alpine tar czf /backup/fuseki-backup-$(date +%Y%m%d).tar.gz -C /data .
+```
+
+**Restore Fuseki:**
+```bash
+# Restore from backup
+docker run --rm -v h3-fuseki-data:/data -v $(pwd):/backup alpine tar xzf /backup/fuseki-backup-YYYYMMDD.tar.gz -C /data
+```
 
 ## Additional Notes
 
 - Backups run daily at midnight
 - Backup retention: 14 days (configurable)
-- All data persisted in named Docker volumes
-- SSL certificates stored in `h3-traefik-certs` volume
+- All data persisted in named Docker volumes or host-mounted directories
+- SSL certificates stored in `/mnt/data/appdata/hhh/traefik-certs/`
+- MongoDB automatically initializes with sample survey data on first run
+- Neo4j requires SSH tunnel for secure browser access
