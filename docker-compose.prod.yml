@@ -200,6 +200,18 @@ services:
       - /mnt/data/appdata/hhh/neo4j/data:/data
       - /mnt/data/appdata/hhh/neo4j/logs:/logs
       - ./fuseki/init:/import:ro
+    depends_on:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.neo4j.rule=Host(`${DOMAIN}`) && PathPrefix(`/neo4j`)
+      - traefik.http.routers.neo4j.entrypoints=websecure
+      - traefik.http.routers.neo4j.tls=true
+      - traefik.http.routers.neo4j.tls.certresolver=letsencrypt
+      - traefik.http.routers.neo4j.service=neo4j
+      - traefik.http.services.neo4j.loadbalancer.server.port=7474
+      - traefik.http.middlewares.neo4j-stripprefix.stripprefix.prefixes=/neo4j
+      - traefik.http.routers.neo4j.middlewares=neo4j-stripprefix
 
   backup:
     image: hhh/backup
