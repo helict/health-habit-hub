@@ -3,7 +3,7 @@
 **Version:** 2.0
 **Last Updated:** October 2025
 **Production Domain:** https://habit.wiwi.tu-dresden.de
-**Repository:** https://github.com/felixreinsch/health-habit-hub
+**Repository:** https://github.com/helict/health-habit-hub
 
 ---
 
@@ -116,7 +116,7 @@ health-habit-hub/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/felixreinsch/health-habit-hub.git
+   git clone https://github.com/helict/health-habit-hub.git
    cd health-habit-hub
    ```
 
@@ -670,7 +670,7 @@ NEO4J_PASSWORD=your-password
 
 1. **Clone and configure**:
    ```bash
-   git clone https://github.com/felixreinsch/health-habit-hub.git
+   git clone https://github.com/helict/health-habit-hub.git
    cd health-habit-hub
    cp .env.example .env
    ```
@@ -2189,7 +2189,7 @@ Your group assignment affects which features you can access.
 **Need help?**
 - Check the FAQ section
 - Contact: felix.reinsch@tu-dresden.de
-- Report bugs: https://github.com/felixreinsch/health-habit-hub/issues
+- Report bugs: https://github.com/helict/health-habit-hub/issues
 
 ### System Requirements
 
@@ -2592,7 +2592,7 @@ sudo systemctl stop nginx
    ```
 
 2. **Search existing issues**:
-   https://github.com/felixreinsch/health-habit-hub/issues
+   https://github.com/helict/health-habit-hub/issues
 
 3. **Create new issue**:
    - Include error messages
@@ -3113,5 +3113,5 @@ This project is proprietary software developed for research purposes at TU Dresd
 **End of Documentation**
 
 For questions, issues, or contributions:
-- GitHub: https://github.com/felixreinsch/health-habit-hub
+- GitHub: https://github.com/helict/health-habit-hub
 - Email: felix.reinsch@tu-dresden.de
