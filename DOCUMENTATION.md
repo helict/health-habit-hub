@@ -1021,9 +1021,29 @@ ALERT_EMAIL=        # Optional: Email for alerts
 
 ## Production Deployment
 
-### Prerequisites
+### Overview
 
-#### 1. DNS Configuration
+This guide covers deploying Health Habit Hub to production using Portainer on your server.
+
+**Server Details:**
+- **IP**: 141.76.16.16
+- **Domain**: habit.wiwi.tu-dresden.de
+- **Management**: Portainer
+- **Auto-update**: Every 5 minutes from `master` branch
+
+### Pre-Deployment Checklist
+
+#### 1. Server Prerequisites
+
+- [ ] Server accessible at 141.76.16.16
+- [ ] Portainer installed and running
+- [ ] Ports 80 and 443 open in firewall
+- [ ] Docker installed (managed by Portainer)
+
+#### 2. DNS Configuration
+
+- [x] Domain `habit.wiwi.tu-dresden.de` resolves to `141.76.16.16`
+- [x] DNS propagation complete (verified with `dig`)
 
 Ensure DNS A record is configured:
 ```
@@ -1036,7 +1056,18 @@ dig habit.wiwi.tu-dresden.de
 nslookup habit.wiwi.tu-dresden.de
 ```
 
-#### 2. Firewall Configuration
+#### 3. External Services
+
+- [ ] Google reCAPTCHA keys obtained (https://www.google.com/recaptcha/admin)
+  - Site key
+  - Secret key
+  - Domain `habit.wiwi.tu-dresden.de` added
+- [ ] Mailjet API credentials obtained (https://app.mailjet.com/account/api_keys)
+  - API key
+  - Secret key
+  - Sender domain verified
+
+#### 4. Firewall Configuration
 
 **Required open ports on server (141.76.16.16)**:
 - **Port 80** (HTTP) - Required for Let's Encrypt HTTP-01 challenge
@@ -1083,7 +1114,7 @@ nc -zv 141.76.16.16 80
 nc -zv 141.76.16.16 443
 ```
 
-#### 3. Server Requirements
+#### 5. Server Requirements
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
@@ -1098,7 +1129,7 @@ docker --version
 docker compose version
 ```
 
-#### 4. Check Nothing is Using Ports 80/443
+#### 6. Check Nothing is Using Ports 80/443
 
 ```bash
 # Check what's listening
@@ -1115,273 +1146,552 @@ sudo systemctl stop apache2
 sudo systemctl stop nginx
 ```
 
-### Deployment Steps
+#### 7. Security
 
-#### Step 1: Configure Production Environment
+- [ ] Generate secure passwords for:
+  - Fuseki admin password
+  - MongoDB password
+  - Mongo Express password
+  - Neo4j password
+  - Traefik dashboard password (use `htpasswd -nb admin your-password`)
 
-1. **Copy production template**:
+### Portainer Deployment Steps
+
+#### Step 1: Access Portainer
+
+1. Navigate to Portainer web interface at `http://141.76.16.16:9000`
+2. Login with your credentials
+3. Select your environment
+
+#### Step 2: Create Stack
+
+1. Go to **Stacks** → **Add stack**
+2. Stack name: `health-habit-hub`
+3. Build method: **Repository**
+
+#### Step 3: Configure Git Repository
+
+- **Repository URL:** `https://github.com/helict/health-habit-hub`
+- **Repository reference:** `refs/heads/master`
+- **Compose path:** `docker-compose.prod.yml`
+- **GitOps updates:** Enable
+  - Polling interval: 5 minutes
+  - Re-pull image: Enable
+  - Force redeployment: Enable
+
+#### Step 4: Override Environment Variables
+
+The `stack.env` file contains template values. Override these in Portainer:
+
+**Required Overrides:**
+```env
+# Passwords (generate secure ones!)
+ADMIN_PASSWORD=<your-secure-fuseki-password>
+MONGO_PASSWORD=<your-secure-mongo-password>
+MONGO_EXPRESS_PASSWORD=<your-secure-mongo-express-password>
+NEO4J_PASSWORD=<your-secure-neo4j-password>
+
+# Traefik Dashboard (generate: htpasswd -nb admin your-password)
+TRAEFIK_DASHBOARD_AUTH=<your-htpasswd-hash>
+
+# reCAPTCHA (from Google)
+RECAPTCHA_SITEKEY=<your-production-site-key>
+RECAPTCHA_SECRETKEY=<your-production-secret-key>
+
+# Mailjet (from Mailjet dashboard)
+MAIL_USER=<mailjet-api-key>
+MAIL_PASS=<mailjet-secret-key>
+```
+
+**Optional Overrides:**
+```env
+# Backup alerts (Slack/Discord/Teams webhook)
+ALERT_WEBHOOK_URL=<your-webhook-url>
+
+# Backup retention
+BACKUP_RETENTION_DAYS=14
+```
+
+#### Step 5: Deploy
+
+1. Click **Deploy the stack**
+2. Wait for deployment (5-10 minutes for initial setup)
+3. Monitor container logs for any errors
+
+### Post-Deployment Verification
+
+#### 1. Check Container Status
+
+All containers should be running:
+- `h3-proxy` (Traefik)
+- `h3-app` (Node.js application)
+- `h3-fuseki` (RDF database)
+- `h3-mongo` (MongoDB)
+- `h3-mongo-express` (MongoDB web UI)
+- `h3-neo4j` (Graph database)
+- `h3-translate` (LibreTranslate)
+- `h3-backup` (Backup service)
+
+#### 2. Verify SSL Certificate
+
+- Check Traefik logs: Look for "certificate obtained"
+- Visit https://habit.wiwi.tu-dresden.de
+- Verify valid SSL certificate (green padlock)
+
+#### 3. Test Services
+
+- [ ] Main application: https://habit.wiwi.tu-dresden.de
+- [ ] Mongo Express: https://habit.wiwi.tu-dresden.de/mongo
+- [ ] Fuseki (requires auth): https://habit.wiwi.tu-dresden.de/fuseki
+- [ ] Translation API: https://habit.wiwi.tu-dresden.de/translate
+- [ ] Neo4j browser: http://localhost:7474 (via SSH tunnel)
+- [ ] Traefik dashboard: https://habit.wiwi.tu-dresden.de/dashboard
+
+#### 4. Test Backup System
+
+Check backup logs:
+```bash
+docker logs h3-backup
+```
+
+Verify backup files are created:
+- Location: `/backups` directory
+- Format: `full_backup_YYYYMMDD_HHMMSS.tar.gz`
+
+### Network Architecture
+
+#### How It Works
+
+1. **External Traffic:**
+   - Internet → Port 80/443 → Traefik (h3-proxy)
+
+2. **Internal Routing:**
+   - Traefik inspects Host/Path
+   - Routes to appropriate service via `h3-proxy` network
+
+3. **Service Communication:**
+   - All services on `h3-proxy` bridge network
+   - Services use container names (mongo, fuseki, neo4j)
+   - No direct internet exposure
+
+#### Network Diagram
+
+```
+Internet
+   ↓
+Port 80/443
+   ↓
+Traefik (h3-proxy)
+   ↓
+h3-proxy network (bridge)
+   ├── h3-app (Node.js)
+   ├── h3-fuseki (RDF)
+   ├── h3-mongo (MongoDB)
+   ├── h3-mongo-express (MongoDB UI)
+   ├── h3-neo4j (Graph) - Port 7474/7687 exposed for SSH tunnel
+   ├── h3-translate (LibreTranslate)
+   └── h3-backup (Backup service)
+```
+
+### Automatic Updates
+
+#### How It Works
+
+- Portainer checks `master` branch every 5 minutes
+- If changes detected:
+  1. Pulls latest code
+  2. Rebuilds images if needed
+  3. Recreates containers
+  4. Zero-downtime for config changes
+
+#### Triggering Manual Update
+
+In Portainer:
+1. Go to **Stacks** → `health-habit-hub`
+2. Click **Pull and redeploy**
+
+### Troubleshooting
+
+#### SSL Certificate Issues
+
+**Problem:** Certificate not obtained
+
+**Solutions:**
+1. Check ports 80/443 are open:
    ```bash
-   cp .env.production .env
+   sudo ufw status
    ```
-
-2. **Edit `.env`** with production values:
-
+2. Verify DNS propagation:
    ```bash
-   # Let's Encrypt email for certificate notifications
-   ACME_EMAIL=felix.reinsch@tu-dresden.de
-
-   # Generate SECURE passwords (NEVER use simple passwords in production!)
-   ADMIN_PASSWORD=$(openssl rand -base64 32)
-   MONGO_PASSWORD=$(openssl rand -base64 32)
-   NEO4J_PASSWORD=$(openssl rand -base64 32)
-
-   # Traefik Dashboard Authentication
-   # Install htpasswd: apt-get install apache2-utils (Debian/Ubuntu)
-   #                   yum install httpd-tools (RHEL/CentOS)
-   # Generate: echo $(htpasswd -nb admin your-secure-password) | sed -e s/\\$/\\$\\$/g
-   TRAEFIK_DASHBOARD_AUTH=admin:$$apr1$$...hashed-password...
-
-   # Production reCAPTCHA keys (REQUIRED!)
-   # Create at: https://www.google.com/recaptcha/admin/create
-   # Add domain: habit.wiwi.tu-dresden.de
-   # TEST keys will NOT work in production!
-   RECAPTCHA_SITEKEY=your-production-site-key
-   RECAPTCHA_SECRETKEY=your-production-secret-key
-
-   # Mailjet Configuration (for contact form AND backup alerts)
-   # Get credentials from: https://app.mailjet.com/account/api_keys
-   MAIL_USER=your-mailjet-api-key
-   MAIL_PASS=your-mailjet-secret-key
-   MAIL_FROM=noreply@wiwi.tu-dresden.de
-   MAIL_RECEIVER=felix.reinsch@tu-dresden.de
-
-   # Backup Alerts (Optional)
-   ALERT_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
-   ALERT_EMAIL=admin@example.com  # Requires MAIL_USER and MAIL_PASS for Mailjet API
+   dig habit.wiwi.tu-dresden.de
    ```
-
-#### Step 2: Deploy via Portainer
-
-**Option A: Git Repository Deployment (Recommended)**
-
-1. Log in to Portainer at `http://141.76.16.16:9000`
-
-2. Navigate to **Stacks** → **Add stack**
-
-3. Configure the stack:
-   - **Name**: `health-habit-hub`
-   - **Build method**: Git Repository
-   - **Repository URL**: `https://github.com/[your-username]/health-habit-hub`
-   - **Repository reference**: `refs/heads/master`
-   - **Compose path**: `docker-compose.prod.yml`
-
-4. Add environment variables from your `.env` file in the **Environment variables** section
-
-5. Enable **Re-pull image** and **Prune services** options
-
-6. Click **Deploy the stack**
-
-**Option B: Web Editor Deployment**
-
-1. Log in to Portainer
-
-2. Navigate to **Stacks** → **Add stack**
-
-3. Configure the stack:
-   - **Name**: `health-habit-hub`
-   - **Build method**: Web editor
-   - Paste contents of `docker-compose.prod.yml`
-
-4. Add environment variables from `.env` file
-
-5. Click **Deploy the stack**
-
-#### Step 3: Verify Deployment
-
-**1. Check container status**:
-```bash
-docker ps
-```
-
-All containers should show "Up" status:
-- h3-proxy (Traefik)
-- h3-app
-- h3-fuseki
-- h3-mongo
-- h3-neo4j
-- h3-translate
-- h3-backup
-
-**2. Check Traefik logs for SSL certificate**:
-```bash
-docker logs h3-proxy
-```
-
-Look for:
-```
-level=info msg="Certificate obtained for domain habit.wiwi.tu-dresden.de"
-```
-
-**3. Test HTTPS**:
-```bash
-curl -I https://habit.wiwi.tu-dresden.de
-# Should return: HTTP/2 200
-```
-
-**4. Check certificate issuer**:
-```bash
-echo | openssl s_client -servername habit.wiwi.tu-dresden.de \
-  -connect habit.wiwi.tu-dresden.de:443 2>/dev/null | \
-  openssl x509 -noout -issuer
-# Should show: issuer=C = US, O = Let's Encrypt
-```
-
-**5. Access the application**:
-- Main app: https://habit.wiwi.tu-dresden.de
-- Traefik dashboard: https://habit.wiwi.tu-dresden.de/dashboard/
-- Fuseki: https://habit.wiwi.tu-dresden.de/fuseki
-- Neo4j: https://habit.wiwi.tu-dresden.de/neo4j
-
-#### Step 4: Initial Database Setup
-
-**1. Verify Fuseki RDF database**:
-```bash
-curl -u admin:YOUR_ADMIN_PASSWORD \
-  https://habit.wiwi.tu-dresden.de/fuseki/$/datasets
-```
-
-**2. Initialize Neo4j**:
-- Navigate to `https://habit.wiwi.tu-dresden.de/neo4j`
-- Login with credentials from `.env`
-- Run initialization scripts if needed
-
-### Production Architecture
-
-```
-Internet (Port 80/443)
-    ↓
-Traefik Reverse Proxy (h3-proxy)
-    - Automatic HTTPS (Let's Encrypt)
-    - HTTP → HTTPS redirect
-    - Path-based routing
-    ↓
-Docker Network: h3-proxy (bridge)
-    ├── h3-app (Node.js) → Port 3000
-    ├── h3-fuseki (Apache Jena) → Port 3030
-    ├── h3-mongo (MongoDB) → Port 27017
-    ├── h3-neo4j (Neo4j) → Port 7474/7687
-    └── h3-translate (LibreTranslate) → Port 5000
-```
-
-**Key Features**:
-- Automatic HTTPS with Let's Encrypt certificates
-- HTTP → HTTPS redirect
-- Path-based routing on single domain
-- Internal Docker network (no exposed ports except 80/443)
-- Named volume persistence
-- Automated daily backups with 14-day retention
-
-### SSL Certificate Management
-
-**Certificate Location**:
-Certificates stored in Docker volume `h3-traefik-certs`:
-```bash
-docker volume inspect h3-traefik-certs
-```
-
-**Automatic Renewal**:
-- Let's Encrypt certificates valid for 90 days
-- Traefik automatically renews 30 days before expiration
-- No manual intervention required
-
-**Monitor renewal**:
-```bash
-docker logs -f h3-proxy | grep -i certificate
-```
-
-**Troubleshooting Certificates**:
-
-1. **Verify DNS**:
+3. Check Traefik logs:
    ```bash
-   nslookup habit.wiwi.tu-dresden.de
+   docker logs h3-proxy | grep -i certificate
    ```
 
-2. **Ensure port 80 is accessible** (required for HTTP-01 challenge):
+#### Services Can't Communicate
+
+**Problem:** App can't connect to MongoDB/Fuseki/Neo4j
+
+**Solutions:**
+1. Verify all containers on same network:
    ```bash
-   curl -I http://habit.wiwi.tu-dresden.de
+   docker network inspect h3-proxy
    ```
+2. Check service names match docker-compose.prod.yml
+3. Verify environment variables in Portainer
 
-3. **Check rate limits**: Let's Encrypt has rate limits (50 certificates per domain per week)
+#### Backup Failures
 
-4. **Use staging for testing**: Edit `docker-compose.prod.yml`:
-   ```yaml
-   - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+**Problem:** Backup container shows errors
+
+**Solutions:**
+1. Check backup logs:
+   ```bash
+   docker logs h3-backup
    ```
+2. Verify MongoDB credentials match
+3. Ensure `/backups` directory has write permissions
+4. Check disk space
+
+#### Container Won't Start
+
+**Problem:** Container in restart loop
+
+**Solutions:**
+1. Check container logs:
+   ```bash
+   docker logs <container-name>
+   ```
+2. Verify environment variables set correctly
+3. Check resource constraints (memory/CPU)
+
+### Monitoring
+
+#### Container Logs
+
+View logs in Portainer:
+- **Stacks** → `health-habit-hub` → Click container → **Logs**
+
+Or via CLI:
+```bash
+docker logs -f <container-name>
+```
+
+#### Resource Usage
+
+View in Portainer:
+- **Containers** → Click container → **Stats**
+
+#### Backup Status
+
+Check latest backup:
+```bash
+docker exec h3-backup ls -lh /backups/full_backup_*.tar.gz | tail -5
+```
+
+View backup manifest:
+```bash
+docker exec h3-backup cat /backups/backup_*.manifest | tail -20
+```
 
 ### Maintenance
 
-**Update Application**:
+#### Updating Application Code
 
-Via Portainer:
-1. Go to **Stacks** → **health-habit-hub**
-2. Click **Pull and redeploy**
+1. Push changes to `master` branch
+2. Wait 5 minutes (or trigger manual update)
+3. Verify deployment in Portainer logs
 
-Via CLI:
+#### Rotating Passwords
+
+1. Generate new secure password
+2. Update in Portainer environment variables
+3. Click **Update the stack**
+4. Restart affected containers
+
+#### Backup Restoration
+
+See `backup-service/restore.sh` for restoration procedures.
+
+#### Certificate Renewal
+
+Automatic via Let's Encrypt:
+- Certificates auto-renew 30 days before expiry
+- Monitor Traefik logs for renewal notices
+
+### Security Best Practices
+
+- [ ] All passwords are strong and unique
+- [ ] Traefik dashboard protected with authentication
+- [ ] Regular backups verified
+- [ ] Security updates applied to base images
+- [ ] Logs monitored for suspicious activity
+- [ ] Firewall configured (only ports 80/443 open)
+- [ ] SSH key authentication enabled
+- [ ] Root login disabled
+
+### Support
+
+#### Logs Location
+
+- Traefik: `docker logs h3-proxy`
+- Application: `docker logs h3-app`
+- Backups: `docker logs h3-backup`
+- All others: `docker logs <container-name>`
+
+#### Health Checks
+
 ```bash
-cd /path/to/health-habit-hub
-git pull origin master
-docker-compose -f docker-compose.prod.yml pull
-docker-compose -f docker-compose.prod.yml up -d
+# Check all containers
+docker ps
+
+# Check network
+docker network inspect h3-proxy
+
+# Check volumes
+docker volume ls | grep h3-
 ```
 
-**View Logs**:
-```bash
-# All services
-docker-compose -f docker-compose.prod.yml logs -f
+### URLs Reference
 
-# Specific service
-docker logs -f h3-app
-docker logs -f h3-proxy
-docker logs -f h3-mongo
+| Service | URL | Authentication |
+|---------|-----|----------------|
+| Main App | https://habit.wiwi.tu-dresden.de | None |
+| Mongo Express | https://habit.wiwi.tu-dresden.de/mongo | Basic Auth (admin) |
+| Fuseki | https://habit.wiwi.tu-dresden.de/fuseki | Basic Auth (admin) |
+| Translation | https://habit.wiwi.tu-dresden.de/translate | None |
+| Neo4j Browser | via SSH tunnel (see below) | Neo4j Auth |
+| Traefik Dashboard | https://habit.wiwi.tu-dresden.de/dashboard | Basic Auth |
+
+### Accessing Neo4j Browser via SSH Tunnel
+
+Neo4j Browser requires an SSH tunnel for secure access. The database runs internally on the server but only exposes its ports through the tunnel for security.
+
+#### What is SSH Tunneling?
+
+SSH tunneling (port forwarding) creates a secure encrypted connection that forwards traffic from your local machine to the remote server. This allows you to access Neo4j's web browser and Bolt protocol securely without exposing the ports directly to the internet.
+
+#### Connection Methods
+
+You can connect to the server using either the domain name or IP address:
+
+##### Option 1: Using Domain Name (Recommended)
+
+```bash
+# Create SSH tunnel (keeps connection open)
+ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@habit.wiwi.tu-dresden.de
 ```
 
-**Restart Services**:
-```bash
-# Restart all
-docker-compose -f docker-compose.prod.yml restart
+##### Option 2: Using IP Address
 
-# Restart specific service
-docker restart h3-app
+```bash
+# Create SSH tunnel using direct IP address
+ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@141.76.16.16
 ```
 
-### Security Considerations
+**Note:** The IP address `141.76.16.16` is useful when DNS is not available or for direct server access.
 
-1. **Non-Root Containers**: All containers run as non-root users:
-   - App: `node` user (from Dockerfile)
-   - Fuseki: `fuseki` user (UID 9008)
-   - MongoDB: `mongodb` user (UID 999)
-   - Neo4j: `neo4j` user (UID 7474)
-   - LibreTranslate: `libretranslate` user (UID 1032)
+#### How to Access Neo4j Browser
 
-2. **Strong Passwords**: Use randomly generated passwords (minimum 32 characters)
+1. **Start the SSH tunnel** in a terminal window (keep it open):
    ```bash
-   openssl rand -base64 32
+   # Use one of the commands above
+   ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@habit.wiwi.tu-dresden.de
    ```
 
-3. **Production reCAPTCHA Keys**:
-   - Test keys will NOT work in production
-   - Create at https://www.google.com/recaptcha/admin
-   - Add domain: `habit.wiwi.tu-dresden.de`
+2. **Open Neo4j Browser** in your web browser:
+   - Navigate to: `http://localhost:7474`
 
-4. **Traefik Dashboard**: Protected with HTTP Basic Auth, consider IP whitelisting
+3. **Authenticate** with Neo4j credentials:
+   - **Username:** `neo4j`
+   - **Password:** Use the password from `NEO4J_PASSWORD` environment variable in Portainer
+   - **Connection URL:** `neo4j://localhost:7687` (will auto-populate)
 
-5. **Database Access**: MongoDB and Neo4j only accessible within Docker network
+4. **Keep the SSH tunnel open** while using Neo4j Browser. The tunnel forwards traffic as follows:
+   - Port 7474 (HTTP Browser): `localhost:7474` → `server:7474`
+   - Port 7687 (Bolt Protocol): `localhost:7687` → `server:7687`
 
-6. **Regular Updates**: Keep Docker images updated
+#### SSH Tunnel Explanation
 
-7. **Firewall**: Restrict access to non-public services
+The SSH command maps two ports:
+- **7474**: Neo4j HTTP browser interface
+- **7687**: Neo4j Bolt protocol (database connection)
 
-8. **Automated Backups**: Daily backups with 14-day retention (see Backup System section)
+Breakdown of the command:
+```bash
+ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@141.76.16.16
+      ↓                         ↓                        ↓
+   Local→Remote            Local→Remote            Connection
+   mapping                  mapping                 credentials
+```
+
+#### Advanced: Connecting via Cypher Shell
+
+If you need direct command-line access to Neo4j while the SSH tunnel is active:
+
+```bash
+# In another terminal (after SSH tunnel is open):
+docker exec -it h3-neo4j cypher-shell -u neo4j -p ${NEO4J_PASSWORD} -a bolt://localhost:7687
+```
+
+Or directly through the SSH tunnel on the server:
+```bash
+# From your local machine
+ssh service@141.76.16.16 'docker exec -it h3-neo4j cypher-shell -u neo4j -p ${NEO4J_PASSWORD}'
+```
+
+#### Troubleshooting SSH Tunnel Connection
+
+**Issue: "Connection refused" on localhost:7474**
+- Ensure the SSH tunnel is still active in your terminal
+- Verify Neo4j container is running: `docker ps | grep neo4j`
+- Check if another service is using port 7474 locally: `lsof -i :7474`
+
+**Issue: SSH connection fails**
+- Verify SSH key authentication is configured
+- Check server IP/domain is correct and accessible
+- Ensure firewall allows SSH connections (usually port 22)
+- Test connection first: `ssh -v service@141.76.16.16` (shows debug info)
+
+**Issue: Neo4j authentication fails**
+- Verify the NEO4J_PASSWORD in Portainer matches what you're using
+- Make sure credentials are for the "neo4j" user, not another user
+- Check Neo4j container logs: `docker logs h3-neo4j | tail -20`
+
+**Issue: Slow or dropped connections**
+- SSH tunnels can timeout after inactivity
+- Add keepalive option: `ssh -o ServerAliveInterval=60 -L 7474:localhost:7474 -L 7687:localhost:7687 service@141.76.16.16`
+- Consider using screen/tmux to keep tunnel persistent
+
+### Data Access and Management
+
+#### MongoDB Data
+
+**Location on Server:**
+- Database files: `/mnt/data/appdata/hhh/mongo/db`
+- Config files: `/mnt/data/appdata/hhh/mongo/config`
+
+**Access via Mongo Express (Web UI):**
+- URL: https://habit.wiwi.tu-dresden.de/mongo
+- Username: `admin` (from MONGO_EXPRESS_USER)
+- Password: (from MONGO_EXPRESS_PASSWORD in .env)
+
+**Initialization:**
+MongoDB is automatically initialized on first run with:
+- Database: `surveyjs`
+- Collections: `surveys` (with sample survey), `results` (with sample responses)
+- Initialization script: `mongo/entrypoint/surveyjs-init.js`
+
+**Backup MongoDB:**
+```bash
+# Create backup
+docker exec h3-mongo mongodump --username admin --password ${MONGO_PASSWORD} --authenticationDatabase admin --out /tmp/backup
+
+# Copy backup to host
+docker cp h3-mongo:/tmp/backup ./mongo-backup-$(date +%Y%m%d)
+```
+
+**Restore MongoDB:**
+```bash
+# Copy backup to container
+docker cp ./mongo-backup-YYYYMMDD h3-mongo:/tmp/restore
+
+# Restore
+docker exec h3-mongo mongorestore --username admin --password ${MONGO_PASSWORD} --authenticationDatabase admin /tmp/restore
+```
+
+**Direct Access via CLI:**
+```bash
+# Connect to MongoDB shell
+docker exec -it h3-mongo mongosh -u admin -p ${MONGO_PASSWORD} --authenticationDatabase admin
+
+# List databases
+show dbs
+
+# Use surveyjs database
+use surveyjs
+
+# Show collections
+show collections
+
+# Query surveys
+db.surveys.find()
+
+# Query results
+db.results.find()
+```
+
+#### Neo4j Data
+
+**Location on Server:**
+- Database files: `/mnt/data/appdata/hhh/neo4j/data`
+- Log files: `/mnt/data/appdata/hhh/neo4j/logs`
+
+**Access via Browser:**
+See "Accessing Neo4j Browser via SSH Tunnel" above.
+
+**Backup Neo4j:**
+```bash
+# Stop Neo4j container first
+docker stop h3-neo4j
+
+# Create backup
+sudo tar -czf neo4j-backup-$(date +%Y%m%d).tar.gz /mnt/data/appdata/hhh/neo4j/data
+
+# Restart Neo4j
+docker start h3-neo4j
+```
+
+**Restore Neo4j:**
+```bash
+# Stop Neo4j container
+docker stop h3-neo4j
+
+# Restore backup
+sudo tar -xzf neo4j-backup-YYYYMMDD.tar.gz -C /
+
+# Restart Neo4j
+docker start h3-neo4j
+```
+
+**Direct Access via Cypher Shell:**
+```bash
+# Connect to Neo4j Cypher shell
+docker exec -it h3-neo4j cypher-shell -u neo4j -p ${NEO4J_PASSWORD}
+
+# Example queries
+MATCH (n) RETURN count(n);  # Count all nodes
+MATCH (n) RETURN n LIMIT 10;  # Show first 10 nodes
+```
+
+#### Fuseki Data
+
+**Location on Server:**
+- RDF data: Named volume `h3-fuseki-data`
+
+**Backup Fuseki:**
+```bash
+# Backup is included in automated daily backups
+# Manual backup:
+docker run --rm -v h3-fuseki-data:/data -v $(pwd):/backup alpine tar czf /backup/fuseki-backup-$(date +%Y%m%d).tar.gz -C /data .
+```
+
+**Restore Fuseki:**
+```bash
+# Restore from backup
+docker run --rm -v h3-fuseki-data:/data -v $(pwd):/backup alpine tar xzf /backup/fuseki-backup-YYYYMMDD.tar.gz -C /data
+```
+
+### Additional Notes
+
+- Backups run daily at midnight
+- Backup retention: 14 days (configurable)
+- All data persisted in named Docker volumes or host-mounted directories
+- SSL certificates stored in `/mnt/data/appdata/hhh/traefik-certs/`
+- MongoDB automatically initializes with sample survey data on first run
+- Neo4j requires SSH tunnel for secure browser access
 
 ---
 

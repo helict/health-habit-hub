@@ -116,6 +116,24 @@ See [Production Deployment Guide](DOCUMENTATION.md#production-deployment) for co
 
 **Production URL**: https://habit.wiwi.tu-dresden.de
 
+### Accessing Databases in Production
+
+**Neo4j Browser** (requires SSH tunnel):
+```bash
+# Create secure tunnel to Neo4j
+ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@141.76.16.16
+
+# Then access: http://localhost:7474
+# Login with Neo4j credentials (username: neo4j, password from NEO4J_PASSWORD)
+```
+
+See [DEPLOYMENT.md - Neo4j SSH Tunnel](DEPLOYMENT.md#accessing-neo4j-browser-via-ssh-tunnel) for detailed instructions.
+
+**Other services** (available via https://habit.wiwi.tu-dresden.de):
+- Mongo Express: `/mongo`
+- Fuseki RDF: `/fuseki`
+- Traefik Dashboard: `/dashboard`
+
 ---
 
 ## Tech Stack

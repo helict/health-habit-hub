@@ -327,19 +327,103 @@ docker volume ls | grep h3-
 
 ### Accessing Neo4j Browser via SSH Tunnel
 
-Neo4j Browser requires an SSH tunnel for secure access. From your local machine:
+Neo4j Browser requires an SSH tunnel for secure access. The database runs internally on the server but only exposures its ports through the tunnel for security.
+
+#### What is SSH Tunneling?
+
+SSH tunneling (port forwarding) creates a secure encrypted connection that forwards traffic from your local machine to the remote server. This allows you to access Neo4j's web browser and Bolt protocol securely without exposing the ports directly to the internet.
+
+#### Connection Methods
+
+You can connect to the server using either the domain name or IP address:
+
+##### Option 1: Using Domain Name (Recommended)
 
 ```bash
 # Create SSH tunnel (keeps connection open)
 ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@habit.wiwi.tu-dresden.de
-
-# Then access Neo4j Browser at:
-# http://localhost:7474
-# Username: neo4j
-# Password: (from NEO4J_PASSWORD in .env)
 ```
 
-Keep the terminal with the SSH tunnel open while using Neo4j Browser.
+##### Option 2: Using IP Address
+
+```bash
+# Create SSH tunnel using direct IP address
+ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@141.76.16.16
+```
+
+**Note:** The IP address `141.76.16.16` is useful when DNS is not available or for direct server access.
+
+#### How to Access Neo4j Browser
+
+1. **Start the SSH tunnel** in a terminal window (keep it open):
+   ```bash
+   # Use one of the commands above
+   ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@habit.wiwi.tu-dresden.de
+   ```
+
+2. **Open Neo4j Browser** in your web browser:
+   - Navigate to: `http://localhost:7474`
+
+3. **Authenticate** with Neo4j credentials:
+   - **Username:** `neo4j`
+   - **Password:** Use the password from `NEO4J_PASSWORD` environment variable in Portainer
+   - **Connection URL:** `neo4j://localhost:7687` (will auto-populate)
+
+4. **Keep the SSH tunnel open** while using Neo4j Browser. The tunnel forwards traffic as follows:
+   - Port 7474 (HTTP Browser): `localhost:7474` → `server:7474`
+   - Port 7687 (Bolt Protocol): `localhost:7687` → `server:7687`
+
+#### SSH Tunnel Explanation
+
+The SSH command maps two ports:
+- **7474**: Neo4j HTTP browser interface
+- **7687**: Neo4j Bolt protocol (database connection)
+
+Breakdown of the command:
+```bash
+ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@141.76.16.16
+      ↓                         ↓                        ↓
+   Local→Remote            Local→Remote            Connection
+   mapping                  mapping                 credentials
+```
+
+#### Advanced: Connecting via Cypher Shell
+
+If you need direct command-line access to Neo4j while the SSH tunnel is active:
+
+```bash
+# In another terminal (after SSH tunnel is open):
+docker exec -it h3-neo4j cypher-shell -u neo4j -p ${NEO4J_PASSWORD} -a bolt://localhost:7687
+```
+
+Or directly through the SSH tunnel on the server:
+```bash
+# From your local machine
+ssh service@141.76.16.16 'docker exec -it h3-neo4j cypher-shell -u neo4j -p ${NEO4J_PASSWORD}'
+```
+
+#### Troubleshooting SSH Tunnel Connection
+
+**Issue: "Connection refused" on localhost:7474**
+- Ensure the SSH tunnel is still active in your terminal
+- Verify Neo4j container is running: `docker ps | grep neo4j`
+- Check if another service is using port 7474 locally: `lsof -i :7474`
+
+**Issue: SSH connection fails**
+- Verify SSH key authentication is configured
+- Check server IP/domain is correct and accessible
+- Ensure firewall allows SSH connections (usually port 22)
+- Test connection first: `ssh -v service@141.76.16.16` (shows debug info)
+
+**Issue: Neo4j authentication fails**
+- Verify the NEO4J_PASSWORD in Portainer matches what you're using
+- Make sure credentials are for the "neo4j" user, not another user
+- Check Neo4j container logs: `docker logs h3-neo4j | tail -20`
+
+**Issue: Slow or dropped connections**
+- SSH tunnels can timeout after inactivity
+- Add keepalive option: `ssh -o ServerAliveInterval=60 -L 7474:localhost:7474 -L 7687:localhost:7687 service@141.76.16.16`
+- Consider using screen/tmux to keep tunnel persistent
 
 ## Data Access and Management
 
