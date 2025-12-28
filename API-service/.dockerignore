@@ -1,0 +1,36 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# venv
+API-serve/
+.venv/
+env/
+venv/
+
+# env files
+.env
+*.env
+
+# Git/IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Tests
+tests/
+.coverage
+pytest_cache/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+
+# Misc
+*.log
+*.md
+sequenceDiagram.md
