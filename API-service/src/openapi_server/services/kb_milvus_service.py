@@ -792,6 +792,9 @@ def sync_kb(
     # delete stale docs based on cache files
     stale = 0
     for cf in sorted(meta_dir.glob("*.json")):
+        # skip kb state or any internal/meta files
+        if cf.name == "_kb_state.json" or cf.stem.startswith("_"):
+            continue
         doc_id = cf.stem
         if doc_id not in alive_doc_ids:
             try:

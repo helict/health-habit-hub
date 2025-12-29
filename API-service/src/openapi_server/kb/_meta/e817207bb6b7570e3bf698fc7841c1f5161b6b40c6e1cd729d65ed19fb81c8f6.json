@@ -1,0 +1,15 @@
+{
+  "doc_id": "e817207bb6b7570e3bf698fc7841c1f5161b6b40c6e1cd729d65ed19fb81c8f6",
+  "domain": "nutrition",
+  "title": "Guideline Sugars intake for adults and children",
+  "doc_summary": "Here are 7 concise bullet points on recommendations and behaviour-change measures:\n* Reduce daily intake of free sugars to less than 10% of total energy intake\n* Limit daily intake of free sugars to less than 5% of total energy intake for additional health benefits\n* Restrict sugary drinks and foods high in free sugars\n* Promote healthy eating habits and balanced diets\n* Limit sugary snacks and desserts\n* Encourage reading of food labels to identify added sugars\n* Support public health interventions to decrease intake of free sugars and prevent unhealthy weight gain and dental caries",
+  "ingested_at": "2025-12-29T17:39:10.243833+01:00",
+  "source_pdf": "C:\\Users\\hjt\\Desktop\\Dip_Code_Jingting_Hua\\API-service\\src\\openapi_server\\kb\\nutrition\\Guideline_Sugars_intake_for_adults_and_children.pdf",
+  "pdf_mtime": 1766936243.5059795,
+  "pdf_size": 570829,
+  "indexed_at": "2025-12-29T17:40:59.257189+01:00",
+  "chunk_count": 50,
+  "embed_provider": "bge-m3",
+  "embed_model": "BAAI/bge-m3",
+  "embed_dim": 1024
+}

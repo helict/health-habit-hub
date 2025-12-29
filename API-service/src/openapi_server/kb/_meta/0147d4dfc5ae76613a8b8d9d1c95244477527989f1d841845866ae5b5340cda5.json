@@ -1,0 +1,15 @@
+{
+  "doc_id": "0147d4dfc5ae76613a8b8d9d1c95244477527989f1d841845866ae5b5340cda5",
+  "domain": "physical_activity",
+  "title": "Physical Activity Guidelines for Americans 2nd edition",
+  "doc_summary": "Here are 7 concise bullet points focusing on recommendations and behavior-change measures:\n* Move more and sit less to improve health and reduce chronic disease risk\n* Aim for regular physical activity to maintain or improve overall health\n* Incorporate aerobic and muscle-strengthening activities into daily routine\n* Start with small amounts of physical activity and gradually increase duration and intensity\n* Eliminate the need for physical activity to occur in bouts of at least 10 minutes\n* Use tested strategies to increase physical activity levels, such as community-level interventions\n* Make physical activity a priority at individual, school, workplace, and community levels to promote a healthier nation",
+  "ingested_at": "2025-12-29T17:40:59.309849+01:00",
+  "source_pdf": "C:\\Users\\hjt\\Desktop\\Dip_Code_Jingting_Hua\\API-service\\src\\openapi_server\\kb\\physical_activity\\Physical_Activity_Guidelines_for_Americans_2nd_edition.pdf",
+  "pdf_mtime": 1766936243.559707,
+  "pdf_size": 15360711,
+  "indexed_at": "2025-12-29T17:44:14.067835+01:00",
+  "chunk_count": 104,
+  "embed_provider": "bge-m3",
+  "embed_model": "BAAI/bge-m3",
+  "embed_dim": 1024
+}
