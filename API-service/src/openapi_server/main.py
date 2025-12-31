@@ -15,6 +15,7 @@ from openapi_server.apis.bcio_mapping_api import router as BcioMappingApiRouter
 from openapi_server.apis.system_api import router as SystemApiRouter
 
 # --- Import KB query router (your Workflow3 module) ---
+from openapi_server.apis.profiles_build_api import router as ProfilesBuildApiRouter
 from openapi_server.apis.kb_query_api import router as KbQueryRouter
 from openapi_server.apis.select_habits_api import router as HabitDbSelectRouter
 
@@ -59,8 +60,9 @@ force_single_tag(ClassifyHabitApiRouter, WORKFLOW1_TAG)
 force_single_tag(ClassifyContextApiRouter, WORKFLOW1_TAG)
 force_single_tag(BcioMappingApiRouter, WORKFLOW1_TAG)
 
-force_single_tag(KbQueryRouter, WORKFLOW3_TAG)
+force_single_tag(ProfilesBuildApiRouter, WORKFLOW3_TAG)
 force_single_tag(HabitDbSelectRouter, WORKFLOW3_TAG)
+force_single_tag(KbQueryRouter, WORKFLOW3_TAG)
 
 force_single_tag(SystemApiRouter, SYSTEM_TAG)
 
@@ -69,8 +71,10 @@ workflow1_router.include_router(ClassifyHabitApiRouter)
 workflow1_router.include_router(ClassifyContextApiRouter)
 workflow1_router.include_router(BcioMappingApiRouter)
 
-workflow3_router.include_router(KbQueryRouter)
+workflow3_router.include_router(ProfilesBuildApiRouter)
 workflow3_router.include_router(HabitDbSelectRouter)
+workflow3_router.include_router(KbQueryRouter)
+
 
 system_router.include_router(SystemApiRouter)
 
