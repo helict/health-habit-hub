@@ -6,7 +6,7 @@
     <div>
       <div style="font-weight:950; font-size:28px">Habit Recommendation System UI</div>
       <div class="muted" style="font-size:13px; margin-top:4px">
-        UI for HHH-service (8081): <code>/ingest</code> · <code>/habits</code> · <code>/system/config</code>
+        UI for HHH-service (8081)
       </div>
     </div>
 

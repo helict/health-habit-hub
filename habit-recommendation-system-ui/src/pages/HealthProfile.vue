@@ -6,7 +6,8 @@
         <div class="titleBlock">
           <h2>Health Profile</h2>
           <p class="sub">
-            Switch between <b>Basic</b> / <b>SLIQ</b> / <b>WHOQOL-BREF</b>. Backend stores only the latest submission per
+            Switch between <b>Basic</b> / <b>SLIQ</b> / <b>WHOQOL-BREF</b>. Backend stores only the latest submission
+            per
             form.
           </p>
         </div>
@@ -15,7 +16,8 @@
           <div class="tabs">
             <button class="btn" :class="{ primary: active === 'basic' }" @click="active = 'basic'">Basic</button>
             <button class="btn" :class="{ primary: active === 'sliq' }" @click="active = 'sliq'">SLIQ</button>
-            <button class="btn" :class="{ primary: active === 'whoqol' }" @click="active = 'whoqol'">WHOQOL-BREF</button>
+            <button class="btn" :class="{ primary: active === 'whoqol' }"
+              @click="active = 'whoqol'">WHOQOL-BREF</button>
           </div>
 
           <div class="metaRow">
@@ -81,10 +83,14 @@ const status = ref<{ kind: "idle" | "saving" | "saved" | "error"; text: string }
 // Survey JSONs (placeholders)
 // -----------------------------
 const basicJson = {
-  title: "Basic (Required)",
+  title: "Basic Health Profile",
   showQuestionNumbers: "off",
   elements: [
+    // --------------------
+    // Required
+    // --------------------
     { type: "text", name: "age", title: "Age", isRequired: true, inputType: "number", min: 16, max: 120 },
+
     {
       type: "dropdown",
       name: "sex",
@@ -97,6 +103,93 @@ const basicJson = {
         { value: "prefer_not_say", text: "Prefer not to say" },
       ],
     },
+
+    {
+      type: "dropdown",
+      name: "primary_goal",
+      title: "Primary goal",
+      isRequired: true,
+      choices: [
+        { value: "sleep", text: "Improve sleep" },
+        { value: "stress", text: "Reduce stress" },
+        { value: "fitness", text: "Increase fitness" },
+        { value: "diet", text: "Eat healthier" },
+        { value: "weight", text: "Weight management" },
+        { value: "general", text: "General health" },
+      ],
+    },
+
+    // --------------------
+    // Optional
+    // --------------------
+    { type: "text", name: "height_cm", title: "Height (cm)", isRequired: false, inputType: "number", min: 100, max: 230 },
+
+    { type: "text", name: "weight_kg", title: "Weight (kg)", isRequired: false, inputType: "number", min: 30, max: 250 },
+
+    {
+      type: "dropdown",
+      name: "limitations",
+      title: "Physical limitations (optional)",
+      isRequired: false,
+      choices: [
+        { value: "none", text: "None" },
+        { value: "knee", text: "Knee problems" },
+        { value: "back", text: "Back problems" },
+        { value: "cardio", text: "Cardiovascular limitations" },
+        { value: "other", text: "Other" },
+      ],
+    },
+
+    {
+      type: "text",
+      name: "limitations_other",
+      title: "If other, please specify (optional)",
+      isRequired: false,
+      visibleIf: "{limitations} = 'other'",
+      placeholder: "e.g., shoulder injury, asthma, etc.",
+    },
+
+    {
+      type: "dropdown",
+      name: "time_budget",
+      title: "Daily time budget for new habits (optional)",
+      isRequired: false,
+      choices: [
+        { value: "lt5", text: "< 5 minutes" },
+        { value: "5_10", text: "5–10 minutes" },
+        { value: "10_20", text: "10–20 minutes" },
+        { value: "20_30", text: "20–30 minutes" },
+        { value: "30_plus", text: "30+ minutes" },
+      ],
+    },
+
+    {
+  type: "html",
+  name: "additional_info_hint",
+  html:
+    `<div style="padding:10px 12px;border:1px solid rgba(15,23,42,0.08);border-radius:12px;background:rgba(15,23,42,0.02);">
+      <b>Additional info (optional)</b><br/>
+      If the questions above feel limited, you can add anything you think is relevant for better recommendations.
+      <ul style="margin:8px 0 0 18px;">
+        <li>NCD history (e.g., diabetes, hypertension, CVD, COPD, cancer)</li>
+        <li>Current medication, allergies, injuries/limitations</li>
+        <li>Diet preferences, daily routine constraints, what has/hasn't worked for you</li>
+      </ul>
+      <span style="opacity:0.75;">Please avoid sharing personal identifiers (names, exact addresses, etc.).</span>
+    </div>`,
+},
+
+{
+  type: "comment",
+  name: "additional_notes",
+  title: "Free notes (optional)",
+  isRequired: false,
+  placeholder:
+    "E.g., I have hypertension and take medication; I prefer low-impact activities; night shifts; allergies; main barriers; etc.",
+  rows: 6,
+  autoGrow: true,
+  maxLength: 2000,
+},
   ],
 };
 
@@ -143,8 +236,8 @@ theme.cssVariables = {
   "--sjs-font-size": "14px",
   "--sjs-corner-radius": "12px",
   "--sjs-base-unit": "8px",
-  "--sjs-general-backcolor": "transparent",
-  "--sjs-general-backcolor-dim": "transparent",
+  "--sjs-general-backcolor": "#fff",
+  "--sjs-general-backcolor-dim": "#fff",
   "--sjs-shadow-small": "0 10px 30px rgba(15,23,42,0.06)",
 };
 
@@ -324,10 +417,12 @@ const currentModel = computed(() => modelByForm(active.value));
   transform: translateY(-1px);
   box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
 }
+
 .btn:active {
   transform: translateY(0px) scale(0.98);
   box-shadow: 0 6px 12px rgba(15, 23, 42, 0.06);
 }
+
 .btn:focus-visible {
   outline: 2px solid rgba(59, 130, 246, 0.7);
   outline-offset: 2px;
@@ -338,10 +433,12 @@ const currentModel = computed(() => modelByForm(active.value));
   align-items: center;
   gap: 10px;
 }
+
 .label {
   font-size: 12px;
   opacity: 0.7;
 }
+
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 12px;
@@ -361,30 +458,37 @@ const currentModel = computed(() => modelByForm(active.value));
   border: 1px solid rgba(17, 24, 39, 0.08);
   background: rgba(17, 24, 39, 0.03);
 }
+
 .status .dot {
   width: 7px;
   height: 7px;
   border-radius: 99px;
   background: rgba(100, 116, 139, 0.9);
 }
+
 .status.saving {
   background: rgba(59, 130, 246, 0.08);
   border-color: rgba(59, 130, 246, 0.18);
 }
+
 .status.saving .dot {
   background: rgba(37, 99, 235, 0.9);
 }
+
 .status.saved {
   background: rgba(34, 197, 94, 0.08);
   border-color: rgba(34, 197, 94, 0.18);
 }
+
 .status.saved .dot {
   background: rgba(22, 163, 74, 0.9);
 }
+
 .status.error {
   background: rgba(239, 68, 68, 0.08);
   border-color: rgba(239, 68, 68, 0.18);
 }
+
 .status.error .dot {
   background: rgba(220, 38, 38, 0.9);
 }
@@ -397,7 +501,8 @@ const currentModel = computed(() => modelByForm(active.value));
 
 .body {
   padding: 6px 2px 0;
-  padding-bottom: 22px; /* sticky nav spacing */
+  padding-bottom: 22px;
+  /* sticky nav spacing */
 }
 
 /* =========================================================
@@ -451,11 +556,13 @@ const currentModel = computed(() => modelByForm(active.value));
   padding: 10px 14px !important;
   transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease, border-color 120ms ease !important;
 }
+
 :deep(.sd-btn:hover),
 :deep(.sv-btn:hover) {
   transform: translateY(-1px);
   box-shadow: 0 10px 20px rgba(15, 23, 42, 0.10);
 }
+
 :deep(.sd-btn:active),
 :deep(.sv-btn:active) {
   transform: translateY(0) scale(0.98);
@@ -487,6 +594,7 @@ const currentModel = computed(() => modelByForm(active.value));
   margin-left: auto !important;
 }
 
+
 /* debug */
 .debug {
   margin-top: 14px;
@@ -495,12 +603,14 @@ const currentModel = computed(() => modelByForm(active.value));
   padding: 10px 12px;
   background: rgba(15, 23, 42, 0.02);
 }
+
 .debug summary {
   cursor: pointer;
   font-weight: 800;
   font-size: 13px;
   opacity: 0.8;
 }
+
 pre {
   margin: 10px 0 0;
   white-space: pre-wrap;
