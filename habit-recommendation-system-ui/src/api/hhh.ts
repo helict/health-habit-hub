@@ -1,5 +1,12 @@
 import { jsonFetch, API_BASE } from "./utils";
-import type { IngestOut, HabitsListResponse, SystemConfigResponse } from "./types";
+import type {
+  IngestOut,
+  HabitsListResponse,
+  SystemConfigResponse,
+  ProfileFormKey,
+  ProfileLatestUpsertOut,
+  ProfileLatestGetOut,
+} from "./types";
 
 export async function ingest(habit: string, language: string): Promise<IngestOut> {
   return jsonFetch<IngestOut>(`${API_BASE}/ingest`, {
@@ -24,4 +31,32 @@ export async function listHabits(params: {
 
 export async function systemConfig(): Promise<SystemConfigResponse> {
   return jsonFetch<SystemConfigResponse>(`${API_BASE}/system/config`);
+}
+
+// ---------------------------
+// Workflow2: Profile
+// ---------------------------
+export async function putProfileLatest(
+  profile_uuid: string,
+  form: ProfileFormKey,
+  data: Record<string, any>
+): Promise<ProfileLatestUpsertOut> {
+  return jsonFetch<ProfileLatestUpsertOut>(
+    `${API_BASE}/profile/${encodeURIComponent(profile_uuid)}/latest`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ form, data }),
+    }
+  );
+}
+
+export async function getProfileLatest(
+  profile_uuid: string,
+  form: ProfileFormKey
+): Promise<ProfileLatestGetOut> {
+  const q = new URLSearchParams({ form });
+  return jsonFetch<ProfileLatestGetOut>(
+    `${API_BASE}/profile/${encodeURIComponent(profile_uuid)}/latest?${q.toString()}`
+  );
 }

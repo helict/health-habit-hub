@@ -66,3 +66,39 @@ export type SystemConfigResponse = {
   api_base: string;
   mapping_params: MappingParams;
 };
+
+// ---------------------------
+// Workflow2: Profile
+// ---------------------------
+export type ProfileFormKey = "basic" | "sliq" | "whoqol";
+
+export type ApiOut<T> = {
+  ok: boolean;
+  message: string;
+  data: T | null;
+};
+
+export type ProfileMeta = {
+  mongo_id?: string;
+  created_at?: string;
+  updated_at?: string;
+  collection?: ProfileFormKey;
+};
+
+export type ProfileLatestUpsertData = {
+  profile_uuid: string;
+  form: ProfileFormKey;
+  _meta?: ProfileMeta;
+};
+
+export type ProfileLatestUpsertOut = ApiOut<ProfileLatestUpsertData>;
+
+export type ProfileLatestItem = {
+  profile_uuid: string;
+  form: ProfileFormKey;
+  data: Record<string, any>;
+  updated_at?: string;
+  _meta?: ProfileMeta;
+};
+
+export type ProfileLatestGetOut = ApiOut<ProfileLatestItem | Partial<Record<ProfileFormKey, ProfileLatestItem>>>;
