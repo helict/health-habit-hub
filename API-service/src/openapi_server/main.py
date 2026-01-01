@@ -19,6 +19,7 @@ from openapi_server.apis.profiles_build_api import router as ProfilesBuildApiRou
 from openapi_server.apis.kb_query_api import router as KbQueryRouter
 from openapi_server.apis.select_habits_api import router as HabitDbSelectRouter
 from openapi_server.apis.theory_prompt_api import router as TheoryPromptApiRouter
+from openapi_server.apis.recommend_api import router as RecommendApiRouter
 
 WORKFLOW1_TAG = "Workflow1: Habitual structured collection workflow"
 WORKFLOW2_TAG = "Workflow2: User Profile/Form Workflow"
@@ -65,6 +66,7 @@ force_single_tag(ProfilesBuildApiRouter, WORKFLOW3_TAG)
 force_single_tag(HabitDbSelectRouter, WORKFLOW3_TAG)
 force_single_tag(KbQueryRouter, WORKFLOW3_TAG)
 force_single_tag(TheoryPromptApiRouter, WORKFLOW3_TAG)
+force_single_tag(RecommendApiRouter, WORKFLOW3_TAG)
 
 force_single_tag(SystemApiRouter, SYSTEM_TAG)
 
@@ -77,6 +79,7 @@ workflow3_router.include_router(ProfilesBuildApiRouter)
 workflow3_router.include_router(HabitDbSelectRouter)
 workflow3_router.include_router(KbQueryRouter)
 workflow3_router.include_router(TheoryPromptApiRouter)
+workflow3_router.include_router(RecommendApiRouter)
 
 system_router.include_router(SystemApiRouter)
 

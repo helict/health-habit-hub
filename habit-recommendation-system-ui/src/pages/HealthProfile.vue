@@ -104,33 +104,32 @@ const basicJson = {
       ],
     },
 
-    {
-      type: "dropdown",
-      name: "primary_goal",
-      title: "Primary goal",
-      isRequired: true,
-      choices: [
-        { value: "sleep", text: "Improve sleep" },
-        { value: "stress", text: "Reduce stress" },
-        { value: "fitness", text: "Increase fitness" },
-        { value: "diet", text: "Eat healthier" },
-        { value: "weight", text: "Weight management" },
-        { value: "general", text: "General health" },
-      ],
-    },
+    // {
+    //   type: "dropdown",
+    //   name: "primary_goal",
+    //   title: "Primary goal",
+    //   isRequired: true,
+    //   choices: [
+    //     { value: "sleep", text: "Improve sleep" },
+    //     { value: "stress", text: "Reduce stress" },
+    //     { value: "fitness", text: "Increase fitness" },
+    //     { value: "diet", text: "Eat healthier" },
+    //     { value: "weight", text: "Weight management" },
+    //     { value: "general", text: "General health" },
+    //   ],
+    // },
 
-    // --------------------
-    // Optional
-    // --------------------
-    { type: "text", name: "height_cm", title: "Height (cm)", isRequired: false, inputType: "number", min: 100, max: 230 },
 
-    { type: "text", name: "weight_kg", title: "Weight (kg)", isRequired: false, inputType: "number", min: 30, max: 250 },
+    { type: "text", name: "height_cm", title: "Height (cm)", isRequired: true, inputType: "number", min: 100, max: 230 },
+
+    { type: "text", name: "weight_kg", title: "Weight (kg)", isRequired: true, inputType: "number", min: 30, max: 250 },
+
 
     {
       type: "dropdown",
       name: "limitations",
-      title: "Physical limitations (optional)",
-      isRequired: false,
+      title: "Physical limitations",
+      isRequired: true,
       choices: [
         { value: "none", text: "None" },
         { value: "knee", text: "Knee problems" },
@@ -143,8 +142,8 @@ const basicJson = {
     {
       type: "text",
       name: "limitations_other",
-      title: "If other, please specify (optional)",
-      isRequired: false,
+      title: "If other, please specify",
+      isRequired: true,
       visibleIf: "{limitations} = 'other'",
       placeholder: "e.g., shoulder injury, asthma, etc.",
     },
@@ -152,8 +151,8 @@ const basicJson = {
     {
       type: "dropdown",
       name: "time_budget",
-      title: "Daily time budget for new habits (optional)",
-      isRequired: false,
+      title: "Daily time budget for new behavior changes",
+      isRequired: true,
       choices: [
         { value: "lt5", text: "< 5 minutes" },
         { value: "5_10", text: "5–10 minutes" },
@@ -179,6 +178,9 @@ const basicJson = {
     </div>`,
 },
 
+    // --------------------
+    // Optional
+    // --------------------
 {
   type: "comment",
   name: "additional_notes",
