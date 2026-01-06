@@ -51,18 +51,7 @@ Explain COM-B briefly:
 - Opportunity: physical/social environment that enables or blocks behavior.
 - Motivation: reflective (goals, plans) and automatic (habits, emotions).
 
-How to recommend next (strategy):
-1) Diagnose which components are limiting the target behavior (C / O / M).
-2) Choose habits that directly strengthen the limiting components.
-3) For each recommended habit, include:
-   - Why it fits (map to C/O/M)
-   - Context design (time/place/people/trigger)
-   - Minimal viable version + progression path
-   - Barrier handling (if-then plan)
 
-Output requirements:
-- 3–6 sentences theory explanation
-- A practical checklist for how recommendations should be generated using COM-B
 """.strip(),
     },
     "TTM": {
@@ -74,19 +63,6 @@ Explain TTM briefly:
 - Change progresses through stages: Precontemplation, Contemplation, Preparation, Action, Maintenance (relapse possible).
 - Recommendations should match the user's stage (readiness and past attempts).
 
-How to recommend next (strategy):
-1) Infer the stage from user text (readiness, intention, previous attempts).
-2) Stage-matched recommendations:
-   - Precontemplation: awareness & gentle prompts
-   - Contemplation: resolve ambivalence, small experiments
-   - Preparation: concrete planning, easy starter habits, if-then plans
-   - Action: consistency support, tracking, coping plans
-   - Maintenance: relapse prevention, identity reinforcement, variety
-3) Always include a relapse plan: "If X happens, then Y."
-
-Output requirements:
-- State the assumed stage + evidence
-- Provide the best recommendation strategy for that stage
 """.strip(),
     },
     "SCT": {
@@ -98,15 +74,7 @@ Explain SCT briefly:
 - Behavior, personal factors, and environment interact (reciprocal determinism).
 - Key constructs: self-efficacy, outcome expectations, observational learning, self-regulation, reinforcement.
 
-How to recommend next (strategy):
-1) Build self-efficacy with tiny wins (very easy starter habit).
-2) Strengthen self-regulation (goal setting, action planning, self-monitoring).
-3) Modify environment (cues, reduce friction, social support).
-4) Add reinforcement (immediate rewards, celebrating progress).
 
-Output requirements:
-- Brief SCT explanation
-- A recommendation checklist mapped to SCT constructs
 """.strip(),
     },
 }

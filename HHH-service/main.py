@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from apis.workflow1_api import router as workflow1_router
 from apis.workflow2_api import router as workflow2_router
+from apis.workflow3_api import router as workflow3_router
 from apis.system_api import router as system_router
 
 WORKFLOW1_TAG = "Workflow1: Habitual structured collection workflow"
@@ -52,6 +53,7 @@ app.add_middleware(
 
 app.include_router(workflow1_router)
 app.include_router(workflow2_router)
+app.include_router(workflow3_router)
 app.include_router(system_router)
 
 if __name__ == "__main__":
