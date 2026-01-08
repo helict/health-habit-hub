@@ -41,6 +41,9 @@ KB_QUERY_COLL_NAME = os.getenv("KB_QUERY_COLL_NAME", "kb_queries")
 # NEW: store every request_uuid's API /recommend output (no cache)
 RECO_API_OUTPUT_COLL_NAME = os.getenv("RECO_API_OUTPUT_COLL_NAME", "reco_api_outputs")
 
+# NEW: store user comments for each request_uuid (no cache)
+RECO_COMMENTS_COLL_NAME = os.getenv("RECO_COMMENTS_COLL_NAME", "recommendation_comments")
+
 # Used to compute profiles_signature (same algorithm as profiles_build_api.py)
 USERPROFILES_DB_NAME = os.getenv("USERPROFILES_DB_NAME", "UserProfiles")
 USERPROFILES_BASIC_COLL_NAME = os.getenv("USERPROFILES_BASIC_COLL_NAME", "basic")
@@ -51,7 +54,7 @@ USERPROFILES_WHOQOL_COLL_NAME = os.getenv("USERPROFILES_WHOQOL_COLL_NAME", "whoq
 # Redis (5 seconds cache for Step4 only, keyed by text_sig)
 # ----------------------------
 REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0").strip()
-RECO_REDIS_TTL_SECONDS = int(os.getenv("RECO_REDIS_TTL_SECONDS", "5"))
+RECO_REDIS_TTL_SECONDS = int(os.getenv("RECO_REDIS_TTL_SECONDS", "300"))
 RECO_REDIS_KEY_PREFIX = os.getenv("RECO_REDIS_KEY_PREFIX", "w3:reco:").strip() or "w3:reco:"
 
 _redis_client: Optional[redis.Redis] = None
@@ -88,6 +91,17 @@ class RecommendIn(BaseModel):
     theory_name: Optional[TheoryName] = None
 
 
+
+class RecommendCommentIn(BaseModel):
+    request_uuid: str = Field(min_length=8, max_length=80)
+    text: str = Field(min_length=1, max_length=5000)
+    text_signature: str = Field(min_length=40, max_length=40)  # sha1 hex
+    comment: str = Field(min_length=1, max_length=4000)
+
+
+class RecommendCommentOut(BaseModel):
+    ok: bool = True
+    data: Dict[str, Any] = Field(default_factory=dict)
 
 # ----------------------------
 # Step1 output model (matches /profiles/build)
@@ -392,6 +406,10 @@ def _reco_api_output_coll():
     return client[RECOMMEND_DB_NAME][RECO_API_OUTPUT_COLL_NAME]
 
 
+def _reco_comments_coll():
+    client = _get_mongo_client()
+    return client[RECOMMEND_DB_NAME][RECO_COMMENTS_COLL_NAME]
+
 # ============================================================
 # Step2: import API-service "same algorithm" for habit_db_signature
 # (so signature matches /habit_db/select output exactly)
@@ -627,7 +645,7 @@ async def recommend(payload: RecommendIn) -> Dict[str, Any]:
                 "text_signature": text_sig,
                 "input_theory_name": payload.theory_name.value if payload.theory_name is not None else None,
                 "resolved_theory_name": theory_out.get("theory_name"),
-                "feedback": payload.feedback.model_dump() if payload.feedback is not None else None,
+                "prompt": theory_out.get("prompt"),
             }
         )
     except Exception as e:
@@ -851,3 +869,174 @@ async def recommend(payload: RecommendIn) -> Dict[str, Any]:
         "kb_query": kb_out,
         "recommendation": reco_out_raw,  # NEW
     }
+
+from pymongo.errors import DuplicateKeyError
+
+@router.post(
+    "/recommend/comment",
+    response_model=RecommendCommentOut,
+    summary="Workflow3: Store a user comment for a recommendation request (strict, one-time only)",
+)
+async def recommend_comment(payload: RecommendCommentIn) -> RecommendCommentOut:
+    # 0) validate request_uuid
+    req_id = (payload.request_uuid or "").strip()
+    if not req_id:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "INVALID_REQUEST_UUID", "message": "request_uuid is empty."},
+        )
+
+    # 1) validate comment (non-empty)
+    comment_clean = _normalize_text(payload.comment)
+    if not comment_clean:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "EMPTY_COMMENT", "message": "comment is empty after normalization."},
+        )
+
+    # 2) verify signature
+    clean_text = _normalize_text(payload.text)
+    expected_sig = _sha1(clean_text)
+    if expected_sig != payload.text_signature:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "TEXT_SIGNATURE_MISMATCH",
+                "message": "text_signature does not match sha1(normalized text).",
+                "hint": [
+                    "Use signatures.text_signature returned by /recommend (Step1/Step2).",
+                    "Or compute sha1(_normalize_text(text)) consistently.",
+                ],
+            },
+        )
+
+    created_at = _iso_utc_now()
+
+    # 3) build doc (stable comment id == request_uuid)
+    doc = {
+        "_id": req_id,                 # <- stable ID; makes it one-time only
+        "created_at": created_at,
+        "request_uuid": req_id,
+        "text": payload.text,
+        "text_signature": payload.text_signature,
+        "comment": comment_clean,
+    }
+
+    # 4) insert (strict one-time)
+    try:
+        await _reco_comments_coll().insert_one(doc)
+    except DuplicateKeyError:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": "COMMENT_ALREADY_EXISTS",
+                "message": "A comment for this request_uuid already exists (one-time only).",
+                "hint": [
+                    "Do not submit twice for the same request_uuid.",
+                    "If you want editing, change backend to upsert/replace_one().",
+                ],
+            },
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to store recommendation comment: {e}")
+
+    # 5) return itself
+    return RecommendCommentOut(
+        ok=True,
+        data={
+            "created_at": created_at,
+            "request_uuid": req_id,
+            "text": payload.text,
+            "text_signature": payload.text_signature,
+            "comment": comment_clean,
+        },
+    )
+
+
+
+from fastapi import Query
+from typing import Any, Dict, List, Optional
+from pydantic import BaseModel, Field
+
+class RecommendationLatestItem(BaseModel):
+    text_signature: str
+    request_uuid: str
+    updated_at: Optional[str] = None
+
+    text: str = ""
+    profile_summary: str = ""
+    selected_habits: List[Dict[str, Any]] = Field(default_factory=list)
+
+    recommendation_text: str = ""
+    llm_meta: Dict[str, Any] = Field(default_factory=dict)
+    rag_assessment: Dict[str, Any] = Field(default_factory=dict)
+    used_evidence_rag: List[Dict[str, Any]] = Field(default_factory=list)
+
+    comment: Optional[str] = None
+    theory_name: Optional[str] = None
+
+
+class RecommendationLatestOut(BaseModel):
+    ok: bool = True
+    total: int = 0
+    items: List[RecommendationLatestItem] = Field(default_factory=list)
+
+
+@router.get(
+    "/recommend/history/latest",
+    response_model=RecommendationLatestOut,
+    summary="History (dedup by text_signature): latest recommendation per text",
+)
+async def recommend_history_latest(
+    limit: int = Query(50, ge=1, le=200),
+    skip: int = Query(0, ge=0),
+) -> RecommendationLatestOut:
+    habits_coll = _selected_habits_coll()          # _id=text_sig, request_uuid=latest
+    profile_coll = _selected_user_info_coll()      # _id=text_sig
+    reco_coll = _reco_api_output_coll()            # _id=request_uuid
+    comments_coll = _reco_comments_coll()          # _id=request_uuid
+    theory_coll = _theory_selections_coll()        # _id=request_uuid
+
+    total = await habits_coll.count_documents({})
+
+    cursor = (
+        habits_coll.find({}, projection={"_id": 1, "request_uuid": 1, "text": 1, "updated_at": 1, "selected_habits": 1})
+        .sort("updated_at", -1)
+        .skip(skip)
+        .limit(limit)
+    )
+    habit_docs = await cursor.to_list(length=limit)
+
+    items: List[RecommendationLatestItem] = []
+    for hdoc in habit_docs:
+        text_sig = hdoc.get("_id")
+        req_id = (hdoc.get("request_uuid") or "").strip()
+        if not text_sig or not req_id:
+            continue
+
+        prof = await profile_coll.find_one({"_id": text_sig}) or {}
+        reco = await reco_coll.find_one({"_id": req_id}) or {}
+        comm = await comments_coll.find_one({"_id": req_id}) or {}
+        theo = await theory_coll.find_one({"_id": req_id}) or {}
+
+        reco_reco = reco.get("recommendation") or {}
+        used = (reco_reco.get("used_evidence") or {}) if isinstance(reco_reco, dict) else {}
+
+        items.append(
+            RecommendationLatestItem(
+                text_signature=text_sig,
+                request_uuid=req_id,
+                updated_at=hdoc.get("updated_at"),
+                text=hdoc.get("text", "") or prof.get("text", "") or "",
+                profile_summary=prof.get("profile_summary", "") or "",
+                selected_habits=hdoc.get("selected_habits", []) or [],
+                recommendation_text=(reco_reco.get("recommendation_text", "") if isinstance(reco_reco, dict) else "") or "",
+                llm_meta=reco.get("llm_meta") or {},
+                rag_assessment=(reco_reco.get("rag_assessment") if isinstance(reco_reco, dict) else {}) or {},
+                used_evidence_rag=(used.get("rag", []) if isinstance(used, dict) else []) or [],
+                comment=comm.get("comment") if isinstance(comm, dict) else None,
+                theory_name=(theo.get("resolved_theory_name") or theo.get("input_theory_name")),
+            )
+        )
+
+    return RecommendationLatestOut(ok=True, total=total, items=items)

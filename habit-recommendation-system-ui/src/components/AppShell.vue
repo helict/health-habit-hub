@@ -14,6 +14,8 @@
       <RouterLink class="btn navBtn" to="/donate">Donate Habit</RouterLink>
       <RouterLink class="btn navBtn" to="/manage">Manage Habits</RouterLink>
       <RouterLink class="btn navBtn" to="/profile">Health Profile</RouterLink>
+      <RouterLink class="btn navBtn" to="/recommend">Get Recommendation</RouterLink>
+      <RouterLink class="btn navBtn" to="/live">Manage Recommendations</RouterLink>
     </div>
   </div>
 
