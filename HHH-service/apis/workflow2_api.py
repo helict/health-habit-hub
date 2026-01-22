@@ -16,8 +16,8 @@ router = APIRouter(tags=[WORKFLOW2_TAG])
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017/UserProfiles")
 MONGO = AsyncIOMotorClient(MONGODB_URI, serverSelectionTimeoutMS=2000)
 DB = MONGO.get_default_database()
-ProfileFormKey = Literal["basic", "sliq", "whoqol"]
-FORM_KEYS: tuple[str, ...] = ("basic", "sliq", "whoqol")
+ProfileFormKey = Literal["basic", "sliq", "rand36"]
+FORM_KEYS: tuple[str, ...] = ("basic", "sliq", "rand36")
 COLL_BY_FORM = {k: DB.get_collection(k) for k in FORM_KEYS}
 
 

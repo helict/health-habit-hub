@@ -70,7 +70,7 @@ export type SystemConfigResponse = {
 // ---------------------------
 // Workflow2: Profile
 // ---------------------------
-export type ProfileFormKey = "basic" | "sliq" | "whoqol";
+export type ProfileFormKey = "basic" | "sliq" | "rand36";
 
 export type ApiOut<T> = {
   ok: boolean;
