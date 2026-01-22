@@ -87,13 +87,21 @@ export type ProfileLatestUpsertData = {
 
 export type ProfileLatestUpsertOut = ApiOut<ProfileLatestUpsertData>;
 
+export type ProfileAnswerItem = {
+  id: string;
+  question: string;
+  value: any;
+  label?: string | null;
+};
+
 // GET 返回：会带回 data（问卷答案）+ created_at/updated_at
 export type ProfileLatestItem = {
   form: ProfileFormKey;
-  data: Record<string, any>;
-  created_at?: string;
-  updated_at?: string;
+  data: ProfileAnswerItem[];
+  created_at?: string | null;
+  updated_at?: string | null;
 };
+
 
 // GET: 单个 form 或全部 forms（map）
 export type ProfileLatestGetOut = ApiOut<

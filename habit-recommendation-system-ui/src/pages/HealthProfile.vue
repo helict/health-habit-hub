@@ -56,7 +56,8 @@ import * as SurveyThemes from "survey-core/themes";
 import "survey-core/survey-core.css";
 
 import { getProfileLatest, putProfileLatest } from "../api/hhh";
-import type { ProfileFormKey, ProfileLatestGetOut, ProfileLatestUpsertOut } from "../api/types";
+import type { ProfileFormKey, ProfileLatestGetOut, ProfileLatestUpsertOut, ProfileAnswerItem } from "../api/types";
+
 
 // -----------------------------
 // profile_uuid (anonymous device id)
@@ -1334,8 +1335,52 @@ const loaded = ref<Record<ProfileFormKey, boolean>>({
 function extractFormData(r: ProfileLatestGetOut): Record<string, any> | null {
   const payload: any = (r as any)?.data ?? null;
   if (!payload) return null;
-  if (typeof payload === "object" && "data" in payload) return (payload as any).data ?? {};
+
+  if (typeof payload === "object" && "data" in payload) {
+    const d = (payload as any).data ?? null;
+
+    // NEW: backend returns list[{id,value,...}] -> convert to SurveyJS map
+    if (Array.isArray(d)) {
+      const m: Record<string, any> = {};
+      for (const it of d) {
+        if (it && typeof it === "object" && "id" in it) m[String((it as any).id)] = (it as any).value;
+      }
+      return m;
+    }
+
+    // legacy: object map
+    if (typeof d === "object" && d) return d;
+  }
+
   return null;
+}
+
+function buildAnswerItems(m: Model): ProfileAnswerItem[] {
+  const out: ProfileAnswerItem[] = [];
+  const qs: any[] = (m as any).getAllQuestions?.() ?? [];
+
+  for (const q of qs) {
+    const id = String(q?.name ?? "");
+    if (!id) continue;
+
+    const val = q?.value;
+    if (val === undefined || val === null || val === "") continue;
+
+    const question = String(q?.title ?? q?.fullTitle ?? id);
+
+    let label: string | null = null;
+    try {
+      const dv = q?.displayValue ?? (typeof q?.getDisplayValue === "function" ? q.getDisplayValue(false) : undefined);
+      if (Array.isArray(dv)) label = dv.join(", ");
+      else if (dv !== undefined && dv !== null && dv !== "") label = String(dv);
+    } catch {}
+
+    if (!label) label = typeof val === "string" ? val : JSON.stringify(val);
+
+    out.push({ id, question, value: val, label });
+  }
+
+  return out;
 }
 
 async function loadLatest(form: ProfileFormKey, opts?: { force?: boolean }) {
@@ -1361,12 +1406,11 @@ async function loadLatest(form: ProfileFormKey, opts?: { force?: boolean }) {
 // -----------------------------
 // Save (PUT latest), then re-load (optional)
 // -----------------------------
-async function save(form: ProfileFormKey, data: Record<string, any>) {
+async function save(form: ProfileFormKey, items: ProfileAnswerItem[]) {
   status.value = { kind: "saving", text: "Saving..." };
 
-  // 1) PUT: save
   try {
-    const r = (await putProfileLatest(profileUuid, form, data)) as ProfileLatestUpsertOut;
+    const r = (await putProfileLatest(profileUuid, form, items)) as ProfileLatestUpsertOut;
     lastResp.value = r;
   } catch (e) {
     status.value = { kind: "error", text: "Save failed" };
@@ -1374,7 +1418,6 @@ async function save(form: ProfileFormKey, data: Record<string, any>) {
     return;
   }
 
-  // 2) GET again: keep UI == DB latest (if GET fails, don't mark save as failed)
   try {
     await loadLatest(form, { force: true });
   } catch (e) {
@@ -1387,14 +1430,10 @@ async function save(form: ProfileFormKey, data: Record<string, any>) {
   }, 1200);
 }
 
-// -----------------------------
-// Wire "Save" button WITHOUT completing survey
-// -----------------------------
 function wireSave(m: Model, form: ProfileFormKey) {
-  // IMPORTANT: use onCompleting to prevent "completed" state
   (m as any).onCompleting.add((sender: any, opt: any) => {
-    if (opt) opt.allowComplete = false; // block completion
-    save(form, sender.data);
+    if (opt) opt.allowComplete = false;
+    save(form, buildAnswerItems(sender));
   });
 }
 

@@ -22,9 +22,6 @@ FORM_KEYS: tuple[str, ...] = ("basic", "sliq", "rand36")
 COLL_BY_FORM = {k: DB.get_collection(k) for k in FORM_KEYS}
 
 
-# ----------------------------
-# Time helpers
-# ----------------------------
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -38,9 +35,6 @@ def _created_at_from_oid(oid: Any) -> Optional[str]:
         return None
 
 
-# ----------------------------
-# Ensure indexes (lazy, once)
-# ----------------------------
 _INDEX_READY = False
 
 
@@ -59,9 +53,20 @@ async def _ensure_indexes():
 # ----------------------------
 # Models
 # ----------------------------
+class AnswerItem(BaseModel):
+    """A single answered item with human-readable context."""
+
+    id: str = Field(..., description="Question id/name (e.g., rand36_q01)")
+    question: str = Field(..., description="Human-readable question title")
+    value: Any = Field(..., description="Raw stored value (number/string/boolean/array)")
+    label: Optional[str] = Field(default=None, description="Human-readable chosen label (if applicable)")
+
+
 class ProfileLatestIn(BaseModel):
     form: ProfileFormKey
-    data: Dict[str, Any] = Field(default_factory=dict)
+    # Prefer: list[AnswerItem]
+    # Also accept legacy: { [questionId]: value }
+    data: Any = Field(default_factory=list)
 
 
 class ApiOut(BaseModel):
@@ -78,9 +83,41 @@ class ProfileLatestMetaOut(BaseModel):
 
 class ProfileLatestItemOut(BaseModel):
     form: ProfileFormKey
-    data: Dict[str, Any] = Field(default_factory=dict)
+    data: list[AnswerItem] = Field(default_factory=list)
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
+
+
+def _normalize_data(data: Any) -> list[dict]:
+    """Normalize incoming/stored data into the canonical list[AnswerItem] shape."""
+    if data is None:
+        return []
+
+    # Preferred: list[AnswerItem]/list[dict]
+    if isinstance(data, list):
+        out: list[dict] = []
+        for x in data:
+            try:
+                item = AnswerItem.model_validate(x)
+                out.append(item.model_dump())
+            except Exception:
+                continue
+        return out
+
+    # Legacy: dict {id: value}
+    if isinstance(data, dict):
+        out: list[dict] = []
+        for k, v in data.items():
+            item = AnswerItem(
+                id=str(k),
+                question=str(k),  # fallback
+                value=v,
+                label=None if v is None else str(v),
+            )
+            out.append(item.model_dump())
+        return out
+
+    return []
 
 
 # ----------------------------
@@ -99,17 +136,16 @@ async def put_profile_latest(profile_uuid: str, body: ProfileLatestIn):
         raise HTTPException(status_code=400, detail=f"Invalid form: {body.form}")
 
     now = _now_iso()
+    normalized_items = _normalize_data(body.data)
+    n = len(normalized_items)
 
-    # NOTE:
-    # - profile_uuid 仍然用于 DB 的唯一键（只是“响应里”不再返回它）
-    # - created_at 用 $setOnInsert 只在首次插入时写入
     try:
         await coll.update_one(
             {"profile_uuid": profile_uuid},
             {
                 "$set": {
                     "profile_uuid": profile_uuid,
-                    "data": body.data,
+                    "data": normalized_items,
                     "updated_at": now,
                 },
                 "$setOnInsert": {
@@ -122,18 +158,13 @@ async def put_profile_latest(profile_uuid: str, body: ProfileLatestIn):
         raise HTTPException(status_code=500, detail=f"DB error while saving form '{body.form}': {e}")
 
     saved = await coll.find_one({"profile_uuid": profile_uuid}) or {}
-
     created_at = saved.get("created_at") or _created_at_from_oid(saved.get("_id"))
     updated_at = saved.get("updated_at", now)
 
     return ApiOut(
         success=True,
-        message=f"Saved latest '{body.form}' form successfully. created_at={created_at}, updated_at={updated_at}.",
-        data=ProfileLatestMetaOut(
-            form=body.form,
-            created_at=created_at,
-            updated_at=updated_at,
-        ).model_dump(),
+        message=f"Saved latest '{body.form}' responses ({n} items). created_at={created_at}, updated_at={updated_at}.",
+        data=ProfileLatestMetaOut(form=body.form, created_at=created_at, updated_at=updated_at).model_dump(),
     )
 
 
@@ -154,21 +185,19 @@ async def get_profile_latest(
         doc = await coll.find_one({"profile_uuid": profile_uuid})
 
         if not doc:
-            return ApiOut(
-                success=True,
-                message=f"No saved data found for form '{form}' yet.",
-                data=None,
-            )
+            return ApiOut(success=True, message=f"No saved data found for form '{form}' yet.", data=None)
 
         created_at = doc.get("created_at") or _created_at_from_oid(doc.get("_id"))
         updated_at = doc.get("updated_at")
+        items = _normalize_data(doc.get("data", []))
+        n = len(items)
 
         return ApiOut(
             success=True,
-            message=f"Retrieved latest '{form}' form successfully. updated_at={updated_at}.",
+            message=f"Retrieved latest '{form}' responses ({n} items). updated_at={updated_at}.",
             data=ProfileLatestItemOut(
                 form=form,
-                data=doc.get("data", {}) or {},
+                data=items,
                 created_at=created_at,
                 updated_at=updated_at,
             ).model_dump(),
@@ -185,10 +214,11 @@ async def get_profile_latest(
 
         created_at = doc.get("created_at") or _created_at_from_oid(doc.get("_id"))
         updated_at = doc.get("updated_at")
+        items = _normalize_data(doc.get("data", []))
 
         out[k] = ProfileLatestItemOut(
-            form=k,  # 冗余但好用：即使 map key 丢了也能知道是哪张表
-            data=doc.get("data", {}) or {},
+            form=k,
+            data=items,
             created_at=created_at,
             updated_at=updated_at,
         ).model_dump()
@@ -196,14 +226,6 @@ async def get_profile_latest(
         found_keys.append(k)
 
     if not out:
-        return ApiOut(
-            success=True,
-            message="No saved profile forms found yet (basic/sliq/rand36 are all empty).",
-            data={},
-        )
+        return ApiOut(success=True, message="No saved profile forms found yet (basic/sliq/rand36 are all empty).", data={})
 
-    return ApiOut(
-        success=True,
-        message=f"Retrieved latest profile forms successfully: {', '.join(found_keys)}.",
-        data=out,
-    )
+    return ApiOut(success=True, message=f"Retrieved latest profile forms successfully: {', '.join(found_keys)}.", data=out)

@@ -6,6 +6,7 @@ import type {
   ProfileFormKey,
   ProfileLatestUpsertOut,
   ProfileLatestGetOut,
+  ProfileAnswerItem
 } from "./types";
 
 export async function ingest(habit: string, language: string): Promise<IngestOut> {
@@ -39,7 +40,7 @@ export async function systemConfig(): Promise<SystemConfigResponse> {
 export async function putProfileLatest(
   profile_uuid: string,
   form: ProfileFormKey,
-  data: Record<string, any>
+  data: ProfileAnswerItem[] | Record<string, any>
 ): Promise<ProfileLatestUpsertOut> {
   return jsonFetch<ProfileLatestUpsertOut>(
     `${API_BASE}/profile/${encodeURIComponent(profile_uuid)}/latest`,
