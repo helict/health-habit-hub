@@ -16,16 +16,17 @@ router = APIRouter(tags=[WORKFLOW2_TAG])
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017/UserProfiles")
 MONGO = AsyncIOMotorClient(MONGODB_URI, serverSelectionTimeoutMS=2000)
 DB = MONGO.get_default_database()
+
 ProfileFormKey = Literal["basic", "sliq", "rand36"]
 FORM_KEYS: tuple[str, ...] = ("basic", "sliq", "rand36")
 COLL_BY_FORM = {k: DB.get_collection(k) for k in FORM_KEYS}
 
 
 # ----------------------------
-# Mongo helpers
+# Time helpers
 # ----------------------------
-def _oid_str(oid: Any) -> Optional[str]:
-    return str(oid) if oid is not None else None
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
 
 def _created_at_from_oid(oid: Any) -> Optional[str]:
@@ -35,10 +36,6 @@ def _created_at_from_oid(oid: Any) -> Optional[str]:
         return oid.generation_time.isoformat()  # UTC
     except Exception:
         return None
-
-
-def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
 
 
 # ----------------------------
@@ -52,7 +49,7 @@ async def _ensure_indexes():
     if _INDEX_READY:
         return
 
-    for k, coll in COLL_BY_FORM.items():
+    for _, coll in COLL_BY_FORM.items():
         await coll.create_index([("profile_uuid", 1)], unique=True)
         await coll.create_index([("profile_uuid", 1), ("updated_at", -1)])
 
@@ -68,9 +65,22 @@ class ProfileLatestIn(BaseModel):
 
 
 class ApiOut(BaseModel):
-    ok: bool
+    success: bool
     message: str
     data: Optional[Any] = None
+
+
+class ProfileLatestMetaOut(BaseModel):
+    form: ProfileFormKey
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
+class ProfileLatestItemOut(BaseModel):
+    form: ProfileFormKey
+    data: Dict[str, Any] = Field(default_factory=dict)
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
 
 
 # ----------------------------
@@ -86,40 +96,44 @@ async def put_profile_latest(profile_uuid: str, body: ProfileLatestIn):
 
     coll = COLL_BY_FORM.get(body.form)
     if coll is None:
-        raise HTTPException(status_code=400, detail="Invalid form")
+        raise HTTPException(status_code=400, detail=f"Invalid form: {body.form}")
 
-    updated_at = _now_iso()
-    doc = {
-        "profile_uuid": profile_uuid,
-        "data": body.data,
-        "updated_at": updated_at,
-    }
+    now = _now_iso()
 
+    # NOTE:
+    # - profile_uuid 仍然用于 DB 的唯一键（只是“响应里”不再返回它）
+    # - created_at 用 $setOnInsert 只在首次插入时写入
     try:
         await coll.update_one(
             {"profile_uuid": profile_uuid},
-            {"$set": doc},
+            {
+                "$set": {
+                    "profile_uuid": profile_uuid,
+                    "data": body.data,
+                    "updated_at": now,
+                },
+                "$setOnInsert": {
+                    "created_at": now,
+                },
+            },
             upsert=True,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"DB error: {e}")
+        raise HTTPException(status_code=500, detail=f"DB error while saving form '{body.form}': {e}")
 
-    saved = await coll.find_one({"profile_uuid": profile_uuid})
-    meta = {
-        "mongo_id": _oid_str((saved or {}).get("_id")),
-        "created_at": _created_at_from_oid((saved or {}).get("_id")),
-        "updated_at": (saved or {}).get("updated_at", updated_at),
-        "collection": body.form,
-    }
+    saved = await coll.find_one({"profile_uuid": profile_uuid}) or {}
+
+    created_at = saved.get("created_at") or _created_at_from_oid(saved.get("_id"))
+    updated_at = saved.get("updated_at", now)
 
     return ApiOut(
-        ok=True,
-        message="Saved",
-        data={
-            "profile_uuid": profile_uuid,
-            "form": body.form,
-            "_meta": meta,
-        },
+        success=True,
+        message=f"Saved latest '{body.form}' form successfully. created_at={created_at}, updated_at={updated_at}.",
+        data=ProfileLatestMetaOut(
+            form=body.form,
+            created_at=created_at,
+            updated_at=updated_at,
+        ).model_dump(),
     )
 
 
@@ -134,43 +148,62 @@ async def get_profile_latest(
 ):
     await _ensure_indexes()
 
+    # ---- single form ----
     if form:
         coll = COLL_BY_FORM.get(form)
         doc = await coll.find_one({"profile_uuid": profile_uuid})
+
         if not doc:
-            return ApiOut(ok=True, message="No data yet", data=None)
+            return ApiOut(
+                success=True,
+                message=f"No saved data found for form '{form}' yet.",
+                data=None,
+            )
+
+        created_at = doc.get("created_at") or _created_at_from_oid(doc.get("_id"))
+        updated_at = doc.get("updated_at")
 
         return ApiOut(
-            ok=True,
-            message="OK",
-            data={
-                "profile_uuid": doc.get("profile_uuid"),
-                "form": form,
-                "data": doc.get("data", {}),
-                "updated_at": doc.get("updated_at"),
-                "_meta": {
-                    "mongo_id": _oid_str(doc.get("_id")),
-                    "created_at": _created_at_from_oid(doc.get("_id")),
-                    "collection": form,
-                },
-            },
+            success=True,
+            message=f"Retrieved latest '{form}' form successfully. updated_at={updated_at}.",
+            data=ProfileLatestItemOut(
+                form=form,
+                data=doc.get("data", {}) or {},
+                created_at=created_at,
+                updated_at=updated_at,
+            ).model_dump(),
         )
 
+    # ---- all forms ----
     out: Dict[str, Any] = {}
+    found_keys: list[str] = []
+
     for k, coll in COLL_BY_FORM.items():
         doc = await coll.find_one({"profile_uuid": profile_uuid})
         if not doc:
             continue
-        out[k] = {
-            "profile_uuid": doc.get("profile_uuid"),
-            "form": k,
-            "data": doc.get("data", {}),
-            "updated_at": doc.get("updated_at"),
-            "_meta": {
-                "mongo_id": _oid_str(doc.get("_id")),
-                "created_at": _created_at_from_oid(doc.get("_id")),
-                "collection": k,
-            },
-        }
 
-    return ApiOut(ok=True, message="OK", data=out)
+        created_at = doc.get("created_at") or _created_at_from_oid(doc.get("_id"))
+        updated_at = doc.get("updated_at")
+
+        out[k] = ProfileLatestItemOut(
+            form=k,  # 冗余但好用：即使 map key 丢了也能知道是哪张表
+            data=doc.get("data", {}) or {},
+            created_at=created_at,
+            updated_at=updated_at,
+        ).model_dump()
+
+        found_keys.append(k)
+
+    if not out:
+        return ApiOut(
+            success=True,
+            message="No saved profile forms found yet (basic/sliq/rand36 are all empty).",
+            data={},
+        )
+
+    return ApiOut(
+        success=True,
+        message=f"Retrieved latest profile forms successfully: {', '.join(found_keys)}.",
+        data=out,
+    )

@@ -496,7 +496,7 @@ const sliqJson = {
 const rand36Json = {
   title: "RAND 36-Item Health Survey (RAND-36) v1.0",
   description:
-    "This prototype implements the RAND 36-Item Health Survey 1.0 (MOS SF-36 items) and scoring as described by RAND (Table 1 item recoding; Table 2 scale averaging). For research/prototyping use only (not for clinical decision-making). When printing/distributing, include a RAND credit line and clearly mark any modifications or translations.",
+    "This prototype implements the RAND 36-Item Health Survey 1.0 (RAND-36 / MOS SF-36 items) and scoring according to RAND (Table 1 item recoding to 0–100; Table 2 scale averaging). Item wording shown on screen follows the standard English item wording; any deviations will be explicitly marked. For research/prototyping use only (not for clinical decision-making). When printing/distributing, include the RAND credit line: Developed at RAND as part of the Medical Outcomes Study (MOS).",
   showQuestionNumbers: "off",
 
   elements: [

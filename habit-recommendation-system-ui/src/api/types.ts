@@ -73,32 +73,29 @@ export type SystemConfigResponse = {
 export type ProfileFormKey = "basic" | "sliq" | "rand36";
 
 export type ApiOut<T> = {
-  ok: boolean;
-  message: string;
+  success: boolean;   // was: ok
+  message: string;    // now more detailed
   data: T | null;
 };
 
-export type ProfileMeta = {
-  mongo_id?: string;
+// PUT 返回：只需要告诉你保存的是哪个 form + created_at/updated_at
+export type ProfileLatestUpsertData = {
+  form: ProfileFormKey;
   created_at?: string;
   updated_at?: string;
-  collection?: ProfileFormKey;
-};
-
-export type ProfileLatestUpsertData = {
-  profile_uuid: string;
-  form: ProfileFormKey;
-  _meta?: ProfileMeta;
 };
 
 export type ProfileLatestUpsertOut = ApiOut<ProfileLatestUpsertData>;
 
+// GET 返回：会带回 data（问卷答案）+ created_at/updated_at
 export type ProfileLatestItem = {
-  profile_uuid: string;
   form: ProfileFormKey;
   data: Record<string, any>;
+  created_at?: string;
   updated_at?: string;
-  _meta?: ProfileMeta;
 };
 
-export type ProfileLatestGetOut = ApiOut<ProfileLatestItem | Partial<Record<ProfileFormKey, ProfileLatestItem>>>;
+// GET: 单个 form 或全部 forms（map）
+export type ProfileLatestGetOut = ApiOut<
+  ProfileLatestItem | Partial<Record<ProfileFormKey, ProfileLatestItem>>
+>;
