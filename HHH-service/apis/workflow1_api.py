@@ -7,7 +7,7 @@ import uuid
 import unicodedata
 import requests
 import hashlib
-from typing import Any, Optional
+from typing import Any, Optional, Dict
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.concurrency import run_in_threadpool
@@ -79,6 +79,10 @@ class IngestOut(BaseModel):
     ok: bool
     message: str
     data: dict
+
+    # Flattened top-level fields (no _meta)
+    created_at: Optional[str] = None
+    mapping_params: Optional[Dict[str, Any]] = None
 
 # ----------------------------
 # Helpers (belonging to workflow1 pipeline)
@@ -197,7 +201,8 @@ async def store_context_mapping(mapped_data: dict) -> None:
 
 async def _merge_habit(uuid_str: str) -> dict:
     """
-    Merge habits + contexts + context_mappings into one record for frontend.
+    Merge habits + contexts + context_mappings into one record for internal use.
+    (Includes internal _id; API responses will be flattened via _public_habit_item().)
     """
     habit_doc = await HABITS_COLL.find_one({"uuid": uuid_str})
     if not habit_doc:
@@ -220,8 +225,28 @@ async def _merge_habit(uuid_str: str) -> dict:
         "mapping_params": (mapped_doc or {}).get("mapping_params"),
     }
 
+def _public_habit_item(merged: dict) -> dict:
+    """
+    Flattened public representation: NO mongo_id/_id, NO _meta.
+    """
+    return {
+        "uuid": merged.get("uuid"),
+        "habit": merged.get("habit"),
+        "language": merged.get("language"),
+        "habit_class": merged.get("habit_class", 0),
+        "confidence": merged.get("confidence"),
+        "created_at": merged.get("created_at"),
+        "mapping_params": merged.get("mapping_params"),
+        "contexts_raw": merged.get("contexts_raw", []) or [],
+        "contexts_mapped": merged.get("contexts_mapped", []) or [],
+        "bcio_mapping_error": merged.get("bcio_mapping_error"),
+    }
+
 def _ingest_response_from_merged(merged: dict) -> IngestOut:
     is_habit = int(merged.get("habit_class", 0)) == 1
+
+    created_at = merged.get("created_at")
+    mapping_params = merged.get("mapping_params")
 
     if is_habit:
         data = {
@@ -229,12 +254,6 @@ def _ingest_response_from_merged(merged: dict) -> IngestOut:
             "habit": merged.get("habit"),
             "language": merged.get("language"),
             "result": merged.get("contexts_mapped") or merged.get("contexts_raw") or [],
-            "mapping_params": merged.get("mapping_params"),
-            "_meta": {
-                "mongo_id": merged.get("_id"),
-                "created_at": merged.get("created_at"),
-                "mapping_params": merged.get("mapping_params"),
-            },
         }
         if merged.get("bcio_mapping_error") is not None:
             data["bcio_mapping_error"] = merged.get("bcio_mapping_error")
@@ -243,6 +262,8 @@ def _ingest_response_from_merged(merged: dict) -> IngestOut:
             ok=True,
             message="This sentence has already been processed. Returning the stored result (deduplicated).",
             data=data,
+            created_at=created_at,
+            mapping_params=mapping_params,
         )
 
     data = {
@@ -251,12 +272,12 @@ def _ingest_response_from_merged(merged: dict) -> IngestOut:
         "language": merged.get("language"),
         "habit_class": merged.get("habit_class", 0),
         "confidence": merged.get("confidence"),
-        "_meta": {"mongo_id": merged.get("_id"), "created_at": merged.get("created_at")},
     }
     return IngestOut(
         ok=False,
         message="This sentence already exists and was classified as not a habit. Returning the stored result (deduplicated).",
         data=data,
+        created_at=created_at,
     )
 
 # ----------------------------
@@ -265,12 +286,14 @@ def _ingest_response_from_merged(merged: dict) -> IngestOut:
 @router.post(
     "/ingest",
     response_model=IngestOut,
+    response_model_exclude_none=True,
     summary="Workflow 1: classify habit -> classify context -> BCIO map -> store raw+mapped into HabitDB",
 )
 async def ingest(body: IngestIn):
     clean_habit = _normalize_text(body.habit)
     hk = _habit_key(clean_habit, body.language)
 
+    # Dedup
     existing = await HABITS_COLL.find_one({"habit_key": hk})
     if existing and existing.get("uuid"):
         merged = await _merge_habit(existing["uuid"])
@@ -302,15 +325,17 @@ async def ingest(body: IngestIn):
             mapped_out = dict(context_out)
             mapped_out["bcio_mapping_error"] = str(e.detail)
 
+        # store in DB (keep mapping_params inside stored mapped_out)
         mapped_out["mapping_params"] = {"threshold": threshold, "top_n": top_n}
         await store_context_mapping(mapped_out)
 
         merged = await _merge_habit(uuid_str)
-        mapped_out["_meta"] = {
-            "mongo_id": merged.get("_id"),
-            "created_at": merged.get("created_at"),
-            "mapping_params": merged.get("mapping_params"),
-        }
+        created_at = merged.get("created_at")
+
+        # Response: remove mapping_params from data (keep it at top level)
+        resp_data = dict(mapped_out)
+        resp_data.pop("mapping_params", None)
+        resp_data.pop("_meta", None)  # backward compatibility if someone re-added it
 
         return IngestOut(
             ok=True,
@@ -319,17 +344,29 @@ async def ingest(body: IngestIn):
                 '["TIME", "PHYSICAL SETTING", "PRIOR BEHAVIOR", "OTHER PEOPLE", "INTERNAL STATE", "BEHAVIOR", "REASONING"]. '
                 "Extracted phrases were mapped to BCIO and stored successfully."
             ),
-            data=mapped_out,
+            data=resp_data,
+            created_at=created_at,
+            mapping_params={"threshold": threshold, "top_n": top_n},
         )
 
+    # Not a habit
     merged = await _merge_habit(uuid_str)
-    habit_out["_meta"] = {"mongo_id": merged.get("_id"), "created_at": merged.get("created_at")}
-    return IngestOut(ok=False, message="The input provided is not a habit. Please retry.", data=habit_out)
+    created_at = merged.get("created_at")
+
+    resp_data = dict(habit_out)
+    resp_data.pop("_meta", None)
+
+    return IngestOut(
+        ok=False,
+        message="The input provided is not a habit. Please retry.",
+        data=resp_data,
+        created_at=created_at,
+    )
 
 @router.get(
     "/habits",
     summary="List habits (for management UI)",
-    description="Returns habits sorted by Mongo _id desc (newest first).",
+    description="Returns habits sorted by Mongo _id desc (newest first). Flattened items (no _id).",
 )
 async def list_habits(
     limit: int = Query(30, ge=1, le=200),
@@ -346,7 +383,8 @@ async def list_habits(
         u = doc.get("uuid")
         if not u:
             continue
-        items.append(await _merge_habit(u))
+        merged = await _merge_habit(u)
+        items.append(_public_habit_item(merged))
 
     total = await HABITS_COLL.count_documents(q)
     return {"ok": True, "total": total, "limit": limit, "skip": skip, "items": items}
@@ -354,7 +392,8 @@ async def list_habits(
 @router.get(
     "/habits/{uuid_str}",
     summary="Get habit detail (for management UI)",
+    description="Flattened item (no _id).",
 )
 async def get_habit(uuid_str: str):
     merged = await _merge_habit(uuid_str)
-    return {"ok": True, "item": merged}
+    return {"ok": True, "item": _public_habit_item(merged)}

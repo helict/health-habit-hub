@@ -40,7 +40,6 @@ const contexts = computed(() => {
         <div class="row" style="gap:10px; align-items:center">
           <span class="badge">created: <code>{{ createdAtText }}</code></span>
           <span class="badge">lang: <code>{{ item.language }}</code></span>
-          <span class="badge">_id: <code>{{ item._id ?? "-" }}</code></span>
         </div>
 
         <div v-if="item.mapping_params" class="row" style="margin-top:10px; gap:10px">

@@ -17,26 +17,35 @@ export type ContextItem = {
   bcio_mappings?: BcioMapping[];
 };
 
+export type IngestDataHabit = {
+  uuid: string;
+  habit: string;
+  language: string;
+  result: ContextItem[];
+  bcio_mapping_error?: string | null;
+};
+
+export type IngestDataNotHabit = {
+  uuid: string;
+  habit: string;
+  language: string;
+  habit_class: number;            // 0/1
+  confidence: number | null;
+};
+
 export type IngestOut = {
   ok: boolean;
   message: string;
-  data: {
-    uuid: string;
-    habit: string;
-    language: string;
-    result: ContextItem[];
-    mapping_params?: MappingParams;
-    _meta?: {
-      mongo_id?: string;
-      created_at?: string;
-      mapping_params?: MappingParams;
-    };
-    bcio_mapping_error?: string | null;
-  };
+
+  created_at?: string | null;
+  mapping_params?: MappingParams | null;
+
+  data: IngestDataHabit | IngestDataNotHabit;
 };
 
 export type HabitItem = {
-  _id: string | null;
+  _id?: string | null;
+
   created_at: string | null;
 
   uuid: string;
@@ -52,6 +61,7 @@ export type HabitItem = {
   bcio_mapping_error?: string | null;
   mapping_params?: MappingParams | null;
 };
+
 
 export type HabitsListResponse = {
   ok: boolean;

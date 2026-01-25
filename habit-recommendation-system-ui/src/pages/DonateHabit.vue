@@ -13,20 +13,25 @@ const error = ref<string | null>(null);
 const resp = ref<IngestOut | null>(null);
 
 function toHabitItem(r: IngestOut): HabitItem {
-  const d = r.data;
-  const meta = d._meta || {};
+  const d: any = r.data || {};
+  const isHabit = r.ok === true;
+
   return {
-    _id: meta.mongo_id ?? null,
-    created_at: meta.created_at ?? null,
+    created_at: r.created_at ?? null,
+
     uuid: d.uuid,
     habit: d.habit,
     language: d.language,
-    habit_class: r.ok ? 1 : 0,
-    confidence: null,
+
+
+    habit_class: isHabit ? 1 : (d.habit_class ?? 0),
+    confidence: isHabit ? null : (d.confidence ?? null),
+
     contexts_raw: [],
-    contexts_mapped: d.result ?? [],
+    contexts_mapped: isHabit ? (d.result ?? []) : [],
+
     bcio_mapping_error: d.bcio_mapping_error ?? null,
-    mapping_params: meta.mapping_params ?? d.mapping_params ?? null,
+    mapping_params: r.mapping_params ?? null,
   };
 }
 
