@@ -15,12 +15,13 @@ from pydantic import BaseModel, Field
 from openapi_server.infra.mongo_UserProfiles import (
     USERPROFILES_BASIC_COLL,
     USERPROFILES_SLIQ_COLL,
-    USERPROFILES_WHOQOL_COLL,
+    USERPROFILES_RAND36_COLL,
 )
 
 from openapi_server.services.llm_habit_service import classify_habit_via_llm_prompt
 
 router = APIRouter(prefix="", tags=["UserProfiles"])
+
 
 # ----------------------------
 # Models
@@ -41,7 +42,6 @@ class ProfilesBuildOut(BaseModel):
     llm_meta: Dict[str, Any] = Field(default_factory=dict)
     profile_detailed: str = ""
     profile_summary: str = ""
-    profiles_snapshot_meta: Dict[str, Any] = Field(default_factory=dict)
     signatures: Dict[str, str] = Field(default_factory=dict)
 
 
@@ -65,12 +65,12 @@ def _get_env_value(key: str) -> str:
 
 
 def _env_signature() -> str:
+    # Top-K removed
     keys = [
         "Profiles_LLM_PROVIDER",
         "Profiles_LLM_MODEL",
         "Profiles_LLM_TEMPERATURE",
         "Profiles_LLM_MAX_TOKENS",
-        "Profiles_TOP_K",
     ]
     snap = {k: _get_env_value(k) for k in keys}
     payload = json.dumps(snap, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
@@ -102,6 +102,43 @@ async def _fetch_latest_doc(coll) -> Optional[Dict[str, Any]]:
     return doc
 
 
+def _project_question_label(data: Any) -> Any:
+    """
+    Keep ONLY (question, label) pairs for LLM input (token-efficient, less ambiguity).
+    - If label is missing, fall back to string(value) so we still keep the answer meaning.
+    - Never output id/value keys.
+    """
+    if data is None:
+        return None
+
+    # Common case: list[dict]
+    if isinstance(data, list):
+        out = []
+        for item in data:
+            if not isinstance(item, dict):
+                continue
+            q = item.get("question")
+            lbl = item.get("label")
+            if (lbl is None or str(lbl).strip() == "") and "value" in item:
+                lbl = str(item.get("value"))
+            if q is None and lbl is None:
+                continue
+            out.append({"question": q, "label": lbl})
+        return out
+
+    # Sometimes stored as a dict
+    if isinstance(data, dict):
+        q = data.get("question")
+        lbl = data.get("label")
+        if (lbl is None or str(lbl).strip() == "") and "value" in data:
+            lbl = str(data.get("value"))
+        if q is None and lbl is None:
+            return None
+        return [{"question": q, "label": lbl}]
+
+    return None
+
+
 def _stable_data_string(name: str, data: Any) -> str:
     payload = json.dumps(data, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return f"{name}={payload}"
@@ -110,24 +147,25 @@ def _stable_data_string(name: str, data: Any) -> str:
 async def build_profiles_snapshot() -> Tuple[str, str, Dict[str, Any]]:
     basic_doc = await _fetch_latest_doc(USERPROFILES_BASIC_COLL)
     sliq_doc = await _fetch_latest_doc(USERPROFILES_SLIQ_COLL)
-    whoqol_doc = await _fetch_latest_doc(USERPROFILES_WHOQOL_COLL)
+    rand36_doc = await _fetch_latest_doc(USERPROFILES_RAND36_COLL)
 
     def pick_data(doc: Optional[Dict[str, Any]]) -> Any:
         if not doc:
             return None
         return doc.get("data", doc)
 
-    basic_data = pick_data(basic_doc)
-    sliq_data = pick_data(sliq_doc)
-    whoqol_data = pick_data(whoqol_doc)
+    # Only (question, label) pairs go to LLM
+    basic_data = _project_question_label(pick_data(basic_doc))
+    sliq_data = _project_question_label(pick_data(sliq_doc))
+    rand36_data = _project_question_label(pick_data(rand36_doc))
 
     parts = []
     if basic_data is not None:
         parts.append(_stable_data_string("basic", basic_data))
     if sliq_data is not None:
         parts.append(_stable_data_string("sliq", sliq_data))
-    if whoqol_data is not None:
-        parts.append(_stable_data_string("whoqol", whoqol_data))
+    if rand36_data is not None:
+        parts.append(_stable_data_string("rand36", rand36_data))
 
     combined = "\n".join(parts)
     profiles_sig = _sha1(combined)
@@ -135,7 +173,7 @@ async def build_profiles_snapshot() -> Tuple[str, str, Dict[str, Any]]:
     meta = {
         "basic_present": basic_data is not None,
         "sliq_present": sliq_data is not None,
-        "whoqol_present": whoqol_data is not None,
+        "rand36_present": rand36_data is not None,
         "combined": combined,
         "combined_len": len(combined),
     }
@@ -148,33 +186,33 @@ async def build_profiles_snapshot() -> Tuple[str, str, Dict[str, Any]]:
 PROMPT_TEMPLATE = """
 You are a user-profile synthesis module for a Habit Recommendation System.
 
-You will receive:
+Input
 - USER_TEXT: the user's current request/goal (free text).
-- PROFILES_DATA: a merged string containing the latest saved form submissions from:
-  - Basic
-  - SLIQ
-  - WHOQOL-BREF
+- PROFILES_DATA: a merged string from the latest saved form submissions, containing ONLY (question, label) pairs. Sources include:
+  - Basic: a custom form.
+  - SLIQ: focuses on health behaviors and lifestyle risk factors, used to characterize the user's behavioral patterns in diet, physical activity, smoking, alcohol use, and stress.
+  - RAND-36: focuses on cognitive and affective states as well as social and functional status, measuring the individual's overall health experience via quality of life.
 
-Task:
-Generate:
-1) "profile_detailed": a detailed, structured narrative user profile grounded ONLY in USER_TEXT + PROFILES_DATA.
-2) "profile_summary": a short summary (max {top_k} key points) suitable as downstream input for habit recommendation.
+Task
+Generate the following two fields: "profile_detailed" and "profile_summary".
 
-Hard Rules:
-1) Output ONLY valid JSON (no markdown, no extra text).
-2) Do NOT invent values not supported by USER_TEXT or PROFILES_DATA. If unknown, say "unknown" or omit.
-3) Privacy:
-   - If PROFILES_DATA contains personal identifiers (names, exact addresses, phone numbers, emails, usernames, org names),
-     replace them with placeholders like [PERSON], [ADDRESS], [PHONE], [EMAIL], [ORG].
-   - Do NOT output any unique identifiers, IDs, UUIDs, request_uuid, profile_uuid, timestamps.
-4) Use neutral, non-judgmental language.
-5) If PROFILES_DATA is empty/missing, base the result mainly on USER_TEXT and explicitly state uncertainty.
-
-JSON schema:
+Output
+- Output ONLY valid JSON (no markdown, no extra text):
 {{
   "profile_detailed": "...",
   "profile_summary": "..."
 }}
+- "profile_detailed":
+   - Derived from PROFILES_DATA only, USER_TEXT may be used only to prioritize what to include.
+   - "profile_detailed" should describe only the user profile itself and must not include the user's stated goal/purpose from USER_TEXT.
+- "profile_summary":
+   - A short, retrieval-oriented summary for downstream RAG.
+   - Must be produced only by compressing/summarizing the content of "profile_detailed".
+   - Focus only on high-signal items: constraints (time/physical limitations), major risks, strong preferences, and the most important questionnaire outcomes.
+- Do NOT invent any values not supported by USER_TEXT or PROFILES_DATA.
+- If PROFILES_DATA contains personal identifiers (names, exact addresses, phone numbers, emails, usernames, org names), replace them with placeholders such as [PERSON], [ADDRESS], [PHONE], [EMAIL], [ORG].
+- Do NOT output any unique identifiers, such as IDs, UUIDs, request_uuid, profile_uuid, or timestamps.
+- Use neutral, non-judgmental language when describing the user.
 
 USER_TEXT:
 {user_text}
@@ -184,13 +222,14 @@ PROFILES_DATA:
 """.strip()
 
 
+
 # ----------------------------
 # Route
 # ----------------------------
 @router.post(
     "/profiles/build",
     response_model=ProfilesBuildOut,
-    summary="Build a detailed user profile + summary from UserProfiles (basic/sliq/whoqol) and user text",
+    summary="Build a detailed user profile + RAG-oriented summary from UserProfiles (basic/sliq/rand36) and user text",
 )
 async def profiles_build(body: ProfilesBuildIn):
     clean_text = _normalize_text(body.text)
@@ -202,10 +241,7 @@ async def profiles_build(body: ProfilesBuildIn):
     # snapshot from mongo
     profiles_sig, profiles_data, snapshot_meta = await build_profiles_snapshot()
 
-    top_k = int(_get_env_value("Profiles_TOP_K") or 6)
-
     prompt = PROMPT_TEMPLATE.format(
-        top_k=str(top_k),
         user_text=clean_text,
         profiles_data=profiles_data,
     )
@@ -249,7 +285,6 @@ async def profiles_build(body: ProfilesBuildIn):
         "model": model,
         "temperature": temperature,
         "max_tokens": max_tokens,
-        "top_k": top_k,
         "raw_len": len(raw or ""),
     }
 
@@ -259,7 +294,6 @@ async def profiles_build(body: ProfilesBuildIn):
         llm_meta=llm_meta,
         profile_detailed=llm_out.profile_detailed or "",
         profile_summary=llm_out.profile_summary or "",
-        profiles_snapshot_meta=snapshot_meta,
         signatures={
             "text_signature": text_sig,
             "profiles_signature": profiles_sig,

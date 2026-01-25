@@ -90,42 +90,41 @@ def _extract_json_object(raw: str) -> dict:
 PROMPT_TEMPLATE = """
 You are a habit-database selection module.
 
-You will receive:
-- USER_TEXT
-- CANDIDATES: a JSON array. Each item has:
+Input description:
+- USER_TEXT: the user's goal.
+- CANDIDATES: a JSON array showing all habits in the user's habit database. Each item contains:
   - "habit_key" (string)
   - "habit" (string)
-  - "contexts" (array of 7 values in order:
+  - "contexts" (an array of 7 values in the following order:
     ["TIME","PHYSICAL SETTING","PRIOR BEHAVIOR","OTHER PEOPLE","INTERNAL STATE","BEHAVIOR","REASONING"])
 
 Task:
-Select the most relevant habits for USER_TEXT.
+Select up to {top_k} most relevant habits for USER_TEXT.
 
-Hard Rules:
-1) You MUST ONLY output habit_key values that appear in CANDIDATES.
-2) Output ONLY valid JSON (no markdown, no extra text).
-3) JSON schema:
+OUTPUT CONSTRAINTS:
+- Output ONLY valid JSON (no Markdown, no extra text).
+- JSON schema:
 {{
   "selected_habits":[{{"habit_key":"...","score":0.0-1.0,"reason":"..."}}],
   "selected_habits_summary":"..."
 }}
-4) Select at most TOP_K habits. If none match, return an empty list.
-
-Summary Requirements (for "selected_habits_summary"):
-A) The summary MUST ONLY describe the habits that you selected in "selected_habits".
-B) The summary MUST ground every statement in the provided CANDIDATES data (habit text + contexts array).
-C) The summary MUST explicitly reflect relevant context values (TIME / PHYSICAL SETTING / PRIOR BEHAVIOR / OTHER PEOPLE / INTERNAL STATE / BEHAVIOR / REASONING) when they exist.
-D) The summary MUST be useful as input for a downstream recommendation module: concise but context-rich.
-E) Do NOT mention or describe any habit that is not selected. If no habit is selected, set selected_habits_summary to an empty string.
-
-TOP_K = {top_k}
+- You MUST ONLY output habit_key values that appear in CANDIDATES.
+- Higher score means more relevant to USER_TEXT.
+- Keep each "reason" to one short sentence (max 20 words).
+- "selected_habits": select at most {top_k} habits from CANDIDATES. If there are no matches, return:
+  {{"selected_habits":[], "selected_habits_summary":""}}
+- "selected_habits_summary": a concise summary of key points from "selected_habits", to be used as part of a downstream RAG query:
+   A) The summary MUST use only information from the selected habits in "selected_habits".
+   B) The summary MUST be clear and concise.
 
 USER_TEXT:
 {user_text}
 
-CANDIDATES(JSON):
+CANDIDATES (JSON):
 {candidates_json}
-"""
+""".strip()
+
+
 
 # ----------------------------
 # Route
