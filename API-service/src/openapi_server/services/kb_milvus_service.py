@@ -44,8 +44,8 @@ except ImportError:
 # -----------------------
 # Paths (do NOT depend on cwd)
 # -----------------------
-OPENAPI_SERVER_DIR = Path(__file__).resolve().parents[1]   # .../src/openapi_server
-DEFAULT_KB_ROOT = OPENAPI_SERVER_DIR / "kb"               # .../src/openapi_server/kb
+OPENAPI_SERVER_DIR = Path(__file__).resolve().parents[1]  # .../src/openapi_server
+DEFAULT_KB_ROOT = OPENAPI_SERVER_DIR / "kb"  # .../src/openapi_server/kb
 DEFAULT_META_DIR = DEFAULT_KB_ROOT / "_meta"
 
 
@@ -75,7 +75,11 @@ def load_config(
     milvus_uri: Optional[str] = None,
     collection_name: Optional[str] = None,
 ) -> KbMilvusConfig:
-    kb = Path(kb_root).resolve() if kb_root else Path(os.getenv("KB_ROOT_DIR") or DEFAULT_KB_ROOT).resolve()
+    kb = (
+        Path(kb_root).resolve()
+        if kb_root
+        else Path(os.getenv("KB_ROOT_DIR") or DEFAULT_KB_ROOT).resolve()
+    )
     meta = Path(os.getenv("KB_META_DIR") or (kb / "_meta")).resolve()
 
     uri = milvus_uri or os.getenv("MILVUS_URI") or "http://localhost:19530"
@@ -93,14 +97,18 @@ def load_config(
         except Exception:
             embed_dim = 1024
     else:
-        embed_dim = 1024 if embed_provider.lower() in {"bge-m3", "bgem3", "bge_m3"} else 1536
+        embed_dim = (
+            1024 if embed_provider.lower() in {"bge-m3", "bgem3", "bge_m3"} else 1536
+        )
 
     embed_device = (os.getenv("KB_EMBED_DEVICE") or "cpu").strip()  # "cuda" / "cpu"
     embed_fp16 = (os.getenv("KB_EMBED_FP16") or "1") == "1"
 
     exclude_dirs = set(
         x.strip().lower()
-        for x in (os.getenv("KB_EXCLUDE_DIRS") or "_meta,figs,__pycache__,.git,.venv").split(",")
+        for x in (
+            os.getenv("KB_EXCLUDE_DIRS") or "_meta,figs,__pycache__,.git,.venv"
+        ).split(",")
         if x.strip()
     )
 
@@ -159,6 +167,7 @@ def _docmeta_to_cache_dict(
     embed_dim: int,
     chunk_count: int,
 ) -> dict:
+    # Only these parameters changing should trigger reindex (per your requirement)
     return {
         "doc_id": doc_meta.doc_id,
         "domain": doc_meta.domain,
@@ -173,6 +182,13 @@ def _docmeta_to_cache_dict(
         "embed_provider": str(embed_provider),
         "embed_model": str(embed_model),
         "embed_dim": int(embed_dim),
+        # ---- chunk/env snapshot ----
+        "pdf_strategy": (os.getenv("KB_PDF_STRATEGY", "fast") or "fast").strip(),
+        "infer_table_structure": os.getenv("KB_INFER_TABLE_STRUCTURE", "1") == "1",
+        "chunk_max_characters": int(os.getenv("KB_CHUNK_MAX_CHARACTERS", "2800")),
+        "chunk_new_after_n_chars": int(os.getenv("KB_CHUNK_NEW_AFTER_N_CHARS", "2400")),
+        "chunk_combine_under_n_chars": int(os.getenv("KB_CHUNK_COMBINE_UNDER_N_CHARS", "900")),
+        "extract_images": os.getenv("KB_EXTRACT_IMAGES", "0") == "1",
     }
 
 
@@ -212,6 +228,7 @@ def _safe_expr_str(s: str) -> str:
 
 def _normalize(vec: List[float]) -> List[float]:
     import math
+
     norm = math.sqrt(sum(x * x for x in vec)) or 1.0
     return [x / norm for x in vec]
 
@@ -248,14 +265,18 @@ def _discover_domain_folders(kb_root: Path, exclude_dirs: Set[str]) -> Set[str]:
     return domains
 
 
-def _infer_domain_from_kb_root(kb_root: Path, pdf_path: Path, exclude_dirs: Set[str]) -> str:
+def _infer_domain_from_kb_root(
+    kb_root: Path, pdf_path: Path, exclude_dirs: Set[str]
+) -> str:
     allowed = _discover_domain_folders(kb_root, exclude_dirs)
     rel = pdf_path.resolve().relative_to(kb_root.resolve())
     if len(rel.parts) < 2:
         raise ValueError(f"Expected kb_root/<domain>/... structure, got: {pdf_path}")
     domain = rel.parts[0].lower()
     if allowed and domain not in allowed:
-        raise ValueError(f"Unknown domain '{domain}'. Allowed under {kb_root}: {sorted(allowed)}")
+        raise ValueError(
+            f"Unknown domain '{domain}'. Allowed under {kb_root}: {sorted(allowed)}"
+        )
     return domain
 
 
@@ -286,7 +307,9 @@ def _get_bge_m3_ef(model_name: str, device: str, use_fp16: bool):
     return _BGE_M3_EF
 
 
-def _bge_m3_encode_texts(texts: List[str], model: str, device: str, fp16: bool) -> List[List[float]]:
+def _bge_m3_encode_texts(
+    texts: List[str], model: str, device: str, fp16: bool
+) -> List[List[float]]:
     ef = _get_bge_m3_ef(model_name=model, device=device, use_fp16=fp16)
 
     # Prefer encode_documents for chunk text; encode_queries for search query if available.
@@ -315,7 +338,9 @@ def _bge_m3_encode_query(text: str, model: str, device: str, fp16: bool) -> List
 
     dense = out.get("dense") if isinstance(out, dict) else None
     if dense is None:
-        raise RuntimeError("BGE-M3 query embedding output does not contain 'dense' vectors.")
+        raise RuntimeError(
+            "BGE-M3 query embedding output does not contain 'dense' vectors."
+        )
     v = dense[0]
     try:
         return v.tolist()
@@ -339,7 +364,9 @@ def embed_texts(
 
     # local BGE-M3
     if prov in {"bge-m3", "bgem3", "bge_m3"}:
-        vecs = _bge_m3_encode_texts(texts, model=model, device=bge_device, fp16=bge_fp16)
+        vecs = _bge_m3_encode_texts(
+            texts, model=model, device=bge_device, fp16=bge_fp16
+        )
         if normalize:
             vecs = [_normalize(v) for v in vecs]
         return vecs
@@ -398,9 +425,13 @@ class KbMilvusStore:
             # Validate embedding dim matches existing schema
             col = Collection(self.cfg.collection_name)
             try:
-                emb_field = next((f for f in col.schema.fields if f.name == "embedding"), None)
+                emb_field = next(
+                    (f for f in col.schema.fields if f.name == "embedding"), None
+                )
                 if emb_field is not None:
-                    existing_dim = int(getattr(emb_field, "params", {}).get("dim", 0) or 0)
+                    existing_dim = int(
+                        getattr(emb_field, "params", {}).get("dim", 0) or 0
+                    )
                     if existing_dim and existing_dim != int(self.cfg.embed_dim):
                         raise RuntimeError(
                             f"Milvus collection '{self.cfg.collection_name}' embedding dim mismatch: "
@@ -420,24 +451,44 @@ class KbMilvusStore:
 
     def _create_collection(self) -> None:
         fields = [
-            FieldSchema(name="id", dtype=DataType.VARCHAR, is_primary=True, auto_id=False, max_length=128),
+            FieldSchema(
+                name="id",
+                dtype=DataType.VARCHAR,
+                is_primary=True,
+                auto_id=False,
+                max_length=128,
+            ),
             FieldSchema(name="doc_id", dtype=DataType.VARCHAR, max_length=80),
             FieldSchema(name="domain", dtype=DataType.VARCHAR, max_length=64),
             FieldSchema(name="chunk_id", dtype=DataType.INT64),
             FieldSchema(name="page_number", dtype=DataType.INT64),
             FieldSchema(name="text", dtype=DataType.VARCHAR, max_length=16384),
-            FieldSchema(name="embedding", dtype=DataType.FLOAT_VECTOR, dim=int(self.cfg.embed_dim)),
+            FieldSchema(
+                name="embedding",
+                dtype=DataType.FLOAT_VECTOR,
+                dim=int(self.cfg.embed_dim),
+            ),
         ]
-        schema = CollectionSchema(fields, description="KB chunks (doc_id/domain/page_number/text + embedding)")
-        col = Collection(name=self.cfg.collection_name, schema=schema, consistency_level="Strong")
+        schema = CollectionSchema(
+            fields, description="KB chunks (doc_id/domain/page_number/text + embedding)"
+        )
+        col = Collection(
+            name=self.cfg.collection_name, schema=schema, consistency_level="Strong"
+        )
 
         # For normalized embeddings + IP => cosine-like ranking
         try:
-            col.create_index("embedding", {"index_type": "AUTOINDEX", "metric_type": "IP"})
+            col.create_index(
+                "embedding", {"index_type": "AUTOINDEX", "metric_type": "IP"}
+            )
         except Exception:
             col.create_index(
                 "embedding",
-                {"index_type": "HNSW", "metric_type": "IP", "params": {"M": 16, "efConstruction": 200}},
+                {
+                    "index_type": "HNSW",
+                    "metric_type": "IP",
+                    "params": {"M": 16, "efConstruction": 200},
+                },
             )
 
     def drop_collection(self) -> None:
@@ -490,7 +541,9 @@ class KbMilvusStore:
             pass
         return len(chunks)
 
-    def search(self, query_vec: List[float], top_k: int = 5, domain: Optional[str] = None) -> List[dict]:
+    def search(
+        self, query_vec: List[float], top_k: int = 5, domain: Optional[str] = None
+    ) -> List[dict]:
         expr = None
         if domain:
             expr = f'domain == "{_safe_expr_str(domain.lower())}"'
@@ -534,20 +587,18 @@ def parse_pdf_chunks_no_llm(
     Partition PDF and produce (domain, title, chunks) WITHOUT calling any LLM.
     Must match kb_min.py chunking behavior closely.
     """
-    extract_images = os.getenv("KB_EXTRACT_IMAGES", "0") == "1"
-
     raw_pdf_elements = partition_pdf(
         filename=str(pdf),
-        extract_images_in_pdf=extract_images,
-        infer_table_structure=False,
+        extract_images_in_pdf=os.getenv("KB_EXTRACT_IMAGES", "0") == "1",
+        infer_table_structure=os.getenv("KB_INFER_TABLE_STRUCTURE", "1") == "1",
         skip_infer_table_types=False,
-        strategy="fast",
+        strategy=(os.getenv("KB_PDF_STRATEGY", "fast") or "fast").strip(),
         languages=[language],
         chunking_strategy="by_title",
-        max_characters=4000,
-        new_after_n_chars=3800,
-        combine_text_under_n_chars=2000,
-        # image_output_dir_path=str(pdf.parent / "figs"),
+        # IMPORTANT: unstructured expects ints here (env is str)
+        max_characters=int(os.getenv("KB_CHUNK_MAX_CHARACTERS", "2800")),
+        new_after_n_chars=int(os.getenv("KB_CHUNK_NEW_AFTER_N_CHARS", "2400")),
+        combine_text_under_n_chars=int(os.getenv("KB_CHUNK_COMBINE_UNDER_N_CHARS", "900")),
     )
 
     domain = _infer_domain_from_kb_root(kb_root, pdf, exclude_dirs)
@@ -621,11 +672,65 @@ def ingest_one_pdf(
         if int(cached.get("embed_dim") or 0) not in (0, int(cfg.embed_dim)):
             embed_mismatch = True
 
+    # Only these chunk/env parameters changing should trigger reindex
+    chunk_mismatch = False
+    if cached:
+        now_pdf_strategy = (os.getenv("KB_PDF_STRATEGY", "fast") or "fast").strip()
+        now_infer_table = os.getenv("KB_INFER_TABLE_STRUCTURE", "1") == "1"
+        now_extract_images = os.getenv("KB_EXTRACT_IMAGES", "0") == "1"
+        now_max = int(os.getenv("KB_CHUNK_MAX_CHARACTERS", "2800"))
+        now_new = int(os.getenv("KB_CHUNK_NEW_AFTER_N_CHARS", "2400"))
+        now_combine = int(os.getenv("KB_CHUNK_COMBINE_UNDER_N_CHARS", "900"))
+
+        cached_pdf_strategy = (str(cached.get("pdf_strategy") or "")).strip()
+        # if old cache has no these fields, treat as mismatch so one-time reindex upgrades cache format
+        if cached_pdf_strategy == "":
+            chunk_mismatch = True
+        else:
+            cached_infer_table = bool(cached.get("infer_table_structure"))
+            cached_extract_images = bool(cached.get("extract_images"))
+            try:
+                cached_max = int(cached.get("chunk_max_characters"))
+            except Exception:
+                cached_max = None
+            try:
+                cached_new = int(cached.get("chunk_new_after_n_chars"))
+            except Exception:
+                cached_new = None
+            try:
+                cached_combine = int(cached.get("chunk_combine_under_n_chars"))
+            except Exception:
+                cached_combine = None
+
+            if cached_pdf_strategy != now_pdf_strategy:
+                chunk_mismatch = True
+            elif cached_infer_table != now_infer_table:
+                chunk_mismatch = True
+            elif cached_extract_images != now_extract_images:
+                chunk_mismatch = True
+            elif cached_max != now_max:
+                chunk_mismatch = True
+            elif cached_new != now_new:
+                chunk_mismatch = True
+            elif cached_combine != now_combine:
+                chunk_mismatch = True
+
     # Fast skip: already indexed + cache hit + no mismatch
-    if (not force_rebuild) and cached and (not embed_mismatch) and store.has_doc(doc_id):
+    if (
+        (not force_rebuild)
+        and cached
+        and (not embed_mismatch)
+        and (not chunk_mismatch)
+        and store.has_doc(doc_id)
+    ):
         if verbose:
             print(f"[KB] skip (already indexed): doc_id={doc_id} pdf={pdf.name}")
-        return {"ok": True, "skipped": True, "doc_id": doc_id, "reason": "already_indexed"}
+        return {
+            "ok": True,
+            "skipped": True,
+            "doc_id": doc_id,
+            "reason": "already_indexed",
+        }
 
     language = language or os.getenv("KB_LANGUAGE") or "eng"
 
@@ -637,6 +742,8 @@ def ingest_one_pdf(
             msg = "cache hit (no LLM)"
             if embed_mismatch:
                 msg += " + embedding config changed -> reindex"
+            if chunk_mismatch:
+                msg += " + chunk env changed -> reindex"
             print(f"[KB] {msg}: doc_id={doc_id}")
 
         domain, title, chunks = parse_pdf_chunks_no_llm(
@@ -675,8 +782,15 @@ def ingest_one_pdf(
     # CACHE MISS -> call kb_min (LLM summary)
     # -------------------------
     else:
-        provider = provider or os.getenv("KB_PROVIDER") or os.getenv("PROVIDER") or "scads"
-        model = model or os.getenv("KB_MODEL") or os.getenv("CLASSIFY_HABIT_MODEL") or "meta-llama/Llama-3.3-70B-Instruct"
+        provider = (
+            provider or os.getenv("KB_PROVIDER") or os.getenv("PROVIDER") or "scads"
+        )
+        model = (
+            model
+            or os.getenv("KB_MODEL")
+            or os.getenv("CLASSIFY_HABIT_MODEL")
+            or "meta-llama/Llama-3.3-70B-Instruct"
+        )
 
         if verbose:
             print(f"[KB] ingest (cache miss -> LLM ok): {pdf}")
@@ -690,11 +804,29 @@ def ingest_one_pdf(
         )
 
     if not chunks:
+        # Still write cache (including env snapshot) for stability
         _write_json(
             cache_file,
-            _docmeta_to_cache_dict(doc_meta, pdf, cfg.embed_provider, cfg.embed_model, cfg.embed_dim, chunk_count=0),
+            _docmeta_to_cache_dict(
+                doc_meta,
+                pdf,
+                cfg.embed_provider,
+                cfg.embed_model,
+                cfg.embed_dim,
+                chunk_count=0,
+            ),
         )
-        return {"ok": False, "doc_id": doc_id, "reason": "no_chunks"}
+        return {
+            "ok": False,
+            "doc_id": doc_id,
+            "reason": "no_chunks",
+            "pdf_strategy": (os.getenv("KB_PDF_STRATEGY", "fast") or "fast").strip(),
+            "infer_table_structure": os.getenv("KB_INFER_TABLE_STRUCTURE", "1") == "1",
+            "chunk_max_characters": int(os.getenv("KB_CHUNK_MAX_CHARACTERS", "2800")),
+            "chunk_new_after_n_chars": int(os.getenv("KB_CHUNK_NEW_AFTER_N_CHARS", "2400")),
+            "chunk_combine_under_n_chars": int(os.getenv("KB_CHUNK_COMBINE_UNDER_N_CHARS", "900")),
+            "extract_images": os.getenv("KB_EXTRACT_IMAGES", "0") == "1",
+        }
 
     # embed chunks -> vectors
     texts = [c.text for c in chunks]
@@ -713,18 +845,36 @@ def ingest_one_pdf(
             )
         )
 
-    n = store.upsert_chunks(doc_id=doc_meta.doc_id, domain=doc_meta.domain, chunks=chunks, vectors=vectors)
+    n = store.upsert_chunks(
+        doc_id=doc_meta.doc_id, domain=doc_meta.domain, chunks=chunks, vectors=vectors
+    )
 
-    # update cache (also refresh domain/title if moved)
+    # update cache (also refresh domain/title if moved) + persist env snapshot
     _write_json(
         cache_file,
-        _docmeta_to_cache_dict(doc_meta, pdf, cfg.embed_provider, cfg.embed_model, cfg.embed_dim, chunk_count=n),
+        _docmeta_to_cache_dict(
+            doc_meta,
+            pdf,
+            cfg.embed_provider,
+            cfg.embed_model,
+            cfg.embed_dim,
+            chunk_count=n,
+        ),
     )
 
     if verbose:
-        print(f"[KB] indexed: doc_id={doc_id} chunks={n} domain={doc_meta.domain} title={doc_meta.title}")
+        print(
+            f"[KB] indexed: doc_id={doc_id} chunks={n} domain={doc_meta.domain} title={doc_meta.title}"
+        )
 
-    return {"ok": True, "skipped": False, "doc_id": doc_id, "chunks": n, "domain": doc_meta.domain, "title": doc_meta.title}
+    return {
+        "ok": True,
+        "skipped": False,
+        "doc_id": doc_id,
+        "chunks": n,
+        "domain": doc_meta.domain,
+        "title": doc_meta.title,
+    }
 
 
 def delete_doc(
@@ -779,7 +929,9 @@ def sync_kb(
         try:
             doc_id = _sha256_file(pdf)
             alive_doc_ids.add(doc_id)
-            out = ingest_one_pdf(store, str(pdf), force_rebuild=force_rebuild, verbose=verbose)
+            out = ingest_one_pdf(
+                store, str(pdf), force_rebuild=force_rebuild, verbose=verbose
+            )
             if out.get("skipped"):
                 skipped += 1
             elif out.get("ok"):
@@ -854,7 +1006,11 @@ def search(
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--sync", action="store_true", help="Sync kb -> Milvus")
-    p.add_argument("--force", action="store_true", help="Force rebuild (drop collection and re-ingest)")
+    p.add_argument(
+        "--force",
+        action="store_true",
+        help="Force rebuild (drop collection and re-ingest)",
+    )
     p.add_argument("--kb", default=None, help="KB root dir")
     p.add_argument("--milvus", default=None, help="Milvus URI")
     p.add_argument("--collection", default=None, help="Milvus collection name")
@@ -866,7 +1022,9 @@ def main() -> None:
     p.add_argument("--quiet", action="store_true", help="Less logs")
     args = p.parse_args()
 
-    cfg = load_config(kb_root=args.kb, milvus_uri=args.milvus, collection_name=args.collection)
+    cfg = load_config(
+        kb_root=args.kb, milvus_uri=args.milvus, collection_name=args.collection
+    )
     store = KbMilvusStore(cfg)
     verbose = not args.quiet
 
@@ -886,7 +1044,9 @@ def main() -> None:
         return
 
     if args.q:
-        out = search(store, args.q, top_k=args.k, domain=args.domain, include_doc_meta=True)
+        out = search(
+            store, args.q, top_k=args.k, domain=args.domain, include_doc_meta=True
+        )
         print(_json_dump(out))
         return
 

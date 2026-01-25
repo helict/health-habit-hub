@@ -244,15 +244,15 @@ def build_kb_min_from_pdf(
     raw_pdf_elements = partition_pdf(
         filename=str(pdf),
         extract_images_in_pdf=extract_images,
-        infer_table_structure=True,
+        infer_table_structure=os.getenv("KB_INFER_TABLE_STRUCTURE", "1") == "1",
         skip_infer_table_types=False,
-        strategy="hi_res",
+        strategy=os.getenv("KB_PDF_STRATEGY", "fast"),
         languages=[language],
         chunking_strategy="by_title",
-        max_characters=4000,
-        new_after_n_chars=3800,
-        combine_text_under_n_chars=2000,
-        image_output_dir_path=str(pdf.parent / "figs"),
+        max_characters=os.getenv("KB_CHUNK_MAX_CHARACTERS", "2800"),
+        new_after_n_chars=os.getenv("KB_CHUNK_NEW_AFTER_N_CHARS", "2400"),
+        combine_text_under_n_chars=os.getenv("KB_CHUNK_COMBINE_UNDER_N_CHARS", "900"),
+        # image_output_dir_path=str(pdf.parent / "figs"),
     )
 
     fallback_title = _title_from_filename(pdf)

@@ -4,11 +4,10 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-from dataclasses import asdict
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, HTTPException
 from fastapi.concurrency import run_in_threadpool
@@ -44,27 +43,34 @@ class KbHit(BaseModel):
     doc_summary: Optional[str] = None
 
 
-class KbQueryOut(BaseModel):
-    ok: bool
-    request_uuid: str
-    query: str
-
-    # retrieval controls (from env)
+class RetrievalInfo(BaseModel):
     top_n: int
     score_threshold: float
 
-    # store info
+
+class StoreInfo(BaseModel):
     collection: str
     embed_provider: str
     embed_model: str
     embed_dim: int
 
-    # sync info
+
+class KbStateInfo(BaseModel):
     kb_root: str
     kb_changed: bool
-    kb_signature: str
     last_sync_at: str
 
+
+class KbQueryOut(BaseModel):
+    ok: bool
+    request_uuid: str
+    query: str
+
+    retrieval: RetrievalInfo
+    # store: StoreInfo
+    # kb_state: KbStateInfo
+
+    # hits 保持不变（仍在顶层）
     hits: List[KbHit] = Field(default_factory=list)
 
 
@@ -96,16 +102,66 @@ def _kb_state_path(meta_dir: Path) -> Path:
     return meta_dir / "_kb_state.json"
 
 
+# -----------------------
+# Signature: files + watched env (so env change triggers sync -> reindex)
+# Only these env changes should trigger reindex (your requirement)
+# -----------------------
+_WATCHED_ENV_KEYS = [
+    "KB_PDF_STRATEGY",
+    "KB_INFER_TABLE_STRUCTURE",
+    "KB_CHUNK_MAX_CHARACTERS",
+    "KB_CHUNK_NEW_AFTER_N_CHARS",
+    "KB_CHUNK_COMBINE_UNDER_N_CHARS",
+    "KB_EXTRACT_IMAGES",
+]
+
+
+def _env_bool_1(key: str, default: str) -> bool:
+    # Keep consistent with your kb_milvus_service.py logic: == "1"
+    return (os.getenv(key, default) or default) == "1"
+
+
+def _env_int(key: str, default: str) -> int:
+    try:
+        return int(os.getenv(key, default) or default)
+    except Exception:
+        return int(default)
+
+
+def _env_snapshot_for_signature() -> dict:
+    """
+    Canonicalized env snapshot included in kb_signature.
+    Only includes watched keys.
+    """
+    return {
+        "KB_PDF_STRATEGY": (os.getenv("KB_PDF_STRATEGY", "fast") or "fast").strip(),
+        "KB_INFER_TABLE_STRUCTURE": _env_bool_1("KB_INFER_TABLE_STRUCTURE", "1"),
+        "KB_CHUNK_MAX_CHARACTERS": _env_int("KB_CHUNK_MAX_CHARACTERS", "2800"),
+        "KB_CHUNK_NEW_AFTER_N_CHARS": _env_int("KB_CHUNK_NEW_AFTER_N_CHARS", "2400"),
+        "KB_CHUNK_COMBINE_UNDER_N_CHARS": _env_int("KB_CHUNK_COMBINE_UNDER_N_CHARS", "900"),
+        "KB_EXTRACT_IMAGES": _env_bool_1("KB_EXTRACT_IMAGES", "0"),
+    }
+
+
 def _compute_kb_signature(kb_root: Path, exclude_dirs: set[str]) -> str:
     """
-    Signature calculation using only stat information (mtime/size/path):
-    - Fast, does not read file content
-    - Can detect: additions/deletions/modifications (mtime/size changes)
-    """
-    items: List[str] = []
-    if not kb_root.exists():
-        return "missing"
+    Signature calculation:
+    - File stat information (mtime/size/path) for PDFs
+    - PLUS watched env snapshot (chunking-related keys only)
 
+    This makes env changes trigger:
+      kb_signature change -> sync_kb() -> per-doc ingest_one_pdf() checks cache/env mismatch -> reindex.
+    """
+    # 1) env part (stable order)
+    env = _env_snapshot_for_signature()
+    env_lines = [f"{k}={env[k]}" for k in _WATCHED_ENV_KEYS]
+
+    if not kb_root.exists():
+        payload = "missing\n" + "\n".join(env_lines)
+        return hashlib.sha1(payload.encode("utf-8")).hexdigest()
+
+    # 2) files part
+    file_items: List[str] = []
     for p in kb_root.rglob("*.pdf"):
         parts_lower = {x.lower() for x in p.parts}
         if any(ex in parts_lower for ex in exclude_dirs):
@@ -116,19 +172,21 @@ def _compute_kb_signature(kb_root: Path, exclude_dirs: set[str]) -> str:
             continue
 
         rel = str(p.relative_to(kb_root)).replace("\\", "/").lower()
-        items.append(f"{rel}|{int(st.st_mtime)}|{int(st.st_size)}")
+        file_items.append(f"{rel}|{int(st.st_mtime)}|{int(st.st_size)}")
 
-    items.sort()
-    payload = "\n".join(items).encode("utf-8")
+    file_items.sort()
+
+    payload_lines = ["ENV"] + env_lines + ["FILES"] + file_items
+    payload = "\n".join(payload_lines).encode("utf-8")
     return hashlib.sha1(payload).hexdigest()
 
 
 def _load_thresholds() -> tuple[int, float, int]:
     """
-    Since only string + request_uuid is input, top_n / threshold are calculated using the following parameters:
+    top_n / threshold are calculated using:
     - KB_TOP_N: Default 5
     - KB_SCORE_THRESHOLD: Default 0.25 (normalized embedding + IP)
-    - KB_CANDIDATES: Default 20 (first select candidates, then filter and truncate top_n according to the threshold)
+    - KB_CANDIDATES: Default 20 (select candidates, then filter and truncate to top_n)
     """
     top_n = int(os.getenv("KB_TOP_N") or "5")
     thr = float(os.getenv("KB_SCORE_THRESHOLD") or "0.25")
@@ -143,11 +201,11 @@ def _load_thresholds() -> tuple[int, float, int]:
 # -----------------------
 @lru_cache(maxsize=1)
 def get_store() -> KbMilvusStore:
+    # Load .env once on boot (typical for FastAPI).
     try:
         from dotenv import load_dotenv  # type: ignore
 
-        # .../src/openapi_server
-        openapi_server_dir = Path(__file__).resolve().parents[1]
+        openapi_server_dir = Path(__file__).resolve().parents[1]  # .../src/openapi_server
         env_path = openapi_server_dir / ".env"
         if env_path.exists():
             load_dotenv(env_path)
@@ -158,14 +216,15 @@ def get_store() -> KbMilvusStore:
     return KbMilvusStore(cfg)
 
 
-def _ensure_kb_synced(
-    store: KbMilvusStore, verbose: bool = True
-) -> tuple[bool, str, str]:
+def _ensure_kb_synced(store: KbMilvusStore, verbose: bool = True) -> tuple[bool, str]:
     """
-    Key: Make "KB changes" automatically reflected in:
-    - kb/_meta cache
-    - Milvus collection
-    Strategy: Calculate the signature for each query; run sync_kb() if it changes.
+    Auto-sync trigger:
+      - kb_signature changed (file stats OR watched env snapshot)
+
+    sync_kb() handles:
+      - ingest new PDFs
+      - delete stale docs
+      - update per-doc cache
     """
     cfg = store.cfg
     meta_dir = cfg.meta_dir
@@ -180,12 +239,10 @@ def _ensure_kb_synced(
     last_sync_at = (state or {}).get("last_sync_at") or ""
 
     if not changed:
-        return False, sig_now, last_sync_at
+        return False, last_sync_at
 
-    # KB changed -> Automatic synchronization (sync_kb internally performs: adding to the database/deleting stale/updating the cache)
     out = sync_kb(store, force_rebuild=False, verbose=verbose)
 
-    # After syncing, write back the state (even if there are errors in the output, record the time and sig).
     last_sync_at = datetime.now().astimezone().isoformat()
     _write_json(
         state_file,
@@ -194,9 +251,11 @@ def _ensure_kb_synced(
             "last_sync_at": last_sync_at,
             "sync_ok": bool(out.get("ok")),
             "sync_summary": out,
+            "watched_env": _env_snapshot_for_signature(),
+            "watched_env_keys": list(_WATCHED_ENV_KEYS),
         },
     )
-    return True, sig_now, last_sync_at
+    return True, last_sync_at
 
 
 # -----------------------
@@ -205,20 +264,17 @@ def _ensure_kb_synced(
 @router.post("/query", response_model=KbQueryOut)
 async def kb_query_api(body: KbQueryIn):
     """
-    ONLY ONE API:
     input: string + request_uuid
     behaviour:
-      1) auto-detect kb changes -> sync (cache+milvus)
+      1) auto-detect kb changes (files OR watched env) -> sync (cache+milvus)
       2) search with threshold + top_n
-      3) return minimal structured output
+      3) return structured output (kb_signature not returned)
     """
     store = get_store()
 
     # 1) auto sync if kb changed
     try:
-        kb_changed, kb_sig, last_sync_at = await run_in_threadpool(
-            _ensure_kb_synced, store, True
-        )
+        kb_changed, last_sync_at = await run_in_threadpool(_ensure_kb_synced, store, True)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"KB sync failed: {repr(e)}")
 
@@ -232,13 +288,12 @@ async def kb_query_api(body: KbQueryIn):
             store,
             body.text,
             candidates,  # top_k candidates
-            None,  # domain=None
-            True,  # include_doc_meta=True
+            None,        # domain=None
+            True,        # include_doc_meta=True
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Search failed: {repr(e)}")
 
-    # filter + top_n
     hits: List[KbHit] = []
     for h in hits_raw:
         try:
@@ -256,15 +311,17 @@ async def kb_query_api(body: KbQueryIn):
         ok=True,
         request_uuid=body.request_uuid,
         query=body.text,
-        top_n=top_n,
-        score_threshold=thr,
-        collection=cfg.collection_name,
-        embed_provider=cfg.embed_provider,
-        embed_model=cfg.embed_model,
-        embed_dim=int(cfg.embed_dim),
-        kb_root=str(cfg.kb_root),
-        kb_changed=kb_changed,
-        kb_signature=kb_sig,
-        last_sync_at=last_sync_at or "",
+        retrieval=RetrievalInfo(top_n=top_n, score_threshold=thr),
+        # store=StoreInfo(
+        #     collection=cfg.collection_name,
+        #     embed_provider=cfg.embed_provider,
+        #     embed_model=cfg.embed_model,
+        #     embed_dim=int(cfg.embed_dim),
+        # ),
+        # kb_state=KbStateInfo(
+        #     kb_root=str(cfg.kb_root),
+        #     kb_changed=kb_changed,
+        #     last_sync_at=last_sync_at or "",
+        # ),
         hits=hits,
     )
