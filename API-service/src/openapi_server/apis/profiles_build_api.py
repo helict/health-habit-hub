@@ -285,7 +285,7 @@ async def profiles_build(body: ProfilesBuildIn):
         "model": model,
         "temperature": temperature,
         "max_tokens": max_tokens,
-        "raw_len": len(raw or ""),
+        # "raw_len": len(raw or ""),
     }
 
     return ProfilesBuildOut(

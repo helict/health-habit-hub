@@ -83,6 +83,7 @@ class IngestOut(BaseModel):
     # Flattened top-level fields (no _meta)
     created_at: Optional[str] = None
     mapping_params: Optional[Dict[str, Any]] = None
+    llm_meta: Optional[Dict[str, Any]] = None  # 
 
 # ----------------------------
 # Helpers (belonging to workflow1 pipeline)
@@ -164,6 +165,7 @@ async def store_habit_data(habit_data: dict, habit_key: str) -> None:
             "habit_class": habit_data.get("habit_class", 0),
             "confidence": habit_data.get("confidence", None),
             "habit_key": habit_key,
+            "llm_meta": habit_data.get("llm_meta"),  # 
         },
     }
     await HABITS_COLL.update_one({"uuid": habit_data.get("uuid")}, update_doc, upsert=True)
@@ -178,6 +180,7 @@ async def store_context_raw(context_data: dict) -> None:
             "habit": context_data.get("habit"),
             "language": context_data.get("language"),
             "result": context_data.get("result", []),
+            "llm_meta": context_data.get("llm_meta"),  # 
         },
     }
     await CONTEXTS_COLL.update_one({"uuid": context_data.get("uuid")}, update_doc, upsert=True)
@@ -186,6 +189,7 @@ async def store_context_mapping(mapped_data: dict) -> None:
     """
     context_mappings: Stores enriched data (including bcio_mappings / mapping error)
     + mapping_params (threshold used in this call / top_n)
+    NOTE: DO NOT store llm_meta here (your requirement)
     """
     update_doc = {
         "$setOnInsert": {"uuid": mapped_data.get("uuid")},
@@ -223,6 +227,8 @@ async def _merge_habit(uuid_str: str) -> dict:
         "contexts_mapped": (mapped_doc or {}).get("result", []),
         "bcio_mapping_error": (mapped_doc or {}).get("bcio_mapping_error"),
         "mapping_params": (mapped_doc or {}).get("mapping_params"),
+        "llm_meta_habit": habit_doc.get("llm_meta"),         # 
+        "llm_meta_context": (raw_doc or {}).get("llm_meta"), # 
     }
 
 def _public_habit_item(merged: dict) -> dict:
@@ -247,6 +253,10 @@ def _ingest_response_from_merged(merged: dict) -> IngestOut:
 
     created_at = merged.get("created_at")
     mapping_params = merged.get("mapping_params")
+    llm_meta = {
+        "habit": merged.get("llm_meta_habit"),
+        "context": merged.get("llm_meta_context"),
+    }  # 
 
     if is_habit:
         data = {
@@ -264,6 +274,7 @@ def _ingest_response_from_merged(merged: dict) -> IngestOut:
             data=data,
             created_at=created_at,
             mapping_params=mapping_params,
+            llm_meta=llm_meta,  # 
         )
 
     data = {
@@ -278,6 +289,7 @@ def _ingest_response_from_merged(merged: dict) -> IngestOut:
         message="This sentence already exists and was classified as not a habit. Returning the stored result (deduplicated).",
         data=data,
         created_at=created_at,
+        llm_meta=llm_meta,  #  (context may be None)
     )
 
 # ----------------------------
@@ -347,6 +359,10 @@ async def ingest(body: IngestIn):
             data=resp_data,
             created_at=created_at,
             mapping_params={"threshold": threshold, "top_n": top_n},
+            llm_meta={  # 
+                "habit": habit_out.get("llm_meta"),
+                "context": context_out.get("llm_meta"),
+            },
         )
 
     # Not a habit
@@ -361,6 +377,9 @@ async def ingest(body: IngestIn):
         message="The input provided is not a habit. Please retry.",
         data=resp_data,
         created_at=created_at,
+        llm_meta={  # 
+            "habit": habit_out.get("llm_meta"),
+        },
     )
 
 @router.get(

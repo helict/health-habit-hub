@@ -220,11 +220,11 @@ async def habit_db_select(body: HabitDBSelectIn):
         "model": model,
         "temperature": temperature,
         "max_tokens": max_tokens,
-        "candidate_limit": cand_limit,
-        "candidates_used": len(candidates),
+        # "candidate_limit": cand_limit,
+        # "candidates_used": len(candidates),
         "top_k": top_k,
-        "dropped_hallucinated_keys": dropped,
-        "raw_len": len(raw or ""),
+        # "dropped_hallucinated_keys": dropped,
+        # "raw_len": len(raw or ""),
     }
 
     return HabitDBSelectOut(

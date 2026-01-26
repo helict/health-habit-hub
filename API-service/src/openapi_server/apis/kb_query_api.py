@@ -60,11 +60,14 @@ class KbStateInfo(BaseModel):
     kb_changed: bool
     last_sync_at: str
 
+class LlmMeta(BaseModel):
+    provider: str
+    model: str
 
 class KbQueryOut(BaseModel):
-    ok: bool
     request_uuid: str
     query: str
+    llm_meta: LlmMeta
 
     retrieval: RetrievalInfo
     # store: StoreInfo
@@ -308,9 +311,12 @@ async def kb_query_api(body: KbQueryIn):
 
     cfg = store.cfg
     return KbQueryOut(
-        ok=True,
         request_uuid=body.request_uuid,
         query=body.text,
+        llm_meta=LlmMeta(
+            provider=(os.getenv("KB_PROVIDER", "") or "").strip(),
+            model=(os.getenv("KB_MODEL", "") or "").strip(),
+        ),
         retrieval=RetrievalInfo(top_n=top_n, score_threshold=thr),
         # store=StoreInfo(
         #     collection=cfg.collection_name,

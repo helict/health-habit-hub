@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Optional
-import os,re,unicodedata
+import os, re, unicodedata
 from dotenv import load_dotenv
 from pydantic import BaseModel, ValidationError, conint, confloat
 
@@ -77,6 +77,7 @@ def _validate_habit_output(output_dict: dict) -> Optional[LLMHabitOutput]:
     except ValidationError:
         return None
 
+
 def _normalize(txt: str) -> str:
     s = unicodedata.normalize("NFC", txt).strip()
     return re.sub(r"\s+", " ", s)
@@ -87,7 +88,7 @@ class ClassifyHabitApi(BaseClassifyHabitApi):
         max_retries = 6
         # 拿到Redis实例
         cache = RedisCache.default()
-        clean_habit=_normalize(habit_in.habit)
+        clean_habit = _normalize(habit_in.habit)
         key = habit_cache_key_from_habit(clean_habit)
         cached = await cache.get_json(key)
         if cached:
@@ -121,6 +122,12 @@ class ClassifyHabitApi(BaseClassifyHabitApi):
                     language=habit_in.language,
                     habit_class=validated.label,
                     confidence=validated.confidence,
+                    llm_meta={
+                        "provider": os.getenv("PROVIDER"),
+                        "model": os.getenv("CLASSIFY_HABIT_MODEL"),
+                        "temperature": os.getenv("TEMPERATURE"),
+                        "max_tokens": os.getenv("MAX_TOKENS"),
+                    },
                 )
 
                 data = out.model_dump(mode="json")

@@ -5,7 +5,7 @@ import json
 import re
 from pathlib import Path
 from typing import List, Optional
-import os,re,unicodedata
+import os, re, unicodedata
 
 from dotenv import load_dotenv
 from pydantic import ValidationError
@@ -17,7 +17,10 @@ from openapi_server.models.context import Context
 
 from openapi_server.services.llm_habit_service import classify_habit_via_llm_prompt
 
-from openapi_server.services.redis_service import RedisCache, context_cache_key_from_habit
+from openapi_server.services.redis_service import (
+    RedisCache,
+    context_cache_key_from_habit,
+)
 
 
 FEW_SHOT_PROMPT = """You are a behavioral scientist LLM specializing in habit context recognition.
@@ -72,10 +75,10 @@ Now please process the input sentence:
 """
 
 
-
 _THINK_RE = re.compile(r"<think>.*?</think>", re.I | re.S)
 _CODE_FENCE_RE = re.compile(r"```(?:json)?(.*?)```", re.I | re.S)
 _CTX_KEY_RE = re.compile(r'"contexts"\s*:\s*\[', re.I)
+
 
 def _find_balanced_square(text: str, start_idx: int) -> int:
     depth = 0
@@ -88,6 +91,7 @@ def _find_balanced_square(text: str, start_idx: int) -> int:
             if depth == 0:
                 return i
     return -1
+
 
 def _clean_llm_output(raw: str) -> str:
     if not raw:
@@ -104,14 +108,14 @@ def _clean_llm_output(raw: str) -> str:
         start = m2.end() - 1
         end = _find_balanced_square(s, start)
         if end != -1:
-            arr = s[start:end + 1]
+            arr = s[start : end + 1]
             return arr.strip()
 
     start = s.find("[")
     if start != -1:
         end = _find_balanced_square(s, start)
         if end != -1:
-            arr = s[start:end + 1]
+            arr = s[start : end + 1]
             arr = re.sub(r"```(?:json)?|```", "", arr).strip()
             return arr
 
@@ -159,6 +163,7 @@ def _normalize(txt: str) -> str:
     s = unicodedata.normalize("NFC", txt).strip()
     return re.sub(r"\s+", " ", s)
 
+
 class ClassifyContextApi(BaseClassifyContextApi):
     async def classify_context_classify_context_post(
         self, classify_context_in: ClassifyContextIn
@@ -166,7 +171,7 @@ class ClassifyContextApi(BaseClassifyContextApi):
         max_retries = 3
 
         cache = RedisCache.default()
-        clean_habit=_normalize(classify_context_in.habit)
+        clean_habit = _normalize(classify_context_in.habit)
         key = context_cache_key_from_habit(clean_habit)
         cached = await cache.get_json(key)
         if cached:
@@ -174,7 +179,9 @@ class ClassifyContextApi(BaseClassifyContextApi):
 
         for _ in range(max_retries):
             try:
-                prompt = FEW_SHOT_PROMPT.format(language=_lang_name(classify_context_in.language))
+                prompt = FEW_SHOT_PROMPT.format(
+                    language=_lang_name(classify_context_in.language)
+                )
                 raw_output = classify_habit_via_llm_prompt(
                     prompt,
                     clean_habit,
@@ -195,6 +202,12 @@ class ClassifyContextApi(BaseClassifyContextApi):
                     habit=clean_habit,
                     language=classify_context_in.language,
                     result=validated,
+                    llm_meta={
+                        "provider": os.getenv("PROVIDER"),
+                        "model": os.getenv("CLASSIFY_HABIT_CONTEXT_MODEL"),
+                        "temperature": os.getenv("TEMPERATURE"),
+                        "max_tokens": os.getenv("MAX_TOKENS"),
+                    },
                 )
                 await cache.set_json(key, out.model_dump(mode="json"))
                 return out
