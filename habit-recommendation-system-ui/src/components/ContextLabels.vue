@@ -64,8 +64,8 @@ function mappings(c: ContextItem): BcioMapping[] {
         >
           <div class="row" style="justify-content:space-between; align-items:center">
             <div class="muted" style="font-size:12px">
-              classification=<code>{{ c.classification }}</code>,
-              confidence=<code>{{ c.confidence }}</code>
+              <!--classification=<code>{{ c.classification }}</code>,-->
+              Confidence score=<code>{{ c.confidence }}</code>
             </div>
           </div>
 

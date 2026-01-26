@@ -56,7 +56,7 @@ onMounted(load);
       <div>
         <div style="font-weight:950; font-size:18px">Manage Habits</div>
         <div class="muted" style="font-size:13px; margin-top:6px">
-          Data from <code>GET /habits</code> (merged from Mongo collections).
+          Display data stored in the local habit database
         </div>
       </div>
 
@@ -65,9 +65,8 @@ onMounted(load);
       </button>
     </div>
 
-    <div class="hr"></div>
 
-    <div class="card" style="background:#fff">
+    <!-- <div class="card" style="background:#fff">
       <div style="font-weight:900">Current mapping params (env → /system/config)</div>
       <div v-if="cfg" class="row" style="margin-top:10px; align-items:center">
         <span class="badge">threshold: <code>{{ cfg.mapping_params.threshold }}</code></span>
@@ -75,7 +74,7 @@ onMounted(load);
         <span class="badge">API_BASE: <code>{{ cfg.api_base }}</code></span>
       </div>
       <div v-else class="muted" style="margin-top:10px">Loading...</div>
-    </div>
+    </div> -->
 
     <div class="hr"></div>
 
@@ -118,7 +117,7 @@ onMounted(load);
     <div v-else-if="items.length === 0" class="muted">No items.</div>
 
     <div v-else class="col" style="gap:12px">
-      <HabitCard v-for="it in items" :key="it.uuid" :item="it" />
+      <HabitCard v-for="it in items" :key="it.habit_key" :item="it" />
     </div>
   </div>
 </template>

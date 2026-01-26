@@ -18,7 +18,7 @@ export type ContextItem = {
 };
 
 export type IngestDataHabit = {
-  uuid: string;
+  habit_key: string;
   habit: string;
   language: string;
   result: ContextItem[];
@@ -26,29 +26,30 @@ export type IngestDataHabit = {
 };
 
 export type IngestDataNotHabit = {
-  uuid: string;
+  habit_key: string;
   habit: string;
   language: string;
-  habit_class: number;            // 0/1
+  habit_class: number; // 0/1
   confidence: number | null;
 };
 
 export type IngestOut = {
   ok: boolean;
   message: string;
-
-  created_at?: string | null;
-  mapping_params?: MappingParams | null;
-
   data: IngestDataHabit | IngestDataNotHabit;
+
+  mapping_params?: MappingParams | null;
+  llm_meta?: Record<string, any> | null;
+  created_at?: string | null;
 };
 
+
 export type HabitItem = {
+  habit_key: string;
   _id?: string | null;
+  created_at?: string | null;
+  uuid?: string | null;
 
-  created_at: string | null;
-
-  uuid: string;
   habit: string;
   language: string;
 
@@ -61,7 +62,6 @@ export type HabitItem = {
   bcio_mapping_error?: string | null;
   mapping_params?: MappingParams | null;
 };
-
 
 export type HabitsListResponse = {
   ok: boolean;
@@ -88,7 +88,6 @@ export type ApiOut<T> = {
   data: T | null;
 };
 
-// PUT 返回：只需要告诉你保存的是哪个 form + created_at/updated_at
 export type ProfileLatestUpsertData = {
   form: ProfileFormKey;
   created_at?: string;
@@ -104,7 +103,6 @@ export type ProfileAnswerItem = {
   label?: string | null;
 };
 
-// GET 返回：会带回 data（问卷答案）+ created_at/updated_at
 export type ProfileLatestItem = {
   form: ProfileFormKey;
   data: ProfileAnswerItem[];
@@ -113,7 +111,6 @@ export type ProfileLatestItem = {
 };
 
 
-// GET: 单个 form 或全部 forms（map）
 export type ProfileLatestGetOut = ApiOut<
   ProfileLatestItem | Partial<Record<ProfileFormKey, ProfileLatestItem>>
 >;

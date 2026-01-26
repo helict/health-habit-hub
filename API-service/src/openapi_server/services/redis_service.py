@@ -13,12 +13,10 @@ except Exception as e:
     _IMPORT_ERR = e
 
 
-# 一致化输入文本
 def _normalize_text(s: str) -> str:
     s = unicodedata.normalize("NFC", s).strip()
     return re.sub(r"\s+", " ", s)
 
-# 返回MD5 字符串
 def _hash_habit(habit: str, language: Optional[str] = None) -> str:
     include_lang = os.getenv("HASH_INCLUDE_LANGUAGE", "false").lower() in {"1", "true", "yes"}
     base = _normalize_text(habit)
@@ -26,19 +24,32 @@ def _hash_habit(habit: str, language: Optional[str] = None) -> str:
         base = f"{base}||{language.strip().lower()}"
     return hashlib.md5(base.encode("utf-8")).hexdigest()
 
+def _env_fingerprint(meta: Dict[str, Any]) -> str:
+    payload = json.dumps(meta, ensure_ascii=False, sort_keys=True)
+    return hashlib.sha1(payload.encode("utf-8")).hexdigest()
+
+def _habit_env_sig() -> str:
+    return _env_fingerprint({
+        "provider": os.getenv("PROVIDER") or "",
+        "model": os.getenv("CLASSIFY_HABIT_MODEL") or "",
+        "temperature": str(os.getenv("TEMPERATURE") or ""),
+        "max_tokens": str(os.getenv("MAX_TOKENS") or ""),
+    })
+
+def _context_env_sig() -> str:
+    return _env_fingerprint({
+        "provider": os.getenv("PROVIDER") or "",
+        "model": os.getenv("CLASSIFY_HABIT_CONTEXT_MODEL") or "",
+        "temperature": str(os.getenv("TEMPERATURE") or ""),
+        "max_tokens": str(os.getenv("MAX_TOKENS") or ""),
+    })
+
 
 def habit_cache_key_from_habit(habit: str, language: Optional[str] = None) -> str:
-    return f"habit:{_hash_habit(habit, language)}"
+    return f"habit:{_hash_habit(habit, language)}:{_habit_env_sig()}"
 
 def context_cache_key_from_habit(habit: str, language: Optional[str] = None) -> str:
-    return f"context:{_hash_habit(habit, language)}"
-
-
-# def habit_cache_key(uuid_or_habit: str) -> str:
-#     return f"habit:{_hash_habit(uuid_or_habit, None)}"
-
-# def context_cache_key(uuid_or_habit: str) -> str:
-#     return f"context:{_hash_habit(uuid_or_habit, None)}"
+    return f"context:{_hash_habit(habit, language)}:{_context_env_sig()}"
 
 
 class RedisCache:

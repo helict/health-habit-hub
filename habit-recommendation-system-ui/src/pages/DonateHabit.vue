@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { ingest } from "../api/hhh";
 import type { HabitItem, IngestOut } from "../api/types";
 import HabitCard from "../components/HabitCard.vue";
@@ -12,17 +12,27 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const resp = ref<IngestOut | null>(null);
 
+/**
+ * UI-safe response:
+ * remove fields you never want to show in the UI (e.g., created_at)
+ */
+const respUi = computed(() => {
+  if (!resp.value) return null;
+  const { created_at, ...rest } = resp.value as any;
+  return rest;
+});
+
 function toHabitItem(r: IngestOut): HabitItem {
   const d: any = r.data || {};
   const isHabit = r.ok === true;
 
   return {
-    created_at: r.created_at ?? null,
-
-    uuid: d.uuid,
+    habit_key: d.habit_key,
     habit: d.habit,
     language: d.language,
 
+    uuid: null,
+    created_at: null, // never show created_at in HabitCard
 
     habit_class: isHabit ? 1 : (d.habit_class ?? 0),
     confidence: isHabit ? null : (d.confidence ?? null),
@@ -84,7 +94,6 @@ async function submit() {
         </div>
 
         <div class="right col">
-          <!-- Language stays at the top (unchanged position) -->
           <div>
             <label class="muted label">Language</label>
             <select class="select" v-model="language">
@@ -94,7 +103,6 @@ async function submit() {
             </select>
           </div>
 
-          <!-- Spacer moved BEFORE buttons, so buttons go down -->
           <div class="spacer"></div>
 
           <button class="btn primary bigBtn btnFx" :disabled="loading" @click="submit">
@@ -129,13 +137,15 @@ async function submit() {
         <div style="margin-top: 12px">
           <details>
             <summary style="cursor: pointer; font-weight: 900">Raw JSON</summary>
-            <JsonBlock :value="resp" />
+            <!-- use respUi so created_at never appears -->
+            <JsonBlock :value="respUi" />
           </details>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .page {

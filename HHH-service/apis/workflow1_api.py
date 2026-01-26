@@ -1,4 +1,3 @@
-# apis/workflow1_api.py
 from __future__ import annotations
 
 import os
@@ -14,11 +13,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi import HTTPException, APIRouter, Query
 from pydantic import BaseModel
 
-# bson is available via pymongo (motor dependency)
-from bson import ObjectId
-
 WORKFLOW1_TAG = "Workflow1: Habitual structured collection workflow"
-
 router = APIRouter(tags=[WORKFLOW1_TAG])
 
 API_BASE = os.getenv("API_BASE_URL", "http://127.0.0.1:8080")
@@ -45,6 +40,7 @@ def _env_float(name: str, default: float) -> float:
     except ValueError:
         return float(default)
 
+
 def _env_int(name: str, default: int) -> int:
     v = os.getenv(name)
     if v is None or str(v).strip() == "":
@@ -54,51 +50,39 @@ def _env_int(name: str, default: int) -> int:
     except ValueError:
         return int(default)
 
-# ----------------------------
-# Mongo helpers
-# ----------------------------
-def _oid_str(oid: Any) -> Optional[str]:
-    return str(oid) if oid is not None else None
-
-def _created_at_from_oid(oid: Any) -> Optional[str]:
-    if oid is None:
-        return None
-    try:
-        return oid.generation_time.isoformat()  # UTC
-    except Exception:
-        return None
 
 # ----------------------------
-# Models (input/output parameters belonging to workflow1)
+# Models
 # ----------------------------
 class IngestIn(BaseModel):
     habit: str
     language: str = "en"
 
+
 class IngestOut(BaseModel):
     ok: bool
     message: str
     data: dict
-
-    # Flattened top-level fields (no _meta)
-    created_at: Optional[str] = None
     mapping_params: Optional[Dict[str, Any]] = None
-    llm_meta: Optional[Dict[str, Any]] = None  # 
+    llm_meta: Optional[Dict[str, Any]] = None
+
 
 # ----------------------------
-# Helpers (belonging to workflow1 pipeline)
+# Helpers
 # ----------------------------
 def _normalize_text(s: str) -> str:
     s = unicodedata.normalize("NFC", s).strip()
     return re.sub(r"\s+", " ", s)
 
-def _habit_key(habit: str, language: str) -> str:
+
+def _habit_key(habit: str) -> str:
     """
     Stable key based on normalized input text.
-    NOTE: includes language to avoid cross-language collision.
+    NOTE: language does NOT participate (per your requirement).
     """
-    base = f"{language.strip()}|{_normalize_text(habit)}"
+    base = _normalize_text(habit)
     return hashlib.sha256(base.encode("utf-8")).hexdigest()
+
 
 def call_api_classify_habit(habit: str, language: str, uuid_str: str) -> dict:
     url = f"{API_BASE}/classify_habit"
@@ -113,6 +97,7 @@ def call_api_classify_habit(habit: str, language: str, uuid_str: str) -> dict:
     except requests.RequestException as e:
         raise HTTPException(status_code=502, detail=f"classify_habit upstream error: {e}")
 
+
 def call_api_classify_context(habit: str, language: str, uuid_str: str) -> dict:
     url = f"{API_BASE}/classify_context"
     try:
@@ -126,6 +111,7 @@ def call_api_classify_context(habit: str, language: str, uuid_str: str) -> dict:
     except requests.RequestException as e:
         raise HTTPException(status_code=502, detail=f"classify_context upstream error: {e}")
 
+
 def call_api_bcio_map(
     context_payload: dict,
     threshold: float = 0.6,
@@ -133,11 +119,6 @@ def call_api_bcio_map(
     expr: str | None = 'etype in ["Class","ObjectProperty"]',
     debug: bool = False,
 ) -> dict:
-    """
-    Call upstream API-service POST /map
-    body: ClassifyContextOut (dict)
-    query: threshold, top_n, expr, debug
-    """
     url = f"{API_BASE}/map"
     try:
         r = SESSION.post(
@@ -156,236 +137,216 @@ def call_api_bcio_map(
     except requests.RequestException as e:
         raise HTTPException(status_code=502, detail=f"bcio_map upstream error: {e}")
 
-async def store_habit_data(habit_data: dict, habit_key: str) -> None:
+
+# ----------------------------
+# Mongo store (latest overwrite by habit_key)
+# ----------------------------
+async def store_habit_data(habit_data: dict, habit_key: str, habit_text: str, language: str, uuid: str) -> None:
+    """
+    habits: only business fields + llm_meta, keyed by habit_key
+    """
     update_doc = {
-        "$setOnInsert": {"uuid": habit_data.get("uuid")},
         "$set": {
-            "habit": habit_data.get("habit"),
-            "language": habit_data.get("language"),
+            "uuid": uuid,
+            "habit": habit_text,
+            "language": language,
             "habit_class": habit_data.get("habit_class", 0),
             "confidence": habit_data.get("confidence", None),
-            "habit_key": habit_key,
-            "llm_meta": habit_data.get("llm_meta"),  # 
+            "llm_meta": habit_data.get("llm_meta"),
+        },"$setOnInsert": {
+            "habit_key": habit_key
         },
     }
-    await HABITS_COLL.update_one({"uuid": habit_data.get("uuid")}, update_doc, upsert=True)
+    await HABITS_COLL.update_one({"habit_key": habit_key}, update_doc, upsert=True)
 
-async def store_context_raw(context_data: dict) -> None:
+
+async def store_context_raw(context_data: dict, habit_key: str, habit_text: str, language: str, uuid: str) -> None:
     """
-    contexts: Stores only the raw classify_context output (excluding mapping).
+    contexts: only raw classify_context output + llm_meta, keyed by habit_key
     """
     update_doc = {
-        "$setOnInsert": {"uuid": context_data.get("uuid")},
         "$set": {
-            "habit": context_data.get("habit"),
-            "language": context_data.get("language"),
+            "uuid": uuid,
+            "habit": habit_text,
+            "language": language,
             "result": context_data.get("result", []),
-            "llm_meta": context_data.get("llm_meta"),  # 
+            "llm_meta": context_data.get("llm_meta"),
+        },"$setOnInsert": {
+            "habit_key": habit_key
         },
     }
-    await CONTEXTS_COLL.update_one({"uuid": context_data.get("uuid")}, update_doc, upsert=True)
+    await CONTEXTS_COLL.update_one({"habit_key": habit_key}, update_doc, upsert=True)
 
-async def store_context_mapping(mapped_data: dict) -> None:
+
+async def store_context_mapping(mapped_data: dict, habit_key: str, habit_text: str, language: str, uuid: str) -> None:
     """
-    context_mappings: Stores enriched data (including bcio_mappings / mapping error)
-    + mapping_params (threshold used in this call / top_n)
+    context_mappings: only mapped result + mapping_params + mapping_error, keyed by habit_key
     NOTE: DO NOT store llm_meta here (your requirement)
     """
     update_doc = {
-        "$setOnInsert": {"uuid": mapped_data.get("uuid")},
         "$set": {
-            "habit": mapped_data.get("habit"),
-            "language": mapped_data.get("language"),
+            "uuid": uuid,
+            "habit": habit_text,
+            "language": language,
             "result": mapped_data.get("result", []),
             "bcio_mapping_error": mapped_data.get("bcio_mapping_error"),
             "mapping_params": mapped_data.get("mapping_params"),
+        },"$setOnInsert": {
+            "habit_key": habit_key
         },
     }
-    await CONTEXT_MAPPINGS_COLL.update_one({"uuid": mapped_data.get("uuid")}, update_doc, upsert=True)
+    await CONTEXT_MAPPINGS_COLL.update_one({"habit_key": habit_key}, update_doc, upsert=True)
 
-async def _merge_habit(uuid_str: str) -> dict:
-    """
-    Merge habits + contexts + context_mappings into one record for internal use.
-    (Includes internal _id; API responses will be flattened via _public_habit_item().)
-    """
-    habit_doc = await HABITS_COLL.find_one({"uuid": uuid_str})
-    if not habit_doc:
-        raise HTTPException(status_code=404, detail="habit not found")
 
-    raw_doc = await CONTEXTS_COLL.find_one({"uuid": uuid_str})
-    mapped_doc = await CONTEXT_MAPPINGS_COLL.find_one({"uuid": uuid_str})
+async def _get_latest_item(habit_key: str) -> dict:
+    habit_doc = await HABITS_COLL.find_one({"habit_key": habit_key}) or {}
+    raw_doc = await CONTEXTS_COLL.find_one({"habit_key": habit_key}) or {}
+    mapped_doc = await CONTEXT_MAPPINGS_COLL.find_one({"habit_key": habit_key}) or {}
 
     return {
-        "_id": _oid_str(habit_doc.get("_id")),
-        "created_at": _created_at_from_oid(habit_doc.get("_id")),
-        "uuid": habit_doc.get("uuid"),
+        "habit_key": habit_key,
         "habit": habit_doc.get("habit"),
         "language": habit_doc.get("language"),
         "habit_class": habit_doc.get("habit_class", 0),
         "confidence": habit_doc.get("confidence"),
-        "contexts_raw": (raw_doc or {}).get("result", []),
-        "contexts_mapped": (mapped_doc or {}).get("result", []),
-        "bcio_mapping_error": (mapped_doc or {}).get("bcio_mapping_error"),
-        "mapping_params": (mapped_doc or {}).get("mapping_params"),
-        "llm_meta_habit": habit_doc.get("llm_meta"),         # 
-        "llm_meta_context": (raw_doc or {}).get("llm_meta"), # 
+        "contexts_raw": raw_doc.get("result", []),
+        "contexts_mapped": mapped_doc.get("result", []),
+        "bcio_mapping_error": mapped_doc.get("bcio_mapping_error"),
+        "mapping_params": mapped_doc.get("mapping_params"),
+        "llm_meta_habit": habit_doc.get("llm_meta"),
+        "llm_meta_context": raw_doc.get("llm_meta"),
     }
 
-def _public_habit_item(merged: dict) -> dict:
-    """
-    Flattened public representation: NO mongo_id/_id, NO _meta.
-    """
+
+def _public_habit_item(latest: dict) -> dict:
     return {
-        "uuid": merged.get("uuid"),
-        "habit": merged.get("habit"),
-        "language": merged.get("language"),
-        "habit_class": merged.get("habit_class", 0),
-        "confidence": merged.get("confidence"),
-        "created_at": merged.get("created_at"),
-        "mapping_params": merged.get("mapping_params"),
-        "contexts_raw": merged.get("contexts_raw", []) or [],
-        "contexts_mapped": merged.get("contexts_mapped", []) or [],
-        "bcio_mapping_error": merged.get("bcio_mapping_error"),
+        "habit_key": latest.get("habit_key"),
+        "habit": latest.get("habit"),
+        "language": latest.get("language"),
+        "habit_class": latest.get("habit_class", 0),
+        "confidence": latest.get("confidence"),
+        "mapping_params": latest.get("mapping_params"),
+        "contexts_raw": latest.get("contexts_raw") or [],
+        "contexts_mapped": latest.get("contexts_mapped") or [],
+        "bcio_mapping_error": latest.get("bcio_mapping_error"),
     }
 
-def _ingest_response_from_merged(merged: dict) -> IngestOut:
-    is_habit = int(merged.get("habit_class", 0)) == 1
-
-    created_at = merged.get("created_at")
-    mapping_params = merged.get("mapping_params")
-    llm_meta = {
-        "habit": merged.get("llm_meta_habit"),
-        "context": merged.get("llm_meta_context"),
-    }  # 
-
-    if is_habit:
-        data = {
-            "uuid": merged.get("uuid"),
-            "habit": merged.get("habit"),
-            "language": merged.get("language"),
-            "result": merged.get("contexts_mapped") or merged.get("contexts_raw") or [],
-        }
-        if merged.get("bcio_mapping_error") is not None:
-            data["bcio_mapping_error"] = merged.get("bcio_mapping_error")
-
-        return IngestOut(
-            ok=True,
-            message="This sentence has already been processed. Returning the stored result (deduplicated).",
-            data=data,
-            created_at=created_at,
-            mapping_params=mapping_params,
-            llm_meta=llm_meta,  # 
-        )
-
-    data = {
-        "uuid": merged.get("uuid"),
-        "habit": merged.get("habit"),
-        "language": merged.get("language"),
-        "habit_class": merged.get("habit_class", 0),
-        "confidence": merged.get("confidence"),
-    }
-    return IngestOut(
-        ok=False,
-        message="This sentence already exists and was classified as not a habit. Returning the stored result (deduplicated).",
-        data=data,
-        created_at=created_at,
-        llm_meta=llm_meta,  #  (context may be None)
-    )
 
 # ----------------------------
-# Workflow 1 routes
+# Routes
 # ----------------------------
 @router.post(
     "/ingest",
     response_model=IngestOut,
     response_model_exclude_none=True,
-    summary="Workflow 1: classify habit -> classify context -> BCIO map -> store raw+mapped into HabitDB",
+    summary="Workflow 1: classify habit -> classify context -> BCIO map -> store raw+mapped into HabitDB (latest overwrite)",
 )
 async def ingest(body: IngestIn):
     clean_habit = _normalize_text(body.habit)
-    hk = _habit_key(clean_habit, body.language)
+    hk = _habit_key(clean_habit)
 
-    # Dedup
-    existing = await HABITS_COLL.find_one({"habit_key": hk})
-    if existing and existing.get("uuid"):
-        merged = await _merge_habit(existing["uuid"])
-        return _ingest_response_from_merged(merged)
+    # one request uuid for this ingest call
+    req_uuid = str(uuid.uuid4())
 
-    uuid_str = str(uuid.uuid4())
-
+    # 1) classify habit
     habit_out = await run_in_threadpool(
-        lambda: call_api_classify_habit(clean_habit, body.language, uuid_str)
+        lambda: call_api_classify_habit(clean_habit, body.language, req_uuid)
     )
     is_habit = int(habit_out.get("habit_class", 0)) == 1
 
-    await store_habit_data(habit_out, habit_key=hk)
+    # 2) store habit (always)
+    await store_habit_data(
+        habit_out,
+        habit_key=hk,
+        habit_text=clean_habit,
+        language=body.language,
+        uuid=req_uuid,
+    )
 
-    if is_habit:
-        context_out = await run_in_threadpool(
-            lambda: call_api_classify_context(clean_habit, body.language, uuid_str)
-        )
-        await store_context_raw(context_out)
-
-        threshold = _env_float("THRESHOLD_BCIO_MAP", 0.6)
-        top_n = _env_int("TOP_N_BCIO_MAP", 2)
-
-        try:
-            mapped_out = await run_in_threadpool(
-                lambda: call_api_bcio_map(context_out, threshold=threshold, top_n=top_n)
-            )
-        except HTTPException as e:
-            mapped_out = dict(context_out)
-            mapped_out["bcio_mapping_error"] = str(e.detail)
-
-        # store in DB (keep mapping_params inside stored mapped_out)
-        mapped_out["mapping_params"] = {"threshold": threshold, "top_n": top_n}
-        await store_context_mapping(mapped_out)
-
-        merged = await _merge_habit(uuid_str)
-        created_at = merged.get("created_at")
-
-        # Response: remove mapping_params from data (keep it at top level)
-        resp_data = dict(mapped_out)
-        resp_data.pop("mapping_params", None)
-        resp_data.pop("_meta", None)  # backward compatibility if someone re-added it
-
+    # 3) if NOT habit -> return
+    if not is_habit:
         return IngestOut(
-            ok=True,
+            ok=False,
             message=(
-                "Excellent! Your habit sentence has been processed using the seven predefined context labels "
-                '["TIME", "PHYSICAL SETTING", "PRIOR BEHAVIOR", "OTHER PEOPLE", "INTERNAL STATE", "BEHAVIOR", "REASONING"]. '
-                "Extracted phrases were mapped to BCIO and stored successfully."
+                "The input you provided is not a habitual behavior. Please enter a habit instead. "
+                "This data will be stored locally in the MongoDB habits collection, but it will not be used "
+                "for subsequent context classification or Behaviour Change Intervention Ontology Mapping."
             ),
-            data=resp_data,
-            created_at=created_at,
-            mapping_params={"threshold": threshold, "top_n": top_n},
-            llm_meta={  # 
-                "habit": habit_out.get("llm_meta"),
-                "context": context_out.get("llm_meta"),
+            data={
+                "habit_key": hk,
+                "habit": clean_habit,
+                "language": body.language,
+                "habit_class": habit_out.get("habit_class", 0),
+                "confidence": habit_out.get("confidence", None),
             },
+            llm_meta={"habit": habit_out.get("llm_meta")},
         )
 
-    # Not a habit
-    merged = await _merge_habit(uuid_str)
-    created_at = merged.get("created_at")
+    # 4) habit -> classify context
+    context_out = await run_in_threadpool(
+        lambda: call_api_classify_context(clean_habit, body.language, req_uuid)
+    )
 
-    resp_data = dict(habit_out)
-    resp_data.pop("_meta", None)
+    await store_context_raw(
+        context_out,
+        habit_key=hk,
+        habit_text=clean_habit,
+        language=body.language,
+        uuid=req_uuid,
+    )
+
+    # 5) mapping (drop llm_meta before sending to mapper, per your requirement)
+    threshold = _env_float("THRESHOLD_BCIO_MAP", 0.6)
+    top_n = _env_int("TOP_N_BCIO_MAP", 2)
+
+    context_payload = {k: v for k, v in context_out.items() if k != "llm_meta"}
+
+    try:
+        mapped_out = await run_in_threadpool(
+            lambda: call_api_bcio_map(context_payload, threshold=threshold, top_n=top_n)
+        )
+    except HTTPException as e:
+        mapped_out = {
+            "result": context_out.get("result", []),
+            "bcio_mapping_error": str(e.detail),
+        }
+
+    mapped_out["mapping_params"] = {"threshold": threshold, "top_n": top_n}
+
+    await store_context_mapping(
+        mapped_out,
+        habit_key=hk,
+        habit_text=clean_habit,
+        language=body.language,
+        uuid=req_uuid,
+    )
+
+    # 6) response
+    resp_data = {
+        "habit_key": hk,
+        "habit": clean_habit,
+        "language": body.language,
+        "result": mapped_out.get("result", []),
+    }
+    if mapped_out.get("bcio_mapping_error") is not None:
+        resp_data["bcio_mapping_error"] = mapped_out.get("bcio_mapping_error")
 
     return IngestOut(
-        ok=False,
-        message="The input provided is not a habit. Please retry.",
+        ok=True,
+        message="This input describes a habit, and it has been successfully processed: habit classification, context classification (TIME, PHYSICAL SETTING, PRIOR BEHAVIOR, OTHER PEOPLE, INTERNAL STATE, BEHAVIOR, and REASONING), and BCIO mapping have been completed and stored in the local database.",
         data=resp_data,
-        created_at=created_at,
-        llm_meta={  # 
+        mapping_params={"threshold": threshold, "top_n": top_n},
+        llm_meta={
             "habit": habit_out.get("llm_meta"),
+            "context": context_out.get("llm_meta"),
         },
     )
+
 
 @router.get(
     "/habits",
     summary="List habits (for management UI)",
-    description="Returns habits sorted by Mongo _id desc (newest first). Flattened items (no _id).",
+    description="Returns habits sorted by Mongo _id desc (newest first). Items joined by habit_key.",
 )
 async def list_habits(
     limit: int = Query(30, ge=1, le=200),
@@ -397,22 +358,26 @@ async def list_habits(
         q["habit_class"] = 1
 
     cursor = HABITS_COLL.find(q).sort([("_id", -1)]).skip(skip).limit(limit)
+
     items = []
     async for doc in cursor:
-        u = doc.get("uuid")
-        if not u:
+        hk = doc.get("habit_key")
+        if not hk:
             continue
-        merged = await _merge_habit(u)
-        items.append(_public_habit_item(merged))
+        latest = await _get_latest_item(hk)
+        items.append(_public_habit_item(latest))
 
     total = await HABITS_COLL.count_documents(q)
     return {"ok": True, "total": total, "limit": limit, "skip": skip, "items": items}
 
+
 @router.get(
-    "/habits/{uuid_str}",
+    "/habits/{habit_key}",
     summary="Get habit detail (for management UI)",
-    description="Flattened item (no _id).",
+    description="Joined by habit_key.",
 )
-async def get_habit(uuid_str: str):
-    merged = await _merge_habit(uuid_str)
-    return {"ok": True, "item": _public_habit_item(merged)}
+async def get_habit(habit_key: str):
+    latest = await _get_latest_item(habit_key)
+    if not latest.get("habit"):
+        raise HTTPException(status_code=404, detail="habit not found")
+    return {"ok": True, "item": _public_habit_item(latest)}

@@ -10,9 +10,9 @@ const open = ref(false);
 const isHabit = computed(() => (props.item.habit_class ?? 0) === 1);
 
 const createdAtISO = computed(() => {
-  return props.item.created_at || createdAtFromObjectId(props.item._id);
+  return props.item.created_at || (props.item._id ? createdAtFromObjectId(props.item._id) : null);
 });
-const createdAtText = computed(() => fmtTime(createdAtISO.value));
+const createdAtText = computed(() => fmtTime(createdAtISO.value) || "N/A");
 
 const contexts = computed(() => {
   const mapped = props.item.contexts_mapped || [];
@@ -28,21 +28,22 @@ const contexts = computed(() => {
           <span class="badge" :class="isHabit ? 'ok' : 'no'">
             {{ isHabit ? "habit" : "non-habit" }}
           </span>
-          <span class="muted" style="font-size:13px">uuid: <code>{{ item.uuid }}</code></span>
-        </div>
-
-        <div style="margin-top:10px; font-weight:950; line-height:1.35">
+          <!-- <span class="muted" style="font-size:13px">
+            habit_key: <code>{{ item.habit_key }}</code>
+          </span>
+          <span v-if="item.uuid" class="muted" style="font-size:13px">
+            uuid: <code>{{ item.uuid }}</code>
+          </span> -->
+          <div style="margin-top:-2px; font-weight:950; line-height:1.2">
           {{ item.habit }}
+        </div>
         </div>
 
         <div class="hr"></div>
 
-        <div class="row" style="gap:10px; align-items:center">
-          <span class="badge">created: <code>{{ createdAtText }}</code></span>
-          <span class="badge">lang: <code>{{ item.language }}</code></span>
-        </div>
 
         <div v-if="item.mapping_params" class="row" style="margin-top:10px; gap:10px">
+          <span class="badge">language: <code>{{ item.language }}</code></span>
           <span class="badge">threshold: <code>{{ item.mapping_params.threshold }}</code></span>
           <span class="badge">top_n: <code>{{ item.mapping_params.top_n }}</code></span>
         </div>
