@@ -1,6 +1,16 @@
 # main.py
 from __future__ import annotations
 
+# coding: utf-8
+from pathlib import Path
+
+from dotenv import load_dotenv
+from fastapi import FastAPI, APIRouter
+
+# Load .env
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env", override=False)
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

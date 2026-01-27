@@ -6,7 +6,7 @@ from fastapi import FastAPI, APIRouter
 
 # Load .env
 BASE_DIR = Path(__file__).resolve().parent
-load_dotenv(BASE_DIR / ".env")
+load_dotenv(BASE_DIR / ".env", override=False)
 
 # --- Import generated routers ---
 from openapi_server.apis.classify_habit_api import router as ClassifyHabitApiRouter
