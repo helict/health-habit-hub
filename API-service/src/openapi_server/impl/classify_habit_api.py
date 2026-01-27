@@ -86,14 +86,14 @@ def _normalize(txt: str) -> str:
 class ClassifyHabitApi(BaseClassifyHabitApi):
     async def classify_habit_classify_habit_post(self, habit_in: HabitIn) -> HabitOut:
         max_retries = 6
-        # 拿到Redis实例
         cache = RedisCache.default()
         clean_habit = _normalize(habit_in.habit)
         key = habit_cache_key_from_habit(clean_habit)
         cached = await cache.get_json(key)
         if cached:
+            cached["uuid"] = habit_in.uuid
+            cached["language"] = habit_in.language
             return HabitOut(**cached)
-        # 最多尝试次数
         for attempt in range(max_retries):
             try:
                 prompt_str = FEW_SHOT_PROMPT.format(language=habit_in.language)

@@ -45,12 +45,47 @@ def _context_env_sig() -> str:
     })
 
 
+
+def _profiles_env_sig() -> str:
+    return _env_fingerprint({
+        "provider": os.getenv("Profiles_LLM_PROVIDER") or "",
+        "model": os.getenv("Profiles_LLM_MODEL") or "",
+        "temperature": str(os.getenv("Profiles_LLM_TEMPERATURE") or ""),
+        "max_tokens": str(os.getenv("Profiles_LLM_MAX_TOKENS") or ""),
+    })
+
+def _habitdbselect_env_sig() -> str:
+    return _env_fingerprint({
+        "provider": os.getenv("HABIT_DB_SELECT_LLM_PROVIDER") or "",
+        "model": os.getenv("HABIT_DB_SELECT_LLM_MODEL") or "",
+        "temperature": str(os.getenv("HABIT_DB_SELECT_LLM_TEMPERATURE") or ""),
+        "max_tokens": str(os.getenv("HABIT_DB_SELECT_LLM_MAX_TOKENS") or ""),
+        "top_k": str(os.getenv("HABIT_DB_SELECT_TOP_K") or ""),
+        "candidate_limit": str(os.getenv("HABIT_DB_CANDIDATE_LIMIT") or ""),
+    })
+
+def _recommendation_env_sig() -> str:
+    return _env_fingerprint({
+        "provider": os.getenv("RECO_LLM_PROVIDER") or "",
+        "model": os.getenv("RECO_LLM_MODEL") or "",
+        "temperature": str(os.getenv("RECO_LLM_TEMPERATURE") or ""),
+        "max_tokens": str(os.getenv("RECO_LLM_MAX_TOKENS") or ""),
+    })
+
 def habit_cache_key_from_habit(habit: str, language: Optional[str] = None) -> str:
     return f"habit:{_hash_habit(habit, language)}:{_habit_env_sig()}"
 
 def context_cache_key_from_habit(habit: str, language: Optional[str] = None) -> str:
     return f"context:{_hash_habit(habit, language)}:{_context_env_sig()}"
 
+def profiles_cache_key_from_habit(text: str, language: Optional[str] = None) -> str:
+    return f"profiles:{_hash_habit(text, language)}:{_profiles_env_sig()}"
+
+def habitdbselect_cache_key_from_habit(text: str, language: Optional[str] = None) -> str:
+    return f"habitdbselect:{_hash_habit(text, language)}:{_habitdbselect_env_sig()}"
+
+def recommendation_cache_key_from_habit(text: str, language: Optional[str] = None) -> str:
+    return f"recommendation:{_hash_habit(text, language)}:{_recommendation_env_sig()}"
 
 class RedisCache:
     _instance: Optional["RedisCache"] = None

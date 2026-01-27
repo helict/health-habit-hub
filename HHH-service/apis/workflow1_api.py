@@ -114,8 +114,6 @@ def call_api_classify_context(habit: str, language: str, uuid_str: str) -> dict:
 
 def call_api_bcio_map(
     context_payload: dict,
-    threshold: float = 0.6,
-    top_n: int = 2,
     expr: str | None = 'etype in ["Class","ObjectProperty"]',
     debug: bool = False,
 ) -> dict:
@@ -124,8 +122,6 @@ def call_api_bcio_map(
         r = SESSION.post(
             url,
             params={
-                "threshold": threshold,
-                "top_n": top_n,
                 "expr": expr,
                 "debug": str(debug).lower(),
             },
@@ -296,14 +292,12 @@ async def ingest(body: IngestIn):
     )
 
     # 5) mapping (drop llm_meta before sending to mapper, per your requirement)
-    threshold = _env_float("THRESHOLD_BCIO_MAP", 0.6)
-    top_n = _env_int("TOP_N_BCIO_MAP", 2)
 
     context_payload = {k: v for k, v in context_out.items() if k != "llm_meta"}
 
     try:
         mapped_out = await run_in_threadpool(
-            lambda: call_api_bcio_map(context_payload, threshold=threshold, top_n=top_n)
+            lambda: call_api_bcio_map(context_payload)
         )
     except HTTPException as e:
         mapped_out = {
@@ -311,7 +305,7 @@ async def ingest(body: IngestIn):
             "bcio_mapping_error": str(e.detail),
         }
 
-    mapped_out["mapping_params"] = {"threshold": threshold, "top_n": top_n}
+    mapped_out["mapping_params"] = {"threshold": mapped_out["threshold"], "top_n": mapped_out["top_n"]}
 
     await store_context_mapping(
         mapped_out,
@@ -335,7 +329,7 @@ async def ingest(body: IngestIn):
         ok=True,
         message="This input describes a habit, and it has been successfully processed: habit classification, context classification (TIME, PHYSICAL SETTING, PRIOR BEHAVIOR, OTHER PEOPLE, INTERNAL STATE, BEHAVIOR, and REASONING), and BCIO mapping have been completed and stored in the local database.",
         data=resp_data,
-        mapping_params={"threshold": threshold, "top_n": top_n},
+        mapping_params=mapped_out["mapping_params"],
         llm_meta={
             "habit": habit_out.get("llm_meta"),
             "context": context_out.get("llm_meta"),

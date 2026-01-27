@@ -19,6 +19,10 @@ from openapi_server.infra.mongo_UserProfiles import (
 )
 
 from openapi_server.services.llm_habit_service import classify_habit_via_llm_prompt
+from openapi_server.services.redis_service import (
+    RedisCache,
+    profiles_cache_key_from_habit,
+)
 
 router = APIRouter(prefix="", tags=["UserProfiles"])
 
@@ -42,7 +46,7 @@ class ProfilesBuildOut(BaseModel):
     llm_meta: Dict[str, Any] = Field(default_factory=dict)
     profile_detailed: str = ""
     profile_summary: str = ""
-    signatures: Dict[str, str] = Field(default_factory=dict)
+
 
 
 # ----------------------------
@@ -51,30 +55,6 @@ class ProfilesBuildOut(BaseModel):
 def _normalize_text(s: str) -> str:
     s = unicodedata.normalize("NFC", s).strip()
     return re.sub(r"\s+", " ", s)
-
-
-def _sha1(s: str) -> str:
-    return hashlib.sha1(s.encode("utf-8")).hexdigest()
-
-
-def _get_env_value(key: str) -> str:
-    v = os.getenv(key, "")
-    if v == "":
-        v = os.getenv(key.upper(), "")
-    return v
-
-
-def _env_signature() -> str:
-    # Top-K removed
-    keys = [
-        "Profiles_LLM_PROVIDER",
-        "Profiles_LLM_MODEL",
-        "Profiles_LLM_TEMPERATURE",
-        "Profiles_LLM_MAX_TOKENS",
-    ]
-    snap = {k: _get_env_value(k) for k in keys}
-    payload = json.dumps(snap, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-    return _sha1(payload)
 
 
 def _extract_json_object(raw: str) -> dict:
@@ -144,7 +124,7 @@ def _stable_data_string(name: str, data: Any) -> str:
     return f"{name}={payload}"
 
 
-async def build_profiles_snapshot() -> Tuple[str, str, Dict[str, Any]]:
+async def build_profiles_snapshot() -> str:
     basic_doc = await _fetch_latest_doc(USERPROFILES_BASIC_COLL)
     sliq_doc = await _fetch_latest_doc(USERPROFILES_SLIQ_COLL)
     rand36_doc = await _fetch_latest_doc(USERPROFILES_RAND36_COLL)
@@ -168,16 +148,7 @@ async def build_profiles_snapshot() -> Tuple[str, str, Dict[str, Any]]:
         parts.append(_stable_data_string("rand36", rand36_data))
 
     combined = "\n".join(parts)
-    profiles_sig = _sha1(combined)
-
-    meta = {
-        "basic_present": basic_data is not None,
-        "sliq_present": sliq_data is not None,
-        "rand36_present": rand36_data is not None,
-        "combined": combined,
-        "combined_len": len(combined),
-    }
-    return profiles_sig, combined, meta
+    return combined
 
 
 # ----------------------------
@@ -234,29 +205,44 @@ PROFILES_DATA:
 async def profiles_build(body: ProfilesBuildIn):
     clean_text = _normalize_text(body.text)
 
-    # signatures
-    text_sig = _sha1(clean_text)
-    env_sig = _env_signature()
-
-    # snapshot from mongo
-    profiles_sig, profiles_data, snapshot_meta = await build_profiles_snapshot()
+    profiles_combined= await build_profiles_snapshot()
 
     prompt = PROMPT_TEMPLATE.format(
         user_text=clean_text,
-        profiles_data=profiles_data,
+        profiles_data=profiles_combined,
     )
 
-    provider = _get_env_value("Profiles_LLM_PROVIDER") or "openai"
-    model = _get_env_value("Profiles_LLM_MODEL") or "gpt-4.1"
-    temperature = float(_get_env_value("Profiles_LLM_TEMPERATURE") or 0.0)
-    max_tokens = int(_get_env_value("Profiles_LLM_MAX_TOKENS") or 900)
+    provider = os.getenv("Profiles_LLM_PROVIDER") or "openai"
+    model = os.getenv("Profiles_LLM_MODEL") or "gpt-4.1"
+    temperature = float(os.getenv("Profiles_LLM_TEMPERATURE") or 0.0)
+    max_tokens = int(os.getenv("Profiles_LLM_MAX_TOKENS") or 900)
 
-    # call LLM with small retry (format robustness)
+    llm_meta = {
+        "provider": provider,
+        "model": model,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+    }
+    cache = RedisCache.default()
+    cache_payload = {
+        "text": clean_text,
+        "profiles_data": profiles_combined,
+    }
+    cache_key_text = json.dumps(
+        cache_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    )
+    key = profiles_cache_key_from_habit(cache_key_text)
+
+    cached = await cache.get_json(key)
+    if cached:
+        cached["request_uuid"] = body.request_uuid
+        return ProfilesBuildOut(**cached)
+
     last_err: Optional[str] = None
     raw = ""
     llm_out = ProfilesBuildLLMOut(profile_detailed="", profile_summary="")
 
-    for attempt in range(3):
+    for _ in range(3):
         raw = await run_in_threadpool(
             lambda: classify_habit_via_llm_prompt(
                 prompt=prompt,
@@ -274,29 +260,17 @@ async def profiles_build(body: ProfilesBuildIn):
             break
         except Exception as e:
             last_err = str(e)
-            prompt = prompt + "\n\nREMINDER: Output ONLY a single valid JSON object. No extra text."
-            continue
+            prompt += "\n\nREMINDER: Output ONLY a single valid JSON object. No extra text."
 
     if last_err is not None:
         raise HTTPException(status_code=502, detail=f"LLM output invalid after retries: {last_err}")
 
-    llm_meta = {
-        "provider": provider,
-        "model": model,
-        "temperature": temperature,
-        "max_tokens": max_tokens,
-        # "raw_len": len(raw or ""),
-    }
-
-    return ProfilesBuildOut(
+    out = ProfilesBuildOut(
         request_uuid=body.request_uuid,
-        text=body.text,
+        text=clean_text,
         llm_meta=llm_meta,
         profile_detailed=llm_out.profile_detailed or "",
         profile_summary=llm_out.profile_summary or "",
-        signatures={
-            "text_signature": text_sig,
-            "profiles_signature": profiles_sig,
-            "profiles_env_signature": env_sig,
-        },
     )
+    await cache.set_json(key, out.model_dump(mode="json"))
+    return out

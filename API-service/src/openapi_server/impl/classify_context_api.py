@@ -175,6 +175,8 @@ class ClassifyContextApi(BaseClassifyContextApi):
         key = context_cache_key_from_habit(clean_habit)
         cached = await cache.get_json(key)
         if cached:
+            cached["uuid"] = classify_context_in.uuid
+            cached["language"] = classify_context_in.language
             return ClassifyContextOut(**cached)
 
         for _ in range(max_retries):

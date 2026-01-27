@@ -1,6 +1,6 @@
 # src/openapi_server/apis/bcio_mapping_api.py
 from __future__ import annotations
-
+import os
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Body, HTTPException, Query
@@ -28,6 +28,8 @@ def bcio_map(
     Output: dict (same payload + each hit context gets bcio_mappings)
     """
     try:
+        threshold = float(os.getenv("THRESHOLD_BCIO_MAP", "0.7") or 0.7)
+        top_n = int(os.getenv("TOP_N_BCIO_MAP", "2") or 2)
         enriched = map_bcio_for_contexts(
             payload=payload,
             threshold=threshold,
@@ -35,6 +37,11 @@ def bcio_map(
             expr=expr,
             debug=debug,
         )
+        if isinstance(enriched, dict):
+            enriched["threshold"] = threshold
+            enriched["top_n"] = top_n
+        else:
+            enriched = {"result": enriched, "threshold": threshold, "top_n": top_n}
         return jsonable_encoder(enriched)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

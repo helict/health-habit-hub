@@ -14,6 +14,10 @@ from pydantic import BaseModel, Field, ValidationError, confloat
 from openapi_server.infra.mongo import HABITS_COLL, CONTEXTS_COLL, CONTEXT_MAPPINGS_COLL
 from openapi_server.services.habit_db_state_service import build_habit_db_snapshot
 from openapi_server.services.llm_habit_service import classify_habit_via_llm_prompt
+from openapi_server.services.redis_service import (
+    RedisCache,
+    habitdbselect_cache_key_from_habit,
+)
 
 router = APIRouter(prefix="", tags=["HabitsDB"])
 
@@ -46,7 +50,6 @@ class HabitDBSelectOut(BaseModel):
     llm_meta: Dict[str, Any]
     selected_habits: List[SelectedHabitOut] = Field(default_factory=list)
     selected_habits_summary: str = ""
-    signatures: Dict[str, str]
 
 # ----------------------------
 # Helpers
@@ -55,21 +58,6 @@ def _normalize_text(s: str) -> str:
     s = unicodedata.normalize("NFC", s).strip()
     return re.sub(r"\s+", " ", s)
 
-def _sha1(s: str) -> str:
-    return hashlib.sha1(s.encode("utf-8")).hexdigest()
-
-def _env_signature() -> str:
-    keys = [
-        "HABIT_DB_SELECT_LLM_PROVIDER",
-        "HABIT_DB_SELECT_LLM_MODEL",
-        "HABIT_DB_SELECT_LLM_TEMPERATURE",
-        "HABIT_DB_SELECT_LLM_MAX_TOKENS",
-        "HABIT_DB_SELECT_TOP_K",
-        "HABIT_DB_SELECT_CANDIDATE_LIMIT",
-    ]
-    snap = {k: os.getenv(k, "") for k in keys}
-    payload = json.dumps(snap, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-    return _sha1(payload)
 
 
 def _extract_json_object(raw: str) -> dict:
@@ -137,10 +125,6 @@ CANDIDATES (JSON):
 async def habit_db_select(body: HabitDBSelectIn):
     clean_text = _normalize_text(body.text)
 
-    # signatures
-    text_sig = _sha1(clean_text)
-    env_sig = _env_signature()
-
     # snapshot (signature + candidates)
     habit_db_sig, habits_list = await build_habit_db_snapshot(
         HABITS_COLL, CONTEXTS_COLL, CONTEXT_MAPPINGS_COLL, only_habits=True
@@ -162,6 +146,32 @@ async def habit_db_select(body: HabitDBSelectIn):
     model = os.getenv("HABIT_DB_SELECT_LLM_MODEL", "gpt-4.1")
     temperature = float(os.getenv("HABIT_DB_SELECT_LLM_TEMPERATURE", "0") or 0.0)
     max_tokens = int(os.getenv("HABIT_DB_SELECT_LLM_MAX_TOKENS", "900") or 900)
+    
+    llm_meta = {
+        "provider": provider,
+        "model": model,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+        # "candidate_limit": cand_limit,
+        # "candidates_used": len(candidates),
+        "top_k": top_k,
+        # "dropped_hallucinated_keys": dropped,
+        # "raw_len": len(raw or ""),
+    }
+    cache = RedisCache.default()
+    cache_payload = {
+        "text": clean_text,
+        "candidates_json": json.dumps(candidates, ensure_ascii=False, separators=(",", ":")),
+    }
+    cache_key_text = json.dumps(
+        cache_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    )
+    key = habitdbselect_cache_key_from_habit(cache_key_text)
+
+    cached = await cache.get_json(key)
+    if cached:
+        cached["request_uuid"] = body.request_uuid
+        return HabitDBSelectOut(**cached)
 
     # call LLM with small retry (format robustness)
     last_err: Optional[str] = None
@@ -196,7 +206,7 @@ async def habit_db_select(body: HabitDBSelectIn):
     dropped: List[str] = []
     seen: set[str] = set()
 
-    for it in llm_out.selected_habits[:top_k]:
+    for it in llm_out.selected_habits:
         hk = it.habit_key
         if not hk or hk in seen:
             continue
@@ -215,27 +225,12 @@ async def habit_db_select(body: HabitDBSelectIn):
             )
         )
 
-    llm_meta = {
-        "provider": provider,
-        "model": model,
-        "temperature": temperature,
-        "max_tokens": max_tokens,
-        # "candidate_limit": cand_limit,
-        # "candidates_used": len(candidates),
-        "top_k": top_k,
-        # "dropped_hallucinated_keys": dropped,
-        # "raw_len": len(raw or ""),
-    }
-
-    return HabitDBSelectOut(
+    out = HabitDBSelectOut(
         request_uuid=body.request_uuid,
         text=body.text,
         llm_meta=llm_meta,
         selected_habits=selected,
         selected_habits_summary=llm_out.selected_habits_summary or "",
-        signatures={
-            "text_signature": text_sig,
-            "habit_db_signature": habit_db_sig,
-            "env_signature": env_sig,
-        },
     )
+    await cache.set_json(key, out.model_dump(mode="json"))
+    return out
