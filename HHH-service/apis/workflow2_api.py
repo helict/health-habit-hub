@@ -20,6 +20,7 @@ DB = MONGO.get_default_database()
 ProfileFormKey = Literal["basic", "sliq", "rand36"]
 FORM_KEYS: tuple[str, ...] = ("basic", "sliq", "rand36")
 COLL_BY_FORM = {k: DB.get_collection(k) for k in FORM_KEYS}
+PROFILE_HISTORY_COLL = DB.get_collection("profile_history")
 
 
 def _now_iso() -> str:
@@ -46,9 +47,24 @@ async def _ensure_indexes():
     for _, coll in COLL_BY_FORM.items():
         await coll.create_index([("profile_uuid", 1)], unique=True)
         await coll.create_index([("profile_uuid", 1), ("updated_at", -1)])
-
+    await PROFILE_HISTORY_COLL.create_index([("profile_uuid", 1), ("saved_at", -1)])
     _INDEX_READY = True
 
+
+async def _write_profile_history_snapshot(profile_uuid: str, saved_at: str, trigger_form: ProfileFormKey) -> None:
+    forms: Dict[str, Any] = {}
+
+    for k, c in COLL_BY_FORM.items():
+        doc = await c.find_one({"profile_uuid": profile_uuid})
+        forms[k] = dict(doc) if doc else None 
+    await PROFILE_HISTORY_COLL.insert_one(
+        {
+            "profile_uuid": profile_uuid,
+            "saved_at": saved_at,
+            "trigger_form": trigger_form,
+            "forms": forms,
+        }
+    )
 
 # ----------------------------
 # Models
@@ -161,6 +177,8 @@ async def put_profile_latest(profile_uuid: str, body: ProfileLatestIn):
     created_at = saved.get("created_at") or _created_at_from_oid(saved.get("_id"))
     updated_at = saved.get("updated_at", now)
 
+    await _write_profile_history_snapshot(profile_uuid, now, body.form)
+    
     return ApiOut(
         success=True,
         message=f"Saved latest '{body.form}' responses ({n} items). created_at={created_at}, updated_at={updated_at}.",

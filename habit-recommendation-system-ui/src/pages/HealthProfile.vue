@@ -21,8 +21,8 @@
           </div>
 
           <div class="metaRow">
-            <span class="label">profile_uuid</span>
-            <code class="mono">{{ profileUuid }}</code>
+            <!-- <span class="label">profile_uuid</span>
+            <code class="mono">{{ profileUuid }}</code> -->
 
             <span v-if="status.kind !== 'idle'" class="status" :class="status.kind">
               <span class="dot"></span>
