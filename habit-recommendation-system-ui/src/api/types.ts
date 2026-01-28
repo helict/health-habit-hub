@@ -39,10 +39,15 @@ export type IngestOut = {
   data: IngestDataHabit | IngestDataNotHabit;
 
   mapping_params?: MappingParams | null;
-  llm_meta?: Record<string, any> | null;
+  llm_meta?: LlmMeta | null;
   created_at?: string | null;
 };
 
+
+export type LlmMeta = {
+  habit: Record<string, any>;
+  context: Record<string, any>;
+};
 
 export type HabitItem = {
   habit_key: string;
@@ -61,6 +66,8 @@ export type HabitItem = {
 
   bcio_mapping_error?: string | null;
   mapping_params?: MappingParams | null;
+
+  llm_meta?: LlmMeta | null;
 };
 
 export type HabitsListResponse = {

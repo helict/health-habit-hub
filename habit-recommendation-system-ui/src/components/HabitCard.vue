@@ -35,17 +35,22 @@ const contexts = computed(() => {
             uuid: <code>{{ item.uuid }}</code>
           </span> -->
           <div style="margin-top:-2px; font-weight:950; line-height:1.2">
-          {{ item.habit }}
-        </div>
+            {{ item.habit }}
+          </div>
         </div>
 
         <div class="hr"></div>
 
 
-        <div v-if="item.mapping_params" class="row" style="margin-top:10px; gap:10px">
+        <div class="row" style="margin-top:10px; gap:10px">
           <span class="badge">language: <code>{{ item.language }}</code></span>
-          <span class="badge">threshold: <code>{{ item.mapping_params.threshold }}</code></span>
-          <span class="badge">top_n: <code>{{ item.mapping_params.top_n }}</code></span>
+            <span class="badge">provider: <code>{{ item.llm_meta?.habit.provider }}</code></span>
+            <span class="badge">habit_model: <code>{{ item.llm_meta?.habit.model }}</code></span>
+          <template v-if="item.mapping_params">
+            <span class="badge">context_model: <code>{{ item.llm_meta?.context.model }}</code></span>
+            <span class="badge">threshold: <code>{{ item.mapping_params.threshold }}</code></span>
+            <span class="badge">top_n: <code>{{ item.mapping_params.top_n }}</code></span>
+          </template>
         </div>
 
         <div v-if="item.bcio_mapping_error" class="hr"></div>

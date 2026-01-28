@@ -42,6 +42,7 @@ function toHabitItem(r: IngestOut): HabitItem {
 
     bcio_mapping_error: d.bcio_mapping_error ?? null,
     mapping_params: r.mapping_params ?? null,
+    llm_meta: r.llm_meta ?? null,
   };
 }
 

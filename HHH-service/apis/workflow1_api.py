@@ -7,7 +7,7 @@ import unicodedata
 import requests
 import hashlib
 from typing import Any, Optional, Dict
-
+from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.concurrency import run_in_threadpool
 from fastapi import HTTPException, APIRouter, Query
@@ -25,6 +25,8 @@ DB = MONGO.get_default_database()
 HABITS_COLL = DB.get_collection("habits")
 CONTEXTS_COLL = DB.get_collection("contexts")  # raw classify_context output (no mapping)
 CONTEXT_MAPPINGS_COLL = DB.get_collection("context_mappings")  # enriched mapping results
+HABIT_HISTORY_COLL = DB.get_collection("habit_history")  # historical versions of habits
+
 
 SESSION = requests.Session()
 
@@ -60,6 +62,8 @@ class IngestIn(BaseModel):
 
 
 class IngestOut(BaseModel):
+    uuid: Optional[str] = None
+    stored_at: Optional[datetime]
     ok: bool
     message: str
     data: dict
@@ -193,39 +197,9 @@ async def store_context_mapping(mapped_data: dict, habit_key: str, habit_text: s
     }
     await CONTEXT_MAPPINGS_COLL.update_one({"habit_key": habit_key}, update_doc, upsert=True)
 
-
-async def _get_latest_item(habit_key: str) -> dict:
-    habit_doc = await HABITS_COLL.find_one({"habit_key": habit_key}) or {}
-    raw_doc = await CONTEXTS_COLL.find_one({"habit_key": habit_key}) or {}
-    mapped_doc = await CONTEXT_MAPPINGS_COLL.find_one({"habit_key": habit_key}) or {}
-
-    return {
-        "habit_key": habit_key,
-        "habit": habit_doc.get("habit"),
-        "language": habit_doc.get("language"),
-        "habit_class": habit_doc.get("habit_class", 0),
-        "confidence": habit_doc.get("confidence"),
-        "contexts_raw": raw_doc.get("result", []),
-        "contexts_mapped": mapped_doc.get("result", []),
-        "bcio_mapping_error": mapped_doc.get("bcio_mapping_error"),
-        "mapping_params": mapped_doc.get("mapping_params"),
-        "llm_meta_habit": habit_doc.get("llm_meta"),
-        "llm_meta_context": raw_doc.get("llm_meta"),
-    }
-
-
-def _public_habit_item(latest: dict) -> dict:
-    return {
-        "habit_key": latest.get("habit_key"),
-        "habit": latest.get("habit"),
-        "language": latest.get("language"),
-        "habit_class": latest.get("habit_class", 0),
-        "confidence": latest.get("confidence"),
-        "mapping_params": latest.get("mapping_params"),
-        "contexts_raw": latest.get("contexts_raw") or [],
-        "contexts_mapped": latest.get("contexts_mapped") or [],
-        "bcio_mapping_error": latest.get("bcio_mapping_error"),
-    }
+async def write_habit_history(out: IngestOut) -> None:
+    doc = out.model_dump()
+    await HABIT_HISTORY_COLL.insert_one(doc)
 
 
 # ----------------------------
@@ -261,7 +235,9 @@ async def ingest(body: IngestIn):
 
     # 3) if NOT habit -> return
     if not is_habit:
-        return IngestOut(
+        out=IngestOut(
+            uuid=req_uuid,
+            stored_at=datetime.now(timezone.utc),
             ok=False,
             message=(
                 "The input you provided is not a habitual behavior. Please enter a habit instead. "
@@ -275,8 +251,10 @@ async def ingest(body: IngestIn):
                 "habit_class": habit_out.get("habit_class", 0),
                 "confidence": habit_out.get("confidence", None),
             },
-            llm_meta={"habit": habit_out.get("llm_meta")},
+            llm_meta={"habit": habit_out.get("llm_meta"), "context": {}},
         )
+        await write_habit_history(out)
+        return out
 
     # 4) habit -> classify context
     context_out = await run_in_threadpool(
@@ -305,7 +283,10 @@ async def ingest(body: IngestIn):
             "bcio_mapping_error": str(e.detail),
         }
 
-    mapped_out["mapping_params"] = {"threshold": mapped_out["threshold"], "top_n": mapped_out["top_n"]}
+    mapped_out["mapping_params"] = {
+    "threshold": mapped_out.get("threshold"),
+    "top_n": mapped_out.get("top_n"),
+}
 
     await store_context_mapping(
         mapped_out,
@@ -325,7 +306,9 @@ async def ingest(body: IngestIn):
     if mapped_out.get("bcio_mapping_error") is not None:
         resp_data["bcio_mapping_error"] = mapped_out.get("bcio_mapping_error")
 
-    return IngestOut(
+    out = IngestOut(
+        uuid=req_uuid,
+        stored_at=datetime.now(timezone.utc),
         ok=True,
         message="This input describes a habit, and it has been successfully processed: habit classification, context classification (TIME, PHYSICAL SETTING, PRIOR BEHAVIOR, OTHER PEOPLE, INTERNAL STATE, BEHAVIOR, and REASONING), and BCIO mapping have been completed and stored in the local database.",
         data=resp_data,
@@ -335,6 +318,43 @@ async def ingest(body: IngestIn):
             "context": context_out.get("llm_meta"),
         },
     )
+    await write_habit_history(out)
+    return out
+
+
+async def _get_latest_item(habit_key: str) -> dict:
+    habit_doc = await HABITS_COLL.find_one({"habit_key": habit_key}) or {}
+    raw_doc = await CONTEXTS_COLL.find_one({"habit_key": habit_key}) or {}
+    mapped_doc = await CONTEXT_MAPPINGS_COLL.find_one({"habit_key": habit_key}) or {}
+
+    return {
+        "habit_key": habit_key,
+        "habit": habit_doc.get("habit"),
+        "language": habit_doc.get("language"),
+        "habit_class": habit_doc.get("habit_class", 0),
+        "confidence": habit_doc.get("confidence"),
+        "contexts_raw": raw_doc.get("result", []),
+        "contexts_mapped": mapped_doc.get("result", []),
+        "bcio_mapping_error": mapped_doc.get("bcio_mapping_error"),
+        "mapping_params": mapped_doc.get("mapping_params"),
+        "llm_meta_habit": habit_doc.get("llm_meta"),
+        "llm_meta_context": raw_doc.get("llm_meta"),
+    }
+
+
+def _public_habit_item(latest: dict) -> dict:
+    return {
+        "habit_key": latest.get("habit_key"),
+        "habit": latest.get("habit"),
+        "language": latest.get("language"),
+        "habit_class": latest.get("habit_class", 0),
+        "confidence": latest.get("confidence"),
+        "mapping_params": latest.get("mapping_params"),
+        "contexts_raw": latest.get("contexts_raw") or [],
+        "contexts_mapped": latest.get("contexts_mapped") or [],
+        "bcio_mapping_error": latest.get("bcio_mapping_error"),
+        "llm_meta":{"habit": latest.get("llm_meta_habit")or {}, "context": latest.get("llm_meta_context") or {}},
+    }
 
 
 @router.get(

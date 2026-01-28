@@ -84,11 +84,11 @@ onMounted(load);
 
         <label class="row" style="align-items:center; gap:8px; margin-left:10px">
           <input type="checkbox" v-model="onlyHabits" @change="skip=0; load()" />
-          <span class="muted" style="font-size:13px">only habit_class == 1</span>
+          <span class="muted" style="font-size:13px">Only habits</span>
         </label>
 
         <label class="row" style="align-items:center; gap:8px; margin-left:10px">
-          <span class="muted" style="font-size:13px">limit</span>
+          <span class="muted" style="font-size:13px">Items per page</span>
           <select class="select" style="width:90px" v-model.number="limit" @change="skip=0; load()">
             <option :value="10">10</option>
             <option :value="20">20</option>
