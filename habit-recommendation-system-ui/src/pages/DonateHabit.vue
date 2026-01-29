@@ -78,7 +78,7 @@ async function submit() {
             Calls <code>POST /ingest</code>: habit detection → context extraction → BCIO mapping → MongoDB.
           </div>
         </div>
-        <div class="badge">/ingest</div>
+        <!-- <div class="badge">/ingest</div> -->
       </div>
 
       <div class="hr"></div>

@@ -314,8 +314,8 @@ async def kb_query_api(body: KbQueryIn):
         request_uuid=body.request_uuid,
         query=body.text,
         llm_meta=LlmMeta(
-            provider=(os.getenv("KB_PROVIDER", "") or "").strip(),
-            model=(os.getenv("KB_MODEL", "") or "").strip(),
+            provider=(os.getenv("KB_PROVIDER", "scads") or "").strip(),
+            model=(os.getenv("KB_MODEL", "") or "openai/gpt-oss-120b").strip(),
         ),
         retrieval=RetrievalInfo(top_n=top_n, score_threshold=thr),
         # store=StoreInfo(
