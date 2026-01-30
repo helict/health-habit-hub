@@ -11,6 +11,7 @@ import { getLanguageCodes, loadLanguageFiles } from './utils/localization.js';
 
 // Express config
 import aboutRouter from './routes/aboutRouter.js';
+import adminRouter from './routes/adminRouter.js';
 import demoRouter from './routes/demoRouter.js';
 import donateRouter from './routes/donateRouter.js';
 import thanksRouter from './routes/thanksRouter.js';
@@ -102,6 +103,7 @@ router.use('/:lng(' + validLanguageCodes + ')/reward', rewardRouter);
 router.use('/:lng(' + validLanguageCodes + ')/contact', contactRouter);
 router.use('/:lng(' + validLanguageCodes + ')/donate', donateRouter);
 router.use('/:lng(' + validLanguageCodes + ')/about', aboutRouter);
+router.use('/:lng(' + validLanguageCodes + ')/admin', adminRouter);
 router.use('/:lng(' + validLanguageCodes + ')/demo', demoRouter); //Probably needs to be changed like the ones on the top
 router.use('/:lng(' + validLanguageCodes + ')/thanks', thanksRouter);
 router.use('/:lng(' + validLanguageCodes + ')/imprint', imprintRouter);

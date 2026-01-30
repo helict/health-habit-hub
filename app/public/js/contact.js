@@ -90,6 +90,7 @@ function updateContent(data) {
   document.getElementById('nav-home').innerText = data.home;
   document.getElementById('nav-about').innerText = data.about;
   document.getElementById('nav-contact').innerText = data.contact;
+  document.getElementById('nav-admin').innerText = data.admin;
 }
 
 // Function to update the greybox content on the page

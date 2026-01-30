@@ -41,6 +41,8 @@ services:
       - MONGO_USER=admin
       - MONGO_PASSWORD=admin
       - MONGO_HOST=mongo
+      - ADMIN_USER=${ADMIN_USER}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     user: node
     ports:
       - ${APP_HOST_PORT:-3000}:3000

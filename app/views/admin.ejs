@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+<meta name="generator" content=
+"HTML Tidy for Mac OS X (vers 31 October 2006 - Apple Inc. build 1155), see www.w3.org">
+<%- include('header') %>
+<title>Admin - Experiment Groups</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<%- include('nav', navigation) %>
+<div class="container" id="datadonationheader">
+<div class="row">
+<div class="col-12 text-justify">
+
+<h5 id="about_text">
+<strong><%= 'Selection of Experiment Groups' %></strong></h5>
+
+<p class="text-muted">
+  New users will be randomly assigned to one of the groups selected below. 
+  If multiple options are checked, the system ensures a random distribution among them.
+</p>
+
+<form method="post" action="<%= baseUrl %>/experiment-groups">
+  <fieldset>
+    <% groups.forEach(function(group) { %>
+      <div class="form-check">
+        <input class="form-check-input"
+               type="checkbox"
+               name="groups"
+               value="<%= group.id %>"
+               id="g-<%= group.id %>"
+               <%= group.enabled ? 'checked' : '' %> />
+        <label class="form-check-label" for="g-<%= group.id %>">
+          <%= group.label %>
+        </label>
+      </div>
+    <% }); %>
+
+    <div class="form-check mt-3 pt-2 border-top">
+      <input class="form-check-input"
+             type="checkbox"
+             name="useAll"
+             id="useAll"
+             value="on"
+             <%= useAll ? 'checked' : '' %> />
+      <label class="form-check-label" for="useAll">
+        <strong>Use all Groups randomly</strong> (set as default and ignores the upper checkboxes)
+      </label>
+    </div>
+
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Save Configuration</button>
+    </div>
+  </fieldset>
+</form>
+
+</div>
+</div>
+</div>
+<%- include('footer') %>
+</body>
+</html>
