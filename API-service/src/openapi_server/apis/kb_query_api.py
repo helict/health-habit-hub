@@ -73,7 +73,6 @@ class KbQueryOut(BaseModel):
     # store: StoreInfo
     # kb_state: KbStateInfo
 
-    # hits 保持不变（仍在顶层）
     hits: List[KbHit] = Field(default_factory=list)
 
 

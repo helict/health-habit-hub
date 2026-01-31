@@ -18,12 +18,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from apis.workflow1_api import router as workflow1_router
 from apis.workflow2_api import router as workflow2_router
 from apis.workflow3_api import router as workflow3_router
-from apis.system_api import router as system_router
 
 WORKFLOW1_TAG = "Workflow1: Habitual structured collection workflow"
 WORKFLOW2_TAG = "Workflow2: User Profile/Form Workflow "
 WORKFLOW3_TAG = "Workflow3: Recommended workflow"
-SYSTEM_TAG = "System"
+
 
 OPENAPI_TAGS = [
     {
@@ -36,7 +35,6 @@ OPENAPI_TAGS = [
     },
     {"name": WORKFLOW2_TAG, "description": "Form filling and user profile structuring module (reserved)."},
     {"name": WORKFLOW3_TAG, "description": "RAG-based recommendation system (reserved)."},
-    {"name": SYSTEM_TAG, "description": "Perform API key/runtime status checks only"},
 ]
 
 app = FastAPI(
@@ -64,7 +62,7 @@ app.add_middleware(
 app.include_router(workflow1_router)
 app.include_router(workflow2_router)
 app.include_router(workflow3_router)
-app.include_router(system_router)
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8081, reload=True)

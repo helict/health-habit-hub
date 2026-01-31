@@ -78,11 +78,6 @@ export type HabitsListResponse = {
   items: HabitItem[];
 };
 
-export type SystemConfigResponse = {
-  ok: boolean;
-  api_base: string;
-  mapping_params: MappingParams;
-};
 
 // ---------------------------
 // Workflow2: Profile

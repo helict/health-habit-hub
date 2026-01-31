@@ -2,7 +2,6 @@ import { jsonFetch, API_BASE } from "./utils";
 import type {
   IngestOut,
   HabitsListResponse,
-  SystemConfigResponse,
   ProfileFormKey,
   ProfileLatestUpsertOut,
   ProfileLatestGetOut,
@@ -30,9 +29,6 @@ export async function listHabits(params: {
   return jsonFetch<HabitsListResponse>(`${API_BASE}/habits?${q.toString()}`);
 }
 
-export async function systemConfig(): Promise<SystemConfigResponse> {
-  return jsonFetch<SystemConfigResponse>(`${API_BASE}/system/config`);
-}
 
 // ---------------------------
 // Workflow2: Profile

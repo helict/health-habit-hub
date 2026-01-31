@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
-import { listHabits, systemConfig } from "../api/hhh";
-import type { HabitItem, SystemConfigResponse } from "../api/types";
+import { listHabits } from "../api/hhh";
+import type { HabitItem } from "../api/types";
 import HabitCard from "../components/HabitCard.vue";
 
 const loading = ref(false);
 const error = ref<string | null>(null);
-
-const cfg = ref<SystemConfigResponse | null>(null);
 
 const items = ref<HabitItem[]>([]);
 const total = ref(0);
@@ -23,11 +21,11 @@ async function load() {
   loading.value = true;
   error.value = null;
   try {
-    const [c, res] = await Promise.all([
-      systemConfig(),
-      listHabits({ limit: limit.value, skip: skip.value, only_habits: onlyHabits.value }),
-    ]);
-    cfg.value = c;
+    const res = await listHabits({
+      limit: limit.value,
+      skip: skip.value,
+      only_habits: onlyHabits.value,
+    });
     items.value = res.items;
     total.value = res.total;
   } catch (e: any) {
@@ -65,8 +63,8 @@ onMounted(load);
       </button>
     </div>
 
-
-    <!-- <div class="card" style="background:#fff">
+    <!--
+    <div class="card" style="background:#fff">
       <div style="font-weight:900">Current mapping params (env → /system/config)</div>
       <div v-if="cfg" class="row" style="margin-top:10px; align-items:center">
         <span class="badge">threshold: <code>{{ cfg.mapping_params.threshold }}</code></span>
@@ -74,7 +72,8 @@ onMounted(load);
         <span class="badge">API_BASE: <code>{{ cfg.api_base }}</code></span>
       </div>
       <div v-else class="muted" style="margin-top:10px">Loading...</div>
-    </div> -->
+    </div>
+    -->
 
     <div class="hr"></div>
 

@@ -30,28 +30,6 @@ HABIT_HISTORY_COLL = DB.get_collection("habit_history")  # historical versions o
 
 SESSION = requests.Session()
 
-# ----------------------------
-# Env helpers (type-safe)
-# ----------------------------
-def _env_float(name: str, default: float) -> float:
-    v = os.getenv(name)
-    if v is None or str(v).strip() == "":
-        return float(default)
-    try:
-        return float(v)
-    except ValueError:
-        return float(default)
-
-
-def _env_int(name: str, default: int) -> int:
-    v = os.getenv(name)
-    if v is None or str(v).strip() == "":
-        return int(default)
-    try:
-        return int(v)
-    except ValueError:
-        return int(default)
-
 
 # ----------------------------
 # Models

@@ -45,6 +45,7 @@ class RecommendOut(BaseModel):
     text: str
     habit_recommendations: List[HabitRecommendation] = Field(default_factory=list)
     llm_meta: Dict[str, Any] = Field(default_factory=dict)
+    message: str
 
 
 def _is_blank(s: Optional[str]) -> bool:
@@ -192,32 +193,27 @@ You are a recommendation generator.
 
 @router.post("/recommend", response_model=RecommendOut)
 async def recommend(payload: RecommendIn) -> RecommendOut:
-    errors: List[str] = []
-
+    message: str = ""
     if _is_blank(payload.profile_detailed):
-        errors.append(
+        message += (
             "按照你的目的生成的用户画像为空。请你检查是否已经正确填写了必填的用户画像信息。"
             "或者再次确认输入的目的是否正确。或者是大模型在之前的步骤有没有正确生成用户画像信息。"
-            "或者相关设置的参数是否合理。"
+            "或者检查相关设置的参数是否合理。\n"
         )
 
     if not payload.selected_habits:
-        errors.append(
+        message += (
             "按照你的目的检索到的习惯为空。请你检查是否已经捐赠了足够丰富的习惯。"
             "或者再次确认输入的目的是否正确。或者是大模型在之前的步骤有没有正确生成用户的习惯总结。"
-            "或者相关设置的参数是否合理。"
+            "或者检查相关设置的参数是否合理。\n"
         )
 
     if not payload.rag_result:
-        errors.append(
+        message += (
             "按照你检索到的习惯和用户画像在本地知识库通过rag之后得到的结果为空。请你检查输入的目的是否正确。"
-            "或者是本地知识库的内容是否足够丰富。或者之前的流程有没有运行成功。"
-            "或者相关设置的参数是否合理。"
+            "或者是本地知识库的内容是否足够丰富和你的目的是否足够相关。或者之前的流程有没有运行成功。"
+            "或者检查相关设置的参数是否合理。\n"
         )
-
-    if errors:
-        raise HTTPException(status_code=422, detail=errors)
-
 
     selected_habits = strip_selected_habits_fields(payload.selected_habits)
     rag_result = merge_rag_by_book(payload.rag_result)
@@ -277,13 +273,18 @@ async def recommend(payload: RecommendIn) -> RecommendOut:
         try:
             parsed = _extract_json_object(raw)
             llm_out = RecommendLLMOut(**parsed)
-
+            
+            if message:
+                message = message + "推荐生成成功。但是请参考提示的信息检查输入的信息的质量和完整性。高质量的输入通常会带来更好的推荐结果。"
+            else:
+                message="推荐生成成功。但是如果推荐结果为空或者不符合预期，请考虑是否输入正确的目的，是否已经正确填写所有的表单，本地知识仓库存储的文献是否能支持回答用户的目的，是否提供了足够数量和质量的习惯。高质量的输入通常会带来更好的推荐结果。"
             out = RecommendOut(
                 request_uuid=payload.request_uuid,
                 text=clean_text,
                 habit_recommendations=llm_out.habit_recommendations,
                 llm_meta=llm_meta,
-            )
+                message=message.strip(),
+                )
             await cache.set_json(key, out.model_dump(mode="json"))
             return out
         except Exception as e:

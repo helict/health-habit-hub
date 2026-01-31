@@ -184,6 +184,12 @@ Output
 - If PROFILES_DATA contains personal identifiers (names, exact addresses, phone numbers, emails, usernames, org names), replace them with placeholders such as [PERSON], [ADDRESS], [PHONE], [EMAIL], [ORG].
 - Do NOT output any unique identifiers, such as IDs, UUIDs, request_uuid, profile_uuid, or timestamps.
 - Use neutral, non-judgmental language when describing the user.
+- If PROFILES_DATA is empty, missing, or contains no usable (question, label) pairs,
+  return:
+  {{
+    "profile_detailed": "",
+    "profile_summary": ""
+  }}
 
 USER_TEXT:
 {user_text}
