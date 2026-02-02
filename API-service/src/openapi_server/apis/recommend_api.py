@@ -34,10 +34,13 @@ class HabitRecommendation(BaseModel):
     behavior: str
     explanation: str
 
-
+class EvidenceItem(BaseModel):
+    title: str = ""
+    text: str = ""
 
 class RecommendLLMOut(BaseModel):
     habit_recommendations: List[HabitRecommendation] = Field(default_factory=list)
+    habit_recommendations_evidence: List[EvidenceItem] = Field(default_factory=list)
 
 
 class RecommendOut(BaseModel):
@@ -161,18 +164,25 @@ You are a recommendation generator.
       "behavior": "string",
       "explanation": "string"
     }}
+  ],
+  "habit_recommendations_evidence": [
+    {{
+      "title": "string",
+      "text": "string"
+    }}
   ]
 }}
-- context应该优先来自于[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]中明确提到的上下文(TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING)，因为在这些上下文用户进行日常活动，推荐这些上下文更容易实施。如果上下文明确来自于RAG_RESULT，也需要说明这个上下文由[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]可以推断出是用户身边经常性出现的环境。context应该保持多样性。尽量覆盖不同的(TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING)。若不得不重复同一类场景，在explanation中解释原因。
-- behavior只能是来源于[RAG_RESULT]，优先从[RAG_RESULT]总结或者提取出(如果behavior足够具体和合适)或者是合理推测(在[RAG_RESULT]总结或者提取出的behavior不够具体的时候)的用户能被推荐并且是用户在该情境下“能做的动作指令”。在explanation中则需要明确指出behavior的具体来源(书名和原句)和如果是推测出来的需要说明如何推测的。
-- explanation需要详细说明为什么选取这个context(具体(从哪里来的)/如果是推测(依据什么推测的))，为什么推荐这个behavior(从[RAG_RESULT]的具体哪些书名和原句)，引用原句时请提供英文短引（≤25 English words），并用引号包住。不要大段复制。以及这个推荐如何能够帮助用户实现[TEXT]中的目标。
+- habit_recommendations_evidence需要你根据[PROFILE_DETAILED]，[SELECTED_HABITS]和[USER_FEEDBACK]从[RAG_RESULT]中列出所有潜在可以能成为behavior的原文。title就是文章的题目。text就是原文。
+- context应该优先来自于[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]中明确提到的上下文(TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING)。只有当habit_recommendations_evidence中生成的behavior非常具体并且恰当时，并且这个上下文也应该由[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]可以推断出是用户身边经常性出现的环境，而且这个上下文没有出现在[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]，当且仅当满足这三个条件的时候才能适当推理上下文。context应该保持多样性。尽量覆盖不同的(TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING)。若不得不重复同一类场景，在explanation中解释原因。
+- behavior只能是来源于habit_recommendations_evidence，优先从habit_recommendations_evidence总结或者直接提取出(如果behavior足够具体和合适)综合考虑最优推荐在该情境下“能做的动作指令”。完全禁止推测behavior。在explanation中则需要明确指出behavior的所有具体来源(书名和原句)。如果behavior不够具体或者和用户情况不符合，推荐可以为空。
+- 推荐条目的数量要控制在3到7条之间。如果输入的内容非常有限，甚至无法支撑3条推荐，可以适当减少推荐条目的数量，如果实在没有推荐才能返回空列表。
+- explanation需要详细说明:1. 为什么选取这个context(具体(从哪里来的)/如果是推测(依据什么推测的)). 2. 为什么推荐这个behavior(从habit_recommendations_evidence的具体哪些书名和原句)，引用原句时请提供英文短引（≤25 English words），并用引号包住。不要大段复制。3. 以及这个推荐如何能够帮助用户实现[TEXT]中的目标。
 - 对于输入的[USER_FEEDBACK]：你需要先判断是否具有采纳价值。采纳价值意味着对自身状态(行为习惯)的更新或者对具体推荐有具体的合理的观点/态度。如果有采纳价值就可以纳入生成推荐的依据。反之，直接忽略。
 - 推荐要在可信和合理之间平衡。可信指的是推荐有明确的依据(现有的输入)，合理指的是推荐能够有效帮助用户实现目标。总体上要有一定的创新性，但不能脱离实际情况。目标是让让用户觉得推荐很有依据并且有参考价值并且有很好的解释性。
-- 推荐条目的数量要根据输入的内容质量来决定。内容质量越高，推荐条目可以适当多一些。反之，推荐条目要适当少一些。总体上，推荐条目的数量要控制在3到7条之间。如果输入的内容非常有限，甚至无法支撑3条推荐，可以适当减少推荐条目的数量，如果实在没有推荐才能返回空列表。
-- 如果生成的behavior和用户现有的习惯不一样[SELECTED_HABITS]，要在 explanation 里额外说明这一点，让用户注意，遵循新的行为推荐。完全避免生成的behavior和现在用户的习惯高度相似甚至一样，如果出现这样的情况，请重新生成behavior(当然还有相应的[RAG_RESULT])来增强现有的习惯。
-- 避免推荐具体的数值(次数，计量)，具体的时间，除非数值有具体的来源([RAG_RESULT]或者[SELECTED_HABITS]或者[PROFILE_DETAILED])。
+- 如果生成的behavior和用户现有的习惯不一样[SELECTED_HABITS]，要在 explanation 里额外说明这一点，让用户注意，遵循新的行为推荐。完全禁止生成的behavior和现在用户的习惯高度相似甚至一样，如果出现这样的情况，请重新生成behavior来增强现有的习惯。
+- 避免推荐具体的数值(次数，计量)，具体的时间，除非数值有具体的来源([RAG_RESULT]或者[SELECTED_HABITS]或者[PROFILE_DETAILED]或者habit_recommendations_evidence)。
 - 输出是以第二人称称呼用户。
-- 且避免在输出中出现[PROFILE_DETAILED]，[SELECTED_HABITS]，[RAG_RESULT]，[USER_FEEDBACK]等标签。而是使用更加自然的语义化表达。
+- 且避免在输出中出现[PROFILE_DETAILED]，[SELECTED_HABITS]，[RAG_RESULT]，[USER_FEEDBACK]，habit_recommendations_evidence等标签。而是使用更加自然的语义化表达。
 
 [TEXT]
 {text}

@@ -1,6 +1,6 @@
 {
-  "kb_signature": "3b44cffccbffabacdaa4616fe60f09d23334be24",
-  "last_sync_at": "2026-01-29T20:31:49.988376+01:00",
+  "kb_signature": "c4956f7966d2de762c0eeb78a14e2ea3ad09b54b",
+  "last_sync_at": "2026-02-02T17:31:32.912526+01:00",
   "sync_ok": true,
   "sync_summary": {
     "ok": true,
@@ -15,9 +15,9 @@
   "watched_env": {
     "KB_PDF_STRATEGY": "fast",
     "KB_INFER_TABLE_STRUCTURE": true,
-    "KB_CHUNK_MAX_CHARACTERS": 600,
-    "KB_CHUNK_NEW_AFTER_N_CHARS": 450,
-    "KB_CHUNK_COMBINE_UNDER_N_CHARS": 120,
+    "KB_CHUNK_MAX_CHARACTERS": 2500,
+    "KB_CHUNK_NEW_AFTER_N_CHARS": 2000,
+    "KB_CHUNK_COMBINE_UNDER_N_CHARS": 300,
     "KB_EXTRACT_IMAGES": false
   },
   "watched_env_keys": [

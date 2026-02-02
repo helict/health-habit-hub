@@ -249,9 +249,9 @@ def build_kb_min_from_pdf(
         strategy=os.getenv("KB_PDF_STRATEGY", "fast"),
         languages=[language],
         chunking_strategy="by_title",
-        max_characters=os.getenv("KB_CHUNK_MAX_CHARACTERS", "2800"),
-        new_after_n_chars=os.getenv("KB_CHUNK_NEW_AFTER_N_CHARS", "2400"),
-        combine_text_under_n_chars=os.getenv("KB_CHUNK_COMBINE_UNDER_N_CHARS", "900"),
+        max_characters=int(os.getenv("KB_CHUNK_MAX_CHARACTERS", "2800")),
+        new_after_n_chars=int(os.getenv("KB_CHUNK_NEW_AFTER_N_CHARS", "2400")),
+        combine_text_under_n_chars=int(os.getenv("KB_CHUNK_COMBINE_UNDER_N_CHARS", "900")),
         # image_output_dir_path=str(pdf.parent / "figs"),
     )
 
@@ -316,8 +316,8 @@ if __name__ == "__main__":
     provider = os.getenv("KB_PROVIDER") or (os.getenv("PROVIDER") or "scads")
     model = os.getenv("KB_MODEL") or os.getenv("CLASSIFY_HABIT_MODEL") or "meta-llama/Llama-3.3-70B-Instruct"
 
-    default_pdf_rel = Path("openapi_server") / "kb" / "sleep" / "NIH2005SOSPaperonInsomnia.pdf"
-    default_pdf_abs = DEFAULT_KB_ROOT / "sleep" / "NIH2005SOSPaperonInsomnia.pdf"
+    default_pdf_rel = Path("openapi_server") / "kb" / "physical_activity" / "World_Health_Organization_2020_guidelines_on_physical_activity_and_sedentary_behaviour.pdf"
+    default_pdf_abs = DEFAULT_KB_ROOT / "physical_activity" / "World_Health_Organization_2020_guidelines_on_physical_activity_and_sedentary_behaviour.pdf"
 
     kb_pdf = os.getenv("KB_PDF") or (str(default_pdf_rel) if default_pdf_rel.exists() else str(default_pdf_abs))
 
@@ -329,6 +329,9 @@ if __name__ == "__main__":
         kb_root_name=os.getenv("KB_ROOT_NAME", "kb"),
     )
 
-    print("DOC META:", _dump_compat(meta))
-    print("CHUNK[0]:", _dump_compat(chunks[0]) if chunks else None)
+    print("MAX", os.getenv("KB_CHUNK_MAX_CHARACTERS"))
+    print("NEW", os.getenv("KB_CHUNK_NEW_AFTER_N_CHARS"))
+    print("COMB", os.getenv("KB_CHUNK_COMBINE_UNDER_N_CHARS"))
+    # print("DOC META:", _dump_compat(meta))
+    print("CHUNK:", [c.text for c in chunks] if chunks else None)
     print("CHUNKS:", len(chunks))
