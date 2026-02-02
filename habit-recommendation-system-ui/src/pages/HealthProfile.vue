@@ -1472,9 +1472,8 @@ const currentModel = computed(() => modelByForm(active.value));
 }
 
 .titleBlock h2 {
-  margin: 0;
-  font-size: 22px;
-  letter-spacing: -0.01em;
+  font-weight: 950;
+  font-size: 18px;
 }
 
 .sub {

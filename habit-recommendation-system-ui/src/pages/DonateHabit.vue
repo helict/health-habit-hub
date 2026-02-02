@@ -300,7 +300,7 @@ async function submit() {
   transform: none !important;
   box-shadow: none !important;
   cursor: not-allowed;
-  opacity: 0.6 !important;
+  opacity: 1 !important;
   filter: none !important;
 }
 </style>

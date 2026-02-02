@@ -1,868 +1,790 @@
-<template>
-  <div class="card">
-    <div class="row" style="justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px">
-      <div>
-        <div style="font-weight:900; font-size:18px">Recommendation</div>
-        <div class="muted" style="font-size:13px; margin-top:4px">
-          Provide text (and optional theory). The system will generate a recommendation with explainable evidence.
-        </div>
-      </div>
-    </div>
-
-    <!-- Inputs -->
-    <div class="grid2" style="margin-bottom:10px">
-      <div>
-        <div class="label">Theory (optional)</div>
-        <select v-model="theoryName" class="input">
-          <option :value="''">(None)</option>
-          <option value="COM-B">COM-B</option>
-          <option value="TTM">TTM</option>
-          <option value="SCT">SCT</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="label">Text</div>
-    <div class="textBlock">
-      <textarea
-        v-model="text"
-        class="textarea"
-        rows="7"
-        placeholder="e.g., I want to improve my sleep quality. I work rotating shifts and often use screens in bed..."
-      />
-
-      <div class="textActions">
-        <button class="btn" @click="clearAll" :disabled="busy || commentBusy">Clear</button>
-        <button class="btn primary" @click="submit" :disabled="busy || commentBusy || !text.trim()">
-          {{ busy ? "Running..." : "Recommend" }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Progress -->
-    <div v-if="busy" class="progressWrap" style="margin-top:12px">
-      <div class="progressTop">
-        <div class="muted" style="font-size:12px">{{ progressLabel }}</div>
-        <div class="muted" style="font-size:12px">{{ progress }}%</div>
-      </div>
-      <div class="progressBar">
-        <div class="progressFill" :style="{ width: progress + '%' }"></div>
-      </div>
-      <div class="muted" style="font-size:12px; margin-top:6px">
-        Note: progress is estimated until the backend returns.
-      </div>
-    </div>
-
-    <!-- Error (better display) -->
-    <div v-if="errorObj" class="alert error" style="margin-top:12px">
-      <div style="font-weight:900">
-        {{ errorObj.title || "Error" }}
-        <span v-if="errorObj.code" class="muted" style="font-weight:800; margin-left:8px">
-          ({{ errorObj.code }})
-        </span>
-      </div>
-
-      <div class="muted" style="margin-top:6px; white-space:pre-wrap">
-        {{ errorObj.message }}
-      </div>
-
-      <ul v-if="errorObj.hints && errorObj.hints.length" class="ul" style="margin-top:10px">
-        <li v-for="(h, i) in errorObj.hints" :key="i">
-          <span class="chip">Hint</span>
-          <span style="margin-left:8px">{{ h }}</span>
-        </li>
-      </ul>
-
-      <details v-if="errorObj.raw" class="details" style="margin-top:10px">
-        <summary><span class="muted">Raw error (debug)</span></summary>
-        <pre class="pre">{{ JSON.stringify(errorObj.raw, null, 2) }}</pre>
-      </details>
-    </div>
-
-    <!-- Output -->
-    <div v-if="resp && !busy && !errorObj" class="out" style="margin-top:14px">
-      <!-- 0) Input summary -->
-      <div class="section">
-        <div class="sectionTitle">Input</div>
-        <div class="box">
-          <div class="kv">
-            <div class="k">Text</div>
-            <div class="v" style="white-space:pre-wrap">{{ userText }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 1) Recommendation -->
-      <div class="section">
-        <div class="sectionTitle">Recommendation</div>
-        <div class="box">
-          <div v-if="recommendationText" style="white-space:pre-wrap; line-height:1.55">
-            {{ recommendationText }}
-          </div>
-          <div v-else class="muted">No recommendation_text found in response.</div>
-        </div>
-      </div>
-
-      <!-- 2) LLM meta -->
-      <div class="section">
-        <div class="sectionTitle">How it was generated (LLM meta)</div>
-        <div class="box">
-          <div class="kv">
-            <div class="k">Provider</div>
-            <div class="v"><code>{{ llmMeta.provider || "-" }}</code></div>
-          </div>
-          <div class="kv">
-            <div class="k">Model</div>
-            <div class="v"><code>{{ llmMeta.model || "-" }}</code></div>
-          </div>
-          <div class="kv">
-            <div class="k">Temperature</div>
-            <div class="v"><code>{{ llmMeta.temperature ?? "-" }}</code></div>
-          </div>
-          <div class="kv">
-            <div class="k">Max tokens</div>
-            <div class="v"><code>{{ llmMeta.max_tokens ?? "-" }}</code></div>
-          </div>
-
-          <div class="muted" style="font-size:12px; margin-top:8px">
-            This recommendation was generated based on your text + the built profile + selected habits + retrieved evidence.
-          </div>
-        </div>
-      </div>
-
-      <!-- 3) profile_detailed -->
-      <div class="section">
-        <div class="sectionTitle">Profile used for recommendation (LLM-generated)</div>
-        <details class="details" open>
-          <summary>
-            <span class="muted">profile_detailed (click to collapse/expand)</span>
-          </summary>
-          <div class="box" style="margin-top:10px">
-            <div v-if="profileDetailed" style="white-space:pre-wrap; line-height:1.55">
-              {{ profileDetailed }}
-            </div>
-            <div v-else class="muted">No profile_detailed found.</div>
-          </div>
-        </details>
-      </div>
-
-      <!-- 4) selected_habits -->
-      <div class="section">
-        <div class="sectionTitle">Selected habits (used with context)</div>
-
-        <div v-if="selectedHabits.length === 0" class="muted">
-          No selected_habits found.
-        </div>
-
-        <div v-else class="stack">
-          <details v-for="(h, idx) in selectedHabits" :key="h.habit_key || idx" class="details">
-            <summary>
-              <div class="sumRow">
-                <div class="sumMain">
-                  <div class="sumTitle">{{ h.habit || "(no habit text)" }}</div>
-                  <div class="muted" style="font-size:12px">
-                    score: <code>{{ h.score }}</code>
-                    <span v-if="h.habit_key" style="margin-left:10px">
-                      habit_key: <code>{{ shortKey(h.habit_key) }}</code>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </summary>
-
-            <div class="box" style="margin-top:10px">
-              <div class="kv" v-if="h.reason">
-                <div class="k">Why selected</div>
-                <div class="v" style="white-space:pre-wrap">{{ h.reason }}</div>
-              </div>
-
-              <div class="kv">
-                <div class="k">Contexts</div>
-                <div class="v">
-                  <div v-if="contextsToPairs(h.contexts).length === 0" class="muted">No contexts.</div>
-                  <ul v-else class="ul">
-                    <li v-for="c in contextsToPairs(h.contexts)" :key="c.label">
-                      <span class="chip">{{ c.label }}</span>
-                      <span style="margin-left:8px">{{ c.value }}</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </details>
-        </div>
-      </div>
-
-      <!-- 5) RAG evidence + assessment -->
-      <div class="section">
-        <div class="sectionTitle">Retrieved evidence (RAG)</div>
-
-        <div v-if="ragAssessment" class="box" style="margin-bottom:10px">
-          <div class="muted" style="font-weight:900; font-size:12px; margin-bottom:6px">
-            RAG assessment
-          </div>
-
-          <div class="kv">
-            <div class="k">rag_available</div>
-            <div class="v"><code>{{ ragAssessment.rag_available ?? "-" }}</code></div>
-          </div>
-          <div class="kv">
-            <div class="k">rag_actionable</div>
-            <div class="v"><code>{{ ragAssessment.rag_actionable ?? "-" }}</code></div>
-          </div>
-          <div class="kv">
-            <div class="k">reason</div>
-            <div class="v" style="white-space:pre-wrap">{{ ragAssessment.reason || "-" }}</div>
-          </div>
-        </div>
-
-        <div v-if="ragEvidence.length === 0" class="muted">
-          <span v-if="ragAssessment && ragAssessment.rag_actionable === false">
-            No quotes were used because <code>rag_actionable=false</code>.
-          </span>
-          <span v-else>No used_evidence.rag items.</span>
-        </div>
-
-        <div v-else class="stack">
-          <details v-for="(e, idx) in ragEvidence" :key="idx" class="details" open>
-            <summary>
-              <div class="sumRow">
-                <div class="sumMain">
-                  <div class="sumTitle">{{ e.doc_title || "(no doc_title)" }}</div>
-                  <div class="muted" style="font-size:12px">
-                    domain: <code>{{ e.domain || "-" }}</code>
-                    <span style="margin-left:10px">score: <code>{{ formatScore(e.score) }}</code></span>
-                    <span style="margin-left:10px">page: <code>{{ e.page_number ?? "-" }}</code></span>
-                    <span v-if="e.k" style="margin-left:10px">ref: <code>{{ e.k }}</code></span>
-                  </div>
-                </div>
-              </div>
-            </summary>
-
-            <div class="box" style="margin-top:10px">
-              <div class="kv">
-                <div class="k">Quote</div>
-                <div class="v" style="white-space:pre-wrap">{{ e.quote || "(empty quote)" }}</div>
-              </div>
-            </div>
-          </details>
-        </div>
-      </div>
-
-      <!-- 6) Feedback (one-time) -->
-      <div class="section">
-        <div class="sectionTitle">Feedback (one-time)</div>
-
-        <div class="box">
-          <div class="muted" style="font-size:12px; margin-bottom:8px">
-            You can submit a single comment for this recommendation. It will be stored with a stable id (<code>_id=request_uuid</code>).
-          </div>
-
-          <!-- comment API error -->
-          <div v-if="commentErrorObj" class="alert error" style="margin-bottom:10px">
-            <div style="font-weight:900">
-              {{ commentErrorObj.title || "Comment error" }}
-              <span v-if="commentErrorObj.code" class="muted" style="font-weight:800; margin-left:8px">
-                ({{ commentErrorObj.code }})
-              </span>
-            </div>
-            <div class="muted" style="margin-top:6px; white-space:pre-wrap">{{ commentErrorObj.message }}</div>
-            <ul v-if="commentErrorObj.hints && commentErrorObj.hints.length" class="ul" style="margin-top:10px">
-              <li v-for="(h, i) in commentErrorObj.hints" :key="i">
-                <span class="chip">Hint</span>
-                <span style="margin-left:8px">{{ h }}</span>
-              </li>
-            </ul>
-          </div>
-
-          <!-- success -->
-          <div v-if="commentSubmitted && commentResp" class="muted" style="white-space:pre-wrap; line-height:1.5">
-            Submitted!
-            <!-- <div style="margin-top:6px">
-              created_at: <code>{{ commentResp?.data?.created_at || "-" }}</code>
-            </div> -->
-          </div>
-
-          <!-- input -->
-          <div v-else>
-            <div class="label" style="margin-top:0">Your comment</div>
-            <textarea
-              v-model="commentText"
-              class="textarea"
-              rows="3"
-              placeholder="Write a short comment (required). e.g., This recommendation is clear and actionable / not helpful because..."
-              :disabled="commentBusy || commentLocked"
-              style="min-height:90px"
-            />
-
-            <div class="textActions" style="margin-top:8px">
-              <button class="btn" @click="commentText = ''" :disabled="commentBusy || commentLocked">
-                Clear comment
-              </button>
-              <button
-                class="btn primary"
-                @click="submitComment"
-                :disabled="commentBusy || commentLocked || !commentText.trim() || !commentReady"
-              >
-                {{ commentBusy ? "Submitting..." : "Submit comment" }}
-              </button>
-            </div>
-
-            <div v-if="!commentReady" class="muted" style="font-size:12px; margin-top:8px">
-              Comment API is enabled only when <code>request_uuid</code> + <code>text_signature</code> are available from /recommend.
-            </div>
-
-            <div v-if="commentLocked" class="muted" style="font-size:12px; margin-top:8px">
-              🔒 Locked: this request_uuid has already been commented (one-time only).
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Debug -->
-      <details class="details" style="margin-top:12px">
-        <summary><span class="muted">Raw response (debug)</span></summary>
-        <pre class="pre">{{ prettyResp }}</pre>
-      </details>
-    </div>
-  </div>
-</template>
-
+<!-- src/pages/Recommend.vue -->
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref, computed } from "vue";
+import { recommend, recommendComment } from "../api/hhh";
+import type {
+  RecommendOut,
+  KbHit,
+  RecommendCommentReq,
+  SelectedHabitOut,
+  HabitRecommendation,
+} from "../api/types";
+import ContextLabels from "../components/ContextLabels.vue";
+const DEFAULT_GOAL = `Please enter your needs/goals so we can generate personalized recommendations.
 
-const API_BASE = import.meta.env.VITE_HHH_API_BASE || "http://127.0.0.1:8081";
+For example:
+I want to improve my sleep quality. I often scroll on my phone in bed, fall asleep slowly, and struggle to get up in the morning. I’d like to build a better bedtime routine.`;;
+const goal = ref("");
 
-type TheoryName = "" | "COM-B" | "TTM" | "SCT";
-type RecommendReq = { text: string; theory_name?: string | null };
+const loading = ref(false);
+const error = ref<string | null>(null);
+const resp = ref<RecommendOut | null>(null);
 
-const CONTEXT_LABELS = [
-  "TIME",
-  "PHYSICAL SETTING",
-  "PRIOR BEHAVIOR",
-  "OTHER PEOPLE",
-  "INTERNAL STATE",
-  "BEHAVIOR",
-  "REASONING",
-] as const;
+// feedback (comment)
+const commentText = ref("");
+const commentBusy = ref(false);
+const commentOk = ref(false);
+const commentError = ref<string | null>(null);
 
-type ContextLabel = (typeof CONTEXT_LABELS)[number];
-type ContextPair = { label: ContextLabel; value: string };
+const canSubmit = computed(() => goal.value.trim().length > 0);
+const showEmptyWarn = computed(() => !canSubmit.value);
 
-type ErrorView = {
-  title?: string;
-  code?: string;
-  message: string;
-  hints?: string[];
-  raw?: any;
+// ---- block #1: habit_recommendations ----
+const recBlock = computed(() => resp.value?.recommendation_results_outputs || null);
+const recMeta = computed(() => recBlock.value?.llm_meta || {});
+const recMessage = computed(() => recBlock.value?.message || "");
+const habitRecs = computed<HabitRecommendation[]>(
+  () => recBlock.value?.habit_recommendations || []
+);
+
+// ---- block #2: hits grouped by (domain -> book) ----
+type HitLine = { page_number: number; score: number; text: string };
+type BookGroup = {
+  domain: string;
+  doc_id: string;
+  doc_title: string;
+  lines: HitLine[];
 };
+type DomainGroup = { domain: string; books: BookGroup[] };
 
-type RecommendCommentReq = {
-  request_uuid: string;
-  text: string;
-  text_signature: string;
-  comment: string;
-};
+const kbBlock = computed(() => resp.value?.kb_queries || null);
+const kbMeta = computed(() => kbBlock.value?.llm_meta || {});
+const kbRetrieval = computed(() => kbBlock.value?.retrieval || {});
+const kbHits = computed<KbHit[]>(() => kbBlock.value?.hits || []);
 
-const text = ref("");
-const theoryName = ref<TheoryName>("COM-B");
+const groupedHits = computed<DomainGroup[]>(() => {
+  const hits = kbHits.value;
+  const domMap = new Map<string, Map<string, BookGroup>>();
 
-const busy = ref(false);
-const resp = ref<any | null>(null);
-const requestUuid = ref<string>("");
+  for (const h of hits) {
+    const domain = (h.domain || "unknown").trim() || "unknown";
+    const title = (h.doc_title || "").trim();
+    const docTitle = title || h.doc_id;
+    const bookKey = `${h.doc_id}::${docTitle}`;
 
-const errorObj = ref<ErrorView | null>(null);
+    if (!domMap.has(domain)) domMap.set(domain, new Map());
+    const bookMap = domMap.get(domain)!;
 
-/** progress */
-const progress = ref<number>(0);
-const progressLabel = ref<string>("Preparing...");
-let progressTimer: number | null = null;
-
-const prettyResp = computed(() => (resp.value ? JSON.stringify(resp.value, null, 2) : ""));
-
-const userText = computed(() => {
-  return (
-    resp.value?.profiles_build?.text ||
-    resp.value?.habit_db_select?.text ||
-    resp.value?.kb_query?.query ||
-    text.value.trim()
-  );
-});
-
-const recommendationText = computed(() => {
-  const r = resp.value;
-  return r?.recommendation?.recommendation?.recommendation_text || r?.recommendation?.recommendation_text || "";
-});
-
-const ragAssessment = computed(() => {
-  const r = resp.value;
-  return r?.recommendation?.rag_assessment || r?.recommendation?.recommendation?.rag_assessment || null;
-});
-
-const llmMeta = computed(() => {
-  const r = resp.value;
-  return r?.recommendation?.llm_meta || r?.recommendation?.recommendation?.llm_meta || {};
-});
-
-const profileDetailed = computed(() => resp.value?.profiles_build?.profile_detailed || "");
-
-type SelectedHabit = {
-  habit: string;
-  habit_key: string;
-  score: number;
-  reason?: string;
-  contexts?: any;
-};
-const selectedHabits = computed<SelectedHabit[]>(() => {
-  const xs = resp.value?.habit_db_select?.selected_habits;
-  return Array.isArray(xs) ? xs : [];
-});
-
-type RagEvidenceView = {
-  k?: string;
-  quote?: string;
-  page_number?: number | null;
-  doc_title?: string | null;
-  domain?: string | null;
-  score?: number | null;
-};
-const ragEvidence = computed<RagEvidenceView[]>(() => {
-  const r = resp.value;
-  const rag =
-    r?.recommendation?.recommendation?.used_evidence?.rag ||
-    r?.recommendation?.used_evidence?.rag ||
-    [];
-  const hits = r?.kb_query?.hits;
-
-  if (!Array.isArray(rag)) return [];
-  const out: RagEvidenceView[] = [];
-
-  for (const it of rag) {
-    const k = String(it?.k ?? "");
-    const quote = String(it?.quote ?? "");
-
-    let meta: any = null;
-    const m = k.match(/^K(\d+)$/i);
-    if (m && Array.isArray(hits)) {
-      const idx = Number(m[1]) - 1;
-      if (Number.isFinite(idx) && idx >= 0 && idx < hits.length) meta = hits[idx];
+    if (!bookMap.has(bookKey)) {
+      bookMap.set(bookKey, {
+        domain,
+        doc_id: h.doc_id,
+        doc_title: docTitle,
+        lines: [],
+      });
     }
 
-    out.push({
-      k: k || undefined,
-      quote: quote || undefined,
-      page_number: meta?.page_number ?? null,
-      doc_title: meta?.doc_title ?? null,
-      domain: meta?.domain ?? null,
-      score: meta?.score ?? null,
+    bookMap.get(bookKey)!.lines.push({
+      page_number: h.page_number,
+      score: h.score,
+      text: h.text,
     });
   }
+
+  const out: DomainGroup[] = [];
+  for (const [domain, bookMap] of domMap.entries()) {
+    const books = Array.from(bookMap.values()).map((b) => {
+      b.lines.sort((a, c) => (c.score ?? 0) - (a.score ?? 0));
+      return b;
+    });
+    books.sort((a, b) => a.doc_title.localeCompare(b.doc_title));
+    out.push({ domain, books });
+  }
+  out.sort((a, b) => a.domain.localeCompare(b.domain));
   return out;
 });
 
-/** text_signature for comment API (take from /recommend response) */
-const textSignature = computed(() => {
-  return (
-    resp.value?.profiles_build?.signatures?.text_signature ||
-    resp.value?.habit_db_select?.signatures?.text_signature ||
-    ""
-  );
-});
+// ---- block #3: selected_habits ----
+const selBlock = computed(() => resp.value?.selected_habits || null);
+const selMeta = computed(() => selBlock.value?.llm_meta || {});
+const selectedHabits = computed<SelectedHabitOut[]>(
+  () => selBlock.value?.selected_habits || []
+);
 
+// ---- block #4: bilded_profiles ----
+const profBlock = computed(() => resp.value?.bilded_profiles || null);
+const profMeta = computed(() => profBlock.value?.llm_meta || {});
+const profileDetailed = computed(() => profBlock.value?.profile_detailed || "");
+
+// ---- block #5: feedback ----
 const commentReady = computed(() => {
-  return Boolean(requestUuid.value && textSignature.value && userText.value.trim());
+  return Boolean(resp.value?.request_uuid && resp.value?.text && resp.value?.text_signature);
 });
 
-/* -------------------------
-   Comment state + submit
--------------------------- */
-const commentText = ref<string>(""); // default empty (OK). Only submit when user typed.
-const commentBusy = ref(false);
-const commentSubmitted = ref(false);
-const commentLocked = ref(false);
-const commentResp = ref<any | null>(null);
-const commentErrorObj = ref<ErrorView | null>(null);
-
-function clearAll() {
-  errorObj.value = null;
-  resp.value = null;
-  requestUuid.value = "";
-
-  // reset comment state
-  commentText.value = "";
-  commentBusy.value = false;
-  commentSubmitted.value = false;
-  commentLocked.value = false;
-  commentResp.value = null;
-  commentErrorObj.value = null;
-
-  stopProgress();
+function fmtScore(n: any) {
+  const x = Number(n);
+  if (!Number.isFinite(x)) return "-";
+  return x.toFixed(3);
 }
 
-function startProgress() {
-  stopProgress();
-  progress.value = 5;
-  progressLabel.value = "Sending request to backend...";
-
-  let phase = 0;
-
-  progressTimer = window.setInterval(() => {
-    if (!busy.value) return;
-
-    if (progress.value < 25 && phase === 0) {
-      progress.value += 2;
-      if (progress.value >= 25) {
-        phase = 1;
-        progressLabel.value = "Running workflow (profiles + habits + KB query)...";
-      }
-      return;
-    }
-
-    if (progress.value < 55 && phase === 1) {
-      progress.value += 1;
-      if (progress.value >= 55) {
-        phase = 2;
-        progressLabel.value = "Generating recommendation (LLM)...";
-      }
-      return;
-    }
-
-    if (progress.value < 85 && phase === 2) {
-      progress.value += 1;
-      if (progress.value >= 85) {
-        phase = 3;
-        progressLabel.value = "Finalizing response...";
-      }
-      return;
-    }
-
-    if (phase === 3 && progress.value < 90) {
-      progress.value += 1;
-    }
-  }, 160);
+function habitTopN(h: any) {
+  const v =
+    h?.retrieval?.top_n ??
+    h?.retrieval?.topN ??
+    h?.retrieval?.k ??
+    h?.retrieval?.top_k ??
+    null;
+  return v == null ? "-" : String(v);
 }
 
-function finishProgressOk() {
-  progressLabel.value = "Done";
-  progress.value = 100;
-  window.setTimeout(() => stopProgress(), 400);
-}
-
-function stopProgress() {
-  if (progressTimer !== null) {
-    window.clearInterval(progressTimer);
-    progressTimer = null;
-  }
-  progress.value = 0;
-  progressLabel.value = "Preparing...";
-}
-
-function shortKey(s: string) {
-  if (!s) return "";
-  return s.length <= 16 ? s : `${s.slice(0, 8)}…${s.slice(-6)}`;
-}
-
-function formatScore(v: any) {
-  const n = Number(v);
-  if (!Number.isFinite(n)) return "-";
-  return n.toFixed(3);
-}
-
-function contextsToPairs(contexts: any): ContextPair[] {
-  const out: ContextPair[] = [];
-
-  if (Array.isArray(contexts)) {
-    for (const [i, label] of CONTEXT_LABELS.entries()) {
-      const val = contexts?.[i];
-      if (val === null || val === undefined) continue;
-      const s = String(val).trim();
-      if (!s) continue;
-      out.push({ label, value: s });
-    }
-    return out;
-  }
-
-  if (contexts && typeof contexts === "object") {
-    for (const label of CONTEXT_LABELS) {
-      const v = (contexts as any)[label] ?? (contexts as any)[String(label).toLowerCase()] ?? null;
-      if (v === null || v === undefined) continue;
-      const s = String(v).trim();
-      if (!s) continue;
-      out.push({ label, value: s });
-    }
-    return out;
-  }
-
-  return out;
-}
-
-function parseBackendError(data: any, status: number): ErrorView {
-  const detail = data?.detail;
-
-  // 422: NO_SELECTED_HABITS
-  if (status === 422 && detail && typeof detail === "object" && detail.error === "NO_SELECTED_HABITS") {
-    return {
-      title: "No habits selected",
-      code: "NO_SELECTED_HABITS",
-      message:
-        detail.message ||
-        "No habits were selected/provided. Please enrich the habit library and run habit selection before calling /recommend.",
-      hints: Array.isArray(detail.hint) ? detail.hint : undefined,
-      raw: data,
-    };
-  }
-
-  // 409: comment already exists
-  if (status === 409 && detail && typeof detail === "object" && detail.error === "COMMENT_ALREADY_EXISTS") {
-    return {
-      title: "Already submitted",
-      code: "COMMENT_ALREADY_EXISTS",
-      message: detail.message || "A comment for this request_uuid already exists (one-time only).",
-      hints: Array.isArray(detail.hint) ? detail.hint : undefined,
-      raw: data,
-    };
-  }
-
-  if (detail && typeof detail === "object") {
-    return {
-      title: status === 422 ? "Validation error" : "Request failed",
-      code: typeof detail.error === "string" ? detail.error : undefined,
-      message: detail.message ? String(detail.message) : JSON.stringify(detail),
-      hints: Array.isArray(detail.hint) ? detail.hint : undefined,
-      raw: data,
-    };
-  }
-
-  if (typeof detail === "string" && detail.trim()) {
-    return { title: "Request failed", message: detail, raw: data };
-  }
-
-  if (typeof data?.message === "string" && data.message.trim()) {
-    return { title: "Request failed", message: data.message, raw: data };
-  }
-
-  return { title: "Request failed", message: `HTTP ${status}`, raw: data };
+function habitThreshold(h: any) {
+  const v =
+    h?.retrieval?.threshold ??
+    h?.retrieval?.score_threshold ??
+    h?.retrieval?.min_score ??
+    null;
+  if (v == null) return "-";
+  return fmtScore(v);
 }
 
 async function submit() {
-  errorObj.value = null;
+  error.value = null;
   resp.value = null;
-  requestUuid.value = "";
 
-  // reset comment state on each new recommendation
-  commentText.value = "";
+  commentOk.value = false;
+  commentError.value = null;
   commentBusy.value = false;
-  commentSubmitted.value = false;
-  commentLocked.value = false;
-  commentResp.value = null;
-  commentErrorObj.value = null;
 
-  const payload: RecommendReq = {
-    text: text.value.trim(),
-    theory_name: theoryName.value ? theoryName.value : null,
-  };
+  if (!canSubmit.value) {
+    error.value = "To receive recommendations, please enter your goal.";
+    return;
+  }
 
-  busy.value = true;
-  startProgress();
-
+  loading.value = true;
   try {
-    const r = await fetch(`${API_BASE}/recommend`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    const r = await recommend(goal.value.trim());
+    resp.value = r;
 
-    const data = await r.json().catch(() => null);
+    commentText.value = r?.user_feedback || "";
 
-    if (!r.ok) {
-      errorObj.value = parseBackendError(data, r.status);
-      stopProgress();
-      return;
-    }
-
-    resp.value = data;
-
-    requestUuid.value =
-      data?.recommendation?.request_uuid ||
-      data?.profiles_build?.request_uuid ||
-      data?.habit_db_select?.request_uuid ||
-      "";
-
-    finishProgressOk();
+    commentOk.value = false;
+    commentError.value = null;
   } catch (e: any) {
-    errorObj.value = {
-      title: "Network / runtime error",
-      message: String(e?.message || e),
-      raw: e,
-    };
-    stopProgress();
+    error.value = e?.message || String(e);
   } finally {
-    busy.value = false;
+    loading.value = false;
   }
 }
 
-async function submitComment() {
-  commentErrorObj.value = null;
-  commentResp.value = null;
+async function saveFeedback() {
+  commentError.value = null;
+  commentOk.value = false;
 
-  if (!commentReady.value) {
-    commentErrorObj.value = {
-      title: "Not ready",
-      message: "Missing request_uuid or text_signature from /recommend response.",
-    };
+  if (!resp.value?.request_uuid || !resp.value?.text || !resp.value?.text_signature) {
+    commentError.value = "The current results are missing the fields required to save feedback.";
     return;
   }
 
   const req: RecommendCommentReq = {
-    request_uuid: requestUuid.value,
-    text: userText.value, // send original text; backend verifies via normalize+sha1
-    text_signature: textSignature.value,
-    comment: commentText.value.trim(),
+    request_uuid: resp.value.request_uuid,
+    text: resp.value.text,
+    text_signature: resp.value.text_signature!,
+    comment: (commentText.value ?? "").trim(),
   };
 
   commentBusy.value = true;
-
   try {
-    const r = await fetch(`${API_BASE}/recommend/comment`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(req),
-    });
-
-    const data = await r.json().catch(() => null);
-
-    if (!r.ok) {
-      const ev = parseBackendError(data, r.status);
-      commentErrorObj.value = ev;
-
-      // if backend says already exists, lock UI
-      if (r.status === 409 && ev.code === "COMMENT_ALREADY_EXISTS") {
-        commentLocked.value = true;
-      }
-      return;
-    }
-
-    commentResp.value = data;
-    commentSubmitted.value = true;
-    commentLocked.value = true; // one-time only
+    await recommendComment(req);
+    commentOk.value = true;
   } catch (e: any) {
-    commentErrorObj.value = {
-      title: "Network / runtime error",
-      message: String(e?.message || e),
-      raw: e,
-    };
+    commentError.value = e?.message || String(e);
   } finally {
     commentBusy.value = false;
   }
 }
 </script>
 
+<template>
+  <div class="page">
+    <div class="card recCard">
+      <div class="row headerRow">
+        <div>
+          <div class="title">Recommendation (Workflow 3)</div>
+          <div class="muted desc">
+            Enter your goal and call <code>POST /recommend</code>：selected habits → KB hits → habit
+            recommendations → explanation.
+          </div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row mainRow">
+        <div class="left">
+          <label class="muted label">Goal / Purpose</label>
+          <textarea class="textarea bigTextarea" v-model="goal" :placeholder="DEFAULT_GOAL"></textarea>
+
+          <div v-if="showEmptyWarn" class="hint muted">⚠️ To receive recommendations, please enter your goal.</div>
+          <div v-else class="hint muted">Tip: The more accurate and detailed your goal description is, the more reliable the recommendations will be.</div>
+        </div>
+
+        <div class="right col">
+          <div class="spacer"></div>
+
+          <button class="btn primary bigBtn btnFx" :disabled="loading || !canSubmit" @click="submit">
+            {{ loading ? "Processing..." : "Generate recommendations" }}
+          </button>
+
+          <RouterLink class="btn bigBtn btnFx" to="/live">Go to management</RouterLink>
+        </div>
+      </div>
+
+      <div v-if="error" class="hr"></div>
+      <div v-if="error" class="card errorCard">
+        <div class="errTitle">Error</div>
+        <div class="muted" style="white-space: pre-wrap">{{ error }}</div>
+      </div>
+
+      <div v-if="resp" class="hr"></div>
+      <div v-if="resp" class="card respCard">
+        <!-- ===== Block 1 ===== -->
+        <details class="details blockDetails" open>
+          <summary class="blockSummary">
+            <div class="blockTitle">habit_recommendations</div>
+            <div class="blockRight">
+              <div class="metaBadges">
+                <span class="badge">provider: <code>{{ recMeta.provider || "-" }}</code></span>
+                <span class="badge">model: <code>{{ recMeta.model || "-" }}</code></span>
+              </div>
+              <span class="togglePill togglePillSm" aria-hidden="true"></span>
+            </div>
+          </summary>
+
+          <div v-if="recMessage" class="muted" style="margin-top: 8px; white-space: pre-wrap">
+            {{ recMessage }}
+          </div>
+
+          <div class="hr"></div>
+
+          <div v-if="habitRecs.length === 0" class="muted">No habit_recommendations.</div>
+
+          <div v-else class="stack">
+            <details v-for="(r, i) in habitRecs" :key="i" class="details innerDetails">
+              <summary class="innerSummary">
+                <div class="innerSummaryRow">
+                  <div class="innerSummaryText">
+                    <div class="sumTitle">{{ r.context }}</div>
+                    <div class="muted sumSub">behavior: <code>{{ r.behavior }}</code></div>
+                  </div>
+                  <span class="togglePill togglePillSm" aria-hidden="true"></span>
+                </div>
+              </summary>
+
+              <div class="hr"></div>
+
+              <div class="kv">
+                <div class="k">context</div>
+                <div class="v" style="white-space: pre-wrap">{{ r.context }}</div>
+              </div>
+
+              <div class="kv">
+                <div class="k">behavior</div>
+                <div class="v" style="white-space: pre-wrap">{{ r.behavior }}</div>
+              </div>
+
+              <div class="kv">
+                <div class="k">explanation</div>
+                <div class="v" style="white-space: pre-wrap; line-height: 1.55">
+                  {{ r.explanation }}
+                </div>
+              </div>
+            </details>
+          </div>
+        </details>
+
+        <div class="hr2"></div>
+
+        <!-- ===== Block 2 ===== -->
+        <details class="details blockDetails">
+          <summary class="blockSummary">
+            <div class="blockTitle">hits</div>
+
+            <div class="blockRight">
+              <div class="metaBadges">
+                <span class="badge">provider: <code>{{ kbMeta.provider || "-" }}</code></span>
+                <span class="badge">model: <code>{{ kbMeta.model || "-" }}</code></span>
+                <span class="badge">top_n: <code>{{ kbRetrieval.top_n ?? "-" }}</code></span>
+                <span class="badge">threshold: <code>{{ kbRetrieval.score_threshold ?? "-" }}</code></span>
+              </div>
+              <span class="togglePill togglePillSm" aria-hidden="true"></span>
+            </div>
+          </summary>
+
+          <div class="hr"></div>
+
+          <div v-if="groupedHits.length === 0" class="muted">No hits.</div>
+
+          <div v-else class="stack">
+            <details v-for="dg in groupedHits" :key="dg.domain" class="details innerDetails">
+              <summary class="innerSummary">
+                <div class="innerSummaryRow">
+                  <div class="innerSummaryText">
+                    <div class="sumTitle">
+                      domain: <code>{{ dg.domain }}</code>
+                      <span class="muted sumSubInline">books: {{ dg.books.length }}</span>
+                    </div>
+                  </div>
+                  <span class="togglePill togglePillSm" aria-hidden="true"></span>
+                </div>
+              </summary>
+
+              <div class="hr"></div>
+
+              <div class="stack">
+                <details
+                  v-for="bk in dg.books"
+                  :key="bk.doc_id + bk.doc_title"
+                  class="details innerDetails2"
+                >
+                  <summary class="innerSummary">
+                    <div class="innerSummaryRow">
+                      <div class="innerSummaryText">
+                        <div class="sumTitle">{{ bk.doc_title }}</div>
+                        <div class="muted sumSub">hits: <code>{{ bk.lines.length }}</code></div>
+                      </div>
+                      <span class="togglePill togglePillSm" aria-hidden="true"></span>
+                    </div>
+                  </summary>
+
+                  <div class="hr"></div>
+
+                  <div class="stack">
+                    <details v-for="(ln, idx) in bk.lines" :key="idx" class="hitLine">
+                      <summary class="hitSummary">
+                        <div class="hitBadges">
+                          <span class="badge">page: <code>{{ ln.page_number }}</code></span>
+                          <span class="badge">score: <code>{{ fmtScore(ln.score) }}</code></span>
+                        </div>
+                        <span class="togglePill togglePillSm" aria-hidden="true"></span>
+                      </summary>
+
+                      <div class="hr"></div>
+                      <div class="muted" style="white-space: pre-wrap; line-height: 1.55">
+                        {{ ln.text }}
+                      </div>
+                    </details>
+                  </div>
+                </details>
+              </div>
+            </details>
+          </div>
+        </details>
+
+        <div class="hr2"></div>
+
+        <!-- ===== Block 3 ===== -->
+        <details class="details blockDetails" open>
+          <summary class="blockSummary">
+            <div class="blockTitle">selected_habits</div>
+
+            <div class="blockRight">
+              <div class="metaBadges">
+                <span class="badge">provider: <code>{{ selMeta.provider || "-" }}</code></span>
+                <span class="badge">model: <code>{{ selMeta.model || "-" }}</code></span>
+              </div>
+              <span class="togglePill togglePillSm" aria-hidden="true"></span>
+            </div>
+          </summary>
+
+          <div class="hr"></div>
+
+          <div v-if="selectedHabits.length === 0" class="muted">No selected_habits.</div>
+
+          <div v-else class="stack">
+            <details v-for="(h, i) in selectedHabits" :key="h.habit_key || i" class="details innerDetails">
+              <summary class="innerSummary">
+                <div class="innerSummaryRow">
+                  <div class="innerSummaryText">
+                    <div class="sumTitle">{{ h.habit }}</div>
+                  </div>
+                  <span class="togglePill togglePillSm" aria-hidden="true"></span>
+                </div>
+              </summary>
+
+              <div class="hr"></div>
+
+              <div class="row badgesLine">
+                <span class="badge">top_n: <code>{{ habitTopN(h) }}</code></span>
+                <span class="badge">threshold: <code>{{ habitThreshold(h) }}</code></span>
+                <span class="badge">score: <code>{{ fmtScore(h.score) }}</code></span>
+
+                <span v-if="h.reason" class="badge badgeWide">
+                  reason: <span class="reasonText">{{ h.reason }}</span>
+                </span>
+              </div>
+
+              <div class="hr"></div>
+
+              <div class="muted sectionLabel"></div>
+              <ContextLabels :contexts="h.contexts || []" />
+            </details>
+          </div>
+        </details>
+
+        <div class="hr2"></div>
+
+        <!-- ===== Block 4 ===== -->
+        <details class="details blockDetails">
+          <summary class="blockSummary">
+            <div class="blockTitle">bilded_profiles</div>
+
+            <div class="blockRight">
+              <div class="metaBadges">
+                <span class="badge">provider: <code>{{ profMeta.provider || "-" }}</code></span>
+                <span class="badge">model: <code>{{ profMeta.model || "-" }}</code></span>
+              </div>
+              <span class="togglePill togglePillSm" aria-hidden="true"></span>
+            </div>
+          </summary>
+
+          <div class="hr"></div>
+
+          <div v-if="!profileDetailed" class="muted">No profile_detailed.</div>
+          <div v-else class="muted" style="white-space: pre-wrap; line-height: 1.55">
+            {{ profileDetailed }}
+          </div>
+        </details>
+
+        <div class="hr2"></div>
+
+        <!-- ===== Block 5 ===== -->
+        <details class="details blockDetails" open>
+          <summary class="blockSummary">
+            <div class="blockTitle">feedback</div>
+
+            <div class="blockRight">
+              <span class="togglePill togglePillSm" aria-hidden="true"></span>
+            </div>
+          </summary>
+
+          <div class="hr"></div>
+
+          <label class="muted label"></label>
+          <textarea
+            class="textarea feedbackTextarea"
+            v-model="commentText"
+            rows="4"
+            placeholder="Write a short feedback (optional)…"
+            :disabled="commentBusy"
+          ></textarea>
+
+          <div class="row feedbackActions">
+            <button class="btn primary bigBtn btnFx" :disabled="commentBusy || !commentReady" @click="saveFeedback">
+              {{ commentBusy ? "Saving..." : "Save comment" }}
+            </button>
+
+            <button class="btn bigBtn btnFx" :disabled="loading || !canSubmit" @click="submit">
+              Regenerate recommendations
+            </button>
+          </div>
+
+          <div v-if="commentOk" class="muted" style="margin-top: 8px">
+            Feedback has been successfully submitted!
+          </div>
+
+          <div v-if="commentError" class="card errorCard" style="margin-top: 10px">
+            <div class="errTitle">Error</div>
+            <div class="muted" style="white-space: pre-wrap">{{ commentError }}</div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style scoped>
-.grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+.page {
+  max-width: 1100px;
+  margin: 22px auto 0;
+  padding: 0 14px 60px;
+
+  /* theme-ish neutrals (match ManageHabits feeling) */
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface2: rgb(248, 250, 252);
+  --surface3: rgb(241, 245, 249);
+  --border: rgba(15, 23, 42, 0.12);
+  --border2: rgba(15, 23, 42, 0.10);
+  --shadow1: 0 10px 20px rgba(15, 23, 42, 0.10);
+  --shadow2: 0 6px 12px rgba(15, 23, 42, 0.08);
+
+  /* --- subtle blue for nested items --- */
+  --sub1: rgb(248, 251, 255);
+  --sub2: rgb(244, 249, 255);
+  --sub3: rgb(240, 247, 255);
+
+  --subBorder1: rgba(59, 130, 246, 0.10);
+  --subBorder2: rgba(59, 130, 246, 0.14);
+  --subBorder3: rgba(59, 130, 246, 0.16);
 }
-@media (max-width: 900px) {
-  .grid2 {
-    grid-template-columns: 1fr;
-  }
+
+.recCard {
+  padding: 16px 18px 20px;
+  border-radius: 18px;
+  min-height: 600px;
+  font-size: 14px;
+}
+.bigTextarea::placeholder {
+  color: rgba(15, 23, 42, 0.45);
+  opacity: 1;
+}
+
+/* header */
+.headerRow {
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.title {
+  font-weight: 900;
+  font-size: 18px;
+}
+
+.desc {
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* main input row */
+.mainRow {
+  gap: 16px;
+  align-items: stretch;
+}
+
+.left {
+  flex: 1;
+  min-width: 340px;
 }
 
 .label {
-  font-weight: 800;
   font-size: 13px;
-  margin-bottom: 6px;
-}
-
-.input {
-  width: 100%;
-  box-sizing: border-box;
-  border-radius: 12px;
-  border: 1px solid rgba(15, 23, 42, 0.14);
-  padding: 10px 10px;
-  font-size: 14px;
-  outline: none;
-  background: white;
-}
-.input:focus {
-  border-color: rgba(59, 130, 246, 0.55);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
-}
-
-.textBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.textActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
 }
 
 .textarea {
-  width: 100%;
-  box-sizing: border-box;
+  min-height: 440px;
   resize: vertical;
-  border-radius: 14px;
-  border: 1px solid rgba(15, 23, 42, 0.14);
-  padding: 10px 12px;
-  font-size: 14px;
-  outline: none;
-  background: white;
-  min-height: 140px;
-}
-.textarea:focus {
-  border-color: rgba(59, 130, 246, 0.55);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
 }
 
-/* Progress */
-.progressWrap {
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  border-radius: 14px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.9);
+.bigTextarea {
+  min-height: 440px;
+  resize: vertical;
 }
-.progressTop {
+
+.hint {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.right {
+  width: 260px;
+  min-width: 240px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-.progressBar {
-  width: 100%;
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.1);
-  overflow: hidden;
-}
-.progressFill {
-  height: 100%;
-  border-radius: 999px;
-  background: rgba(59, 130, 246, 0.7);
-  transition: width 120ms linear;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
 }
 
-/* Output layout */
-.section {
-  margin-top: 14px;
+.bigBtn {
+  padding: 10px 12px;
+  border-radius: 12px;
 }
-.sectionTitle {
-  font-weight: 900;
+
+.right .bigBtn {
+  font-family: inherit;
   font-size: 14px;
-  margin-bottom: 8px;
+  font-weight: 700;
+  line-height: 1.2;
 }
-.box {
-  border: 1px solid rgba(15, 23, 42, 0.12);
+
+.spacer {
+  flex: 1;
+  min-height: 0;
+  max-height: 385px;
+}
+
+/* errors */
+.errorCard {
+  border-color: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.04);
+}
+.errTitle {
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.respCard {
+  background: transparent;
+}
+
+.details {
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--surface);
 }
+
+.details summary {
+  cursor: pointer;
+  list-style: none;
+}
+.details summary::-webkit-details-marker {
+  display: none;
+}
+
+.blockDetails {
+  padding: 12px 14px;
+}
+
+.blockSummary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.blockTitle {
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.blockRight {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.metaBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.innerDetails {
+  background: #fff;
+  border-color: var(--border2);
+}
+
+.selectedHabitItem {
+  background: var(--sub1);
+  border-color: var(--subBorder2);
+}
+.innerDetails2 {
+  background: #fff;
+  border-color: var(--border2);
+}
+.innerSummary {
+  display: block;
+}
+
+/* ---------- Toggle Pill helpers ---------- */
+.togglePill {
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  padding: 10px 14px;
+  border-radius: 12px;
+
+  font-weight: 800;
+  text-decoration: none;
+  color: var(--text);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  user-select: none;
+  white-space: nowrap;
+}
+
+.blockSummary .togglePill,
+.innerSummary .togglePill,
+.hitSummary .togglePill {
+  border-color: rgba(59, 130, 246, 0.25);
+  background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.togglePillSm {
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.innerSummaryRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.innerSummaryText {
+  flex: 1;
+  min-width: 0;
+}
+.innerSummaryRow .togglePill {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.hitSummary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hitBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.hitSummary .togglePill {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+summary .togglePill::after {
+  content: "Expand Labels";
+}
+details[open] > summary .togglePill::after {
+  content: "Collapse Labels";
+}
+/* ---------------------------------------- */
+
+.sumTitle {
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.sumSub {
+  font-size: 12px;
+  margin-top: 4px;
+  opacity: 0.78;
+}
+
+.sumSubInline {
+  font-size: 12px;
+  margin-left: 10px;
+  opacity: 0.78;
+}
+
+.sectionLabel {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+/* kv */
 .kv {
   display: grid;
-  grid-template-columns: 140px 1fr;
+  grid-template-columns: 120px 1fr;
   gap: 10px;
   padding: 6px 0;
 }
@@ -872,77 +794,104 @@ async function submitComment() {
   }
 }
 .k {
-  font-weight: 800;
+  font-weight: 650;
   font-size: 12px;
-  color: rgba(15, 23, 42, 0.75);
+  color: rgba(15, 23, 42, 0.72);
 }
 .v {
   font-size: 13px;
 }
-.stack {
-  display: flex;
-  flex-direction: column;
+
+.badgesLine {
   gap: 10px;
-}
-.details {
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  border-radius: 14px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.92);
-}
-.details summary {
-  cursor: pointer;
-  list-style: none;
-}
-.details summary::-webkit-details-marker {
-  display: none;
-}
-
-.sumRow {
-  display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: flex-start;
-  gap: 12px;
 }
-.sumMain {
-  min-width: 0;
+.badgeWide {
+  flex: 1;
+  min-width: 260px;
+  max-width: 100%;
 }
-.sumTitle {
-  font-weight: 900;
-  font-size: 13px;
-  line-height: 1.35;
-}
-
-.ul {
-  margin: 0;
-  padding-left: 18px;
-}
-.chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(15, 23, 42, 0.14);
-  background: rgba(248, 250, 252, 0.9);
-  font-size: 12px;
-  font-weight: 700;
+.reasonText {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
-.pre {
-  margin-top: 8px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: rgba(248, 250, 252, 0.9);
-  overflow: auto;
-  font-size: 12px;
-  line-height: 1.4;
+.hitLine {
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 8px 10px;
+  background: #fff;
 }
 
-.alert.error {
-  border: 1px solid rgba(220, 38, 38, 0.35);
-  background: rgba(220, 38, 38, 0.06);
-  border-radius: 14px;
-  padding: 10px 12px;
+/* feedback */
+.feedbackTextarea {
+  resize: vertical;
+  min-height: 96px;
+  max-width: 97%;
+}
+.feedbackActions {
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.btnFx {
+  background: rgb(248, 250, 252) !important;
+  border-color: rgb(226, 232, 240) !important;
+  filter: none !important;
+
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+.btnFx:hover {
+  background: rgb(241, 245, 249) !important;
+  border-color: rgb(203, 213, 225) !important;
+  opacity: 1 !important;
+  filter: none !important;
+
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.10);
+}
+
+.btnFx:active {
+  background: rgb(226, 232, 240) !important;
+  opacity: 1 !important;
+  filter: none !important;
+
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.08);
+}
+
+.btn.primary.btnFx {
+  background: rgb(239, 246, 255) !important;
+  border-color: rgb(191, 219, 254) !important;
+  color: rgb(37, 99, 235) !important;
+}
+
+.btn.primary.btnFx:hover {
+  background: rgb(219, 234, 254) !important;
+  border-color: rgb(147, 197, 253) !important;
+}
+
+.btn.primary.btnFx:active {
+  background: rgb(191, 219, 254) !important;
+}
+
+.btnFx:disabled,
+.btnFx[aria-disabled="true"] {
+  transform: none !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+  opacity: 1 !important;
+  filter: none !important;
 }
 </style>

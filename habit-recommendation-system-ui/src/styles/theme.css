@@ -35,6 +35,11 @@ body{
 .col{ display:flex; flex-direction:column; gap:12px; }
 .muted{ color: var(--muted); }
 .hr{ height:1px; background: var(--border); margin: 12px 0; }
+.hr2 {
+  height: 15px;
+  border: 0;
+  margin: 0;
+}
 
 .btn{
   border: 1px solid var(--border);

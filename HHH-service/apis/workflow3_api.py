@@ -7,9 +7,9 @@ import hashlib
 import unicodedata
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional, List
-
+from bson import ObjectId
 import requests
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.concurrency import run_in_threadpool
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, confloat
@@ -30,6 +30,7 @@ MONGO_URI = os.getenv(
     "MONGO_URI", os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017")
 )
 RECOMMEND_DB_NAME = os.getenv("RECOMMEND_DB_NAME", "RecommendationsDB")
+HabitDB_NAME = os.getenv("HabitDB_NAME", "HabitDB")
 
 BILDED_PROFILES_COLL_NAME = os.getenv("BILDED_PROFILES_COLL_NAME", "bilded_profiles")
 SELECTED_HABITS_COLL_NAME = os.getenv("SELECTED_HABITS_COLL_NAME", "selected_habits")
@@ -49,6 +50,7 @@ HISTORY_COLL_NAME = os.getenv("HISTORY_COLL_NAME", "recommendation_history")
 MONGO = AsyncIOMotorClient(MONGO_URI, serverSelectionTimeoutMS=2000)
 
 RECOMMEND_DB = MONGO.get_database(RECOMMEND_DB_NAME)
+HABIT_DB = MONGO.get_database(HabitDB_NAME)
 
 BILDED_PROFILES_COLL = RECOMMEND_DB.get_collection(BILDED_PROFILES_COLL_NAME)
 SELECTED_HABITS_COLL = RECOMMEND_DB.get_collection(SELECTED_HABITS_COLL_NAME)
@@ -61,6 +63,7 @@ RECOMMENDATION_COMMENTS_COLL = RECOMMEND_DB.get_collection(
 )
 HISTORY_COLL = RECOMMEND_DB.get_collection(HISTORY_COLL_NAME)
 
+HABIT_CONTEXT_MAPPING_COLL = HABIT_DB.get_collection("context_mappings")
 
 # 整个api的输入
 class RecommendIn(BaseModel):
@@ -395,10 +398,18 @@ async def recommend(payload: RecommendIn) -> RecommendOut:
     await store_selected_habits_data(
         request_uuid, clean_text, text_signature, habits_select_out
     )
-
+    selected_habits_with_mapping = habits_select_out.get("selected_habits", [])
+    for h in selected_habits_with_mapping:
+        hk = h.get("habit_key")
+        if not hk:
+            continue
+        doc = await HABIT_CONTEXT_MAPPING_COLL.find_one({"habit_key": hk})
+        if doc and doc.get("result") is not None:
+            h["contexts"] = doc.get("result")
+            h["retrieval"] = doc.get("mapping_params", {})
     step1_out = {
         "llm_meta": habits_select_out.get("llm_meta", {}),
-        "selected_habits": habits_select_out.get("selected_habits", []),
+        "selected_habits": selected_habits_with_mapping,
         "selected_habits_summary": habits_select_out.get("selected_habits_summary", ""),
     }
     # =========================================================
@@ -423,7 +434,11 @@ async def recommend(payload: RecommendIn) -> RecommendOut:
     # =========================================================
     # STEP 3) /kb/query
     # =========================================================
-    query = f"{clean_text}\n\n{selected_habits_summary}\n\n{profile_summary}"
+    query = (
+        f"USER_TEXT:\n{clean_text}\n"
+        f"RELEVANT_HABITS_SUMMARY:\n{selected_habits_summary}\n"
+        f"USER_PROFILE_SUMMARY:\n{profile_summary}"
+    )
 
     kb_query_out = await run_in_threadpool(
         lambda: call_api_kb_query(request_uuid, query)
@@ -497,3 +512,68 @@ async def recommend_comment(payload: RecommendCommentIn) -> RecommendCommentOut:
         text=payload.text,
         comment=payload.comment,
     )
+
+
+def _jsonify(x: Any) -> Any:
+    """Make Mongo documents JSON-serializable (and drop _id)."""
+    if isinstance(x, ObjectId):
+        return str(x)
+    if isinstance(x, datetime):
+        return x.isoformat()
+    if isinstance(x, dict):
+        out: Dict[str, Any] = {}
+        for k, v in x.items():
+            if k == "_id":
+                continue
+            out[k] = _jsonify(v)
+        return out
+    if isinstance(x, list):
+        return [_jsonify(i) for i in x]
+    return x
+
+
+@router.get(
+    "/recommend/history",
+    summary="List recommendation history (latest per text_signature)",
+    description=(
+        "Returns recommendation history items grouped by text_signature, "
+        "keeping only the newest (by created_at). Sorted by newest first."
+    ),
+)
+async def list_recommend_history(
+    limit: int = Query(30, ge=1, le=200),
+    skip: int = Query(0, ge=0),
+):
+    match_q: Dict[str, Any] = {
+        "text_signature": {"$exists": True, "$type": "string", "$ne": ""}
+    }
+
+    # total = distinct(text_signature) count
+    total = 0
+    total_cur = HISTORY_COLL.aggregate(
+        [
+            {"$match": match_q},
+            {"$group": {"_id": "$text_signature"}},
+            {"$count": "total"},
+        ]
+    )
+    total_doc = await total_cur.to_list(length=1)
+    if total_doc:
+        total = int(total_doc[0].get("total", 0))
+
+    # items = latest doc per signature
+    pipeline = [
+        {"$match": match_q},
+        {"$sort": {"created_at": -1, "_id": -1}},
+        {"$group": {"_id": "$text_signature", "doc": {"$first": "$$ROOT"}}},
+        {"$replaceRoot": {"newRoot": "$doc"}},
+        {"$sort": {"created_at": -1, "_id": -1}},
+        {"$skip": skip},
+        {"$limit": limit},
+    ]
+
+    cursor = HISTORY_COLL.aggregate(pipeline, allowDiskUse=True)
+    docs: List[Dict[str, Any]] = await cursor.to_list(length=limit)
+
+    items = [_jsonify(d) for d in docs]
+    return {"ok": True, "total": total, "limit": limit, "skip": skip, "items": items}
