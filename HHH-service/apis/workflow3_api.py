@@ -435,9 +435,10 @@ async def recommend(payload: RecommendIn) -> RecommendOut:
     # STEP 3) /kb/query
     # =========================================================
     query = (
-        f"USER_TEXT:\n{clean_text}\n"
-        f"RELEVANT_HABITS_SUMMARY:\n{selected_habits_summary}\n"
-        f"USER_PROFILE_SUMMARY:\n{profile_summary}"
+        # f"GOAL:\n{clean_text}\n"
+        # f"RELEVANT_HABITS_SUMMARY:\n{selected_habits_summary}\n"
+        f"{profile_summary}\n"
+        "KEYWORDS:\nplan, week-by-week, schedule, routine, progression, starter plan, example plan, daily plan"
     )
 
     kb_query_out = await run_in_threadpool(

@@ -177,9 +177,19 @@ Output
    - Derived from PROFILES_DATA only, USER_TEXT may be used only to prioritize what to include.
    - "profile_detailed" should describe only the user profile itself and must not include the user's stated goal/purpose from USER_TEXT.
 - "profile_summary":
-   - A short, retrieval-oriented summary for downstream RAG.
-   - Must be produced only by compressing/summarizing the content of "profile_detailed".
-   - Focus only on high-signal items: constraints (time/physical limitations), major risks, strong preferences, and the most important questionnaire outcomes.
+   - It contains two parts: GOAL and PROFILE_CONSTRAINTS.
+   - GOAL
+    - Rewrite / paraphrase the "user_text" and expand it with synonyms and retrieval keywords ONLY.
+    - Do NOT introduce any facts from the user profile.
+    - Purpose: improve downstream RAG recall for actionable, step-by-step behaviors/instructions.
+   - PROFILE_CONSTRAINTS
+    - A short, retrieval-friendly summary for downstream RAG retrieval, intended to help retrieve actionable, step-by-step behaviors/instructions.
+    - Include only high-signal, decision-relevant content. Prioritize: constraints (time budget, physical limitations/pain impact, resource/environment constraints if any), major risks/contraindications/verify items (safety flags), strong preferences/aversions (that significantly affect adherence), and the most important questionnaire outcomes (avoid listing fine-grained items or the question text).
+    - Output must be category-level abstractions only (low/medium/high, mild/moderate/severe, adequate/inadequate, stable/unstable, yes/no).Forbidden: any explicit frequencies, counts, durations, distances, schedules, or time patterns, including but not limited to: “per day/week”, “X times”, “minutes/hours”, “km”, “steps”, “usually at 23:00”, “often/rarely” when used as a quasi-frequency.
+    - It must be generated only by compressing/summarizing the existing information in “profile_detailed”, without adding new facts, making inferences, or introducing external knowledge.
+    - Focus only on the current goal; by default, omit any information that is not relevant to the current goal.
+    - Example:
+     - "GOAL: Weight loss | Weight management | Reduce body fat | Control energy intake | Increase daily physical activity; PROFILE: sex: male; age: 25; BMI: overweight (≈25.7); time_budget: ≥30 min/day; baseline_activity: low; mobility_limit: mild (slight limitation for higher-intensity activity); pain: very mild; stress: moderate; diet_quality: moderate; substances: no alcohol/no smoking; self_rated_health: fair."
 - Do NOT invent any values not supported by USER_TEXT or PROFILES_DATA.
 - If PROFILES_DATA contains personal identifiers (names, exact addresses, phone numbers, emails, usernames, org names), replace them with placeholders such as [PERSON], [ADDRESS], [PHONE], [EMAIL], [ORG].
 - Do NOT output any unique identifiers, such as IDs, UUIDs, request_uuid, profile_uuid, or timestamps.

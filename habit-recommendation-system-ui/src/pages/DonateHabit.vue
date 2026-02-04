@@ -12,10 +12,9 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const resp = ref<IngestOut | null>(null);
 
-/**
- * UI-safe response:
- * remove fields you never want to show in the UI (e.g., created_at)
- */
+const canSubmit = computed(() => habit.value.trim().length > 0);
+const showEmptyWarn = computed(() => !canSubmit.value);
+
 const respUi = computed(() => {
   if (!resp.value) return null;
   const { created_at, ...rest } = resp.value as any;
@@ -32,8 +31,7 @@ function toHabitItem(r: IngestOut): HabitItem {
     language: d.language,
 
     uuid: null,
-    created_at: null, // never show created_at in HabitCard
-
+    created_at: null,
     habit_class: isHabit ? 1 : (d.habit_class ?? 0),
     confidence: isHabit ? null : (d.confidence ?? null),
 
@@ -50,11 +48,8 @@ async function submit() {
   error.value = null;
   resp.value = null;
 
-  const text = habit.value.trim();
-  if (!text) {
-    error.value = "Please enter a habit sentence first.";
-    return;
-  }
+if (!canSubmit.value) return;
+const text = habit.value.trim();
 
   loading.value = true;
   try {
@@ -91,7 +86,8 @@ async function submit() {
             v-model="habit"
             placeholder='e.g., "I try to disconnect from screens an hour before sleep to unwind."'
           ></textarea>
-          <div class="hint muted">Tip: one sentence is enough. Context like time/place/people helps.</div>
+          <div v-if="showEmptyWarn" class="hint muted">⚠️ Please enter a habit sentence first.</div>
+          <div v-else class="hint muted">Tip: one sentence is enough. Context like time/place/people helps.</div>
         </div>
 
         <div class="right col">
@@ -106,7 +102,7 @@ async function submit() {
 
           <div class="spacer"></div>
 
-          <button class="btn primary bigBtn btnFx" :disabled="loading" @click="submit">
+          <button class="btn primary bigBtn btnFx" :disabled="loading || !canSubmit" @click="submit">
             {{ loading ? "Processing..." : "Submit /ingest" }}
           </button>
 
