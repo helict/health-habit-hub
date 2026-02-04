@@ -5,10 +5,10 @@
   <!-- Eigene Styles -->
   <link href="<%= contextPath %>/css/style.css" rel="stylesheet" />
   <!-- SurveyJS Scripts -->
-  <link rel="stylesheet" href="<%= contextPath %>/vendor/survey-core/survey-core.css" />
-  <script src="<%= contextPath %>/vendor/survey-core/survey.core.min.js"></script>
-  <script src="<%= contextPath %>/vendor/survey-js-ui/survey-js-ui.min.js"></script>
-  <script src="<%= contextPath %>/vendor/survey-core/survey.i18n.min.js"></script>
+  <link rel="stylesheet" href="<%= contextPath %><%= locale %>/vendor/survey-core/survey-core.min.css" />
+  <script src="<%= contextPath %><%= locale %>/vendor/survey-core/survey.core.min.js"></script>
+  <script src="<%= contextPath %><%= locale %>/vendor/survey-js-ui/survey-js-ui.min.js"></script>
+  <script src="<%= contextPath %><%= locale %>/vendor/survey-core/survey.i18n.min.js"></script>
 </head>
 <body>
   <%- include('nav', navigation) %>

@@ -103,6 +103,30 @@ services:
     depends_on:
       - app
 
+  mongo-express:
+    image: mongo-express:latest
+    container_name: h3-mongo-express
+    restart: unless-stopped
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin
+      - ME_CONFIG_MONGODB_URL=mongodb://admin:admin@mongo:27017/
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGO_EXPRESS_USER:-admin}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGO_EXPRESS_PASSWORD:-AiGhe7ahngoh5eiz}
+    ports:
+      - 8081:8081
+    networks:
+      - h3-proxy
+    depends_on:
+      - mongo
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mongo-express.rule=Host(`mongo-express.${PATH_SUFFIX:-localhost}`)
+      - traefik.http.routers.mongo-express.entrypoints=web
+      - traefik.http.routers.mongo-express.service=mongo-express
+      - traefik.http.services.mongo-express.loadbalancer.server.port=8081
+
   translate:
     image: libretranslate/libretranslate:latest
     container_name: h3-translate

@@ -3,6 +3,7 @@
 <img src="./app/public/pics/h3-logo.png" width="250" alt="Health Habit Hub Logo"/>
 
 **Production URL**: https://habit.wiwi.tu-dresden.de
+**Version**: 1.0.0 (October 2025)
 
 A research-focused web application for collecting and analyzing health habit data using a 2×2 experimental design with multi-database architecture.
 
@@ -114,6 +115,24 @@ See [Production Deployment Guide](DOCUMENTATION.md#production-deployment) for co
 5. Verify SSL certificate obtained automatically
 
 **Production URL**: https://habit.wiwi.tu-dresden.de
+
+### Accessing Databases in Production
+
+**Neo4j Browser** (requires SSH tunnel):
+```bash
+# Create secure tunnel to Neo4j
+ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@141.76.16.16
+
+# Then access: http://localhost:7474
+# Login with Neo4j credentials (username: neo4j, password from NEO4J_PASSWORD)
+```
+
+See [DEPLOYMENT.md - Neo4j SSH Tunnel](DEPLOYMENT.md#accessing-neo4j-browser-via-ssh-tunnel) for detailed instructions.
+
+**Other services** (available via https://habit.wiwi.tu-dresden.de):
+- Mongo Express: `/mongo`
+- Fuseki RDF: `/fuseki`
+- Traefik Dashboard: `/dashboard`
 
 ---
 
