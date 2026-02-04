@@ -287,6 +287,7 @@ class Neo4jDbClient {
 
     const habitTriples = `
 ${iri(`Habit-${donation.id}`)} rdf:type owl:NamedIndividual , hhh:Habit ;
+  hhh:partOf ${iri(`ExperimentalSetting-${experimentalSetting.id}`)} ;
   hhh:habitStrength "${donation.habitStrength}"^^xsd:integer ;
   hhh:id "${donation.id}"^^xsd:string ;
   hhh:language "${this._esc(donation.language)}" ;
@@ -326,7 +327,6 @@ ${iri(`Context-${c.id}`)} rdf:type owl:NamedIndividual , hhh:${c.value} ;
         const hasCtx = ctxList ? `\n  hhh:hasContext ${ctxList} ;` : '';
         return `
 ${iri(`Behavior-${b.id}`)} rdf:type owl:NamedIndividual , hhh:Behavior ;${hasCtx}
-  hhh:partOf ${iri(`ExperimentalSetting-${experimentalSetting.id}`)} ;
   hhh:id "${b.id}"^^xsd:string ;
   hhh:language "${this._esc(donation.language)}" ;
   hhh:source "${this._esc(donation.source)}"^^xsd:string ;
@@ -395,7 +395,6 @@ ${iri(`Context-${tid}`)} hhh:hasTranslation ${iri(`Context-${origCtx.id}`)} .
           const translatedBehaviorData = tLabel ? tLabel.data : origBeh.data;
           return `
 ${iri(`Behavior-${tid}`)} rdf:type owl:NamedIndividual , hhh:Behavior ;
-  hhh:partOf ${iri(`ExperimentalSetting-${experimentalSetting.id}`)} ;
   hhh:id "${tid}"^^xsd:string ;
   hhh:language "${this._esc(t.language)}" ;
   hhh:source "${this._esc(t.source)}"^^xsd:string ;

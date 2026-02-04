@@ -184,37 +184,52 @@ ENABLE_INTEGRATION=1 npm test
 
 ### Experimental Design
 
-Health Habit Hub implements a **2×2 factorial experimental design** for habit data collection:
+Health Habit Hub implements a **2×2 factorial experimental design** to study how different instruction levels and entry methods influence the quality of donated habit data.
 
-**Factors:**
-1. **Donation Option** (2 levels):
-   - Donation possible (users can donate habit data)
-   - No donation option (data collection only)
+#### Factors
 
-2. **Visibility** (2 levels):
-   - Public visibility (donated habits visible to others)
-   - Private visibility (donated habits remain private)
+1. **Instruction Level** (2 levels)
+   - **General instructions shown**  
+     (Definition of “habit”, explanation of behavior and context, examples, research purpose)
+   - **No general instructions shown**
 
-**Experimental Groups:**
+2. **Entry Method / Task Guidance** (2 levels)
+   - **Structured marking workflow**  
+     Users select words or phrases in their habit text and explicitly label **Behavior** and **Context**
+   - **Free-text only**  
+     Users enter the habit as a single sentence without marking behavior or context
 
-| Group | Donation | Visibility | Description |
-|-------|----------|------------|-------------|
-| 1     | Yes      | Public     | Full transparency - users can donate and see others' habits |
-| 2     | Yes      | Private    | Anonymous donation - users can donate but cannot see others |
-| 3     | No       | Public     | View-only - users see others' habits but cannot donate |
-| 4     | No       | Private    | Control group - no donation, no visibility |
+---
 
-**Implementation:**
+#### Experimental Groups
 
-Users are randomly assigned to one of four groups upon accessing the application. The group assignment determines:
-- Whether the "Donate Habit" button is visible
-- Whether the "View Donated Habits" section is accessible
-- What messaging is shown about data sharing
+| Group | General Instructions | Task / Marking Workflow | Data Entry Type | What users do |
+|------:|----------------------|--------------------------|------------------|----------------|
+| **1** | Yes | Yes | **Structured** | Read general instructions and task description; enter habit; **select and mark** behavior and context; submit (with reCAPTCHA). |
+| **2** | No | Yes | **Structured** | Read task description only; enter habit in own words; **select and mark** behavior and context; submit (with reCAPTCHA). |
+| **3** | Yes | No | **Free-text** | Read general instructions; enter habit as a **single sentence**; submit (with reCAPTCHA). |
+| **4** | No | No | **Free-text** | No instructions; enter habit as a **single sentence**; submit (with reCAPTCHA). |
 
-This design allows researchers to study:
-- Effect of donation option on data collection
-- Effect of visibility on user behavior
-- Interaction effects between donation and visibility
+---
+
+#### Implementation
+
+- Users are randomly assigned to one of the four groups when opening the app in a **new browser session**.
+- If a habit has already been donated within the same session, the previously assigned group is reused.
+- The assigned group determines:
+  - Whether general habit instructions are shown
+  - Whether the interface allows explicit behavior/context marking
+  - Whether the habit is submitted as structured annotations or free text
+
+---
+
+#### Research Purpose
+
+This design allows researchers to analyze:
+
+- The effect of **instructions** on how users understand and describe habits
+- The effect of **structured annotation** versus **free-text input** on data quality
+- Interaction effects between instruction level and entry method
 
 ### Data Model
 
