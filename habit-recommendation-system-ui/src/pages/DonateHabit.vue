@@ -68,9 +68,9 @@ const text = habit.value.trim();
     <div class="card donateCard">
       <div class="row headerRow">
         <div>
-          <div class="title">Donate a Habit (Workflow 1)</div>
+          <div class="title">Donate a Habit</div>
           <div class="muted desc">
-            Calls <code>POST /ingest</code>: habit detection → context extraction → BCIO mapping → MongoDB.
+            What you enter here will be classified as either a habit or a non-habit. If it is a habit sentence, short phrases will be extracted according to predefined habit context labels (time, physical setting, prior behavior, other people, internal state, behavior, reasoning). The extracted phrases are then mapped to the Behaviour Change Intervention Ontology using Retrieval-Augmented Generation for reference.
           </div>
         </div>
         <!-- <div class="badge">/ingest</div> -->
@@ -84,10 +84,10 @@ const text = habit.value.trim();
           <textarea
             class="textarea bigTextarea"
             v-model="habit"
-            placeholder='e.g., "I try to disconnect from screens an hour before sleep to unwind."'
+            placeholder='Please enter one sentence describing a habit in your daily life; the result will be saved and used for future recommendations (e.g., I read for ten minutes before bed every night)."'
           ></textarea>
           <div v-if="showEmptyWarn" class="hint muted">⚠️ Please enter a habit sentence first.</div>
-          <div v-else class="hint muted">Tip: one sentence is enough. Context like time/place/people helps.</div>
+          <div v-else class="hint muted">Tip: Regularly sharing your real habits over time helps us generate more accurate, personalized recommendations for you :)</div>
         </div>
 
         <div class="right col">
@@ -103,10 +103,10 @@ const text = habit.value.trim();
           <div class="spacer"></div>
 
           <button class="btn primary bigBtn btnFx" :disabled="loading || !canSubmit" @click="submit">
-            {{ loading ? "Processing..." : "Submit /ingest" }}
+            {{ loading ? "Processing..." : "Submit" }}
           </button>
 
-          <RouterLink class="btn bigBtn btnFx" to="/manage">Go to management →</RouterLink>
+          <RouterLink class="btn bigBtn btnFx" to="/manage">Manage your habits</RouterLink>
         </div>
       </div>
 
@@ -131,13 +131,12 @@ const text = habit.value.trim();
 
         <HabitCard :item="toHabitItem(resp)" />
 
-        <div style="margin-top: 12px">
+        <!-- <div style="margin-top: 12px">
           <details>
             <summary style="cursor: pointer; font-weight: 900">Raw JSON</summary>
-            <!-- use respUi so created_at never appears -->
             <JsonBlock :value="respUi" />
           </details>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

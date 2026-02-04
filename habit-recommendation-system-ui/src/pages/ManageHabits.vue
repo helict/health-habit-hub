@@ -54,7 +54,7 @@ onMounted(load);
       <div>
         <div style="font-weight:950; font-size:18px">Manage Habits</div>
         <div class="muted" style="font-size:13px; margin-top:6px">
-          Display data stored in the local habit database
+          You can review an overview of your habit and non-habit data on this page.
         </div>
       </div>
 
