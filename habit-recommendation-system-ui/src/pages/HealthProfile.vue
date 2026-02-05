@@ -6,9 +6,9 @@
         <div class="titleBlock">
           <h2>Health Profile</h2>
           <p class="sub">
-            Switch between <b>Basic</b> / <b>SLIQ</b> / <b>RAND-36</b>. Backend stores only the latest submission
-            per
-            form.
+            Please honestly complete the three forms <b>Basic</b> / <b>SLIQ</b> / <b>RAND-36</b>. You can update your
+            answers at any time. The forms will be stored in our local database and used later to generate
+            recommendations.
           </p>
         </div>
 
@@ -16,8 +16,7 @@
           <div class="tabs">
             <button class="btn" :class="{ primary: active === 'basic' }" @click="active = 'basic'">Basic</button>
             <button class="btn" :class="{ primary: active === 'sliq' }" @click="active = 'sliq'">SLIQ</button>
-            <button class="btn" :class="{ primary: active === 'rand36' }"
-              @click="active = 'rand36'">RAND-36</button>
+            <button class="btn" :class="{ primary: active === 'rand36' }" @click="active = 'rand36'">RAND-36</button>
           </div>
 
           <div class="metaRow">
@@ -40,10 +39,10 @@
         </keep-alive>
       </div>
 
-      <details v-if="lastResp" class="debug">
+      <!-- <details v-if="lastResp" class="debug">
         <summary>Last API response</summary>
         <pre>{{ JSON.stringify(lastResp, null, 2) }}</pre>
-      </details>
+      </details> -->
     </div>
   </div>
 </template>
@@ -85,6 +84,7 @@ const status = ref<{ kind: "idle" | "saving" | "saved" | "error"; text: string }
 // -----------------------------
 const basicJson = {
   title: "Basic Health Profile",
+  description: "The Basic Health Profile is an author-developed questionnaire created for this prototype to collect additional self-reported information and enrich the user profile.",
   showQuestionNumbers: "off",
   elements: [
     // --------------------
@@ -164,41 +164,41 @@ const basicJson = {
     },
 
     {
-  type: "html",
-  name: "additional_info_hint",
-  html:
-    `<div style="padding:10px 12px;border:1px solid rgba(15,23,42,0.08);border-radius:12px;background:rgba(15,23,42,0.02);">
+      type: "html",
+      name: "additional_info_hint",
+      html:
+        `<div style="padding:10px 12px;border:1px solid rgba(15,23,42,0.08);border-radius:12px;background:rgba(15,23,42,0.02);">
       <b>Additional info (optional)</b><br/>
       If the questions above feel limited, you can add anything you think is relevant for better recommendations.
       <ul style="margin:8px 0 0 18px;">
         <li>NCD history (e.g., diabetes, hypertension, CVD, COPD, cancer)</li>
-        <li>Current medication, allergies, injuries/limitations</li>
+        <li>Current medication, allergies</li>
         <li>Diet preferences, daily routine constraints, what has/hasn't worked for you</li>
       </ul>
       <span style="opacity:0.75;">Please avoid sharing personal identifiers (names, exact addresses, etc.).</span>
     </div>`,
-},
+    },
 
     // --------------------
     // Optional
     // --------------------
-{
-  type: "comment",
-  name: "additional_notes",
-  title: "Free notes (optional)",
-  isRequired: false,
-  placeholder:
-    "E.g., I have hypertension and take medication; I prefer low-impact activities; night shifts; allergies; main barriers; etc.",
-  rows: 6,
-  autoGrow: true,
-  maxLength: 2000,
-},
+    {
+      type: "comment",
+      name: "additional_notes",
+      title: "Free notes (optional)",
+      isRequired: false,
+      placeholder:
+        "E.g., I have hypertension and take medication; I prefer low-impact activities; night shifts; allergies; main barriers; etc.",
+      rows: 6,
+      autoGrow: true,
+      maxLength: 2000,
+    },
   ],
 };
 
 const sliqJson = {
   title: "SLIQ (Lifestyle)",
-  description: "This prototype implements the SLIQ structure and scoring scheme based on Godwin et al. (2008). On-screen item wording is an author-created paraphrase/translation and is not reproduced verbatim from the original questionnaire text. For research/prototyping use only (not for clinical decision-making).",
+  description: "SLIQ (Simple Lifestyle Indicator Questionnaire) is a brief self-report questionnaire used to summarize lifestyle factors and compute an overall lifestyle score."+" This prototype implements the SLIQ structure and scoring scheme based on Godwin et al. (2008). The on-screen item wording is an author-created paraphrase and is not reproduced verbatim from the original questionnaire text. For research use only (not for clinical decision-making).",
   showQuestionNumbers: "off",
 
   elements: [
@@ -207,10 +207,10 @@ const sliqJson = {
     // values: 0..5
     // =====================
     {
-  type: "html",
-  name: "sliq_citation",
-  html:
-    `<div style="padding:12px 14px;border:1px solid rgba(15,23,42,0.12);border-radius:12px;background:rgba(15,23,42,0.03);line-height:1.5">
+      type: "html",
+      name: "sliq_citation",
+      html:
+        `<div style="padding:12px 14px;border:1px solid rgba(15,23,42,0.12);border-radius:12px;background:rgba(15,23,42,0.03);line-height:1.5">
       <b>Source</b>:
       <a
         href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2293321/"
@@ -220,9 +220,9 @@ const sliqJson = {
       >
         Godwin et al. (2008)
       </a>
-      <span style="opacity:0.9;"> (SLIQ structure & scoring scheme)</span>
+      <span style="opacity:0.9;"></span>
     </div>`
-},
+    },
     {
       type: "panel",
       name: "diet_panel",
@@ -497,7 +497,7 @@ const sliqJson = {
 const rand36Json = {
   title: "RAND 36-Item Health Survey (RAND-36) v1.0",
   description:
-    "This prototype implements the RAND 36-Item Health Survey 1.0 (RAND-36 / MOS SF-36 items) and scoring according to RAND (Table 1 item recoding to 0–100; Table 2 scale averaging). Item wording shown on screen follows the standard English item wording; any deviations will be explicitly marked. For research/prototyping use only (not for clinical decision-making). When printing/distributing, include the RAND credit line: Developed at RAND as part of the Medical Outcomes Study (MOS).",
+    "The RAND 36 is a generic questionnaire used to assess overall health-related quality of life (HRQoL), covering domains such as physical functioning, pain, general health perceptions, vitality/energy, social functioning, role limitations due to emotional problems, and mental health. This prototype implements the RAND 36-Item Health Survey 1.0 and scores it according to RAND’s methodology. The on-screen item wording follows the standard English wording; any deviations will be explicitly marked. For research/prototyping use only (not for clinical decision-making). When printing/distributing, please include the RAND credit line: Developed at RAND as part of the Medical Outcomes Study (MOS).",
   showQuestionNumbers: "off",
 
   elements: [
@@ -1373,7 +1373,7 @@ function buildAnswerItems(m: Model): ProfileAnswerItem[] {
       const dv = q?.displayValue ?? (typeof q?.getDisplayValue === "function" ? q.getDisplayValue(false) : undefined);
       if (Array.isArray(dv)) label = dv.join(", ");
       else if (dv !== undefined && dv !== null && dv !== "") label = String(dv);
-    } catch {}
+    } catch { }
 
     if (!label) label = typeof val === "string" ? val : JSON.stringify(val);
 
