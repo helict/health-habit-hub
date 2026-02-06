@@ -1,14 +1,14 @@
 {
-  "kb_signature": "a77325ebe97b2284818b8816842ca0b3bda1d5b9",
-  "last_sync_at": "2026-02-04T23:02:26.327514+01:00",
+  "kb_signature": "c87785320cb4d629c8b480b0d0e8fdd2958fc2d4",
+  "last_sync_at": "2026-02-06T23:12:43.998502+01:00",
   "sync_ok": true,
   "sync_summary": {
     "ok": true,
     "kb_root": "C:\\Users\\hjt\\Desktop\\Dip_Code_Jingting_Hua\\API-service\\src\\openapi_server\\kb",
     "collection": "kb_chunks_bgem3_test1",
-    "pdfs_found": 2,
+    "pdfs_found": 6,
     "ingested": 1,
-    "skipped": 1,
+    "skipped": 5,
     "stale_deleted": 0,
     "errors": []
   },
