@@ -15,14 +15,12 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, confloat
 
 
-WORKFLOW3_TAG = "Workflow3: Recommended workflow"
+WORKFLOW3_TAG = "Workflow 3: Habit Recommendation"
 router = APIRouter(prefix="", tags=[WORKFLOW3_TAG])
 
 API_BASE = os.getenv("API_BASE_URL", "http://127.0.0.1:8080").rstrip("/")
 
-# ----------------------------
-# Mongo (HHH-service cache DB)
-# ----------------------------
+
 # ----------------------------
 # Mongo config
 # ----------------------------
@@ -65,12 +63,12 @@ HISTORY_COLL = RECOMMEND_DB.get_collection(HISTORY_COLL_NAME)
 
 HABIT_CONTEXT_MAPPING_COLL = HABIT_DB.get_collection("context_mappings")
 
-# 整个api的输入
+# The entire API input
 class RecommendIn(BaseModel):
     text: str = Field(min_length=1, max_length=5000)
 
 
-# 习惯选择api的输出
+# Conventional API output selection
 class SelectedHabitOut(BaseModel):
     habit: str
     habit_key: str
@@ -87,7 +85,7 @@ class HabitDBSelectOut(BaseModel):
     selected_habits_summary: str = ""
 
 
-# profliesapi的输出
+# output of profliesapi
 class ProfilesBuildOut(BaseModel):
     request_uuid: str
     text: str
@@ -96,7 +94,7 @@ class ProfilesBuildOut(BaseModel):
     profile_summary: str = ""
 
 
-# kb查询api的输出
+# Output of kb query API
 class KbHit(BaseModel):
     score: float
     doc_id: str
@@ -131,7 +129,7 @@ class KbQueryOut(BaseModel):
     hits: List[KbHit] = Field(default_factory=list)
 
 
-# 推荐api的输出
+# Recommended API output
 
 
 class HabitRecommendation(BaseModel):
@@ -148,7 +146,7 @@ class RecommendApiOut(BaseModel):
     message: str
 
 
-# 推荐评论api的输出
+# Recommended comment API output
 class RecommendCommentIn(BaseModel):
     request_uuid: str
     text: str
@@ -161,7 +159,7 @@ class RecommendCommentOut(BaseModel):
     comment: Optional[str] = None
 
 
-# 整个workflow3的总输出
+# Total output of workflow3
 
 
 class RecommendOut(BaseModel):
@@ -191,7 +189,7 @@ def _text_key(text: str) -> str:
     return hashlib.sha256(base.encode("utf-8")).hexdigest()
 
 
-# 调用api
+# Call API
 
 SESSION = requests.Session()
 
@@ -272,7 +270,7 @@ def call_api_recommend(
         )
 
 
-# 存储
+# storage
 
 
 async def store_selected_habits_data(
@@ -376,8 +374,7 @@ async def store_recommendation_history(out: RecommendOut) -> None:
     "/recommend",
     response_model=RecommendOut,
     summary=(
-        "Workflow3: Full recommendation workflow including theory selection, "
-        "profile building, habit selection, knowledge base query, and recommendation generation."
+        "This API implements Workflow 3. It sequentially performs the following steps: based on the user entered goal, it selects suitable habits, generates an appropriate user profile, runs RAG retrieval, and then generates recommendations using the above results together with the user’s comment on recommendations for the same goal (from the comments collection). The result of each called API is stored in a separate collection (with the goal as the primary key), while the overall API output is stored in a history collection (with a UUID as the primary key)."
     ),
 )
 async def recommend(payload: RecommendIn) -> RecommendOut:
@@ -391,7 +388,7 @@ async def recommend(payload: RecommendIn) -> RecommendOut:
     habits_select_out = await run_in_threadpool(
         lambda: call_api_habits_select(request_uuid, clean_text)
     )
-    # 获取数据
+    # Get data
     selected_habits = habits_select_out.get("selected_habits", [])
     selected_habits_summary = habits_select_out.get("selected_habits_summary", "")
 
@@ -498,7 +495,7 @@ async def recommend(payload: RecommendIn) -> RecommendOut:
 @router.post(
     "/recommend/comment",
     response_model=RecommendCommentOut,
-    summary="Workflow3: Store a user comment for a recommendation request",
+    summary="Store a user comment for a recommendation request",
 )
 async def recommend_comment(payload: RecommendCommentIn) -> RecommendCommentOut:
     clean_text = _normalize_text(payload.text)
@@ -535,7 +532,7 @@ def _jsonify(x: Any) -> Any:
 
 @router.get(
     "/recommend/history",
-    summary="List recommendation history (latest per text_signature)",
+    summary="List recommendation history for management UI",
     description=(
         "Returns recommendation history items grouped by text_signature, "
         "keeping only the newest (by created_at). Sorted by newest first."

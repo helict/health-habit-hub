@@ -1,4 +1,3 @@
-# src/openapi_server/services/kb_auto_sync_service.py
 from __future__ import annotations
 
 import argparse
@@ -8,7 +7,7 @@ import time
 from pathlib import Path
 from typing import Optional
 
-# ---- import kb_milvus_service (module-friendly) ----
+# import kb_milvus_service
 try:
     from .kb_milvus_service import load_config, KbMilvusStore, sync_kb
 except ImportError:

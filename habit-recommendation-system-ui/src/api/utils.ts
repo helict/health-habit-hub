@@ -35,7 +35,6 @@ export async function jsonFetch<T>(
   const ct = r.headers.get("content-type");
   const wantJson = isJsonContentType(ct);
 
-  // Try to parse body once (either JSON or text)
   let data: any = null;
   if (wantJson) {
     data = await r.json().catch(() => null);
@@ -44,7 +43,6 @@ export async function jsonFetch<T>(
   }
 
   if (!r.ok) {
-    // Prefer backend structured messages if present
     const msg =
       (data && typeof data === "object" && (data?.detail?.message || data?.message)) ||
       (typeof data === "string" && data.trim()) ||
@@ -53,17 +51,14 @@ export async function jsonFetch<T>(
     throw new ApiError(String(msg), r.status, data);
   }
 
-  // Success path: if backend didn't return JSON even though we expect it, handle gracefully
   if (wantJson) return data as T;
 
-  // If it's not JSON, but still "ok", try parse it as JSON anyway; else return as-is.
   if (typeof data === "string") {
     const trimmed = data.trim();
     if (!trimmed) return (null as any) as T;
     try {
       return JSON.parse(trimmed) as T;
     } catch {
-      // Last resort: return text as any
       return (data as any) as T;
     }
   }
@@ -71,10 +66,6 @@ export async function jsonFetch<T>(
   return data as T;
 }
 
-/**
- * Mongo ObjectId → time (fallback)
- * ObjectId first 4 bytes = unix timestamp (seconds)
- */
 export function createdAtFromObjectId(oid?: string | null): string | null {
   if (!oid || oid.length < 8) return null;
   try {

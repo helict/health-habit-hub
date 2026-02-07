@@ -1,4 +1,3 @@
-# src/openapi_server/infra/mongo.py
 from __future__ import annotations
 
 import os

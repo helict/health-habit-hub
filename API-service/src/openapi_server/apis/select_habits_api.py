@@ -73,7 +73,7 @@ def _extract_json_object(raw: str) -> dict:
     return json.loads(raw[a : b + 1])
 
 # ----------------------------
-# Prompt (double braces placeholders)
+# Prompt
 # ----------------------------
 PROMPT_TEMPLATE = """
 You are a habit-database selection module.
@@ -114,13 +114,10 @@ CANDIDATES (JSON):
 
 
 
-# ----------------------------
-# Route
-# ----------------------------
 @router.post(
     "/habit_db/select",
     response_model=HabitDBSelectOut,
-    summary="Workflow3 module: select habits from HabitDB snapshot (anti-hallucination enforced)",
+    summary="Use a large language model to select suitable habits from the user’s local habit database based on the user’s goal statement, and to generate a habit summary. The selected habits (including context labels but excluding BCIO mapping results) are passed to /recommend, and the habit summary can optionally be used as part of the RAG query for /kb/query. Redis caching is implemented.",
 )
 async def habit_db_select(body: HabitDBSelectIn):
     clean_text = _normalize_text(body.text)
@@ -173,7 +170,7 @@ async def habit_db_select(body: HabitDBSelectIn):
         cached["request_uuid"] = body.request_uuid
         return HabitDBSelectOut(**cached)
 
-    # call LLM with small retry (format robustness)
+    # call LLM with small retry
     last_err: Optional[str] = None
     raw = ""
     for attempt in range(3):

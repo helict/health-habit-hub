@@ -1,5 +1,3 @@
-# bcio_owl2conceptcards.py
-# Export BCIO (or the whole merged OWL) into JSONL "concept cards" for RAG.
 from __future__ import annotations
 
 import json
@@ -19,7 +17,7 @@ ANN: Dict[str, str] = {
     "rdfs_comment":    "http://www.w3.org/2000/01/rdf-schema#comment",
     "iao_pref_label":  "http://purl.obolibrary.org/obo/IAO_0000111",  # editor preferred label
     "iao_definition":  "http://purl.obolibrary.org/obo/IAO_0000115",  # definition
-    "iao_example":     "http://purl.obolibrary.org/obo/IAO_0000112",  # example of usage (optional)
+    "iao_example":     "http://purl.obolibrary.org/obo/IAO_0000112",  # example of usage
     "exact_syn":       "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
     "related_syn":     "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
     "broad_syn":       "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
@@ -313,7 +311,7 @@ def export_concept_cards(
 
 
 # =========================
-# Optional: keep script runnable
+# keep script runnable
 # =========================
 if __name__ == "__main__":
     MODE = os.getenv("EXTRACTION_MODEL", "ALL_MERGED")

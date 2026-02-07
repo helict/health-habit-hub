@@ -1,4 +1,3 @@
-# src/openapi_server/services/clients.py
 import os
 from functools import lru_cache
 from pathlib import Path
@@ -25,7 +24,6 @@ def _load_env_once() -> None:
 
 
 @lru_cache(maxsize=12)
-# Singleton pattern, external get_client calls to the same
 def get_client(provider: str = "openai", async_: bool = False):
     _load_env_once()
 

@@ -6,14 +6,12 @@ import type {
   ProfileLatestUpsertOut,
   ProfileLatestGetOut,
   ProfileAnswerItem,
-
-  // workflow3
   RecommendOut,
   RecommendCommentReq,
 } from "./types";
 
 // ---------------------------
-// Workflow1: Habit ingest + list
+// Workflow1
 // ---------------------------
 
 export async function ingest(habit: string, language: string): Promise<IngestOut> {
@@ -91,10 +89,6 @@ export async function recommendComment(req: RecommendCommentReq): Promise<any> {
     body: JSON.stringify(req),
   });
 }
-
-// ---------------------------
-// Workflow3: Recommendation (History)
-// ---------------------------
 
 export type RecommendHistoryListResponse = {
   ok: boolean;

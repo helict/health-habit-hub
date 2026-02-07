@@ -1,4 +1,3 @@
-<!-- src/components/RecommendHistoryItem.vue -->
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { recommend, recommendComment } from "../api/hhh";
@@ -28,7 +27,6 @@ const commentBusy = ref(false);
 const commentOk = ref(false);
 const commentError = ref<string | null>(null);
 
-// init commentText
 watch(
     () => localResp.value?.user_feedback,
     (v) => {
@@ -148,7 +146,7 @@ async function saveFeedback() {
         request_uuid: localResp.value.request_uuid,
         text: localResp.value.text,
         text_signature: localResp.value.text_signature!,
-        comment: (commentText.value ?? "").trim(), // allow empty
+        comment: (commentText.value ?? "").trim(),
     };
 
     commentBusy.value = true;
@@ -414,7 +412,7 @@ function shortSig(sig?: string | null) {
 
             <div class="hr2"></div>
 
-            <!-- ===== Block 5 (read-only) ===== -->
+            <!-- ===== Block 5 ===== -->
             <details class="details blockDetails" open>
                 <summary class="blockSummary">
                     <div class="blockTitle">feedback</div>
@@ -681,7 +679,6 @@ details[open]>summary .togglePill::after {
     content: "Collapse Labels";
 }
 
-/* feedback */
 .feedbackTextarea {
     resize: vertical;
     min-height: 96px;

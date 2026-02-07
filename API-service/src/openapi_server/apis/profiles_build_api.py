@@ -1,4 +1,3 @@
-# src/openapi_server/apis/profiles_build_api.py
 from __future__ import annotations
 
 import os
@@ -91,7 +90,6 @@ def _project_question_label(data: Any) -> Any:
     if data is None:
         return None
 
-    # Common case: list[dict]
     if isinstance(data, list):
         out = []
         for item in data:
@@ -151,9 +149,6 @@ async def build_profiles_snapshot() -> str:
     return combined
 
 
-# ----------------------------
-# Prompt (double braces placeholders)
-# ----------------------------
 PROMPT_TEMPLATE = """
 You are a user-profile synthesis module for a Habit Recommendation System.
 
@@ -210,13 +205,10 @@ PROFILES_DATA:
 
 
 
-# ----------------------------
-# Route
-# ----------------------------
 @router.post(
     "/profiles/build",
     response_model=ProfilesBuildOut,
-    summary="Build a detailed user profile + RAG-oriented summary from UserProfiles (basic/sliq/rand36) and user text",
+    summary="Use a large language model to extract profile_detailed and profile_summary from the user’s local form database based on the user’s goal statement. The profile_summary is passed to /recommend, while profile_detailed, including a rewrite of the user’s goal statement optimized for use as a RAG query, is used as part of the RAG query for /kb/query. Redis caching is implemented.",
 )
 async def profiles_build(body: ProfilesBuildIn):
     clean_text = _normalize_text(body.text)

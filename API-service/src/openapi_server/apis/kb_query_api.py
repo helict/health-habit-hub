@@ -1,4 +1,3 @@
-# src/openapi_server/apis/kb_query_api.py
 from __future__ import annotations
 
 import hashlib
@@ -23,9 +22,6 @@ from openapi_server.services.kb_milvus_service import (
 router = APIRouter(prefix="/kb", tags=["KB"])
 
 
-# -----------------------
-# Minimal IO models
-# -----------------------
 class KbQueryIn(BaseModel):
     request_uuid: constr(min_length=6)
     text: constr(min_length=1)
@@ -60,9 +56,11 @@ class KbStateInfo(BaseModel):
     kb_changed: bool
     last_sync_at: str
 
+
 class LlmMeta(BaseModel):
     provider: str
     model: str
+
 
 class KbQueryOut(BaseModel):
     request_uuid: str
@@ -77,7 +75,7 @@ class KbQueryOut(BaseModel):
 
 
 # -----------------------
-# Helpers: json / state
+# Helpers
 # -----------------------
 def _json_dump(obj: Any) -> str:
     def default(o):
@@ -106,7 +104,7 @@ def _kb_state_path(meta_dir: Path) -> Path:
 
 # -----------------------
 # Signature: files + watched env (so env change triggers sync -> reindex)
-# Only these env changes should trigger reindex (your requirement)
+# Only these env changes should trigger reindex
 # -----------------------
 _WATCHED_ENV_KEYS = [
     "KB_PDF_STRATEGY",
@@ -119,7 +117,6 @@ _WATCHED_ENV_KEYS = [
 
 
 def _env_bool_1(key: str, default: str) -> bool:
-    # Keep consistent with your kb_milvus_service.py logic: == "1"
     return (os.getenv(key, default) or default) == "1"
 
 
@@ -140,7 +137,9 @@ def _env_snapshot_for_signature() -> dict:
         "KB_INFER_TABLE_STRUCTURE": _env_bool_1("KB_INFER_TABLE_STRUCTURE", "1"),
         "KB_CHUNK_MAX_CHARACTERS": _env_int("KB_CHUNK_MAX_CHARACTERS", "2800"),
         "KB_CHUNK_NEW_AFTER_N_CHARS": _env_int("KB_CHUNK_NEW_AFTER_N_CHARS", "2400"),
-        "KB_CHUNK_COMBINE_UNDER_N_CHARS": _env_int("KB_CHUNK_COMBINE_UNDER_N_CHARS", "900"),
+        "KB_CHUNK_COMBINE_UNDER_N_CHARS": _env_int(
+            "KB_CHUNK_COMBINE_UNDER_N_CHARS", "900"
+        ),
         "KB_EXTRACT_IMAGES": _env_bool_1("KB_EXTRACT_IMAGES", "0"),
     }
 
@@ -198,16 +197,15 @@ def _load_thresholds() -> tuple[int, float, int]:
     return top_n, thr, cand
 
 
-# -----------------------
-# Store singleton
-# -----------------------
+
 @lru_cache(maxsize=1)
 def get_store() -> KbMilvusStore:
-    # Load .env once on boot (typical for FastAPI).
     try:
-        from dotenv import load_dotenv  # type: ignore
+        from dotenv import load_dotenv
 
-        openapi_server_dir = Path(__file__).resolve().parents[1]  # .../src/openapi_server
+        openapi_server_dir = (
+            Path(__file__).resolve().parents[1]
+        )
         env_path = openapi_server_dir / ".env"
         if env_path.exists():
             load_dotenv(env_path)
@@ -260,10 +258,11 @@ def _ensure_kb_synced(store: KbMilvusStore, verbose: bool = True) -> tuple[bool,
     return True, last_sync_at
 
 
-# -----------------------
-# The ONLY API you want
-# -----------------------
-@router.post("/query", response_model=KbQueryOut)
+@router.post(
+    "/query",
+    response_model=KbQueryOut,
+    summary="Use a large language model to generate a one-time summary for each PDF document in the user’s local knowledge base (KB). The vector database is Milvus, and the embedding model is BAAI/bge-m3 (multilingual); only dense vectors are used. Users can configure top_n and threshold to limit the hits, and the retrieved hits are passed to /recommend. The local KB fully supports extensible CRUD operations (create, read, update, delete), and stores KB metadata in _meta.",
+)
 async def kb_query_api(body: KbQueryIn):
     """
     input: string + request_uuid
@@ -276,7 +275,9 @@ async def kb_query_api(body: KbQueryIn):
 
     # 1) auto sync if kb changed
     try:
-        kb_changed, last_sync_at = await run_in_threadpool(_ensure_kb_synced, store, True)
+        kb_changed, last_sync_at = await run_in_threadpool(
+            _ensure_kb_synced, store, True
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"KB sync failed: {repr(e)}")
 
@@ -289,9 +290,9 @@ async def kb_query_api(body: KbQueryIn):
             kb_search,
             store,
             body.text,
-            candidates,  # top_k candidates
-            None,        # domain=None
-            True,        # include_doc_meta=True
+            candidates,
+            None,  # domain=None
+            True,  # include_doc_meta=True
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Search failed: {repr(e)}")

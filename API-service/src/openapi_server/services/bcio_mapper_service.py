@@ -1,4 +1,3 @@
-# src/openapi_server/services/bcio_mapper_service.py
 from __future__ import annotations
 
 import os
@@ -12,17 +11,10 @@ sys.path.insert(0, str(SRC_DIR))
 
 from openapi_server.models.classify_context_out import ClassifyContextOut
 from openapi_server.services.bcio_hybrid_mapper import BCIOHybridMapper
-
-# -----------------------
-# Path helpers (stable cwd)
-# -----------------------
-# this file: .../src/openapi_server/services/bcio_mapper_service.py
-# OPENAPI_SERVER_DIR: .../src/openapi_server
 OPENAPI_SERVER_DIR = Path(__file__).resolve().parents[1]
 
 
 def _resolve_under_openapi_server(p: str) -> Path:
-    """If p is relative, resolve it under src/openapi_server/ (stable)."""
     pp = Path(p)
     if pp.is_absolute():
         return pp
@@ -58,8 +50,6 @@ def _ensure_concept_cards_jsonl(jsonl_path: Path) -> Path:
 # -----------------------
 _MAPPER: Optional[BCIOHybridMapper] = None
 _LOCK = threading.Lock()
-
-# (Optional) Phrase-level caching: The same value will not be retrieved repeatedly.
 _CACHE: Dict[Tuple[str, float, int, Optional[str], bool], List[Dict[str, Any]]] = {}
 _CACHE_LOCK = threading.Lock()
 _CACHE_MAX = int(os.getenv("BCIO_MAP_CACHE_MAX", "2000"))
@@ -83,8 +73,6 @@ def _get_mapper() -> BCIOHybridMapper:
 
         # If jsonl does not exist: automatically export it from OWL once.
         jsonl_path = _ensure_concept_cards_jsonl(jsonl_path)
-
-        # You can use env to force a new collection name to avoid hitting the old one
         collection_name = os.getenv("BCIO_COLLECTION_NAME") or None
 
         device = os.getenv("BCIO_DEVICE", "cuda")
@@ -160,7 +148,6 @@ def map_bcio_for_contexts(
 
         with _CACHE_LOCK:
             if len(_CACHE) >= _CACHE_MAX:
-                # Simply clear out half to prevent unlimited growth.
                 for k in list(_CACHE.keys())[: _CACHE_MAX // 2]:
                     _CACHE.pop(k, None)
             _CACHE[cache_key] = mappings
@@ -170,7 +157,7 @@ def map_bcio_for_contexts(
 
 
 # -----------------------
-# Example test (run as module)
+# Example test
 # -----------------------
 if __name__ == "__main__":
     import uuid

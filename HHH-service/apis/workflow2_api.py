@@ -9,7 +9,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
-WORKFLOW2_TAG = "Workflow2: User Profile/Form Workflow "
+WORKFLOW2_TAG = "Workflow 2: User form completion"
 
 router = APIRouter(tags=[WORKFLOW2_TAG])
 
@@ -142,7 +142,7 @@ def _normalize_data(data: Any) -> list[dict]:
 @router.put(
     "/profile/{profile_uuid}/latest",
     response_model=ApiOut,
-    summary="Workflow 2: Save latest profile form (one collection per form, upsert by profile_uuid)",
+    summary="Used to store form inputs submitted from the front end. The three forms are stored in three separate collections (keeping only the latest content), and a separate history collection is used to store historical states (with a UUID as the primary key).",
 )
 async def put_profile_latest(profile_uuid: str, body: ProfileLatestIn):
     await _ensure_indexes()
@@ -189,7 +189,7 @@ async def put_profile_latest(profile_uuid: str, body: ProfileLatestIn):
 @router.get(
     "/profile/{profile_uuid}/latest",
     response_model=ApiOut,
-    summary="Workflow 2: Get latest profile form (one form or all forms)",
+    summary="Used to display the latest form data on the front end.",
 )
 async def get_profile_latest(
     profile_uuid: str,

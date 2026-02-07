@@ -1,4 +1,3 @@
-# reco_api.py
 from __future__ import annotations
 
 import json
@@ -34,9 +33,11 @@ class HabitRecommendation(BaseModel):
     behavior: str
     explanation: str
 
+
 class EvidenceItem(BaseModel):
     title: str = ""
     text: str = ""
+
 
 class RecommendLLMOut(BaseModel):
     habit_recommendations: List[HabitRecommendation] = Field(default_factory=list)
@@ -136,6 +137,7 @@ def _extract_json_object(raw: str) -> Dict[str, Any]:
         raise ValueError("Top-level JSON is not an object.")
     return obj
 
+
 def _normalize(txt: str) -> str:
     s = unicodedata.normalize("NFC", txt).strip()
     return re.sub(r"\s+", " ", s)
@@ -144,17 +146,17 @@ def _normalize(txt: str) -> str:
 PROMPT_TEMPLATE = """
 You are a recommendation generator.
 
-你的任务是为用户在具体的context出推荐某种behavior。
+Your task is to recommend a behavior for the user in a specific context.
 
-输入:
-- [TEXT] 是用户的希望目标
-- [PROFILE_DETAILED] 是根据用户的目标筛选出的用户填写的表单生成的详细用户画像。
-- [SELECTED_HABITS] 是根据用户的目标从习惯库中检索到的相关习惯列表。
- - 其中包含每个习惯的上下文，顺序如下：[TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING]
-- [RAG_RESULT] 是根据用户的目标和用户画像总结和相关习惯列表总结在本地知识库中通过RAG检索到的内容。包括具体的推荐行为，行为改变理论等等。
-- [USER_FEEDBACK] 是用户对相同[TEXT]的推荐结果的反馈意见。
+Inputs:
+- [TEXT] is the user’s desired goal.
+- [PROFILE_DETAILED] is the detailed user profile generated from the forms filled out by the user, filtered based on the user’s goal.
+- [SELECTED_HABITS] is the list of relevant habits retrieved from the habit database based on the user’s goal.
+ - It includes the context of each habit in the following order: [TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING]
+- [RAG_RESULT] is the content retrieved from the local knowledge base via RAG based on the user’s goal, the user profile summary, and the selected habits summary. It includes specific recommended behaviors, behavior change theories, and so on.
+- [USER_FEEDBACK] is the user’s feedback on the recommendation results for the same [TEXT].
 
-输出：
+Output:
 - Return ONLY valid JSON (no markdown, no extra text).
 - Schema:
 {{
@@ -166,16 +168,16 @@ You are a recommendation generator.
     }}
   ]
 }}
-- context应该优先来自于[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]中明确提到的上下文(TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING)。只有当[RAG_RESULT]中生成的behavior非常具体并且恰当时，并且这个上下文也应该由[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]可以推断出是用户身边经常性出现的环境，而且这个上下文没有出现在[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]，当且仅当满足这三个条件的时候才能适当推理上下文。context应该保持多样性。尽量覆盖不同的(TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING)。若不得不重复同一类场景，在explanation中解释原因。
-- behavior只能是来源于[RAG_RESULT]，你要读完所有的[RAG_RESULT]再做出判断。优先从[RAG_RESULT]总结或者直接提取出(如果behavior足够具体和合适)在该情境下综合考虑最优的“能做的动作指令”。可以根据[RAG_RESULT]适当推测behavior,当且仅当[RAG_RESULT]中没有具体可执行的行为而只能作为笼统的规范性证据来源。无论是否推测，都需要在explanation中则需要明确指出behavior的所有具体来源(书名和原句)。如果最终behavior不够具体或者和behavior和用户情况不符合(不够恰当)，推荐可以为空。
-- 推荐条目的数量要控制在3到7条之间。如果输入的内容非常有限，甚至无法支撑3条推荐，可以适当减少推荐条目的数量，如果实在没有推荐才能返回空列表。
-- explanation需要分点详细说明:1. 为什么选取这个context(具体(从哪里来的)/如果是推测(依据什么推测的)). 2. 为什么推荐这个behavior(从[RAG_RESULT]的具体哪些书名和原句)，如果是推测的要具体说明怎么推测的，引用原句时请提供英文短引（≤25 English words），并用引号包住。不要大段复制。3. 以及这个推荐如何能够帮助用户实现[TEXT]中的目标。
-- 对于输入的[USER_FEEDBACK]：你需要先判断是否具有采纳价值。采纳价值意味着对自身状态(行为习惯)的更新或者对具体推荐有具体的合理的观点/态度。如果有采纳价值就可以纳入生成推荐的依据。反之，直接忽略。
-- 推荐要在可信和合理之间平衡。可信指的是推荐有明确的依据(现有的输入)，合理指的是推荐能够有效帮助用户实现目标。总体上要有一定的创新性，但不能脱离实际情况。目标是让让用户觉得推荐很有依据并且有参考价值并且有很好的解释性。
-- 如果生成的behavior和用户现有的习惯不一样[SELECTED_HABITS]，要在 explanation 里额外说明这一点，让用户注意，遵循新的行为推荐。完全禁止生成的behavior和现在用户的习惯高度相似甚至一样，如果出现这样的情况，请重新生成behavior来增强现有的习惯。
-- 避免推荐具体的数值(次数，计量)，具体的时间，除非数值有具体的来源([RAG_RESULT]或者[SELECTED_HABITS]或者[PROFILE_DETAILED])。输出具体数值的时候一定要在explanation中强调来源。
-- 输出是以第二人称称呼用户。
-- 且避免在输出中出现[PROFILE_DETAILED]，[SELECTED_HABITS]，[RAG_RESULT]，[USER_FEEDBACK]等标签。而是使用更加自然的语义化表达。
+- The context should primarily come from contexts explicitly mentioned in [PROFILE_DETAILED], [SELECTED_HABITS], or [USER_FEEDBACK] (TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING). You may infer a context only when the behavior generated in [RAG_RESULT] is very specific and appropriate, and this context can also be inferred from [PROFILE_DETAILED], [SELECTED_HABITS], or [USER_FEEDBACK] as an environment that frequently occurs around the user, and this context does not appear in [PROFILE_DETAILED], [SELECTED_HABITS], or [USER_FEEDBACK]; only when all three conditions are met may you appropriately infer the context. The context should remain diverse. Try to cover different (TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING). If you must repeat the same type of scenario, explain the reason in the explanation.
+- The behavior must come only from [RAG_RESULT]; you must read all of [RAG_RESULT] before making a decision. Prefer to summarize or directly extract (if the behavior is specific enough and appropriate) the best “actionable instruction” for that context after considering all factors. You may appropriately infer the behavior based on [RAG_RESULT] only when [RAG_RESULT] contains no concrete executable behavior and can only serve as a general normative evidence source. Whether inferred or not, the explanation must clearly point out all specific sources of the behavior (book title and original sentence). If the final behavior is not specific enough or does not fit the user’s situation (not appropriate), the recommendation can be empty.
+- The number of recommendation items should be controlled between 3 and 7. If the input content is very limited and cannot even support 3 recommendations, you may appropriately reduce the number of recommendation items; if there is truly no recommendation, you may return an empty list.
+- The explanation must be detailed in bullet points: 1. Why this context is chosen (specific (where it comes from) / if inferred (what it is inferred from)). 2. Why this behavior is recommended (from which specific book titles and original sentences in [RAG_RESULT]); if inferred, explain specifically how it is inferred. When quoting original sentences, please provide a short English quote (≤25 English words) and enclose it in quotation marks. Do not copy large passages. 3. How this recommendation can help you achieve the goal in [TEXT].
+- For the input [USER_FEEDBACK]: you need to first judge whether it has adoptable value. Adoptable value means an update to the user’s own state (behavior habits) or a specific, reasonable viewpoint/attitude toward a concrete recommendation. If it has adoptable value, it can be incorporated as evidence for generating recommendations; otherwise, ignore it directly.
+- Recommendations should balance credibility and reasonableness. Credibility means the recommendation has clear evidence (existing inputs), and reasonableness means the recommendation can effectively help the user achieve the goal. Overall, the recommendations should be somewhat innovative but must not deviate from the actual situation. The goal is to make the user feel the recommendations are well-grounded, valuable for reference, and well-explained.
+- If the generated behavior is different from the user’s existing habits [SELECTED_HABITS], you must additionally state this in the explanation so the user pays attention and follows the new behavior recommendation. It is strictly forbidden to generate behaviors that are highly similar to or even the same as the user’s current habits; if this happens, please regenerate the behavior to strengthen the user’s existing habits.
+- Avoid recommending specific numbers (frequency, quantities) and specific times unless the numbers have a specific source ([RAG_RESULT] or [SELECTED_HABITS] or [PROFILE_DETAILED]). When outputting specific numbers, you must emphasize the source in the explanation.
+- Address the user in the second person in the output.
+- Also avoid showing labels such as [PROFILE_DETAILED], [SELECTED_HABITS], [RAG_RESULT], [USER_FEEDBACK] in the output; instead, use more natural, semantic expressions.
 
 [TEXT]
 {text}
@@ -194,28 +196,32 @@ You are a recommendation generator.
 """.strip()
 
 
-@router.post("/recommend", response_model=RecommendOut)
+@router.post(
+    "/recommend",
+    response_model=RecommendOut,
+    summary="Call a large language model to generate appropriate behavior/habit recommendations based on all provided inputs. Redis caching is implemented.",
+)
 async def recommend(payload: RecommendIn) -> RecommendOut:
     message: str = ""
     if _is_blank(payload.profile_detailed):
         message += (
-            "按照你的目的生成的用户画像为空。请你检查是否已经正确填写了必填的用户画像信息。"
-            "或者再次确认输入的目的是否正确。或者是大模型在之前的步骤有没有正确生成用户画像信息。"
-            "或者检查相关设置的参数是否合理。\n"
+            "The user profile generated based on your goal is empty. Please check whether the required profile information has been filled in correctly. "
+            "Also confirm that the goal you entered is correct, or whether the LLM generated the profile properly in the previous steps. "
+            "Alternatively, check whether the relevant configuration parameters are reasonable.\n"
         )
 
     if not payload.selected_habits:
         message += (
-            "按照你的目的检索到的习惯为空。请你检查是否已经捐赠了足够丰富的习惯。"
-            "或者再次确认输入的目的是否正确。或者是大模型在之前的步骤有没有正确生成用户的习惯总结。"
-            "或者检查相关设置的参数是否合理。\n"
+            "No habits were retrieved based on your goal. Please check whether you have donated a sufficiently diverse set of habits. "
+            "Also confirm that the goal you entered is correct, or whether the LLM generated the habit summary properly in the previous steps. "
+            "Alternatively, check whether the relevant configuration parameters are reasonable.\n"
         )
 
     if not payload.rag_result:
         message += (
-            "按照你检索到的习惯和用户画像在本地知识库通过RAG之后得到的结果为空。请你检查输入的目的是否正确。"
-            "或者是本地知识库的内容是否足够丰富和你的目的是否足够相关。或者之前的流程有没有运行成功。"
-            "或者检查相关设置的参数是否合理。\n"
+            "The RAG result from the local knowledge base, based on the retrieved habits and user profile, is empty. Please check whether the goal you entered is correct. "
+            "Also check whether the local knowledge base is sufficiently rich and relevant to your goal, and whether the previous workflow steps ran successfully. "
+            "Alternatively, check whether the relevant configuration parameters are reasonable.\n"
         )
 
     selected_habits = strip_selected_habits_fields(payload.selected_habits)
@@ -224,14 +230,20 @@ async def recommend(payload: RecommendIn) -> RecommendOut:
     clean_text = _normalize(payload.text)
     clean_profile = _normalize(payload.profile_detailed)
     clean_feedback = (
-        _normalize(payload.user_feedback) if isinstance(payload.user_feedback, str) else ""
+        _normalize(payload.user_feedback)
+        if isinstance(payload.user_feedback, str)
+        else ""
     )
 
     prompt = PROMPT_TEMPLATE.format(
         text=clean_text,
         profile_detailed=clean_profile,
-        selected_habits_json=json.dumps(selected_habits, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
-        rag_result_json=json.dumps(rag_result, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
+        selected_habits_json=json.dumps(
+            selected_habits, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ),
+        rag_result_json=json.dumps(
+            rag_result, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ),
         user_feedback=clean_feedback,
     )
 
@@ -240,7 +252,12 @@ async def recommend(payload: RecommendIn) -> RecommendOut:
     temperature = float(os.getenv("RECO_LLM_TEMPERATURE", "0") or 0.0)
     max_tokens = int(os.getenv("RECO_LLM_MAX_TOKENS", "900") or 900)
 
-    llm_meta = {"provider": provider, "model": model, "temperature": temperature, "max_tokens": max_tokens}
+    llm_meta = {
+        "provider": provider,
+        "model": model,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+    }
 
     cache = RedisCache.default()
 
@@ -276,22 +293,29 @@ async def recommend(payload: RecommendIn) -> RecommendOut:
         try:
             parsed = _extract_json_object(raw)
             llm_out = RecommendLLMOut(**parsed)
-            
+
             if message:
-                message = message + "推荐生成成功。但是请参考提示的信息检查输入的信息的质量和完整性。高质量的输入通常会带来更好的推荐结果。"
+                message = (
+                    message
+                    + "The recommendations were generated successfully. However, please refer to the guidance messages and review your inputs."
+                )
             else:
-                message="推荐生成成功。但是如果推荐结果为空或者不符合预期，请考虑是否输入正确的目的，是否已经正确填写所有的表单，本地知识仓库存储的文献是否能支持回答用户的目的，是否提供了足够数量和质量的习惯。高质量的输入通常会带来更好的推荐结果。"
+                message = "The recommendations were generated successfully. However, if the results are empty or do not meet your expectations, please consider whether you entered the correct goal, whether all forms have been completed correctly, whether the documents stored in the local knowledge base can support your goal, and whether you have provided a sufficient number of high-quality habits. Higher quality inputs usually lead to better recommendation results."
             out = RecommendOut(
                 request_uuid=payload.request_uuid,
                 text=clean_text,
                 habit_recommendations=llm_out.habit_recommendations,
                 llm_meta=llm_meta,
                 message=message.strip(),
-                )
+            )
             await cache.set_json(key, out.model_dump(mode="json"))
             return out
         except Exception as e:
             last_err = str(e)
-            prompt += "\n\nREMINDER: Output ONLY a single valid JSON object. No extra text."
+            prompt += (
+                "\n\nREMINDER: Output ONLY a single valid JSON object. No extra text."
+            )
 
-    raise HTTPException(status_code=502, detail=f"LLM output invalid after retries: {last_err}")
+    raise HTTPException(
+        status_code=502, detail=f"LLM output invalid after retries: {last_err}"
+    )

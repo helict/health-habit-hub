@@ -43,7 +43,7 @@ async def build_habit_db_snapshot(
     if only_habits:
         q["habit_class"] = 1
 
-    # 1) load habits (unique by habit_key in your current DB design)
+    # 1) load habits
     habit_docs: List[Dict[str, Any]] = []
     cursor = habits_coll.find(
         q,
@@ -79,9 +79,6 @@ async def build_habit_db_snapshot(
         if hk:
             mappings_by_hk[hk] = d
 
-    # --- Optional fallback for older data (uuid-join) ---
-    # If your old records existed where contexts/mappings didn't store habit_key,
-    # this keeps backward compatibility.
     uuids = [d.get("uuid") for d in habit_docs if d.get("uuid")]
     contexts_by_uuid: Dict[str, Dict[str, Any]] = {}
     mappings_by_uuid: Dict[str, Dict[str, Any]] = {}
@@ -101,9 +98,7 @@ async def build_habit_db_snapshot(
             u = d.get("uuid")
             if u:
                 mappings_by_uuid[u] = d
-    # -----------------------------------------------
-
-    # 3) build habits_list (UNCHANGED structure)
+    # 3) build habits_list
     habits_list: List[Dict[str, Any]] = []
     for h in habit_docs:
         hk = h["habit_key"]
@@ -124,7 +119,7 @@ async def build_habit_db_snapshot(
             }
         )
 
-    # 4) stable sorting + signature (UNCHANGED)
+    # 4) stable sorting + signature
     habits_list.sort(key=lambda x: x.get("habit_key") or "")
     payload = json.dumps(habits_list, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     signature = hashlib.sha256(payload.encode("utf-8")).hexdigest()

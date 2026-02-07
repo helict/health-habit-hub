@@ -13,7 +13,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi import HTTPException, APIRouter, Query
 from pydantic import BaseModel
 
-WORKFLOW1_TAG = "Workflow1: Habitual structured collection workflow"
+WORKFLOW1_TAG = "Workflow 1: Habitual structured collection"
 router = APIRouter(tags=[WORKFLOW1_TAG])
 
 API_BASE = os.getenv("API_BASE_URL", "http://127.0.0.1:8080")
@@ -187,7 +187,7 @@ async def write_habit_history(out: IngestOut) -> None:
     "/ingest",
     response_model=IngestOut,
     response_model_exclude_none=True,
-    summary="Workflow 1: classify habit -> classify context -> BCIO map -> store raw+mapped into HabitDB (latest overwrite)",
+    summary="This API implements Workflow 1: it performs habit detection, if the input is not a habit, it is stored directly and the subsequent steps are skipped; otherwise, context extraction and BCIO mapping are executed in sequence. The results of the three steps are stored in three separate collections (using the sentence content itself as the primary key to keep only the latest result), while the full history is stored in a separate collection (using a UUID as the primary key to ensure traceability).",
 )
 async def ingest(body: IngestIn):
     clean_habit = _normalize_text(body.habit)
@@ -247,8 +247,7 @@ async def ingest(body: IngestIn):
         uuid=req_uuid,
     )
 
-    # 5) mapping (drop llm_meta before sending to mapper, per your requirement)
-
+    # 5) mapping
     context_payload = {k: v for k, v in context_out.items() if k != "llm_meta"}
 
     try:
@@ -337,8 +336,7 @@ def _public_habit_item(latest: dict) -> dict:
 
 @router.get(
     "/habits",
-    summary="List habits (for management UI)",
-    description="Returns habits sorted by Mongo _id desc (newest first). Items joined by habit_key.",
+    summary="List habits for management UI",
 )
 async def list_habits(
     limit: int = Query(30, ge=1, le=200),
@@ -365,8 +363,7 @@ async def list_habits(
 
 @router.get(
     "/habits/{habit_key}",
-    summary="Get habit detail (for management UI)",
-    description="Joined by habit_key.",
+    summary="Get habit detail for management UI",
 )
 async def get_habit(habit_key: str):
     latest = await _get_latest_item(habit_key)

@@ -1,4 +1,3 @@
-<!-- src/pages/HealthProfile.vue -->
 <template>
   <div class="hp">
     <div class="card">
@@ -80,7 +79,7 @@ const status = ref<{ kind: "idle" | "saving" | "saved" | "error"; text: string }
 });
 
 // -----------------------------
-// Survey JSONs (placeholders)
+// Survey JSONs
 // -----------------------------
 const basicJson = {
   title: "Basic Health Profile",
@@ -1323,9 +1322,6 @@ function modelByForm(f: ProfileFormKey): Model {
   return rand36Model;
 }
 
-// -----------------------------
-// Load latest (once per form unless forced)
-// -----------------------------
 const loaded = ref<Record<ProfileFormKey, boolean>>({
   basic: false,
   sliq: false,
@@ -1339,7 +1335,6 @@ function extractFormData(r: ProfileLatestGetOut): Record<string, any> | null {
   if (typeof payload === "object" && "data" in payload) {
     const d = (payload as any).data ?? null;
 
-    // NEW: backend returns list[{id,value,...}] -> convert to SurveyJS map
     if (Array.isArray(d)) {
       const m: Record<string, any> = {};
       for (const it of d) {
@@ -1348,7 +1343,6 @@ function extractFormData(r: ProfileLatestGetOut): Record<string, any> | null {
       return m;
     }
 
-    // legacy: object map
     if (typeof d === "object" && d) return d;
   }
 
@@ -1403,9 +1397,6 @@ async function loadLatest(form: ProfileFormKey, opts?: { force?: boolean }) {
   }
 }
 
-// -----------------------------
-// Save (PUT latest), then re-load (optional)
-// -----------------------------
 async function save(form: ProfileFormKey, items: ProfileAnswerItem[]) {
   status.value = { kind: "saving", text: "Saving..." };
 
@@ -1610,9 +1601,6 @@ const currentModel = computed(() => modelByForm(active.value));
   /* sticky nav spacing */
 }
 
-/* =========================================================
-   SurveyJS polish (deep)
-   ========================================================= */
 :deep(.sd-root-modern),
 :deep(.sv-root-modern) {
   width: 100%;

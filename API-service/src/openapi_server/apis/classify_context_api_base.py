@@ -1,6 +1,4 @@
-# coding: utf-8
-
-from typing import ClassVar, Dict, List, Tuple  # noqa: F401
+from typing import ClassVar, Dict, List, Tuple
 
 from openapi_server.models.classify_context_in import ClassifyContextIn
 from openapi_server.models.classify_context_out import ClassifyContextOut

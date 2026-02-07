@@ -1,5 +1,3 @@
-# Achieve PDF processing for a minimal knowledge base: generate DocMeta and Chunks (domain dynamically derived from subdirectories under kb/).
-# src/openapi_server/services/kb_min.py
 from __future__ import annotations
 
 import os
@@ -13,15 +11,15 @@ from unstructured.partition.pdf import partition_pdf
 
 
 # -------- paths that do NOT depend on cwd --------
-OPENAPI_SERVER_DIR = Path(__file__).resolve().parents[1]          # .../src/openapi_server
-DEFAULT_KB_ROOT = OPENAPI_SERVER_DIR / "kb"                      # .../src/openapi_server/kb
+OPENAPI_SERVER_DIR = Path(__file__).resolve().parents[1]
+DEFAULT_KB_ROOT = OPENAPI_SERVER_DIR / "kb"
 
 
 try:
     from .llm_habit_service import classify_habit_via_llm_prompt
 except ImportError:
     import sys
-    SRC_DIR = Path(__file__).resolve().parents[2]                # .../src
+    SRC_DIR = Path(__file__).resolve().parents[2]
     sys.path.insert(0, str(SRC_DIR))
     from openapi_server.services.llm_habit_service import classify_habit_via_llm_prompt
 
@@ -45,7 +43,7 @@ class KbChunk(BaseModel):
 
 
 # -----------------------
-# Helpers (env / casting)
+# Helpers
 # -----------------------
 def _as_int(x, default: int) -> int:
     try:

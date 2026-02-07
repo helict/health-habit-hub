@@ -1,6 +1,3 @@
-# src/openapi_server/services/bcio_hybrid_mapper.py
-# Hybrid retrieval (dense+sparse) over BCIO concept cards (JSONL) and return BCIO mappings.
-
 import json
 import re
 from pathlib import Path
@@ -28,7 +25,6 @@ def _iter_jsonl(path: Path) -> Iterable[dict]:
 
 
 def _best_label(rec: dict) -> str:
-    # prefer preferred_labels[0] > labels[0] > name > iri tail
     pref = rec.get("preferred_labels") or []
     if isinstance(pref, list) and len(pref) > 0 and str(pref[0]).strip():
         return str(pref[0]).strip()
@@ -130,8 +126,8 @@ class BCIOHybridMapper:
             FieldSchema(name="pk", dtype=DataType.INT64, is_primary=True, auto_id=True),
             FieldSchema(name="iri", dtype=DataType.VARCHAR, max_length=512),
             FieldSchema(name="label", dtype=DataType.VARCHAR, max_length=512),
-            FieldSchema(name="etype", dtype=DataType.VARCHAR, max_length=32),   # Class / ObjectProperty ...
-            FieldSchema(name="source", dtype=DataType.VARCHAR, max_length=32),  # BCIO / OBO_EXTERNAL ...
+            FieldSchema(name="etype", dtype=DataType.VARCHAR, max_length=32),
+            FieldSchema(name="source", dtype=DataType.VARCHAR, max_length=32),
             FieldSchema(name="text", dtype=DataType.VARCHAR, max_length=16384),
             FieldSchema(name="sparse_vector", dtype=DataType.SPARSE_FLOAT_VECTOR),
             FieldSchema(name="dense_vector", dtype=DataType.FLOAT_VECTOR, dim=self.ef.dim["dense"]),
@@ -365,7 +361,7 @@ class BCIOHybridMapper:
         return out
 
 
-# Example usage (optional)
+# Example usage
 if __name__ == "__main__":
     mapper = BCIOHybridMapper(
         milvus_uri="http://localhost:19530",

@@ -1,4 +1,3 @@
-<!-- src/pages/Recommend.vue -->
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { recommend, recommendComment } from "../api/hhh";
@@ -491,7 +490,6 @@ async function saveFeedback() {
   margin: 13px auto 0;
   padding: 0 14px 60px;
 
-  /* theme-ish neutrals (match ManageHabits feeling) */
   --surface: rgba(255, 255, 255, 0.92);
   --surface2: rgb(248, 250, 252);
   --surface3: rgb(241, 245, 249);
@@ -500,7 +498,6 @@ async function saveFeedback() {
   --shadow1: 0 10px 20px rgba(15, 23, 42, 0.10);
   --shadow2: 0 6px 12px rgba(15, 23, 42, 0.08);
 
-  /* --- subtle blue for nested items --- */
   --sub1: rgb(248, 251, 255);
   --sub2: rgb(244, 249, 255);
   --sub3: rgb(240, 247, 255);

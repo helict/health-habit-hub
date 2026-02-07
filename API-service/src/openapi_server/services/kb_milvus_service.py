@@ -1,4 +1,3 @@
-# src/openapi_server/services/kb_milvus_service.py
 from __future__ import annotations
 
 import argparse
@@ -11,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, List, Optional, Set, Tuple
 
-# ---- import kb_min (models + builder) ----
+# import kb_min
 try:
     from .kb_min import build_kb_min_from_pdf, KbDocMeta, KbChunk  # type: ignore
 except ImportError:
@@ -19,10 +18,8 @@ except ImportError:
     sys.path.insert(0, str(SRC_DIR))
     from openapi_server.services.kb_min import build_kb_min_from_pdf, KbDocMeta, KbChunk  # type: ignore
 
-# ---- unstructured (chunks-only path needs it) ----
 from unstructured.partition.pdf import partition_pdf  # type: ignore
 
-# ---- Milvus ORM ----
 from pymilvus import (  # type: ignore
     connections,
     utility,
@@ -32,7 +29,6 @@ from pymilvus import (  # type: ignore
     DataType,
 )
 
-# ---- embeddings client wrapper (OpenAI-like fallback) ----
 try:
     from .clients import get_client  # type: ignore
 except ImportError:
@@ -41,11 +37,8 @@ except ImportError:
     from openapi_server.services.clients import get_client  # type: ignore
 
 
-# -----------------------
-# Paths (do NOT depend on cwd)
-# -----------------------
-OPENAPI_SERVER_DIR = Path(__file__).resolve().parents[1]  # .../src/openapi_server
-DEFAULT_KB_ROOT = OPENAPI_SERVER_DIR / "kb"  # .../src/openapi_server/kb
+OPENAPI_SERVER_DIR = Path(__file__).resolve().parents[1]
+DEFAULT_KB_ROOT = OPENAPI_SERVER_DIR / "kb"
 DEFAULT_META_DIR = DEFAULT_KB_ROOT / "_meta"
 
 
@@ -85,7 +78,7 @@ def load_config(
     uri = milvus_uri or os.getenv("MILVUS_URI") or "http://localhost:19530"
     col = collection_name or os.getenv("KB_MILVUS_COLLECTION") or "kb_chunks_bgem3"
 
-    # ---- default to local BGE-M3 (override via env) ----
+    # default to local BGE-M3
     embed_provider = (os.getenv("KB_EMBED_PROVIDER") or "bge-m3").strip()
     embed_model = (os.getenv("KB_EMBED_MODEL") or "BAAI/bge-m3").strip()
 
@@ -132,7 +125,7 @@ def load_config(
 
 
 # -----------------------
-# Cache (kb/_meta/<doc_id>.json)
+# Cache
 # -----------------------
 def _json_dump(obj: Any) -> str:
     def default(o):
@@ -167,7 +160,7 @@ def _docmeta_to_cache_dict(
     embed_dim: int,
     chunk_count: int,
 ) -> dict:
-    # Only these parameters changing should trigger reindex (per your requirement)
+    # Only these parameters changing should trigger reindex
     return {
         "doc_id": doc_meta.doc_id,
         "domain": doc_meta.domain,
@@ -523,7 +516,6 @@ class KbMilvusStore:
     ) -> int:
         assert len(chunks) == len(vectors)
 
-        # simple+safe: delete then insert
         self.delete_doc(doc_id)
 
         ids = [f"{doc_id}:{c.chunk_id}" for c in chunks]
@@ -575,7 +567,7 @@ class KbMilvusStore:
 
 
 # -----------------------
-# IMPORTANT: chunks-only extractor (NO LLM)
+# chunks-only extractor (NO LLM)
 # -----------------------
 def parse_pdf_chunks_no_llm(
     kb_root: Path,
@@ -595,7 +587,6 @@ def parse_pdf_chunks_no_llm(
         strategy=(os.getenv("KB_PDF_STRATEGY", "fast") or "fast").strip(),
         languages=[language],
         chunking_strategy="by_title",
-        # IMPORTANT: unstructured expects ints here (env is str)
         max_characters=int(os.getenv("KB_CHUNK_MAX_CHARACTERS", "2800")),
         new_after_n_chars=int(os.getenv("KB_CHUNK_NEW_AFTER_N_CHARS", "2400")),
         combine_text_under_n_chars=int(os.getenv("KB_CHUNK_COMBINE_UNDER_N_CHARS", "900")),

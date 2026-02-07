@@ -1,4 +1,3 @@
-# src/openapi_server/apis/bcio_mapping_api.py
 from __future__ import annotations
 import os
 from typing import Any, Dict, Optional
@@ -9,12 +8,12 @@ from fastapi.encoders import jsonable_encoder
 from openapi_server.models.classify_context_out import ClassifyContextOut
 from openapi_server.services.bcio_mapper_service import map_bcio_for_contexts
 
-router = APIRouter(prefix="", tags=["BCIO Mapping"])
+router = APIRouter(prefix="", tags=["Behaviour Change Intervention Ontology Mapping"])
 
 
 @router.post(
     "/map",
-    summary="Map extracted context phrases to BCIO concepts (hybrid dense+sparse)",
+    summary="Map extracted context phrases to Behaviour Change Intervention Ontology concepts. Here, the vector database is Milvus, and the embedding model is BAAI/bge-m3 (multilingual). Retrieval uses a linear weighted combination of dense and sparse vectors.",
 )
 def bcio_map(
     payload: ClassifyContextOut = Body(...),
@@ -23,10 +22,6 @@ def bcio_map(
     expr: Optional[str] = Query('etype in ["Class","ObjectProperty"]'),
     debug: bool = Query(False),
 ) -> Dict[str, Any]:
-    """
-    Input: ClassifyContextOut
-    Output: dict (same payload + each hit context gets bcio_mappings)
-    """
     try:
         threshold = float(os.getenv("THRESHOLD_BCIO_MAP", "0.7") or 0.7)
         top_n = int(os.getenv("TOP_N_BCIO_MAP", "2") or 2)

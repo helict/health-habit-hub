@@ -1,5 +1,5 @@
 // ---------------------------
-// Shared: Habit / Context
+// Habit / Context
 // ---------------------------
 
 export type MappingParams = {
@@ -41,7 +41,6 @@ export type IngestDataNotHabit = {
   confidence: number | null;
 };
 
-/** LLM meta for ingest/listHabits: { habit: {...}, context: {...} } */
 export type LlmMeta = {
   habit: Record<string, any>;
   context: Record<string, any>;
@@ -128,7 +127,6 @@ export type ProfileLatestGetOut = ApiOut<
 // Workflow3: Recommendation
 // ---------------------------
 
-/** LLM meta for workflow3 */
 export type LlmMetaWorkflow3 = {
   provider?: string;
   model?: string;

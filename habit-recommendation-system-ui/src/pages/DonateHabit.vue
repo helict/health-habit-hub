@@ -85,7 +85,7 @@ async function submit() {
           placeholder='Please enter one sentence describing a habit in your daily life; the result will be saved and used for future recommendations (e.g., I read for ten minutes before bed every night)."'></textarea>
         <div v-if="showEmptyWarn" class="hint muted">⚠️ Please enter a habit sentence first.</div>
         <div v-else class="hint muted">Tip: Regularly sharing your real habits over time helps us generate more
-          accurate, personalized recommendations for you :)</div>
+          accurate, personalized recommendations for you :D</div>
       </div>
 
       <div class="right col">

@@ -42,7 +42,7 @@ for _, name, _ in pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + "."):
         422: {"model": HTTPValidationError, "description": "Validation Error"},
     },
     tags=["Classify Habit"],
-    summary="Determine whether the sentence entered by the user is a habit",
+    summary="Call a large language model to determine whether the sentence entered by the user is a habit. Redis is used as a cache.",
     response_model_by_alias=True,
 )
 async def classify_habit_classify_habit_post(
