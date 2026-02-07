@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import { ingest } from "../api/hhh";
 import type { HabitItem, IngestOut } from "../api/types";
 import HabitCard from "../components/HabitCard.vue";
-import JsonBlock from "../components/JsonBlock.vue";
+
 
 const habit = ref("");
 const language = ref("en");
@@ -15,11 +15,7 @@ const resp = ref<IngestOut | null>(null);
 const canSubmit = computed(() => habit.value.trim().length > 0);
 const showEmptyWarn = computed(() => !canSubmit.value);
 
-const respUi = computed(() => {
-  if (!resp.value) return null;
-  const { created_at, ...rest } = resp.value as any;
-  return rest;
-});
+
 
 function toHabitItem(r: IngestOut): HabitItem {
   const d: any = r.data || {};
@@ -48,8 +44,8 @@ async function submit() {
   error.value = null;
   resp.value = null;
 
-if (!canSubmit.value) return;
-const text = habit.value.trim();
+  if (!canSubmit.value) return;
+  const text = habit.value.trim();
 
   loading.value = true;
   try {
@@ -64,80 +60,81 @@ const text = habit.value.trim();
 </script>
 
 <template>
-  <div class="page">
-    <div class="card donateCard">
-      <div class="row headerRow">
-        <div>
-          <div class="title">Donate a Habit</div>
-          <div class="muted desc">
-            What you enter here will be classified as either a habit or a non-habit. If it is a habit sentence, short phrases will be extracted according to predefined habit context labels (time, physical setting, prior behavior, other people, internal state, behavior, reasoning). The extracted phrases are then mapped to the Behaviour Change Intervention Ontology using Retrieval-Augmented Generation for reference.
-          </div>
+  <div class="card">
+
+    <div class="row headerRow">
+      <div>
+        <div class="title">Donate a Habit</div>
+        <div class="muted desc">
+          What you enter here will be classified as either a habit or a non-habit. If it is a habit sentence, short
+          phrases will be extracted according to predefined habit context labels (time, physical setting, prior
+          behavior, other people, internal state, behavior, reasoning). The extracted phrases are then mapped to the
+          Behaviour Change Intervention Ontology using Retrieval-Augmented Generation for reference.
         </div>
-        <!-- <div class="badge">/ingest</div> -->
       </div>
+      <!-- <div class="badge">/ingest</div> -->
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="row mainRow">
+      <div class="left">
+        <label class="muted label">Habit sentence:</label>
+        <div class="hr3"></div>
+        <textarea class="textarea bigTextarea" v-model="habit"
+          placeholder='Please enter one sentence describing a habit in your daily life; the result will be saved and used for future recommendations (e.g., I read for ten minutes before bed every night)."'></textarea>
+        <div v-if="showEmptyWarn" class="hint muted">⚠️ Please enter a habit sentence first.</div>
+        <div v-else class="hint muted">Tip: Regularly sharing your real habits over time helps us generate more
+          accurate, personalized recommendations for you :)</div>
+      </div>
+
+      <div class="right col">
+        <div>
+          <label class="muted label">Language</label>
+          <select class="select" v-model="language">
+            <option value="en">en</option>
+            <option value="de">de</option>
+            <option value="zh">zh</option>
+          </select>
+        </div>
+
+        <div class="spacer"></div>
+
+        <button class="btn primary bigBtn btnFx" :disabled="loading || !canSubmit" @click="submit">
+          {{ loading ? "Processing..." : "Submit" }}
+        </button>
+
+        <RouterLink class="btn bigBtn btnFx" to="/manage">Manage your habits</RouterLink>
+      </div>
+    </div>
+
+    <div v-if="error" class="hr"></div>
+    <div v-if="error" class="card errorCard">
+      <div class="errTitle">Error</div>
+      <div class="muted" style="white-space: pre-wrap">{{ error }}</div>
+    </div>
+
+    <div v-if="resp" class="hr"></div>
+    <div v-if="resp" class="card respCard">
+      <div class="row" style="justify-content: space-between; align-items: center">
+        <div class="respTitle">Response</div>
+        <span class="badge" :class="resp.ok ? 'ok' : 'no'">
+          {{ resp.ok ? "OK" : "Not a habit" }}
+        </span>
+      </div>
+
+      <div class="muted" style="margin-top: 8px; white-space: pre-wrap">{{ resp.message }}</div>
 
       <div class="hr"></div>
 
-      <div class="row mainRow">
-        <div class="left">
-          <label class="muted label">Habit sentence</label>
-          <textarea
-            class="textarea bigTextarea"
-            v-model="habit"
-            placeholder='Please enter one sentence describing a habit in your daily life; the result will be saved and used for future recommendations (e.g., I read for ten minutes before bed every night)."'
-          ></textarea>
-          <div v-if="showEmptyWarn" class="hint muted">⚠️ Please enter a habit sentence first.</div>
-          <div v-else class="hint muted">Tip: Regularly sharing your real habits over time helps us generate more accurate, personalized recommendations for you :)</div>
-        </div>
+      <HabitCard :item="toHabitItem(resp)" />
 
-        <div class="right col">
-          <div>
-            <label class="muted label">Language</label>
-            <select class="select" v-model="language">
-              <option value="en">en</option>
-              <option value="de">de</option>
-              <option value="zh">zh</option>
-            </select>
-          </div>
-
-          <div class="spacer"></div>
-
-          <button class="btn primary bigBtn btnFx" :disabled="loading || !canSubmit" @click="submit">
-            {{ loading ? "Processing..." : "Submit" }}
-          </button>
-
-          <RouterLink class="btn bigBtn btnFx" to="/manage">Manage your habits</RouterLink>
-        </div>
-      </div>
-
-      <div v-if="error" class="hr"></div>
-      <div v-if="error" class="card errorCard">
-        <div class="errTitle">Error</div>
-        <div class="muted" style="white-space: pre-wrap">{{ error }}</div>
-      </div>
-
-      <div v-if="resp" class="hr"></div>
-      <div v-if="resp" class="card respCard">
-        <div class="row" style="justify-content: space-between; align-items: center">
-          <div class="respTitle">Response</div>
-          <span class="badge" :class="resp.ok ? 'ok' : 'no'">
-            {{ resp.ok ? "OK" : "Not a habit" }}
-          </span>
-        </div>
-
-        <div class="muted" style="margin-top: 8px; white-space: pre-wrap">{{ resp.message }}</div>
-
-        <div class="hr"></div>
-
-        <HabitCard :item="toHabitItem(resp)" />
-
-        <!-- <div style="margin-top: 12px">
+      <!-- <div style="margin-top: 12px">
           <details>
             <summary style="cursor: pointer; font-weight: 900">Raw JSON</summary>
             <JsonBlock :value="respUi" />
           </details>
         </div> -->
-      </div>
     </div>
   </div>
 </template>
@@ -227,6 +224,7 @@ const text = habit.value.trim();
   border-color: rgba(239, 68, 68, 0.25);
   background: rgba(239, 68, 68, 0.04);
 }
+
 .errTitle {
   font-weight: 900;
   margin-bottom: 4px;
@@ -235,12 +233,13 @@ const text = habit.value.trim();
 .respCard {
   background: #fff;
 }
+
 .respTitle {
   font-weight: 900;
 }
 
 
-.btnFx{
+.btnFx {
   background: rgb(248, 250, 252) !important;
   border-color: rgb(226, 232, 240) !important;
   filter: none !important;
@@ -255,7 +254,7 @@ const text = habit.value.trim();
     background-color 140ms ease;
 }
 
-.btnFx:hover{
+.btnFx:hover {
   background: rgb(241, 245, 249) !important;
   border-color: rgb(203, 213, 225) !important;
   opacity: 1 !important;
@@ -265,7 +264,7 @@ const text = habit.value.trim();
   box-shadow: 0 10px 20px rgba(15, 23, 42, 0.10);
 }
 
-.btnFx:active{
+.btnFx:active {
   background: rgb(226, 232, 240) !important;
   opacity: 1 !important;
   filter: none !important;
@@ -275,27 +274,33 @@ const text = habit.value.trim();
 }
 
 
-.btn.primary.btnFx{
+.btn.primary.btnFx {
   background: rgb(239, 246, 255) !important;
   border-color: rgb(191, 219, 254) !important;
   color: rgb(37, 99, 235) !important;
 }
 
-.btn.primary.btnFx:hover{
+.btn.primary.btnFx:hover {
   background: rgb(219, 234, 254) !important;
   border-color: rgb(147, 197, 253) !important;
 }
 
-.btn.primary.btnFx:active{
+.btn.primary.btnFx:active {
   background: rgb(191, 219, 254) !important;
 }
 
 .btnFx:disabled,
-.btnFx[aria-disabled="true"]{
+.btnFx[aria-disabled="true"] {
   transform: none !important;
   box-shadow: none !important;
   cursor: not-allowed;
   opacity: 1 !important;
   filter: none !important;
+}
+
+.hr3 {
+  height: 5px;
+  border: 0;
+  margin: 0;
 }
 </style>

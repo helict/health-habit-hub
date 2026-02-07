@@ -42,7 +42,7 @@ function mappings(c: ContextItem): BcioMapping[] {
 
 <template>
   <div>
-    <div style="font-weight:900; margin-bottom:10px">Context Labels</div>
+    <div style="font-weight:900; font-size:16px; margin-bottom:10px">Context Labels</div>
 
     <div v-for="g in grouped" :key="g.label" class="card" style="background:#f8fbff; margin-bottom:10px">
       <div style="display:flex; justify-content:space-between; align-items:center">

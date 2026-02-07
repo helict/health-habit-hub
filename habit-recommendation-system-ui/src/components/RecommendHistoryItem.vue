@@ -210,7 +210,7 @@ function shortSig(sig?: string | null) {
             <!-- ===== Block 1 ===== -->
             <details class="details blockDetails" open>
                 <summary class="blockSummary">
-                    <div class="blockTitle">habit_recommendations</div>
+                    <div class="blockTitle">habit recommendations</div>
 
                     <div class="blockRight">
                         <div class="metaBadges">
@@ -227,7 +227,7 @@ function shortSig(sig?: string | null) {
 
                 <div class="hr2"></div>
 
-                <div v-if="habitRecs.length === 0" class="muted">No habit_recommendations.</div>
+                <div v-if="habitRecs.length === 0" class="muted">No habit recommendations.</div>
 
                 <div v-else class="stack">
                     <details v-for="(r, i) in habitRecs" :key="i" class="details innerDetails">
@@ -268,7 +268,7 @@ function shortSig(sig?: string | null) {
             <!-- ===== Block 2 ===== -->
             <details class="details blockDetails">
                 <summary class="blockSummary">
-                    <div class="blockTitle">hits</div>
+                    <div class="blockTitle">RAG retrieval results</div>
 
                     <div class="blockRight">
                         <div class="metaBadges">
@@ -343,7 +343,7 @@ function shortSig(sig?: string | null) {
             <!-- ===== Block 3 ===== -->
             <details class="details blockDetails" open>
                 <summary class="blockSummary">
-                    <div class="blockTitle">selected_habits</div>
+                    <div class="blockTitle">selected habits</div>
 
                     <div class="blockRight">
                         <div class="metaBadges">
@@ -356,7 +356,7 @@ function shortSig(sig?: string | null) {
 
                 <div class="hr2"></div>
 
-                <div v-if="selectedHabits.length === 0" class="muted">No selected_habits.</div>
+                <div v-if="selectedHabits.length === 0" class="muted">No selected habits.</div>
 
                 <div v-else class="stack">
                     <details v-for="(h, i) in selectedHabits" :key="h.habit_key || i" class="details innerDetails">
@@ -393,7 +393,7 @@ function shortSig(sig?: string | null) {
             <!-- ===== Block 4 ===== -->
             <details class="details blockDetails">
                 <summary class="blockSummary">
-                    <div class="blockTitle">bilded_profiles</div>
+                    <div class="blockTitle">bilded profiles</div>
 
                     <div class="blockRight">
                         <div class="metaBadges">
@@ -425,7 +425,7 @@ function shortSig(sig?: string | null) {
 
                 <div class="hr2"></div>
 
-                <div v-if="!localResp.user_feedback" class="muted">No user_feedback.</div>
+                <div v-if="!localResp.user_feedback" class="muted">No user feedback.</div>
 
                 <div v-else class="muted" style="white-space: pre-wrap; line-height: 1.55">
                     {{ localResp.user_feedback }}

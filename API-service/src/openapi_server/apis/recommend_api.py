@@ -167,7 +167,7 @@ You are a recommendation generator.
   ]
 }}
 - context应该优先来自于[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]中明确提到的上下文(TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING)。只有当[RAG_RESULT]中生成的behavior非常具体并且恰当时，并且这个上下文也应该由[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]可以推断出是用户身边经常性出现的环境，而且这个上下文没有出现在[PROFILE_DETAILED]，[SELECTED_HABITS]或者[USER_FEEDBACK]，当且仅当满足这三个条件的时候才能适当推理上下文。context应该保持多样性。尽量覆盖不同的(TIME,PHYSICAL SETTING,PRIOR BEHAVIOR,OTHER PEOPLE,INTERNAL STATE,BEHAVIOR,REASONING)。若不得不重复同一类场景，在explanation中解释原因。
-- behavior只能是来源于[RAG_RESULT]，你要读完所有的[RAG_RESULT]再做出判断。优先从[RAG_RESULT]总结或者直接提取出(如果behavior足够具体和合适)综合考虑最优推荐在该情境下“能做的动作指令”。可以根据[PROFILE_DETAILED]，[SELECTED_HABITS]，[USER_FEEDBACK]和上下文适当推测behavior,当[RAG_RESULT]中没有具体可执行的行为而只能作为笼统的规范性证据来源。无论是否推测，都需要在explanation中则需要明确指出behavior的所有具体来源(书名和原句)。如果最终behavior不够具体或者和用户情况不符合(不够恰当)，推荐可以为空。
+- behavior只能是来源于[RAG_RESULT]，你要读完所有的[RAG_RESULT]再做出判断。优先从[RAG_RESULT]总结或者直接提取出(如果behavior足够具体和合适)在该情境下综合考虑最优的“能做的动作指令”。可以根据[RAG_RESULT]适当推测behavior,当且仅当[RAG_RESULT]中没有具体可执行的行为而只能作为笼统的规范性证据来源。无论是否推测，都需要在explanation中则需要明确指出behavior的所有具体来源(书名和原句)。如果最终behavior不够具体或者和behavior和用户情况不符合(不够恰当)，推荐可以为空。
 - 推荐条目的数量要控制在3到7条之间。如果输入的内容非常有限，甚至无法支撑3条推荐，可以适当减少推荐条目的数量，如果实在没有推荐才能返回空列表。
 - explanation需要分点详细说明:1. 为什么选取这个context(具体(从哪里来的)/如果是推测(依据什么推测的)). 2. 为什么推荐这个behavior(从[RAG_RESULT]的具体哪些书名和原句)，如果是推测的要具体说明怎么推测的，引用原句时请提供英文短引（≤25 English words），并用引号包住。不要大段复制。3. 以及这个推荐如何能够帮助用户实现[TEXT]中的目标。
 - 对于输入的[USER_FEEDBACK]：你需要先判断是否具有采纳价值。采纳价值意味着对自身状态(行为习惯)的更新或者对具体推荐有具体的合理的观点/态度。如果有采纳价值就可以纳入生成推荐的依据。反之，直接忽略。
@@ -213,7 +213,7 @@ async def recommend(payload: RecommendIn) -> RecommendOut:
 
     if not payload.rag_result:
         message += (
-            "按照你检索到的习惯和用户画像在本地知识库通过rag之后得到的结果为空。请你检查输入的目的是否正确。"
+            "按照你检索到的习惯和用户画像在本地知识库通过RAG之后得到的结果为空。请你检查输入的目的是否正确。"
             "或者是本地知识库的内容是否足够丰富和你的目的是否足够相关。或者之前的流程有没有运行成功。"
             "或者检查相关设置的参数是否合理。\n"
         )

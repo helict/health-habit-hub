@@ -10,7 +10,7 @@ import type {
   HabitRecommendation,
 } from "../api/types";
 import ContextLabels from "../components/ContextLabels.vue";
-const DEFAULT_GOAL = `Please enter your needs/goals so we can generate personalized recommendations.
+const DEFAULT_GOAL = `Enter your goal first — we’ll generate personalized recommendations for you.
 
 For example:
 I want to improve my sleep quality. I often scroll on my phone in bed, fall asleep slowly, and struggle to get up in the morning. I’d like to build a better bedtime routine.`;;
@@ -195,299 +195,292 @@ async function saveFeedback() {
 </script>
 
 <template>
-  <div class="page">
-    <div class="card recCard">
-      <div class="row headerRow">
-        <div>
-          <div class="title">Recommendation (Workflow 3)</div>
-          <div class="muted desc">
-            Enter your goal and call <code>POST /recommend</code>：selected habits → KB hits → habit
-            recommendations → explanation.
-          </div>
+  <div class="card page recCard">
+
+    <div class="row headerRow">
+      <div>
+        <div class="title">Get recommendations</div>
+        <div class="muted desc">
+          Enter a specific behavior you want to improve, or a broader goal. Based on your existing form data, daily
+          habits, and personal knowledge base, the system will generate actionable habit suggestions tailored to your
+          everyday context.
         </div>
       </div>
+    </div>
 
-      <div class="hr"></div>
+    <div class="hr"></div>
 
-      <div class="row mainRow">
-        <div class="left">
-          <label class="muted label">Goal / Purpose</label>
-          <textarea class="textarea bigTextarea" v-model="goal" :placeholder="DEFAULT_GOAL"></textarea>
+    <div class="row mainRow">
+      <div class="left">
+        <label class="muted label">Goal:</label>
+        <div class="hr3"></div>
+        <textarea class="textarea bigTextarea" v-model="goal" :placeholder="DEFAULT_GOAL"></textarea>
 
-          <div v-if="showEmptyWarn" class="hint muted">⚠️ To receive recommendations, please enter your goal.</div>
-          <div v-else class="hint muted">Tip: The more accurate and detailed your goal description is, the more reliable the recommendations will be.</div>
-        </div>
-
-        <div class="right col">
-          <div class="spacer"></div>
-
-          <button class="btn primary bigBtn btnFx" :disabled="loading || !canSubmit" @click="submit">
-            {{ loading ? "Processing..." : "Generate recommendations" }}
-          </button>
-
-          <RouterLink class="btn bigBtn btnFx" to="/live">Go to management</RouterLink>
-        </div>
+        <div v-if="showEmptyWarn" class="hint muted">⚠️ To receive recommendations, please enter your goal.</div>
+        <div v-else class="hint muted">Tip: The more accurate and detailed your goal description is, the more reliable
+          the recommendations will be.</div>
       </div>
 
-      <div v-if="error" class="hr"></div>
-      <div v-if="error" class="card errorCard">
-        <div class="errTitle">Error</div>
-        <div class="muted" style="white-space: pre-wrap">{{ error }}</div>
-      </div>
+      <div class="right col">
+        <div class="spacer"></div>
 
-      <div v-if="resp" class="hr"></div>
-      <div v-if="resp" class="card respCard">
-        <!-- ===== Block 1 ===== -->
-        <details class="details blockDetails" open>
-          <summary class="blockSummary">
-            <div class="blockTitle">habit_recommendations</div>
-            <div class="blockRight">
-              <div class="metaBadges">
-                <span class="badge">provider: <code>{{ recMeta.provider || "-" }}</code></span>
-                <span class="badge">model: <code>{{ recMeta.model || "-" }}</code></span>
-              </div>
-              <span class="togglePill togglePillSm" aria-hidden="true"></span>
+        <button class="btn primary bigBtn btnFx" :disabled="loading || !canSubmit" @click="submit">
+          {{ loading ? "Processing..." : "Generate recommendations" }}
+        </button>
+
+        <RouterLink class="btn bigBtn btnFx" to="/live">Go to management</RouterLink>
+      </div>
+    </div>
+
+    <div v-if="error" class="hr"></div>
+    <div v-if="error" class="card errorCard">
+      <div class="errTitle">Error</div>
+      <div class="muted" style="white-space: pre-wrap">{{ error }}</div>
+    </div>
+
+    <div v-if="resp" class="hr"></div>
+    <div v-if="resp" class="card respCard">
+      <!-- ===== Block 1 ===== -->
+      <details class="details blockDetails" open>
+        <summary class="blockSummary">
+          <div class="blockTitle">habit recommendations</div>
+          <div class="blockRight">
+            <div class="metaBadges">
+              <span class="badge">provider: <code>{{ recMeta.provider || "-" }}</code></span>
+              <span class="badge">model: <code>{{ recMeta.model || "-" }}</code></span>
             </div>
-          </summary>
-
-          <div v-if="recMessage" class="muted" style="margin-top: 8px; white-space: pre-wrap">
-            {{ recMessage }}
+            <span class="togglePill togglePillSm" aria-hidden="true"></span>
           </div>
+        </summary>
 
-          <div class="hr"></div>
+        <div v-if="recMessage" class="muted" style="margin-top: 8px; white-space: pre-wrap">
+          {{ recMessage }}
+        </div>
 
-          <div v-if="habitRecs.length === 0" class="muted">No habit_recommendations.</div>
+        <div class="hr"></div>
 
-          <div v-else class="stack">
-            <details v-for="(r, i) in habitRecs" :key="i" class="details innerDetails">
-              <summary class="innerSummary">
-                <div class="innerSummaryRow">
-                  <div class="innerSummaryText">
-                    <div class="sumTitle">{{ r.context }}</div>
-                    <div class="muted sumSub">behavior: <code>{{ r.behavior }}</code></div>
+        <div v-if="habitRecs.length === 0" class="muted">No habit recommendations.</div>
+
+        <div v-else class="stack">
+          <details v-for="(r, i) in habitRecs" :key="i" class="details innerDetails">
+            <summary class="innerSummary">
+              <div class="innerSummaryRow">
+                <div class="innerSummaryText">
+                  <div class="sumTitle">{{ r.context }}</div>
+                  <div class="muted sumSub">behavior: <code>{{ r.behavior }}</code></div>
+                </div>
+                <span class="togglePill togglePillSm" aria-hidden="true"></span>
+              </div>
+            </summary>
+
+            <div class="hr"></div>
+
+            <div class="kv">
+              <div class="k">context</div>
+              <div class="v" style="white-space: pre-wrap">{{ r.context }}</div>
+            </div>
+
+            <div class="kv">
+              <div class="k">behavior</div>
+              <div class="v" style="white-space: pre-wrap">{{ r.behavior }}</div>
+            </div>
+
+            <div class="kv">
+              <div class="k">explanation</div>
+              <div class="v" style="white-space: pre-wrap; line-height: 1.55">
+                {{ r.explanation }}
+              </div>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <div class="hr2"></div>
+
+      <!-- ===== Block 2 ===== -->
+      <details class="details blockDetails">
+        <summary class="blockSummary">
+          <div class="blockTitle">RAG retrieval results</div>
+
+          <div class="blockRight">
+            <div class="metaBadges">
+              <span class="badge">provider: <code>{{ kbMeta.provider || "-" }}</code></span>
+              <span class="badge">model: <code>{{ kbMeta.model || "-" }}</code></span>
+              <span class="badge">top_n: <code>{{ kbRetrieval.top_n ?? "-" }}</code></span>
+              <span class="badge">threshold: <code>{{ kbRetrieval.score_threshold ?? "-" }}</code></span>
+            </div>
+            <span class="togglePill togglePillSm" aria-hidden="true"></span>
+          </div>
+        </summary>
+
+        <div class="hr"></div>
+
+        <div v-if="groupedHits.length === 0" class="muted">No RAG retrieval results.</div>
+
+        <div v-else class="stack">
+          <details v-for="dg in groupedHits" :key="dg.domain" class="details innerDetails">
+            <summary class="innerSummary">
+              <div class="innerSummaryRow">
+                <div class="innerSummaryText">
+                  <div class="sumTitle">
+                    domain: <code>{{ dg.domain }}</code>
+                    <span class="muted sumSubInline">books: {{ dg.books.length }}</span>
                   </div>
-                  <span class="togglePill togglePillSm" aria-hidden="true"></span>
                 </div>
-              </summary>
-
-              <div class="hr"></div>
-
-              <div class="kv">
-                <div class="k">context</div>
-                <div class="v" style="white-space: pre-wrap">{{ r.context }}</div>
+                <span class="togglePill togglePillSm" aria-hidden="true"></span>
               </div>
+            </summary>
 
-              <div class="kv">
-                <div class="k">behavior</div>
-                <div class="v" style="white-space: pre-wrap">{{ r.behavior }}</div>
-              </div>
+            <div class="hr"></div>
 
-              <div class="kv">
-                <div class="k">explanation</div>
-                <div class="v" style="white-space: pre-wrap; line-height: 1.55">
-                  {{ r.explanation }}
-                </div>
-              </div>
-            </details>
-          </div>
-        </details>
-
-        <div class="hr2"></div>
-
-        <!-- ===== Block 2 ===== -->
-        <details class="details blockDetails">
-          <summary class="blockSummary">
-            <div class="blockTitle">hits</div>
-
-            <div class="blockRight">
-              <div class="metaBadges">
-                <span class="badge">provider: <code>{{ kbMeta.provider || "-" }}</code></span>
-                <span class="badge">model: <code>{{ kbMeta.model || "-" }}</code></span>
-                <span class="badge">top_n: <code>{{ kbRetrieval.top_n ?? "-" }}</code></span>
-                <span class="badge">threshold: <code>{{ kbRetrieval.score_threshold ?? "-" }}</code></span>
-              </div>
-              <span class="togglePill togglePillSm" aria-hidden="true"></span>
-            </div>
-          </summary>
-
-          <div class="hr"></div>
-
-          <div v-if="groupedHits.length === 0" class="muted">No hits.</div>
-
-          <div v-else class="stack">
-            <details v-for="dg in groupedHits" :key="dg.domain" class="details innerDetails">
-              <summary class="innerSummary">
-                <div class="innerSummaryRow">
-                  <div class="innerSummaryText">
-                    <div class="sumTitle">
-                      domain: <code>{{ dg.domain }}</code>
-                      <span class="muted sumSubInline">books: {{ dg.books.length }}</span>
+            <div class="stack">
+              <details v-for="bk in dg.books" :key="bk.doc_id + bk.doc_title" class="details innerDetails2">
+                <summary class="innerSummary">
+                  <div class="innerSummaryRow">
+                    <div class="innerSummaryText">
+                      <div class="sumTitle">{{ bk.doc_title }}</div>
+                      <div class="muted sumSub">hits: <code>{{ bk.lines.length }}</code></div>
                     </div>
+                    <span class="togglePill togglePillSm" aria-hidden="true"></span>
                   </div>
-                  <span class="togglePill togglePillSm" aria-hidden="true"></span>
-                </div>
-              </summary>
+                </summary>
 
-              <div class="hr"></div>
+                <div class="hr"></div>
 
-              <div class="stack">
-                <details
-                  v-for="bk in dg.books"
-                  :key="bk.doc_id + bk.doc_title"
-                  class="details innerDetails2"
-                >
-                  <summary class="innerSummary">
-                    <div class="innerSummaryRow">
-                      <div class="innerSummaryText">
-                        <div class="sumTitle">{{ bk.doc_title }}</div>
-                        <div class="muted sumSub">hits: <code>{{ bk.lines.length }}</code></div>
+                <div class="stack">
+                  <details v-for="(ln, idx) in bk.lines" :key="idx" class="hitLine">
+                    <summary class="hitSummary">
+                      <div class="hitBadges">
+                        <span class="badge">page: <code>{{ ln.page_number }}</code></span>
+                        <span class="badge">score: <code>{{ fmtScore(ln.score) }}</code></span>
                       </div>
                       <span class="togglePill togglePillSm" aria-hidden="true"></span>
+                    </summary>
+
+                    <div class="hr"></div>
+                    <div class="muted" style="white-space: pre-wrap; line-height: 1.55">
+                      {{ ln.text }}
                     </div>
-                  </summary>
-
-                  <div class="hr"></div>
-
-                  <div class="stack">
-                    <details v-for="(ln, idx) in bk.lines" :key="idx" class="hitLine">
-                      <summary class="hitSummary">
-                        <div class="hitBadges">
-                          <span class="badge">page: <code>{{ ln.page_number }}</code></span>
-                          <span class="badge">score: <code>{{ fmtScore(ln.score) }}</code></span>
-                        </div>
-                        <span class="togglePill togglePillSm" aria-hidden="true"></span>
-                      </summary>
-
-                      <div class="hr"></div>
-                      <div class="muted" style="white-space: pre-wrap; line-height: 1.55">
-                        {{ ln.text }}
-                      </div>
-                    </details>
-                  </div>
-                </details>
-              </div>
-            </details>
-          </div>
-        </details>
-
-        <div class="hr2"></div>
-
-        <!-- ===== Block 3 ===== -->
-        <details class="details blockDetails" open>
-          <summary class="blockSummary">
-            <div class="blockTitle">selected_habits</div>
-
-            <div class="blockRight">
-              <div class="metaBadges">
-                <span class="badge">provider: <code>{{ selMeta.provider || "-" }}</code></span>
-                <span class="badge">model: <code>{{ selMeta.model || "-" }}</code></span>
-              </div>
-              <span class="togglePill togglePillSm" aria-hidden="true"></span>
-            </div>
-          </summary>
-
-          <div class="hr"></div>
-
-          <div v-if="selectedHabits.length === 0" class="muted">No selected_habits.</div>
-
-          <div v-else class="stack">
-            <details v-for="(h, i) in selectedHabits" :key="h.habit_key || i" class="details innerDetails">
-              <summary class="innerSummary">
-                <div class="innerSummaryRow">
-                  <div class="innerSummaryText">
-                    <div class="sumTitle">{{ h.habit }}</div>
-                  </div>
-                  <span class="togglePill togglePillSm" aria-hidden="true"></span>
+                  </details>
                 </div>
-              </summary>
+              </details>
+            </div>
+          </details>
+        </div>
+      </details>
 
-              <div class="hr"></div>
+      <div class="hr2"></div>
 
-              <div class="row badgesLine">
-                <span class="badge">top_n: <code>{{ habitTopN(h) }}</code></span>
-                <span class="badge">threshold: <code>{{ habitThreshold(h) }}</code></span>
-                <span class="badge">score: <code>{{ fmtScore(h.score) }}</code></span>
+      <!-- ===== Block 3 ===== -->
+      <details class="details blockDetails" open>
+        <summary class="blockSummary">
+          <div class="blockTitle">selected habits</div>
 
-                <span v-if="h.reason" class="badge badgeWide">
-                  reason: <span class="reasonText">{{ h.reason }}</span>
-                </span>
-              </div>
-
-              <div class="hr"></div>
-
-              <div class="muted sectionLabel"></div>
-              <ContextLabels :contexts="h.contexts || []" />
-            </details>
+          <div class="blockRight">
+            <div class="metaBadges">
+              <span class="badge">provider: <code>{{ selMeta.provider || "-" }}</code></span>
+              <span class="badge">model: <code>{{ selMeta.model || "-" }}</code></span>
+            </div>
+            <span class="togglePill togglePillSm" aria-hidden="true"></span>
           </div>
-        </details>
+        </summary>
 
         <div class="hr2"></div>
 
-        <!-- ===== Block 4 ===== -->
-        <details class="details blockDetails">
-          <summary class="blockSummary">
-            <div class="blockTitle">bilded_profiles</div>
+        <div v-if="selectedHabits.length === 0" class="muted">No selected habits.</div>
 
-            <div class="blockRight">
-              <div class="metaBadges">
-                <span class="badge">provider: <code>{{ profMeta.provider || "-" }}</code></span>
-                <span class="badge">model: <code>{{ profMeta.model || "-" }}</code></span>
+        <div v-else class="stack">
+          <details v-for="(h, i) in selectedHabits" :key="h.habit_key || i" class="details innerDetails">
+            <summary class="innerSummary">
+              <div class="innerSummaryRow">
+                <div class="innerSummaryText">
+                  <div class="sumTitle">{{ h.habit }}</div>
+                </div>
+                <span class="togglePill togglePillSm" aria-hidden="true"></span>
               </div>
-              <span class="togglePill togglePillSm" aria-hidden="true"></span>
+            </summary>
+
+            <div class="hr2"></div>
+
+            <div class="row badgesLine">
+              <span class="badge">top_n: <code>{{ habitTopN(h) }}</code></span>
+              <span class="badge">threshold: <code>{{ habitThreshold(h) }}</code></span>
+              <span class="badge">score: <code>{{ fmtScore(h.score) }}</code></span>
+
+              <span v-if="h.reason" class="badge badgeWide">
+                reason: <span class="reasonText">{{ h.reason }}</span>
+              </span>
             </div>
-          </summary>
 
-          <div class="hr"></div>
+            <div class="hr2"></div>
 
-          <div v-if="!profileDetailed" class="muted">No profile_detailed.</div>
-          <div v-else class="muted" style="white-space: pre-wrap; line-height: 1.55">
-            {{ profileDetailed }}
+            <div class="muted sectionLabel"></div>
+            <ContextLabels :contexts="h.contexts || []" />
+          </details>
+        </div>
+      </details>
+
+      <div class="hr2"></div>
+
+      <!-- ===== Block 4 ===== -->
+      <details class="details blockDetails">
+        <summary class="blockSummary">
+          <div class="blockTitle">bilded profiles</div>
+
+          <div class="blockRight">
+            <div class="metaBadges">
+              <span class="badge">provider: <code>{{ profMeta.provider || "-" }}</code></span>
+              <span class="badge">model: <code>{{ profMeta.model || "-" }}</code></span>
+            </div>
+            <span class="togglePill togglePillSm" aria-hidden="true"></span>
           </div>
-        </details>
+        </summary>
 
         <div class="hr2"></div>
 
-        <!-- ===== Block 5 ===== -->
-        <details class="details blockDetails" open>
-          <summary class="blockSummary">
-            <div class="blockTitle">feedback</div>
+        <div v-if="!profileDetailed" class="muted">No profile detailed.</div>
+        <div v-else class="muted" style="white-space: pre-wrap; line-height: 1.55">
+          {{ profileDetailed }}
+        </div>
+      </details>
 
-            <div class="blockRight">
-              <span class="togglePill togglePillSm" aria-hidden="true"></span>
-            </div>
-          </summary>
+      <div class="hr2"></div>
 
-          <div class="hr"></div>
+      <!-- ===== Block 5 ===== -->
+      <details class="details blockDetails" open>
+        <summary class="blockSummary">
+          <div class="blockTitle">feedback</div>
 
-          <label class="muted label"></label>
-          <textarea
-            class="textarea feedbackTextarea"
-            v-model="commentText"
-            rows="4"
-            placeholder="Write a short feedback (optional)…"
-            :disabled="commentBusy"
-          ></textarea>
-
-          <div class="row feedbackActions">
-            <button class="btn primary bigBtn btnFx" :disabled="commentBusy || !commentReady" @click="saveFeedback">
-              {{ commentBusy ? "Saving..." : "Save comment" }}
-            </button>
-
-            <button class="btn bigBtn btnFx" :disabled="loading || !canSubmit" @click="submit">
-              Regenerate recommendations
-            </button>
+          <div class="blockRight">
+            <span class="togglePill togglePillSm" aria-hidden="true"></span>
           </div>
+        </summary>
 
-          <div v-if="commentOk" class="muted" style="margin-top: 8px">
-            Feedback has been successfully submitted!
-          </div>
+        <div class="hr2"></div>
 
-          <div v-if="commentError" class="card errorCard" style="margin-top: 10px">
-            <div class="errTitle">Error</div>
-            <div class="muted" style="white-space: pre-wrap">{{ commentError }}</div>
-          </div>
-        </details>
-      </div>
+        <label class="muted label"></label>
+        <textarea class="textarea feedbackTextarea" v-model="commentText" rows="4"
+          placeholder="Write a short feedback (optional)…" :disabled="commentBusy"></textarea>
+
+        <div class="row feedbackActions">
+          <button class="btn primary bigBtn btnFx" :disabled="commentBusy || !commentReady" @click="saveFeedback">
+            {{ commentBusy ? "Saving..." : "Save comment" }}
+          </button>
+
+          <button class="btn bigBtn btnFx" :disabled="loading || !canSubmit" @click="submit">
+            Regenerate recommendations
+          </button>
+        </div>
+
+        <div v-if="commentOk" class="muted" style="margin-top: 8px">
+          Feedback has been successfully submitted!
+        </div>
+
+        <div v-if="commentError" class="card errorCard" style="margin-top: 10px">
+          <div class="errTitle">Error</div>
+          <div class="muted" style="white-space: pre-wrap">{{ commentError }}</div>
+        </div>
+      </details>
     </div>
   </div>
 </template>
@@ -495,7 +488,7 @@ async function saveFeedback() {
 <style scoped>
 .page {
   max-width: 1100px;
-  margin: 22px auto 0;
+  margin: 13px auto 0;
   padding: 0 14px 60px;
 
   /* theme-ish neutrals (match ManageHabits feeling) */
@@ -523,6 +516,7 @@ async function saveFeedback() {
   min-height: 600px;
   font-size: 14px;
 }
+
 .bigTextarea::placeholder {
   color: rgba(15, 23, 42, 0.45);
   opacity: 1;
@@ -607,6 +601,7 @@ async function saveFeedback() {
   border-color: rgba(239, 68, 68, 0.25);
   background: rgba(239, 68, 68, 0.04);
 }
+
 .errTitle {
   font-weight: 800;
   margin-bottom: 4px;
@@ -627,6 +622,7 @@ async function saveFeedback() {
   cursor: pointer;
   list-style: none;
 }
+
 .details summary::-webkit-details-marker {
   display: none;
 }
@@ -678,10 +674,12 @@ async function saveFeedback() {
   background: var(--sub1);
   border-color: var(--subBorder2);
 }
+
 .innerDetails2 {
   background: #fff;
   border-color: var(--border2);
 }
+
 .innerSummary {
   display: block;
 }
@@ -723,10 +721,12 @@ async function saveFeedback() {
   align-items: flex-start;
   gap: 12px;
 }
+
 .innerSummaryText {
   flex: 1;
   min-width: 0;
 }
+
 .innerSummaryRow .togglePill {
   margin-left: auto;
   flex: 0 0 auto;
@@ -737,6 +737,7 @@ async function saveFeedback() {
   align-items: center;
   gap: 10px;
 }
+
 .hitBadges {
   display: flex;
   flex-wrap: wrap;
@@ -744,6 +745,7 @@ async function saveFeedback() {
   flex: 1;
   min-width: 0;
 }
+
 .hitSummary .togglePill {
   margin-left: auto;
   flex: 0 0 auto;
@@ -752,9 +754,11 @@ async function saveFeedback() {
 summary .togglePill::after {
   content: "Expand Labels";
 }
-details[open] > summary .togglePill::after {
+
+details[open]>summary .togglePill::after {
   content: "Collapse Labels";
 }
+
 /* ---------------------------------------- */
 
 .sumTitle {
@@ -788,16 +792,19 @@ details[open] > summary .togglePill::after {
   gap: 10px;
   padding: 6px 0;
 }
+
 @media (max-width: 900px) {
   .kv {
     grid-template-columns: 1fr;
   }
 }
+
 .k {
   font-weight: 650;
   font-size: 12px;
   color: rgba(15, 23, 42, 0.72);
 }
+
 .v {
   font-size: 13px;
 }
@@ -807,11 +814,13 @@ details[open] > summary .togglePill::after {
   flex-wrap: wrap;
   align-items: flex-start;
 }
+
 .badgeWide {
   flex: 1;
   min-width: 260px;
   max-width: 100%;
 }
+
 .reasonText {
   white-space: pre-wrap;
   word-break: break-word;
@@ -830,6 +839,7 @@ details[open] > summary .togglePill::after {
   min-height: 96px;
   max-width: 97%;
 }
+
 .feedbackActions {
   justify-content: flex-end;
   gap: 10px;
@@ -893,5 +903,10 @@ details[open] > summary .togglePill::after {
   cursor: not-allowed;
   opacity: 1 !important;
   filter: none !important;
+}
+.hr3 {
+  height: 5px;
+  border: 0;
+  margin: 0;
 }
 </style>

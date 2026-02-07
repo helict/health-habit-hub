@@ -44,12 +44,12 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="card" style="padding:16px 18px 20px; border-radius:18px; max-width:1100px; margin:22px auto 0;">
+  <div class="card">
     <div class="row" style="justify-content:space-between; align-items:flex-start">
       <div>
         <div style="font-weight:950; font-size:18px">Recommendation History</div>
         <div class="muted" style="font-size:13px; margin-top:6px">
-          Latest record per <code>text_signature</code> (sorted by newest first)
+          You can review an overview of your personalized recommendations and all the information used to generate them on this page.
         </div>
       </div>
 
