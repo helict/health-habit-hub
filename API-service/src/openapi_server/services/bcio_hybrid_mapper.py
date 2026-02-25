@@ -95,7 +95,7 @@ class BCIOHybridMapper:
         milvus_uri: str = "http://localhost:19530",
         collection_name: Optional[str] = None,
         jsonl_path: str = "concepts_bcio_only.jsonl",
-        device: str = "cuda",
+        device: str = "cpu",
         use_fp16: bool = False,
         entity_types: Tuple[str, ...] = ("Class",),  # usually only classes for mapping
         dense_weight: float = 0.65,  # dense vs sparse fusion weight

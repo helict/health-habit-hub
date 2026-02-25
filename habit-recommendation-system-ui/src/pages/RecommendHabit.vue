@@ -216,8 +216,9 @@ async function saveFeedback() {
         <textarea class="textarea bigTextarea" v-model="goal" :placeholder="DEFAULT_GOAL"></textarea>
 
         <div v-if="showEmptyWarn" class="hint muted">⚠️ To receive recommendations, please enter your goal.</div>
-        <div v-else class="hint muted">Tip: The more accurate and detailed your goal description is, the more reliable
-          the recommendations will be.</div>
+        <div v-else class="hint muted">⚠️ The first recommendation will trigger downloading the BGE-M3 embeddings and
+          building the index, which may take around 20 minutes. Please be patient :D
+        </div>
       </div>
 
       <div class="right col">
@@ -901,6 +902,7 @@ details[open]>summary .togglePill::after {
   opacity: 1 !important;
   filter: none !important;
 }
+
 .hr3 {
   height: 5px;
   border: 0;

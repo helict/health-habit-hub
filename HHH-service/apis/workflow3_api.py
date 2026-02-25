@@ -13,6 +13,7 @@ from fastapi import APIRouter, HTTPException, Query
 from fastapi.concurrency import run_in_threadpool
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, confloat
+from typing import Any, Annotated
 
 
 WORKFLOW3_TAG = "Workflow 3: Habit Recommendation"
@@ -25,7 +26,7 @@ API_BASE = os.getenv("API_BASE_URL", "http://127.0.0.1:8080").rstrip("/")
 # Mongo config
 # ----------------------------
 MONGO_URI = os.getenv(
-    "MONGO_URI", os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017")
+    "MONGO_URI", os.getenv("MONGO_URI", "mongodb://127.0.0.1:27017")
 )
 RECOMMEND_DB_NAME = os.getenv("RECOMMEND_DB_NAME", "RecommendationsDB")
 HabitDB_NAME = os.getenv("HabitDB_NAME", "HabitDB")
@@ -72,7 +73,7 @@ class RecommendIn(BaseModel):
 class SelectedHabitOut(BaseModel):
     habit: str
     habit_key: str
-    score: confloat(ge=0.0, le=1.0)
+    score: Annotated[float, Field(ge=0.0, le=1.0)]
     reason: str
     contexts: List[Any]  # 7 values
 
@@ -232,7 +233,7 @@ def call_api_kb_query(request_uuid: str, text: str) -> dict:
         r = SESSION.post(
             url,
             json={"request_uuid": request_uuid, "text": text},
-            timeout=(3, 600),
+            timeout=(3, 60000),
         )
         r.raise_for_status()
         return r.json()

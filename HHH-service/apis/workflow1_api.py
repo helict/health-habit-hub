@@ -108,7 +108,7 @@ def call_api_bcio_map(
                 "debug": str(debug).lower(),
             },
             json=context_payload,
-            timeout=(3, 600),
+            timeout=(3, 6000),
         )
         r.raise_for_status()
         return r.json()

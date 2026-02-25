@@ -13,7 +13,7 @@ WORKFLOW2_TAG = "Workflow 2: User form completion"
 
 router = APIRouter(tags=[WORKFLOW2_TAG])
 
-MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://127.0.0.1:27017/UserProfiles")
+MONGODB_URI = os.getenv("MONGOUSER_URI", "mongodb://127.0.0.1:27017/UserProfiles")
 MONGO = AsyncIOMotorClient(MONGODB_URI, serverSelectionTimeoutMS=2000)
 DB = MONGO.get_default_database()
 

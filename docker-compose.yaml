@@ -1,0 +1,57 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: ./API-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./API-service/src:/app/src
+    depends_on:
+      - redis
+    environment:
+      REDIS_URL: "redis://redis:6379/0"
+
+      MONGO_URI: "mongodb://host.docker.internal:27017"
+      MONGODB_URI: "mongodb://host.docker.internal:27017/HabitDB"
+
+      MILVUS_URI: "http://host.docker.internal:19530"
+
+    command: uvicorn src.openapi_server.main:app --host 0.0.0.0 --port 8080 --reload
+
+  hhh:
+    build:
+      context: ./HHH-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./HHH-service:/app
+    depends_on:
+      - api
+    environment:
+      API_BASE_URL: "http://api:8080"
+      MONGODB_URI: "mongodb://host.docker.internal:27017/HabitDB"
+      MONGOUSER_URI: "mongodb://host.docker.internal:27017/UserProfiles"
+      MONGO_URI: "mongodb://host.docker.internal:27017"
+
+    command: uvicorn main:app --host 0.0.0.0 --port 8081 --reload
+  frontend:
+    build:
+      context: ./habit-recommendation-system-ui
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./habit-recommendation-system-ui:/app
+      - /app/node_modules
+    depends_on:
+      - hhh
+    environment:
+      VITE_HHH_BASE: "http://localhost:8081"
+    command: npm run dev -- --host 0.0.0.0 --port 5173

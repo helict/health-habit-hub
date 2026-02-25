@@ -75,7 +75,7 @@ def _get_mapper() -> BCIOHybridMapper:
         jsonl_path = _ensure_concept_cards_jsonl(jsonl_path)
         collection_name = os.getenv("BCIO_COLLECTION_NAME") or None
 
-        device = os.getenv("BCIO_DEVICE", "cuda")
+        device = os.getenv("BCIO_DEVICE", "cpu")
         use_fp16 = os.getenv("BCIO_USE_FP16", "0") == "1"
         dense_weight = float(os.getenv("BCIO_DENSE_WEIGHT", "0.65"))
 
