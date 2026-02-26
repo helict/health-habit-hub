@@ -1,0 +1,21 @@
+{
+  "doc_id": "0147d4dfc5ae76613a8b8d9d1c95244477527989f1d841845866ae5b5340cda5",
+  "domain": "physical_activity",
+  "title": "Physical Activity Guidelines for Americans 2nd edition",
+  "doc_summary": "Summary generation returned empty output. Please retry with a different model/provider or check configuration.",
+  "ingested_at": "2026-02-04T22:58:32.712083+01:00",
+  "source_pdf": "C:\\Users\\hjt\\Desktop\\Dip_Code_Jingting_Hua\\API-service\\src\\openapi_server\\kb\\physical_activity\\Physical_Activity_Guidelines_for_Americans_2nd_edition.pdf",
+  "pdf_mtime": 1770242275.894694,
+  "pdf_size": 15360711,
+  "indexed_at": "2026-02-04T22:59:09.393816+01:00",
+  "chunk_count": 306,
+  "embed_provider": "bge-m3",
+  "embed_model": "BAAI/bge-m3",
+  "embed_dim": 1024,
+  "pdf_strategy": "fast",
+  "infer_table_structure": true,
+  "chunk_max_characters": 2500,
+  "chunk_new_after_n_chars": 2000,
+  "chunk_combine_under_n_chars": 300,
+  "extract_images": false
+}

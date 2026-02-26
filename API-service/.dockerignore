@@ -34,3 +34,4 @@ build/
 *.log
 *.md
 sequenceDiagram.md
+API-service/src/openapi_server/kb/_meta/
