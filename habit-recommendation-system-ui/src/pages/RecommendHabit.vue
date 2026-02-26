@@ -216,8 +216,9 @@ async function saveFeedback() {
         <textarea class="textarea bigTextarea" v-model="goal" :placeholder="DEFAULT_GOAL"></textarea>
 
         <div v-if="showEmptyWarn" class="hint muted">⚠️ To receive recommendations, please enter your goal.</div>
-        <div v-else class="hint muted">⚠️ The first recommendation will trigger downloading the BGE-M3 embeddings and
-          building the index, which may take around 20 minutes. Please be patient :D
+        <div v-else class="hint muted">⚠️ The first recommendation will trigger the download of the BGE-M3 embeddings
+          and the indexing of the PDFs in the knowledge base. The processing time depends on the length and number of
+          the PDFs. Please be patient :D
         </div>
       </div>
 

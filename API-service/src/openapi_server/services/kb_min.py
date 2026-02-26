@@ -192,7 +192,6 @@ def _llm_doc_summary(
 ) -> str:
     prompt = (
         "Summarize the document for a knowledge base.\n"
-        "Focus on recommendations / behaviour-change measures.\n"
         "Return 6-10 concise bullet points. Plain text only.\n"
         "Do NOT include citations or links.\n"
     )
@@ -207,7 +206,7 @@ def _llm_doc_summary(
     )
 
     summary = (raw or "").strip()
-    if len(summary) < 50:
+    if len(summary)==0:
         summary = (
             "Summary generation returned empty output. "
             "Please retry with a different model/provider or check configuration."
