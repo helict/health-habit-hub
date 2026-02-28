@@ -171,3 +171,4 @@ docker compose up -d
 
 * **Author:** Jingting Hua
 * **Contact:** [jingting.hua@mailbox.tu-dresden.de](mailto:jingting.hua@mailbox.tu-dresden.de)
+* This software was developed as part of my Diplomarbeit and is intended for research purposes only.
