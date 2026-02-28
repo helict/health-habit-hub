@@ -206,7 +206,7 @@ def _llm_doc_summary(
     )
 
     summary = (raw or "").strip()
-    if len(summary)==0:
+    if not summary:
         summary = (
             "Summary generation returned empty output. "
             "Please retry with a different model/provider or check configuration."
