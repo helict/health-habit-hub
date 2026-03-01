@@ -8,12 +8,12 @@ A multi-LLM, RAG-supported prototype for collecting habits and generating person
 
 ## Features
 
-![Workflow 1 Diagram](figs/Workflow1.png)
+
 
 ### Workflow1: Habitual Structured Collection
 
 This function supports the collection, storage, and display of users' daily habits in a local habit database.
-
+![Workflow 1 Diagram](figs/Workflow1.png)
 * **M1.1: Habit Classification**
   Calls a large language model to determine whether the sentence entered by the user describes a habit. Redis is used as a cache.
 
@@ -25,7 +25,6 @@ This function supports the collection, storage, and display of users' daily habi
 
 ---
 
-![Workflow 2 Diagram](figs/Workflow2.png)
 
 ### Workflow2: User Forms Completion
 
@@ -35,13 +34,16 @@ This function supports the completion, storage, and display of three user forms 
 * Simple Lifestyle Indicator Questionnaire (SLIQ)
 * RAND 36-Item Health Survey (RAND-36)
 
+![Workflow 2 Diagram](figs/Workflow2.png)
+
 ---
 
-![Workflow 3 Diagram](figs/Workflow3.png)
 
 ### Workflow3: Habit Recommendation
 
 Based on the user-entered goal, the system selects suitable habits, generates an appropriate user profile, performs RAG retrieval, and then generates recommendations using these results together with the user's comments on recommendations for the same goal (from the comments collection). The recommendation results are stored in a local recommendation database and displayed in the UI.
+
+![Workflow 3 Diagram](figs/Workflow3.png)
 
 * **M3.1: Habit Extractor**
   Uses a large language model to select suitable habits from the user's local habit database based on the user's goal statement, and to generate a habit summary. The selected habits (including context labels but excluding BCIO mapping results) are passed to `M3.5: Habit Recommendation Generator`, and the habit summary can optionally be used as part of the RAG query for `M3.3: Retrieval`. Redis caching is implemented.
@@ -100,9 +102,7 @@ Based on the user-entered goal, the system selects suitable habits, generates an
 * **Cache:** Redis
 * **Local Database:** MongoDB
 
-## Installation and Running
-
-### Best Practice
+## Installation and Running (Best Practice)
 
 The author has only tested the project successfully on Windows.
 
