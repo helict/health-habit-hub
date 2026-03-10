@@ -85,7 +85,7 @@ Based on the user-entered goal, the system selects suitable habits, generates an
 ![Local Knowledge Base](figs/kb.png)
 
 * By default, it contains 6 PDFs (guidelines).
-* Users can customize the Local Knowledge Base at any time. During `**M3.3: Retrieval**`, any changes to the Local Knowledge Base will be detected and handled automatically.
+* Users can customize the Local Knowledge Base at any time. During `M3.3: Retrieval`, any changes to the Local Knowledge Base will be detected and handled automatically.
 * Please use the domain name as the name of the category folder.
 * The PDF filename should be the title of the paper or guideline, with words separated by underscores.
 
