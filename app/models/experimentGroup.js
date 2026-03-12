@@ -11,9 +11,7 @@ export class ExperimentGroup {
 
   toString() {
     const taskString = this.closedTask ? 'CLOSED_TASK' : 'OPEN_TASK';
-    const descriptionString = this.closedDescription
-      ? 'CLOSED_DESCRIPTION'
-      : 'OPEN_DESCRIPTION';
+    const descriptionString = this.closedDescription ? 'CLOSED_DESCRIPTION' : 'OPEN_DESCRIPTION';
     return `${taskString}_${descriptionString}`;
   }
 
@@ -37,3 +35,11 @@ export class ExperimentGroup {
     return new ExperimentGroup(obj.closedTask, obj.closedDescription);
   }
 }
+
+// explizite Liste aller vier Gruppen
+export const ALL_EXPERIMENT_GROUPS = [
+  new ExperimentGroup(false, false), // OPEN_TASK_OPEN_DESCRIPTION
+  new ExperimentGroup(false, true),  // OPEN_TASK_CLOSED_DESCRIPTION
+  new ExperimentGroup(true, false),  // CLOSED_TASK_OPEN_DESCRIPTION
+  new ExperimentGroup(true, true),   // CLOSED_TASK_CLOSED_DESCRIPTION
+];

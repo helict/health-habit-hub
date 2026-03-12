@@ -33,6 +33,7 @@
     "donatePageName": "Home",
     "aboutPageName": "About",
     "contactPageName": "Contact",
+    "adminPageName": "Admin",
     "languageCode": "en",
     "language": "English"
   },

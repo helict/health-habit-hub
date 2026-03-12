@@ -1,17 +1,13 @@
 db = db.getSiblingDB("surveyjs");
 
 db.createCollection("surveys");
+db.createCollection("survey_config");
 console.log("Collection 'surveys' created.");
-db.surveys.insertMany([
+
+db.surveys.replaceOne({ "id": "1" },
 {
-  "id": "1", 
-  "completedHtml": {
-    "default": "<h4>Thank you for your participation!</h4>",
-    "de": "<h4>Vielen Dank für Ihre Teilnahme!</h4>",
-    "ja": "<h4>ご参加いただきありがとうございます！</h4>"
-  },
-  "showProgressBar": true,
-  "progressBarLocation": "top",
+  "id": "1",
+  "activeParts": ["demographics", "sus", "ueq"],
   "pages": [
     {
       "name": "demographics",
@@ -962,7 +958,7 @@ db.surveys.insertMany([
               }
             }
           ],
-          "placeholder": {
+            "placeholder": {
             "default": "Please select",
             "de": "Bitte auswählen",
             "ja": "選択してください"
@@ -992,15 +988,15 @@ db.surveys.insertMany([
             "ja": "私はこのシステムを頻繁に使いたいと思う。"
 
           },
-          "minRateDescription": {
-            "default": "Strongly disagree",
-            "de": "Stimme überhaupt nicht zu",
-            "ja": "全くそう思わない"
+          "minRateDescription": { 
+            "default": "Strongly disagree", 
+            "de": "Stimme überhaupt nicht zu", 
+            "ja": "全くそう思わない" 
           },
-          "maxRateDescription": {
-            "default": "Strongly agree",
-            "de": "Stimme voll und ganz zu",
-            "ja": "非常にそう思う"
+          "maxRateDescription": { 
+            "default": "Strongly agree", 
+            "de": "Stimme voll und ganz zu", 
+            "ja": "非常にそう思う" 
           }
         },
         {
@@ -1011,15 +1007,15 @@ db.surveys.insertMany([
             "de": "Ich fand das Produkt unnötig komplex.",
             "ja": "このシステムは不必要に複雑だと思う。"
           },
-          "minRateDescription": {
+          "minRateDescription": { 
             "default": "Strongly disagree",
             "de": "Stimme überhaupt nicht zu",
-            "ja": "全くそう思わない"
-          },
-          "maxRateDescription": {
-            "default": "Strongly agree",
-            "de": "Stimme voll und ganz zu",
-            "ja": "非常にそう思う"
+           "ja": "全くそう思わない"
+           },
+          "maxRateDescription": { 
+            "default": "Strongly agree", 
+            "de": "Stimme voll und ganz zu", 
+            "ja": "非常にそう思う" 
           }
         },
         {
@@ -1030,15 +1026,15 @@ db.surveys.insertMany([
             "de": "Ich dachte, das Produkt war einfach zu bedienen.",
             "ja": "このシステムは使いやすいと感じる。"
           },
-          "minRateDescription": {
-            "default": "Strongly disagree",
-            "de": "Stimme überhaupt nicht zu",
-            "ja": "全くそう思わない"
+          "minRateDescription": { 
+            "default": "Strongly disagree", 
+            "de": "Stimme überhaupt nicht zu", 
+            "ja": "全くそう思わない" 
           },
-          "maxRateDescription": {
-            "default": "Strongly agree",
-            "de": "Stimme voll und ganz zu",
-            "ja": "非常にそう思う"
+          "maxRateDescription": { 
+            "default": "Strongly agree", 
+            "de": "Stimme voll und ganz zu", 
+            "ja": "非常にそう思う" 
           }
         },
         {
@@ -1049,15 +1045,15 @@ db.surveys.insertMany([
             "de": "Ich denke, dass ich die Unterstützung einer technischen Person brauche, um dieses Produkt nutzen zu können.",
             "ja": "このシステムを使うには、専門的なサポートが必要だと思う。"
           },
-          "minRateDescription": {
-            "default": "Strongly disagree",
-            "de": "Stimme überhaupt nicht zu",
-            "ja": "全くそう思わない"
+          "minRateDescription": { 
+            "default": "Strongly disagree", 
+            "de": "Stimme überhaupt nicht zu", 
+            "ja": "全くそう思わない" 
           },
-          "maxRateDescription": {
-            "default": "Strongly agree",
-            "de": "Stimme voll und ganz zu",
-            "ja": "非常にそう思う"
+          "maxRateDescription": { 
+            "default": "Strongly agree", 
+            "de": "Stimme voll und ganz zu", 
+            "ja": "非常にそう思う" 
           }
         },
         {
@@ -1068,15 +1064,15 @@ db.surveys.insertMany([
             "de": "Ich fand, die verschiedenen Funktionen in diesem Produkt waren gut integriert.",
             "ja": "このシステムの機能はよく統合されていると感じる。"
           },
-          "minRateDescription": {
-            "default": "Strongly disagree",
-            "de": "Stimme überhaupt nicht zu",
-            "ja": "全くそう思わない"
+          "minRateDescription": { 
+            "default": "Strongly disagree", 
+            "de": "Stimme überhaupt nicht zu", 
+            "ja": "全くそう思わない" 
           },
-          "maxRateDescription": {
-            "default": "Strongly agree",
-            "de": "Stimme voll und ganz zu",
-            "ja": "非常にそう思う"
+          "maxRateDescription": { 
+            "default": "Strongly agree", 
+            "de": "Stimme voll und ganz zu", 
+            "ja": "非常にそう思う" 
           }
         },
         {
@@ -1087,15 +1083,15 @@ db.surveys.insertMany([
             "de": "Ich dachte, dass dieses Produkt nicht konsistent genug war.",
             "ja": "このシステムには一貫性が欠けている部分があると思う。"
           },
-          "minRateDescription": {
-            "default": "Strongly disagree",
-            "de": "Stimme überhaupt nicht zu",
-            "ja": "全くそう思わない"
+          "minRateDescription": { 
+            "default": "Strongly disagree", 
+            "de": "Stimme überhaupt nicht zu", 
+            "ja": "全くそう思わない" 
           },
-          "maxRateDescription": {
-            "default": "Strongly agree",
-            "de": "Stimme voll und ganz zu",
-            "ja": "非常にそう思う"
+          "maxRateDescription": { 
+            "default": "Strongly agree", 
+            "de": "Stimme voll und ganz zu", 
+            "ja": "非常にそう思う" 
           }
         },
         {
@@ -1106,15 +1102,15 @@ db.surveys.insertMany([
             "de": "Ich würde mir vorstellen, dass die meisten Leute sehr schnell lernen würden, dieses Produkt zu benutzen.",
             "ja": "多くの人はこのシステムをすぐに使えるようになると思う。"
           },
-          "minRateDescription": {
-            "default": "Strongly disagree",
-            "de": "Stimme überhaupt nicht zu",
+          "minRateDescription": { 
+            "default": "Strongly disagree", 
+            "de": "Stimme überhaupt nicht zu", 
             "ja": "全くそう思わない"
           },
-          "maxRateDescription": {
-            "default": "Strongly agree",
-            "de": "Stimme voll und ganz zu",
-            "ja": "非常にそう思う"
+          "maxRateDescription": { 
+            "default": "Strongly agree", 
+            "de": "Stimme voll und ganz zu", 
+            "ja": "非常にそう思う" 
           }
         },
         {
@@ -1125,15 +1121,15 @@ db.surveys.insertMany([
             "de": "Ich fand dieses Produkt sehr umständlich zu benutzen.",
             "ja": "このシステムを使う前に多くのことを学ぶ必要があると思う。"
           },
-          "minRateDescription": {
-            "default": "Strongly disagree",
-            "de": "Stimme überhaupt nicht zu",
-            "ja": "全くそう思わない"
+          "minRateDescription": { 
+            "default": "Strongly disagree", 
+            "de": "Stimme überhaupt nicht zu", 
+            "ja": "全くそう思わない" 
           },
-          "maxRateDescription": {
-            "default": "Strongly agree",
-            "de": "Stimme voll und ganz zu",
-            "ja": "非常にそう思う"
+          "maxRateDescription": { 
+            "default": "Strongly agree", 
+            "de": "Stimme voll und ganz zu", 
+            "ja": "非常にそう思う" 
           }
         },
         {
@@ -1144,15 +1140,15 @@ db.surveys.insertMany([
             "de": "Ich habe mich sehr selbstsicher gefühlt, dieses Produkt zu verwenden.",
             "ja": "このシステムを使っていると、自信を持って操作できる。"
           },
-          "minRateDescription": {
-            "default": "Strongly disagree",
-            "de": "Stimme überhaupt nicht zu",
-            "ja": "全くそう思わない"
+          "minRateDescription": { 
+            "default": "Strongly disagree", 
+            "de": "Stimme überhaupt nicht zu", 
+            "ja": "全くそう思わない" 
           },
-          "maxRateDescription": {
-            "default": "Strongly agree",
-            "de": "Stimme voll und ganz zu",
-            "ja": "非常にそう思う"
+          "maxRateDescription": { 
+            "default": "Strongly agree", 
+            "de": "Stimme voll und ganz zu", 
+            "ja": "非常にそう思う" 
           }
         },
         {
@@ -1163,21 +1159,21 @@ db.surveys.insertMany([
             "de": "Ich musste eine Menge Dinge lernen, bevor ich mit diesem Produkt loslegen konnte.",
             "ja": "このシステムの利用にあたって、戸惑うことが多かった。"
           },
-          "minRateDescription": {
-            "default": "Strongly disagree",
-            "de": "Stimme überhaupt nicht zu",
-            "ja": "全くそう思わない"
+          "minRateDescription": { 
+            "default": "Strongly disagree", 
+            "de": "Stimme überhaupt nicht zu", 
+            "ja": "全くそう思わない" 
           },
-          "maxRateDescription": {
-            "default": "Strongly agree",
-            "de": "Stimme voll und ganz zu",
-            "ja": "非常にそう思う"
+          "maxRateDescription": { 
+            "default": "Strongly agree", 
+            "de": "Stimme voll und ganz zu", 
+            "ja": "非常にそう思う" 
           }
         }
       ]
     },
     {
-      "name": "semantic",
+      "name": "ueq",
       "title": {
         "default": "User Experience",
         "de": "Benutzererfahrung",
@@ -1630,13 +1626,22 @@ db.surveys.insertMany([
             "de": "innovativ",
             "ja": "革新的"
           }
-        }
+        } 
       ]
-    }
+    },
   ]
-}
+},
+{ upsert: true });
 
-]);
+db.survey_config.replaceOne({ "configId": "global_main" }, {
+  "configId": "global_main",
+  "activeSurveys": ["demographics", "sus", "ueq"],
+  "commonSettings": {
+    "showProgressBar": "top",
+    "completedHtml": { "de": "<h4>Vielen Dank!</h4>" }
+  }
+},
+{ upsert: true });
 
 console.log("Survey data inserted successfully. Survey count:", db.surveys.countDocuments());
 

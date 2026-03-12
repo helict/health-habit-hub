@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+<%- include('header') %>
+<title>Admin - Configuration</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<%- include('nav', navigation) %>
+<div class="container" id="datadonationheader">
+<div class="row">
+<div class="col-12 text-justify">
+
+<h5 id="about_text" class="mt-4">
+<strong><%= 'Selection of Experiment Groups' %></strong></h5>
+
+<p class="text-muted">
+  New users will be randomly assigned to one of the groups selected below. 
+</p>
+
+<form method="post" action="<%= baseUrl %>/experiment-groups">
+  <fieldset class="border p-3 mb-4">
+    <% groups.forEach(function(group) { %>
+      <div class="form-check">
+        <input class="form-check-input"
+               type="checkbox"
+               name="groups" 
+               value="<%= group.id %>"
+               id="exp-<%= group.id %>"
+               <%= group.enabled ? 'checked' : '' %> />
+        <label class="form-check-label" for="exp-<%= group.id %>">
+          <%= group.label %>
+        </label>
+      </div>
+    <% }); %>
+
+    <div class="form-check mt-3 pt-2 border-top">
+      <input class="form-check-input" type="checkbox" name="useAll" id="useAll" value="on" <%= useAll ? 'checked' : '' %> />
+      <label class="form-check-label" for="useAll">
+        <strong>Use all Groups randomly</strong>
+      </label>
+    </div>
+
+    <div class="mt-3">
+      <button type="submit" class="btn btn-secondary btn-sm">Save Experiment Groups</button>
+    </div>
+  </fieldset>
+</form>
+
+<hr class="my-5">
+
+<h5><strong><%= 'Survey Module Configuration' %></strong></h5>
+
+<p class="text-muted">
+  Select which questionnaires are active. Changing this updates the <strong>Survey Signature</strong>, 
+  so users with old cookies might see new parts.
+</p>
+
+<form method="post" action="<%= baseUrl %>/update-survey-config">
+  <fieldset class="border p-3">
+    <% surveyModules.forEach(function(module) { %>
+      <div class="form-check">
+        <input class="form-check-input"
+               type="checkbox"
+               name="activeSurveys" 
+               value="<%= module.id %>"
+               id="mod-<%= module.id %>"
+               <%= module.enabled ? 'checked' : '' %> />
+        <label class="form-check-label" for="mod-<%= module.id %>">
+          <%= module.label %>
+        </label>
+      </div>
+    <% }); %>
+
+    <div class="mt-3">
+      <button type="submit" class="btn btn-primary">Save Survey Modules & Signature</button>
+    </div>
+  </fieldset>
+</form>
+
+</div>
+</div>
+</div>
+<%- include('footer') %>
+</body>
+</html>
