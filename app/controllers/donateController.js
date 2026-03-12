@@ -1,4 +1,5 @@
 import url from 'url';
+import path from 'path';
 import contexts from '../models/contexts.js';
 import { ExperimentGroup } from '../models/experimentGroup.js';
 import { getLanguageMessages } from '../utils/localization.js';
@@ -131,7 +132,7 @@ export async function saveDonateData(req, res) {
     } else if (typeof req.body.experimentGroup === 'string') {
       experimentGroupObj = ExperimentGroup.fromString(req.body.experimentGroup);
     } else if (typeof req.body.experimentGroup === 'object') {
-      // Objektform: erwartet { closedTask: boolean, closedDescription: boolean }
+      // expects { closedTask: boolean, closedDescription: boolean }
       experimentGroupObj = ExperimentGroup.fromObject(req.body.experimentGroup);
     } else {
       experimentGroupObj = await pickRandomFromConfig();
@@ -154,16 +155,8 @@ export async function saveDonateData(req, res) {
     const redirectLang = req.body.language || req.lang || 'en';
     const basepath = req.app.get('basepath');
 
-    console.log('Cookies empfangen:', req.cookies);
-    console.log(`Prüfe Cookie 'demographicsCompleted': Wert ist "${req.cookies && req.cookies.demographicsCompleted}"`);
-
-    if (req.cookies && req.cookies.demographicsCompleted === 'true') {
-      console.log("Entscheidung: Cookie ist gesetzt. Leite weiter zur Dankesseite.");
-      res.redirect(`${basepath}/${redirectLang}/thanks`);
-    } else {
-      console.log("Entscheidung: Cookie ist NICHT gesetzt oder falsch. Leite weiter zur Umfrage.");
-      res.redirect(`${basepath}/${redirectLang}/survey/1`);
-    }
+    // always redirects to survey-page, surveyController checks DB if user already answered everything checked on admin page, guarantees newly checked modules won't be missed
+    res.redirect(path.posix.join('/', basepath, redirectLang, 'survey'));
   } catch (error) {
     console.log(data, userId);
     console.error('Fehler beim Speichern der Spendendaten:', error);

@@ -1,6 +1,6 @@
 import express from 'express';
 import basicAuth from 'express-basic-auth';
-import { renderAdminPage } from '../controllers/adminController.js';
+import { renderAdminPage, updateSurveyConfig } from '../controllers/adminController.js';
 import { updateExperimentConfig } from '../configuration/experimentConfig.js';
 
 const router = express.Router();
@@ -72,20 +72,23 @@ router.use(
 );
 
 
+// Experiment-Gruppen
 router.post('/experiment-groups', async (req, res) => {
-  const selected = req.body.groups; // string | array | undefined
+  const selected = req.body.groups; 
   const useAll = req.body.useAll === 'on';
 
   const enabled = [];
   if (Array.isArray(selected)) enabled.push(...selected);
   else if (typeof selected === 'string') enabled.push(selected);
 
-  // speichere in Mongo (await)
   await updateExperimentConfig({ enabledGroups: enabled, useAllGroups: useAll });
 
   const redirectTarget = req.baseUrl && req.baseUrl !== '' ? req.baseUrl : '/admin';
-  return res.redirect(303, redirectTarget);
+  return res.redirect(303, `${redirectTarget}/${req.lang}/admin`);
 });
+
+// Survey-Modul
+router.post('/update-survey-config', updateSurveyConfig);
 
 router.get('/', renderAdminPage);
 

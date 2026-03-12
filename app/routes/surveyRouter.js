@@ -6,6 +6,7 @@ import { renderSurvey, submitSurvey } from '../controllers/surveyController.js';
 const router = express.Router();
 
 router.use(cookieParser());
+
 router.use((req, res, next) => {
   let userId = req.cookies.userId;
   if (!userId) {
@@ -16,7 +17,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router.get('/:id', renderSurvey);
-router.post('/:id/complete', submitSurvey);
+router.get('/', renderSurvey);
+router.post('/complete', submitSurvey);
 
 export default router;

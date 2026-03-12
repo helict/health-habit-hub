@@ -412,6 +412,30 @@ Every change should be tested thoroughly:
 
 By following these steps, you can confidently extend or adjust the survey questions. The key is to keep the front-end, back-end, and ontology in sync with any such change.
 
+Managing Database-Stored Questionnaires (SurveyJS)
+
+While the main habit donation form is handled via EJS templates, additional questionnaire sections (such as Demographics, SUS, and UEQ) are defined in MongoDB and managed via the Admin Panel. These definitions reside in `mongo/entrypoint/surveyjs-init.js`.
+
+Adding a New Questionnaire Section
+
+To add a new section (e.g., a new page of questions), you must update `mongo/entrypoint/surveyjs-init.js` in three places:
+
+1.  **Define the Page Structure**: Inside the `db.surveys.replaceOne` call, add a new object to the `pages` array containing your questions (using SurveyJS JSON format).
+2.  **Register the Section**: Add the unique `name` of your new page to the `activeParts` array within the same `db.surveys.replaceOne` call.
+3.  **Enable in Admin Panel**: Add the section's `name` to the `activeSurveys` array within the `db.survey_config.replaceOne` call.
+
+Applying Changes (Migration)
+
+Since `surveyjs-init.js` is an initialization script, it does not automatically run on existing databases. To apply changes to a running environment (Dev or Prod) without data loss:
+
+1.  Open your updated `mongo/entrypoint/surveyjs-init.js`.
+2.  Access the running database shell:
+    `docker exec -it h3-mongo mongosh`
+3.  Select the database:
+    `use surveyjs;`
+4.  Copy and paste the full `db.surveys.replaceOne(...)` and `db.survey_config.replaceOne(...)` commands from your file into the shell.
+    *   This uses `replaceOne` with `{upsert: true}`, which safely updates the definitions without deleting existing user results stored in other collections.
+
 Data Flow: From User Input to RDF Storage
 
 This section summarizes the end-to-end flow of data in Health Habit Hub, tying together the front-end and back-end interactions when a user donates a habit: 1. User Fills the Form (Front-End): The participant accesses the donation page (which, as described, is tailored to their assigned experimental group). They enter their habit information into the form fields provided. Depending on the group, this could be typing into a text box, selecting category labels, or both. All form fields have name attributes which will be used as keys in the submission data. For example, <textarea name="description"> for the habit description, or <input type="checkbox" name="labels" value="Exercise"> for a label. 2. Form Submission (HTTP Request): When the user clicks the submit button, the browser sends an HTTP POST request to the server. The URL is the form’s action (likely something like http://localhost:3000/en/donate with method POST). The form data is encoded (as application/x-www-form-urlencoded or multipart form data, typically). This request includes all the field values the user provided. 3. Express Server Receives Data: The Node.js Express app has a route defined to handle this POST request. Middleware like body-parser (now built into Express as express.urlencoded) will parse the form data and make it available on req.body. The route handler function is invoked with this data. For instance, req.body.description might contain the habit text, and req.body.labels might be an array of selected labels (if multiple were checked). 4. Data Processing and Validation: The server may perform some validation on the input. For example, it might check that the description isn’t empty if it’s required, or that at least one label was chosen in closed-entry mode. If a required field is missing or some validation fails, the server could respond by re-rendering the form with an error message (and not proceed to save). Assuming validation passes (and often for this kind of simple app, validation might be minimal or left to the front-end), the server proceeds to prepare the data for storage. 5. SPARQL Update Query Formation: The Express handler then constructs a SPARQL query to insert the new data into the RDF store. This involves mapping the form fields to RDF properties as discussed. It will typically create a string for the SPARQL INSERT command. If using template strings in JS, it might look like:
