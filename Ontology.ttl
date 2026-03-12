@@ -146,6 +146,12 @@ hhh:InternalState rdf:type owl:Class ;
                   rdfs:subClassOf hhh:Context ;
                   rdfs:label "Internal State" .
 
+###  http://example.com/hhh#Reasoning
+hhh:Reasoning rdf:type owl:Class ;
+                  rdfs:subClassOf hhh:Context ;
+                  rdfs:label "Reasoning" .
+
+
 
 ###  http://example.com/hhh#People
 hhh:People rdf:type owl:Class ;
@@ -180,7 +186,6 @@ hhh:Behavior1 rdf:type owl:NamedIndividual ,
                        hhh:Behavior ;
               hhh:hasContext hhh:Context1 ;
               hhh:hasTranslation hhh:Behavior1_DE ;
-              hhh:partOf hhh:ExperimentalSetting1 ;
               hhh:id "46343ea8-50fd-4750-a492-393b9d0e040e"^^xsd:token ;
               hhh:language "en" ;
               hhh:source "user"^^rdfs:Literal ;
@@ -191,7 +196,6 @@ hhh:Behavior1 rdf:type owl:NamedIndividual ,
 hhh:Behavior1-2 rdf:type owl:NamedIndividual ,
                          hhh:Behavior ;
                 hhh:hasTranslation hhh:Behavior1-2_DE ;
-                hhh:partOf hhh:ExperimentalSetting1 ;
                 hhh:id "ef0f823c-cdcf-4743-a790-d6599d23e23a"^^xsd:token ;
                 hhh:language "en" ;
                 hhh:source "user"^^rdfs:Literal ;
@@ -202,7 +206,6 @@ hhh:Behavior1-2 rdf:type owl:NamedIndividual ,
 hhh:Behavior1-2_DE rdf:type owl:NamedIndividual ,
                             hhh:Behavior ;
                    hhh:hasTranslation hhh:Behavior1-2 ;
-                   hhh:partOf hhh:ExperimentalSetting1 ;
                    hhh:id "40282606-1fc0-4f09-a125-34fbdd9fdf28"^^xsd:token ;
                    hhh:language "de" ;
                    hhh:source "deepl"^^rdfs:Literal ;
@@ -214,7 +217,6 @@ hhh:Behavior1_DE rdf:type owl:NamedIndividual ,
                           hhh:Behavior ;
                  hhh:hasContext hhh:Context1_DE ;
                  hhh:hasTranslation hhh:Behavior1 ;
-                 hhh:partOf hhh:ExperimentalSetting1 ;
                  hhh:id "3335160d-6fcb-4f95-a97e-bdacc8414bef"^^xsd:token ;
                  hhh:language "de" ;
                  hhh:source "deepl"^^rdfs:Literal ;
@@ -280,6 +282,7 @@ hhh:Habit1 rdf:type owl:NamedIndividual ,
                     hhh:Habit ;
            hhh:hasBehavior hhh:Behavior1 ,
                            hhh:Behavior1_DE ;
+           hhh:partOf hhh:ExperimentalSetting1 ;
            hhh:id "c99f6f9f-cec6-431d-8c7d-3e2988794822"^^xsd:token ;
            hhh:language "en" ;
            hhh:source "user"^^rdfs:Literal ;

@@ -130,7 +130,8 @@ export async function submitSurvey(req, res) {
       { upsert: true }
     );
 
-    res.redirect(path.posix.join('/', basepath, req.lang, 'thanks'));
+    const normalizedBasepath = basepath.endsWith('/') ? basepath : `${basepath}/`;
+    res.redirect(`${normalizedBasepath}${req.lang}/thanks`);
   } catch (err) {
     console.error("Submit Survey Error:", err);
     res.status(500).json({ status: 'error', message: err.message });

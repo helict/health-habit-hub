@@ -29,6 +29,14 @@ router.use((req, res, next) => {
 });
 
 // Configure the reCAPTCHA module with your own keys
+console.log('🔑 reCAPTCHA Config:', {
+  siteKey: config.recaptcha.siteKey ? `${config.recaptcha.siteKey.substring(0, 10)}...` : 'MISSING',
+  secretKey: config.recaptcha.secretKey ? `${config.recaptcha.secretKey.substring(0, 10)}...` : 'MISSING',
+  useRecaptchaDomain: config.recaptcha.useRecaptchaDomain,
+  siteKeyLength: config.recaptcha.siteKey.length,
+  secretKeyLength: config.recaptcha.secretKey.length,
+});
+
 const recaptcha = new Recaptcha(
   config.recaptcha.siteKey,
   config.recaptcha.secretKey,
@@ -49,14 +57,23 @@ router.get('/', showDonateForm);
 // argument was incorrect as the function only accepts (req, res).
 router.post(
   '/data',
+  (req, res, next) => {
+    // Debug: Log what we received
+    console.log('📨 Received reCAPTCHA token:', req.body['g-recaptcha-response'] ? 'Present' : 'MISSING');
+    next();
+  },
   recaptcha.middleware.verify,
   (req, res, next) => {
     if (!req.recaptcha.error) {
       // Success, proceed to save the data.
+      console.log('✅ reCAPTCHA verification passed');
       next();
     } else {
-      console.error('reCAPTCHA verification failed:', req.recaptcha.error);
-      res.status(400).send('Captcha verification failed. Please try again.');
+      console.error('❌ reCAPTCHA verification failed:', req.recaptcha.error);
+      res.status(400).json({
+        error: 'Captcha verification failed. Please try again.',
+        details: req.recaptcha.error
+      });
     }
   },
   saveDonateData

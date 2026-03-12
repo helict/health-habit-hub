@@ -109,6 +109,7 @@ export async function showDonateForm(req, res) {
       experimentGroup: experimentGroup,
       contexts: contexts,
       locale: req.lang,
+      recaptchaSiteKey: config.recaptcha.siteKey,
       ...getLanguageMessages(req.lang),
     }
   );
@@ -117,7 +118,15 @@ export async function showDonateForm(req, res) {
 export async function saveDonateData(req, res) {
   const userId = req.userId;  // User-ID direkt aus req holen
   console.log(`Received donate data for user ${userId}:`, req.body);
-  const dbClient = new DbClient(config);
+  
+  // Choose backend for graph storage without affecting surveys/cookies
+  let dbClient;
+  if (config.graphBackend === 'neo4j') {
+    const { Neo4jDbClient } = await import('../utils/Neo4jDatabase.js');
+    dbClient = new Neo4jDbClient(config);
+  } else {
+    dbClient = new DbClient(config);
+  }
 
   // experimentGroup may come as string or as object.
   let experimentGroupObj;
@@ -153,10 +162,19 @@ export async function saveDonateData(req, res) {
   try {
     await dbClient.insertDonateData(data, userId);
     const redirectLang = req.body.language || req.lang || 'en';
-    const basepath = req.app.get('basepath');
+    const basepath = req.app.get('basepath') || '/';
+    const normalizedBasepath = basepath.endsWith('/') ? basepath : `${basepath}/`;
 
-    // always redirects to survey-page, surveyController checks DB if user already answered everything checked on admin page, guarantees newly checked modules won't be missed
-    res.redirect(path.posix.join('/', basepath, redirectLang, 'survey'));
+    console.log('Cookies empfangen:', req.cookies);
+    console.log(`Prüfe Cookie 'demographicsCompleted': Wert ist "${req.cookies.demographicsCompleted}"`);
+
+    if (req.cookies.demographicsCompleted === 'true') {
+      console.log("Entscheidung: Cookie ist gesetzt. Leite weiter zur Dankesseite.");
+      res.redirect(`${normalizedBasepath}${redirectLang}/thanks`);
+    } else {
+      console.log("Entscheidung: Cookie ist NICHT gesetzt oder falsch. Leite weiter zur Umfrage.");
+      res.redirect(`${normalizedBasepath}${redirectLang}/survey/1`);
+    }
   } catch (error) {
     console.log(data, userId);
     console.error('Fehler beim Speichern der Spendendaten:', error);

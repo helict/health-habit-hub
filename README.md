@@ -1,90 +1,169 @@
 # Health Habit Hub
 
-[<img src="./app/public/pics/h3-logo.png" width="250"/>](./app/public/pics/h3-logo.png)
+<img src="./app/public/pics/h3-logo.png" width="250" alt="Health Habit Hub Logo"/>
 
-## About
+**Production URL**: https://habit.wiwi.tu-dresden.de
+**Version**: 1.0.0 (October 2025)
 
-Welcome to our web application, designed to empower users to willingly contribute valuable data pertaining to their habits for research purposes. Our platform offers a seamless experience, allowing users to input data through a randomized selection of four different entry types:
+A research-focused web application for collecting and analyzing health habit data using a 2×2 experimental design with multi-database architecture.
 
-- Closed: Predefined tasks and labels guide users to provide structured data
-- Open: An empty text field encourages users to share unstructured information without any influence
-- Closed-Task, Open data entry: Predefined task to ensure the right data is submitted but no labeling functionality to leave to user some freedom
-- Open-Task, Closed data entry: No Task, just a textfield with the buttons to label the provided data for well sturctured but less influenced data
+---
 
-#### Data Storage
+## Quick Start
 
-The data is securely stored in a RDF database hosted on an [Apache Jena Fuseki](https://jena.apache.org/documentation/fuseki2/index.html) SPARQL server. This strategic approach not only ensures efficient data management but also paves the way for easier training of machine learning algorithms using the acquired data.
+```bash
+# Clone repository
+git clone https://github.com/yourusername/health-habit-hub.git
+cd health-habit-hub
 
-## Installation
+# Configure environment
+cp .env.example .env
 
-1. Install [Docker](https://www.docker.com/) on your local system.
-2. Clone the repository.
-3. From within the repository root, start the application with:
+# Start development environment
+docker-compose up -d --build
+
+# Access application
+open http://localhost
+```
+
+---
+
+## Key Features
+
+- **Experimental Design**: 2×2 factorial design for habit data collection
+- **Multi-Database**: Apache Fuseki (RDF), Neo4j (Graph), MongoDB (Documents)
+- **Multi-Language**: English, German, Japanese (i18n)
+- **Automated Backups**: Daily backups with 14-day retention
+- **Production-Ready**: Docker Compose with automatic SSL via Let's Encrypt
+- **Translation API**: Integrated LibreTranslate for multilingual content
+
+---
+
+## Architecture
 
 ```
-docker compose watch
+Internet (80/443) → Traefik (SSL) → Node.js App → Databases
+                                          ├── Apache Fuseki (RDF)
+                                          ├── Neo4j (Graph)
+                                          ├── MongoDB (Documents)
+                                          └── LibreTranslate (API)
 ```
 
-[Compose Watch](https://docs.docker.com/compose/file-watch/) watches the `./app` directory for changes and will automatically rebuild and restart the `app` Docker container.
+**Services**:
+- **app**: Node.js/Express application
+- **fuseki**: Apache Jena Fuseki (RDF triple store)
+- **neo4j**: Neo4j graph database
+- **mongo**: MongoDB document store
+- **translate**: LibreTranslate API
+- **proxy**: Traefik reverse proxy
+- **backup**: Automated backup service
 
-**Note:** If you are using a [Mac with Apple silicon](https://support.apple.com/116943), you may need to disable Rosetta emulation in Docker to get the `fuseki` service to run properly.
+---
 
-## Usage
+## Documentation
 
-### Location
+**Complete documentation available in [DOCUMENTATION.md](DOCUMENTATION.md)**
 
-#### Online
+### Quick Links
 
-When inside the TU-Dresden Network you can access the website under:
-[http://swdev.wiwi.tu-dresden.de:3000](http://swdev.wiwi.tu-dresden.de:3000)
-And the database under:
-[http://swdev.wiwi.tu-dresden.de:3001](http://swdev.wiwi.tu-dresden.de:3001)
+- [Quick Start Guide](DOCUMENTATION.md#quick-start)
+- [Architecture & Design](DOCUMENTATION.md#architecture--design)
+- [Development Guide](DOCUMENTATION.md#development-guide)
+- [Production Deployment](DOCUMENTATION.md#production-deployment)
+- [Backup System](DOCUMENTATION.md#backup-system)
+- [Testing](DOCUMENTATION.md#testing)
+- [User Manual](DOCUMENTATION.md#user-manual)
+- [Troubleshooting](DOCUMENTATION.md#troubleshooting)
+- [API Reference](DOCUMENTATION.md#api-reference)
 
-#### Running the app locally
+---
 
-After running `docker-compose up` you can access the following sites:
+## Local Development
 
-Open [app.localhost](https://app.localhost) to use the main application \
-Open [fuseki.localhost](http://fuseki.localhost) to see/use the database \
-Open [proxy.localhost](http://proxy.localhost) to see the dashboard
+```bash
+# Start with hot-reload
+docker-compose watch
 
-Alternatively on Mac Docker Desktop run `docker ps` to check where the traffic is routet. You can then access the sites e.g., with `http://localhost:3000/en/donate`
+# View logs
+docker-compose logs -f
 
-### Donate a habit
+# Run tests
+cd app && npm test
 
-To donate a habit, go to `/donate`. You will be randomly assigned to one of the four experiment groups mentioned above. For the duration of your browser session, Health Habit Hub will remember to which experiment group you have been assigned and only show you the corresponding version of the habit entry form.
+# Code quality
+npm run lint
+npm run format
+```
 
-For debugging, you can also manually select an entry mode by adding a query parameter. Doing so will not change to which experiment group you are assigned to.
+**Access**:
+- App: http://localhost
+- Traefik: http://localhost:8080
+- Fuseki: http://localhost/fuseki
+- Neo4j: http://localhost/neo4j
 
-- `/donate?group=closed_task_closed_desc`
-- `/donate?group=closed_task_open_desc`
-- `/donate?group=open_task_closed_desc`
-- `/donate?group=open_task_open_desc`
+---
 
-## Repository
+## Production Deployment
 
-The repository contains two services:
+See [Production Deployment Guide](DOCUMENTATION.md#production-deployment) for complete instructions.
 
-- `app` – the _Health Habit Hub_ Node.js app.
-- `fuseki` – an Apache Jena Fuseki server instance, initialized with example data and the appropriate schema.
+**Quick deployment**:
+1. Configure DNS: `habit.wiwi.tu-dresden.de → 141.76.16.16`
+2. Open firewall ports: 80, 443
+3. Configure `.env` with production credentials
+4. Deploy via Portainer with `docker-compose.prod.yml`
+5. Verify SSL certificate obtained automatically
 
-## Development
+**Production URL**: https://habit.wiwi.tu-dresden.de
 
-### Overview
+### Accessing Databases in Production
 
-![Architecture diagram](docs/assets/Architecture.svg)
+**Neo4j Browser** (requires SSH tunnel):
+```bash
+# Create secure tunnel to Neo4j
+ssh -L 7474:localhost:7474 -L 7687:localhost:7687 service@141.76.16.16
 
-### Utility scripts for development
+# Then access: http://localhost:7474
+# Login with Neo4j credentials (username: neo4j, password from NEO4J_PASSWORD)
+```
 
-- `npm run format:check` – Check code format with _Prettier_.
-- `npm run lint` – Check for code problems with _ESLint_.
-- `npm run test:unitTests` – Run unit tests.
+See [DEPLOYMENT.md - Neo4j SSH Tunnel](DEPLOYMENT.md#accessing-neo4j-browser-via-ssh-tunnel) for detailed instructions.
 
-To run all of the above in sequence:
+**Other services** (available via https://habit.wiwi.tu-dresden.de):
+- Mongo Express: `/mongo`
+- Fuseki RDF: `/fuseki`
+- Traefik Dashboard: `/dashboard`
 
-- `npm run test`
+---
 
-To fix code problems:
+## Tech Stack
 
-- `npm run format:fix` – Run _Prettier_ to automatically format code.
-- `npm run lint:fix` – Run _ESLint_ to fix all automatically fixable problems.
+**Backend**: Node.js 22, Express.js, EJS
+**Databases**: Apache Fuseki (RDF), Neo4j, MongoDB
+**Infrastructure**: Docker, Traefik, Let's Encrypt
+**Tools**: LibreTranslate, reCAPTCHA, Mailjet
+
+---
+
+## Requirements
+
+- Docker 20.10+
+- Docker Compose 2.0+
+- 4GB RAM minimum (8GB recommended)
+- Ports 80, 443 (production)
+
+---
+
+## Support
+
+**Documentation**: [DOCUMENTATION.md](DOCUMENTATION.md)
+**Issues**: https://github.com/felixreinsch/health-habit-hub/issues
+**Contact**: felix.reinsch@tu-dresden.de
+
+---
+
+## License
+
+Proprietary software for research purposes at TU Dresden.
+
+**Contact**: felix.reinsch@tu-dresden.de

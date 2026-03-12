@@ -89,12 +89,22 @@ function submitHabit(editable, experimentGroup, language, grecaptcha) {
 function sendData(data, language) {
   console.log('Sending data to database');
   console.debug(data);
+
+  // Get reCAPTCHA response token
+  const recaptchaResponse = grecaptcha.getResponse();
+
+  // Add reCAPTCHA token to data
+  const dataWithCaptcha = {
+    ...data,
+    'g-recaptcha-response': recaptchaResponse
+  };
+
   fetch('donate/data', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(dataWithCaptcha),
   })
     .then((response) => {
       if (response.ok) {

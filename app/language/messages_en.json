@@ -17,8 +17,17 @@
   },
 
   "title": "HabitHub",
-  "aboutText": "About the Donation",
-  "step3Text": "Overall, the Habit donation opens up a promising future for data-driven research. By voluntarily providing habit data, people are actively contributing to scientific knowledge and shaping progress in fields such as health, psychology and social sciences. This innovative form of data donation could not only pave the way for new discoveries, but also raise awareness of the importance of data ethics and transparency.",
+  "aboutText": "Why Data Sharing Matters in Habit Research",
+  "step3Text": "<p>Sharing habit data is crucial for advancing our understanding of human behavior. Research shows that <strong>74% of all non-communicable diseases are linked to behavioral factors</strong> - making it essential to understand how habits form and persist.</p><p><strong>Our Research Goal:</strong> We aim to uncover the contextual patterns that make habits stick. By analyzing the situations, environments, and cues that accompany habitual behaviors, we can help people build healthier routines and break harmful ones. Your contribution makes this research possible.</p>",
+  "contextExplanationTitle": "Understanding Context Categories",
+  "contextExplanationText": "<p>When you share a habit, you mark different parts of your sentence with context categories. Each category represents a different aspect of the situation surrounding your habit:</p>",
+  "contextTimeReferenceDesc": "When does the habit occur?<br><em>Example: \"Every morning at 7 AM\" or \"After lunch\"</em>",
+  "contextPhysicalSettingDesc": "Where does the habit take place?<br><em>Example: \"In the kitchen\" or \"At my desk\"</em>",
+  "contextPriorBehaviorDesc": "What action triggers the habit?<br><em>Example: \"After brushing my teeth\" or \"When I see my running shoes\"</em>",
+  "contextPeopleDesc": "Who is involved or present?<br><em>Example: \"With my family\" or \"When I'm alone\"</em>",
+  "contextInternalStateDesc": "How are you feeling?<br><em>Example: \"When I feel stressed\" or \"Feeling energized\"</em>",
+  "contextReasoningDesc": "Why do you do this habit?<br><em>Example: \"To stay healthy\" or \"Because it relaxes me\"</em>",
+  "contextBehaviorDesc": "What is the actual habit action?<br><em>Example: \"I drink a glass of water\" or \"I go for a run\"</em>",
   "navigation": {
     "homePageName": "<b>Hab</b>Share",
     "donatePageName": "Home",
@@ -68,6 +77,7 @@
   "PriorBehavior": "prior behavior",
   "People": "People",
   "InternalState": "internal state",
+  "Reasoning": "reasoning",
   "Behavior": "Behavior",
   "example2": "<h5>Placeholder: I drink a glass of water before bedtime.<h5>",
   "submit": "Donate",
@@ -84,10 +94,15 @@
 
   "origin": "Country of origin:",
 
-  "graduation": "School-leaving certificate:",
-  "g_1": "GCSE: General Certificate of Secondary Education",
-  "g_2": "A-Level: General Certificate of Education Advanced Level",
-  "g_3": "university degree",
+  "graduation": "Highest level of education:",
+  "g_primary": "Primary/elementary school",
+  "g_lower_secondary": "Lower secondary (middle school)",
+  "g_upper_secondary": "Upper secondary (high school diploma)",
+  "g_vocational": "Vocational/technical education",
+  "g_bachelor": "Bachelor's degree",
+  "g_master": "Master's degree",
+  "g_doctorate": "Doctorate (PhD/MD/EdD)",
+  "g_other": "Other / Prefer not to say",
 
   "age": "Age:",
   "weight": "Weight:",
@@ -184,10 +199,25 @@
     "noContextError": "Please confirm that you are not a robot."
   },
 
+  "habitStrengthSlider": {
+    "title": "How much do you want to stop or keep this habit?",
+    "minDescription": "Definitely stop",
+    "maxDescription": "Definitely keep",
+    "labels": [
+      "Definitely stop",
+      "Rather stop",
+      "Tend to stop",
+      "Neutral / Undecided",
+      "Tend to keep",
+      "Rather keep",
+      "Definitely keep"
+    ]
+  },
+
   "form_descriptions":{
     "sex": "Choose the gender you identify with the most.",
     "origin": "Select the country you are from.",
-    "graduation": "Select the highest school-leaving certificate you have obtained.",
+    "graduation": "Select the highest level you have completed.",
     "age": "Type in your current age in years.", 
     "weight": "Select the weight category that best describes you.",
     "occupation": "Select the option that best describes your current professional situation.",
@@ -197,5 +227,11 @@
     "available_time": "Select the option that best describes how much time you have available for your habits.",
     "relationship_context": "Select the option that best describes your partner's attitude towards health and physical activity.",
     "pets": "Select the option that best describes your relationship with pets and their influence on your physical activity."
-  }
+  },
+   "disclaimer": {
+      "title": "",
+      "text": "<h2>Welcome!</h2><p>This site is intended for users aged <strong>18 and over</strong>. We use a small cookie to store your confirmation and improve your experience.</p><p>By clicking <strong>“Enter Website”</strong>, you confirm that you are over 18 and accept our privacy policy.</p>",
+      "confirm": "Enter Website",
+      "leave": "Leave Site"
+    }
 }

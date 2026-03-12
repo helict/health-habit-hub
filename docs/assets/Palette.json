@@ -1,0 +1,95 @@
+{
+  "colors" : [
+    {
+      "hex" : "D975B9",
+      "name" : "Sky Magenta",
+      "rgba" : {
+        "alpha" : 100,
+        "blue" : 185,
+        "green" : 117,
+        "red" : 217
+      }
+    },
+    {
+      "hex" : "94C79F",
+      "name" : "Eton Blue",
+      "rgba" : {
+        "alpha" : 100,
+        "blue" : 159,
+        "green" : 199,
+        "red" : 148
+      }
+    },
+    {
+      "hex" : "69BFC8",
+      "name" : "Downy",
+      "rgba" : {
+        "alpha" : 100,
+        "blue" : 200,
+        "green" : 191,
+        "red" : 105
+      }
+    },
+    {
+      "hex" : "DDA267",
+      "name" : "Earth Yellow",
+      "rgba" : {
+        "alpha" : 100,
+        "blue" : 103,
+        "green" : 162,
+        "red" : 221
+      }
+    },
+    {
+      "hex" : "F8EB7B",
+      "name" : "Sunny",
+      "rgba" : {
+        "alpha" : 100,
+        "blue" : 123,
+        "green" : 235,
+        "red" : 248
+      }
+    },
+    {
+      "hex" : "BDD375",
+      "name" : "Yellow Green",
+      "rgba" : {
+        "alpha" : 100,
+        "blue" : 117,
+        "green" : 211,
+        "red" : 189
+      }
+    },
+    {
+      "hex" : "A67EB8",
+      "name" : "Purple Mountain's Majesty",
+      "rgba" : {
+        "alpha" : 100,
+        "blue" : 184,
+        "green" : 126,
+        "red" : 166
+      }
+    },
+    {
+      "hex" : "D07F7D",
+      "name" : "New York Pink",
+      "rgba" : {
+        "alpha" : 100,
+        "blue" : 125,
+        "green" : 127,
+        "red" : 208
+      }
+    },
+    {
+      "hex" : "E8E9E8",
+      "name" : "Gray Nurse",
+      "rgba" : {
+        "alpha" : 100,
+        "blue" : 232,
+        "green" : 233,
+        "red" : 232
+      }
+    }
+  ],
+  "name" : "Palette"
+}

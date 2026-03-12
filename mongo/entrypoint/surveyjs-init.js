@@ -1,4 +1,4 @@
-db = new Mongo().getDB("surveyjs");
+db = db.getSiblingDB("surveyjs");
 
 db.createCollection("surveys");
 db.createCollection("survey_config");
@@ -67,7 +67,7 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "country",
           "title": {
             "default": "Country of Origin",
-            "de": "Herkunft",
+            "de": "Herkunftsland",
             "ja": "出身国"
           },
           "description": {
@@ -75,11 +75,201 @@ db.surveys.replaceOne({ "id": "1" },
             "de": "Geben Sie Ihr Herkunftsland an.",
             "ja": "出身国を選択してください。"
           },
-          "choicesByUrl": {
-            "url": "https://restcountries.com/v2/all?fields=name",
-            "valueName": "name",
-            "titleName": "name"
-          },
+          "choices": [
+            {"value": "Afghanistan", "text": {"default": "Afghanistan", "de": "Afghanistan", "ja": "アフガニスタン"}},
+            {"value": "Albania", "text": {"default": "Albania", "de": "Albanien", "ja": "アルバニア"}},
+            {"value": "Algeria", "text": {"default": "Algeria", "de": "Algerien", "ja": "アルジェリア"}},
+            {"value": "Andorra", "text": {"default": "Andorra", "de": "Andorra", "ja": "アンドラ"}},
+            {"value": "Angola", "text": {"default": "Angola", "de": "Angola", "ja": "アンゴラ"}},
+            {"value": "Antigua and Barbuda", "text": {"default": "Antigua and Barbuda", "de": "Antigua und Barbuda", "ja": "アンティグア・バーブーダ"}},
+            {"value": "Argentina", "text": {"default": "Argentina", "de": "Argentinien", "ja": "アルゼンチン"}},
+            {"value": "Armenia", "text": {"default": "Armenia", "de": "Armenien", "ja": "アルメニア"}},
+            {"value": "Australia", "text": {"default": "Australia", "de": "Australien", "ja": "オーストラリア"}},
+            {"value": "Austria", "text": {"default": "Austria", "de": "Österreich", "ja": "オーストリア"}},
+            {"value": "Azerbaijan", "text": {"default": "Azerbaijan", "de": "Aserbaidschan", "ja": "アゼルバイジャン"}},
+            {"value": "Bahamas", "text": {"default": "Bahamas", "de": "Bahamas", "ja": "バハマ"}},
+            {"value": "Bahrain", "text": {"default": "Bahrain", "de": "Bahrain", "ja": "バーレーン"}},
+            {"value": "Bangladesh", "text": {"default": "Bangladesh", "de": "Bangladesch", "ja": "バングラデシュ"}},
+            {"value": "Barbados", "text": {"default": "Barbados", "de": "Barbados", "ja": "バルバドス"}},
+            {"value": "Belarus", "text": {"default": "Belarus", "de": "Weißrussland", "ja": "ベラルーシ"}},
+            {"value": "Belgium", "text": {"default": "Belgium", "de": "Belgien", "ja": "ベルギー"}},
+            {"value": "Belize", "text": {"default": "Belize", "de": "Belize", "ja": "ベリーズ"}},
+            {"value": "Benin", "text": {"default": "Benin", "de": "Benin", "ja": "ベナン"}},
+            {"value": "Bhutan", "text": {"default": "Bhutan", "de": "Bhutan", "ja": "ブータン"}},
+            {"value": "Bolivia", "text": {"default": "Bolivia", "de": "Bolivien", "ja": "ボリビア"}},
+            {"value": "Bosnia and Herzegovina", "text": {"default": "Bosnia and Herzegovina", "de": "Bosnien und Herzegowina", "ja": "ボスニア・ヘルツェゴビナ"}},
+            {"value": "Botswana", "text": {"default": "Botswana", "de": "Botswana", "ja": "ボツワナ"}},
+            {"value": "Brazil", "text": {"default": "Brazil", "de": "Brasilien", "ja": "ブラジル"}},
+            {"value": "Brunei", "text": {"default": "Brunei", "de": "Brunei", "ja": "ブルネイ"}},
+            {"value": "Bulgaria", "text": {"default": "Bulgaria", "de": "Bulgarien", "ja": "ブルガリア"}},
+            {"value": "Burkina Faso", "text": {"default": "Burkina Faso", "de": "Burkina Faso", "ja": "ブルキナファソ"}},
+            {"value": "Burundi", "text": {"default": "Burundi", "de": "Burundi", "ja": "ブルンジ"}},
+            {"value": "Cambodia", "text": {"default": "Cambodia", "de": "Kambodscha", "ja": "カンボジア"}},
+            {"value": "Cameroon", "text": {"default": "Cameroon", "de": "Kamerun", "ja": "カメルーン"}},
+            {"value": "Canada", "text": {"default": "Canada", "de": "Kanada", "ja": "カナダ"}},
+            {"value": "Cape Verde", "text": {"default": "Cape Verde", "de": "Kapverdien", "ja": "カーボベルデ"}},
+            {"value": "Central African Republic", "text": {"default": "Central African Republic", "de": "Zentralafrikanische Republik", "ja": "中央アフリカ共和国"}},
+            {"value": "Chad", "text": {"default": "Chad", "de": "Tschad", "ja": "チャド"}},
+            {"value": "Chile", "text": {"default": "Chile", "de": "Chile", "ja": "チリ"}},
+            {"value": "China", "text": {"default": "China", "de": "China", "ja": "中国"}},
+            {"value": "Colombia", "text": {"default": "Colombia", "de": "Kolumbien", "ja": "コロンビア"}},
+            {"value": "Comoros", "text": {"default": "Comoros", "de": "Komoren", "ja": "コモロ"}},
+            {"value": "Congo", "text": {"default": "Congo", "de": "Kongo", "ja": "コンゴ"}},
+            {"value": "Costa Rica", "text": {"default": "Costa Rica", "de": "Costa Rica", "ja": "コスタリカ"}},
+            {"value": "Croatia", "text": {"default": "Croatia", "de": "Kroatien", "ja": "クロアチア"}},
+            {"value": "Cuba", "text": {"default": "Cuba", "de": "Kuba", "ja": "キューバ"}},
+            {"value": "Cyprus", "text": {"default": "Cyprus", "de": "Zypern", "ja": "キプロス"}},
+            {"value": "Czech Republic", "text": {"default": "Czech Republic", "de": "Tschechien", "ja": "チェコ共和国"}},
+            {"value": "Denmark", "text": {"default": "Denmark", "de": "Dänemark", "ja": "デンマーク"}},
+            {"value": "Djibouti", "text": {"default": "Djibouti", "de": "Dschibuti", "ja": "ジブチ"}},
+            {"value": "Dominica", "text": {"default": "Dominica", "de": "Dominica", "ja": "ドミニカ"}},
+            {"value": "Dominican Republic", "text": {"default": "Dominican Republic", "de": "Dominikanische Republik", "ja": "ドミニカ共和国"}},
+            {"value": "Ecuador", "text": {"default": "Ecuador", "de": "Ecuador", "ja": "エクアドル"}},
+            {"value": "Egypt", "text": {"default": "Egypt", "de": "Ägypten", "ja": "エジプト"}},
+            {"value": "El Salvador", "text": {"default": "El Salvador", "de": "El Salvador", "ja": "エルサルバドル"}},
+            {"value": "Equatorial Guinea", "text": {"default": "Equatorial Guinea", "de": "Äquatorialguinea", "ja": "赤道ギニア"}},
+            {"value": "Eritrea", "text": {"default": "Eritrea", "de": "Eritrea", "ja": "エリトリア"}},
+            {"value": "Estonia", "text": {"default": "Estonia", "de": "Estland", "ja": "エストニア"}},
+            {"value": "Ethiopia", "text": {"default": "Ethiopia", "de": "Äthiopien", "ja": "エチオピア"}},
+            {"value": "Fiji", "text": {"default": "Fiji", "de": "Fidschi", "ja": "フィジー"}},
+            {"value": "Finland", "text": {"default": "Finland", "de": "Finnland", "ja": "フィンランド"}},
+            {"value": "France", "text": {"default": "France", "de": "Frankreich", "ja": "フランス"}},
+            {"value": "Gabon", "text": {"default": "Gabon", "de": "Gabun", "ja": "ガボン"}},
+            {"value": "Gambia", "text": {"default": "Gambia", "de": "Gambia", "ja": "ガンビア"}},
+            {"value": "Georgia", "text": {"default": "Georgia", "de": "Georgien", "ja": "ジョージア"}},
+            {"value": "Germany", "text": {"default": "Germany", "de": "Deutschland", "ja": "ドイツ"}},
+            {"value": "Ghana", "text": {"default": "Ghana", "de": "Ghana", "ja": "ガーナ"}},
+            {"value": "Greece", "text": {"default": "Greece", "de": "Griechenland", "ja": "ギリシャ"}},
+            {"value": "Grenada", "text": {"default": "Grenada", "de": "Grenada", "ja": "グレナダ"}},
+            {"value": "Guatemala", "text": {"default": "Guatemala", "de": "Guatemala", "ja": "グアテマラ"}},
+            {"value": "Guinea", "text": {"default": "Guinea", "de": "Guinea", "ja": "ギニア"}},
+            {"value": "Guinea-Bissau", "text": {"default": "Guinea-Bissau", "de": "Guinea-Bissau", "ja": "ギニアビサウ"}},
+            {"value": "Guyana", "text": {"default": "Guyana", "de": "Guyana", "ja": "ガイアナ"}},
+            {"value": "Haiti", "text": {"default": "Haiti", "de": "Haiti", "ja": "ハイチ"}},
+            {"value": "Honduras", "text": {"default": "Honduras", "de": "Honduras", "ja": "ホンジュラス"}},
+            {"value": "Hong Kong", "text": {"default": "Hong Kong", "de": "Hongkong", "ja": "香港"}},
+            {"value": "Hungary", "text": {"default": "Hungary", "de": "Ungarn", "ja": "ハンガリー"}},
+            {"value": "Iceland", "text": {"default": "Iceland", "de": "Island", "ja": "アイスランド"}},
+            {"value": "India", "text": {"default": "India", "de": "Indien", "ja": "インド"}},
+            {"value": "Indonesia", "text": {"default": "Indonesia", "de": "Indonesien", "ja": "インドネシア"}},
+            {"value": "Iran", "text": {"default": "Iran", "de": "Iran", "ja": "イラン"}},
+            {"value": "Iraq", "text": {"default": "Iraq", "de": "Irak", "ja": "イラク"}},
+            {"value": "Ireland", "text": {"default": "Ireland", "de": "Irland", "ja": "アイルランド"}},
+            {"value": "Israel", "text": {"default": "Israel", "de": "Israel", "ja": "イスラエル"}},
+            {"value": "Italy", "text": {"default": "Italy", "de": "Italien", "ja": "イタリア"}},
+            {"value": "Jamaica", "text": {"default": "Jamaica", "de": "Jamaika", "ja": "ジャマイカ"}},
+            {"value": "Japan", "text": {"default": "Japan", "de": "Japan", "ja": "日本"}},
+            {"value": "Jordan", "text": {"default": "Jordan", "de": "Jordanien", "ja": "ヨルダン"}},
+            {"value": "Kazakhstan", "text": {"default": "Kazakhstan", "de": "Kasachstan", "ja": "カザフスタン"}},
+            {"value": "Kenya", "text": {"default": "Kenya", "de": "Kenia", "ja": "ケニア"}},
+            {"value": "Kiribati", "text": {"default": "Kiribati", "de": "Kiribati", "ja": "キリバス"}},
+            {"value": "North Korea", "text": {"default": "North Korea", "de": "Nordkorea", "ja": "北朝鮮"}},
+            {"value": "South Korea", "text": {"default": "South Korea", "de": "Südkorea", "ja": "韓国"}},
+            {"value": "Kuwait", "text": {"default": "Kuwait", "de": "Kuwait", "ja": "クウェート"}},
+            {"value": "Kyrgyzstan", "text": {"default": "Kyrgyzstan", "de": "Kirgisistan", "ja": "キルギスタン"}},
+            {"value": "Laos", "text": {"default": "Laos", "de": "Laos", "ja": "ラオス"}},
+            {"value": "Latvia", "text": {"default": "Latvia", "de": "Lettland", "ja": "ラトビア"}},
+            {"value": "Lebanon", "text": {"default": "Lebanon", "de": "Libanon", "ja": "レバノン"}},
+            {"value": "Lesotho", "text": {"default": "Lesotho", "de": "Lesotho", "ja": "レソト"}},
+            {"value": "Liberia", "text": {"default": "Liberia", "de": "Liberia", "ja": "リベリア"}},
+            {"value": "Libya", "text": {"default": "Libya", "de": "Libyen", "ja": "リビア"}},
+            {"value": "Liechtenstein", "text": {"default": "Liechtenstein", "de": "Liechtenstein", "ja": "リヒテンシュタイン"}},
+            {"value": "Lithuania", "text": {"default": "Lithuania", "de": "Litauen", "ja": "リトアニア"}},
+            {"value": "Luxembourg", "text": {"default": "Luxembourg", "de": "Luxemburg", "ja": "ルクセンブルク"}},
+            {"value": "Macao", "text": {"default": "Macao", "de": "Macau", "ja": "マカオ"}},
+            {"value": "Madagascar", "text": {"default": "Madagascar", "de": "Madagaskar", "ja": "マダガスカル"}},
+            {"value": "Malawi", "text": {"default": "Malawi", "de": "Malawi", "ja": "マラウイ"}},
+            {"value": "Malaysia", "text": {"default": "Malaysia", "de": "Malaysia", "ja": "マレーシア"}},
+            {"value": "Maldives", "text": {"default": "Maldives", "de": "Malediven", "ja": "モルディブ"}},
+            {"value": "Mali", "text": {"default": "Mali", "de": "Mali", "ja": "マリ"}},
+            {"value": "Malta", "text": {"default": "Malta", "de": "Malta", "ja": "マルタ"}},
+            {"value": "Marshall Islands", "text": {"default": "Marshall Islands", "de": "Marshallinseln", "ja": "マーシャル諸島"}},
+            {"value": "Mauritania", "text": {"default": "Mauritania", "de": "Mauretanien", "ja": "モーリタニア"}},
+            {"value": "Mauritius", "text": {"default": "Mauritius", "de": "Mauritius", "ja": "モーリシャス"}},
+            {"value": "Mexico", "text": {"default": "Mexico", "de": "Mexiko", "ja": "メキシコ"}},
+            {"value": "Micronesia", "text": {"default": "Micronesia", "de": "Mikronesien", "ja": "ミクロネシア"}},
+            {"value": "Moldova", "text": {"default": "Moldova", "de": "Moldau", "ja": "モルドバ"}},
+            {"value": "Monaco", "text": {"default": "Monaco", "de": "Monaco", "ja": "モナコ"}},
+            {"value": "Mongolia", "text": {"default": "Mongolia", "de": "Mongolei", "ja": "モンゴル"}},
+            {"value": "Montenegro", "text": {"default": "Montenegro", "de": "Montenegro", "ja": "モンテネグロ"}},
+            {"value": "Morocco", "text": {"default": "Morocco", "de": "Marokko", "ja": "モロッコ"}},
+            {"value": "Mozambique", "text": {"default": "Mozambique", "de": "Mosambik", "ja": "モザンビーク"}},
+            {"value": "Myanmar", "text": {"default": "Myanmar", "de": "Myanmar", "ja": "ミャンマー"}},
+            {"value": "Namibia", "text": {"default": "Namibia", "de": "Namibia", "ja": "ナミビア"}},
+            {"value": "Nauru", "text": {"default": "Nauru", "de": "Nauru", "ja": "ナウル"}},
+            {"value": "Nepal", "text": {"default": "Nepal", "de": "Nepal", "ja": "ネパール"}},
+            {"value": "Netherlands", "text": {"default": "Netherlands", "de": "Niederlande", "ja": "オランダ"}},
+            {"value": "New Zealand", "text": {"default": "New Zealand", "de": "Neuseeland", "ja": "ニュージーランド"}},
+            {"value": "Nicaragua", "text": {"default": "Nicaragua", "de": "Nicaragua", "ja": "ニカラグア"}},
+            {"value": "Niger", "text": {"default": "Niger", "de": "Niger", "ja": "ニジェール"}},
+            {"value": "Nigeria", "text": {"default": "Nigeria", "de": "Nigeria", "ja": "ナイジェリア"}},
+            {"value": "Norway", "text": {"default": "Norway", "de": "Norwegen", "ja": "ノルウェー"}},
+            {"value": "Oman", "text": {"default": "Oman", "de": "Oman", "ja": "オマーン"}},
+            {"value": "Pakistan", "text": {"default": "Pakistan", "de": "Pakistan", "ja": "パキスタン"}},
+            {"value": "Palau", "text": {"default": "Palau", "de": "Palau", "ja": "パラオ"}},
+            {"value": "Panama", "text": {"default": "Panama", "de": "Panama", "ja": "パナマ"}},
+            {"value": "Papua New Guinea", "text": {"default": "Papua New Guinea", "de": "Papua-Neuguinea", "ja": "パプアニューギニア"}},
+            {"value": "Paraguay", "text": {"default": "Paraguay", "de": "Paraguay", "ja": "パラグアイ"}},
+            {"value": "Peru", "text": {"default": "Peru", "de": "Peru", "ja": "ペルー"}},
+            {"value": "Philippines", "text": {"default": "Philippines", "de": "Philippinen", "ja": "フィリピン"}},
+            {"value": "Poland", "text": {"default": "Poland", "de": "Polen", "ja": "ポーランド"}},
+            {"value": "Portugal", "text": {"default": "Portugal", "de": "Portugal", "ja": "ポルトガル"}},
+            {"value": "Qatar", "text": {"default": "Qatar", "de": "Katar", "ja": "カタール"}},
+            {"value": "Romania", "text": {"default": "Romania", "de": "Rumänien", "ja": "ルーマニア"}},
+            {"value": "Russia", "text": {"default": "Russia", "de": "Russland", "ja": "ロシア"}},
+            {"value": "Rwanda", "text": {"default": "Rwanda", "de": "Ruanda", "ja": "ルワンダ"}},
+            {"value": "Saint Kitts and Nevis", "text": {"default": "Saint Kitts and Nevis", "de": "Sankt Kitts und Nevis", "ja": "セントキッツ・ネイビス"}},
+            {"value": "Saint Lucia", "text": {"default": "Saint Lucia", "de": "Heilige Lucia", "ja": "セントルシア"}},
+            {"value": "Saint Vincent and the Grenadines", "text": {"default": "Saint Vincent and the Grenadines", "de": "Saint Vincent und die Grenadinen", "ja": "セントビンセント・グレナディーン"}},
+            {"value": "Samoa", "text": {"default": "Samoa", "de": "Samoa", "ja": "サモア"}},
+            {"value": "San Marino", "text": {"default": "San Marino", "de": "San Marino", "ja": "サンマリノ"}},
+            {"value": "Sao Tome and Principe", "text": {"default": "Sao Tome and Principe", "de": "São Tomé und Príncipe", "ja": "サントメ・プリンシペ"}},
+            {"value": "Saudi Arabia", "text": {"default": "Saudi Arabia", "de": "Saudi-Arabien", "ja": "サウジアラビア"}},
+            {"value": "Senegal", "text": {"default": "Senegal", "de": "Senegal", "ja": "セネガル"}},
+            {"value": "Serbia", "text": {"default": "Serbia", "de": "Serbien", "ja": "セルビア"}},
+            {"value": "Seychelles", "text": {"default": "Seychelles", "de": "Seychellen", "ja": "セーシェル"}},
+            {"value": "Sierra Leone", "text": {"default": "Sierra Leone", "de": "Sierra Leone", "ja": "シエラレオネ"}},
+            {"value": "Singapore", "text": {"default": "Singapore", "de": "Singapur", "ja": "シンガポール"}},
+            {"value": "Slovakia", "text": {"default": "Slovakia", "de": "Slowakei", "ja": "スロバキア"}},
+            {"value": "Slovenia", "text": {"default": "Slovenia", "de": "Slowenien", "ja": "スロベニア"}},
+            {"value": "Solomon Islands", "text": {"default": "Solomon Islands", "de": "Salomonen", "ja": "ソロモン諸島"}},
+            {"value": "Somalia", "text": {"default": "Somalia", "de": "Somalia", "ja": "ソマリア"}},
+            {"value": "South Africa", "text": {"default": "South Africa", "de": "Südafrika", "ja": "南アフリカ"}},
+            {"value": "South Sudan", "text": {"default": "South Sudan", "de": "Südsudan", "ja": "南スーダン"}},
+            {"value": "Spain", "text": {"default": "Spain", "de": "Spanien", "ja": "スペイン"}},
+            {"value": "Sri Lanka", "text": {"default": "Sri Lanka", "de": "Sri Lanka", "ja": "スリランカ"}},
+            {"value": "Sudan", "text": {"default": "Sudan", "de": "Sudan", "ja": "スーダン"}},
+            {"value": "Suriname", "text": {"default": "Suriname", "de": "Surinam", "ja": "スリナム"}},
+            {"value": "Sweden", "text": {"default": "Sweden", "de": "Schweden", "ja": "スウェーデン"}},
+            {"value": "Switzerland", "text": {"default": "Switzerland", "de": "Schweiz", "ja": "スイス"}},
+            {"value": "Syria", "text": {"default": "Syria", "de": "Syrien", "ja": "シリア"}},
+            {"value": "Taiwan", "text": {"default": "Taiwan", "de": "Taiwan", "ja": "台湾"}},
+            {"value": "Tajikistan", "text": {"default": "Tajikistan", "de": "Tadschikistan", "ja": "タジキスタン"}},
+            {"value": "Tanzania", "text": {"default": "Tanzania", "de": "Tansania", "ja": "タンザニア"}},
+            {"value": "Thailand", "text": {"default": "Thailand", "de": "Thailand", "ja": "タイ"}},
+            {"value": "Timor-Leste", "text": {"default": "Timor-Leste", "de": "Osttimor", "ja": "東ティモール"}},
+            {"value": "Togo", "text": {"default": "Togo", "de": "Togo", "ja": "トーゴ"}},
+            {"value": "Tonga", "text": {"default": "Tonga", "de": "Tonga", "ja": "トンガ"}},
+            {"value": "Trinidad and Tobago", "text": {"default": "Trinidad and Tobago", "de": "Trinidad und Tobago", "ja": "トリニダード・トバゴ"}},
+            {"value": "Tunisia", "text": {"default": "Tunisia", "de": "Tunesien", "ja": "チュニジア"}},
+            {"value": "Turkey", "text": {"default": "Turkey", "de": "Türkei", "ja": "トルコ"}},
+            {"value": "Turkmenistan", "text": {"default": "Turkmenistan", "de": "Turkmenistan", "ja": "トルクメニスタン"}},
+            {"value": "Tuvalu", "text": {"default": "Tuvalu", "de": "Tuvalu", "ja": "ツバル"}},
+            {"value": "Uganda", "text": {"default": "Uganda", "de": "Uganda", "ja": "ウガンダ"}},
+            {"value": "Ukraine", "text": {"default": "Ukraine", "de": "Ukraine", "ja": "ウクライナ"}},
+            {"value": "United Arab Emirates", "text": {"default": "United Arab Emirates", "de": "Vereinigte Arabische Emirate", "ja": "アラブ首長国連邦"}},
+            {"value": "United Kingdom", "text": {"default": "United Kingdom", "de": "Vereinigtes Königreich", "ja": "イギリス"}},
+            {"value": "United States", "text": {"default": "United States", "de": "Vereinigte Staaten", "ja": "アメリカ合衆国"}},
+            {"value": "Uruguay", "text": {"default": "Uruguay", "de": "Uruguay", "ja": "ウルグアイ"}},
+            {"value": "Uzbekistan", "text": {"default": "Uzbekistan", "de": "Usbekistan", "ja": "ウズベキスタン"}},
+            {"value": "Vanuatu", "text": {"default": "Vanuatu", "de": "Vanuatu", "ja": "バヌアツ"}},
+            {"value": "Vatican City", "text": {"default": "Vatican City", "de": "Vatikanstadt", "ja": "バチカン市国"}},
+            {"value": "Venezuela", "text": {"default": "Venezuela", "de": "Venezuela", "ja": "ベネズエラ"}},
+            {"value": "Vietnam", "text": {"default": "Vietnam", "de": "Vietnam", "ja": "ベトナム"}},
+            {"value": "Yemen", "text": {"default": "Yemen", "de": "Jemen", "ja": "イエメン"}},
+            {"value": "Zambia", "text": {"default": "Zambia", "de": "Sambia", "ja": "ザンビア"}},
+            {"value": "Zimbabwe", "text": {"default": "Zimbabwe", "de": "Simbabwe", "ja": "ジンバブエ"}}
+          ],
           "placeholder": {
             "default": "Please select",
             "de": "Bitte auswählen",
@@ -90,38 +280,78 @@ db.surveys.replaceOne({ "id": "1" },
           "type": "dropdown",
           "name": "education",
           "title": {
-            "default": "Highest Education",
-            "de": "Schulabschluss",
-            "ja": "学歴"
+            "default": "Highest level of education",
+            "de": "Höchster Bildungsabschluss",
+            "ja": "最終学歴"
           },
           "description": {
-            "default": "Please select your highest level of education.",
-            "de": "Wählen Sie Ihren höchsten Schulabschluss.",
-            "ja": "最終学歴を選択してください。"
+            "default": "Select the highest level you have completed.",
+            "de": "Bitte wählen Sie Ihren höchsten abgeschlossenen Bildungsabschluss.",
+            "ja": "最終的に修了した学歴を選択してください。"
           },
           "choices": [
             {
-              "value": "abitur",
+              "value": "primary",
               "text": {
-                "default": "university entrance diploma",
-                "de": "Abitur",
-                "ja": "アビトゥーア"
+                "default": "Primary/elementary school",
+                "de": "Primar-/Grundschule",
+                "ja": "初等教育（小学校）"
               }
             },
             {
-              "value": "fachabitur",
+              "value": "lower_secondary",
               "text": {
-                "default": "vocational diploma",
-                "de": "Fachabitur",
-                "ja": "ファッハアビトゥーア"
+                "default": "Lower secondary (middle school)",
+                "de": "Sekundarstufe I (Haupt-/Realschulabschluss)",
+                "ja": "中等教育前期（中学校）"
               }
             },
             {
-              "value": "Lower Secondary School Certificate",
+              "value": "upper_secondary",
               "text": {
-                "default": "Hauptschulabschluss",
-                "de": "Hauptschulabschluss",
-                "ja": "ハウプトシューレ卒業"
+                "default": "Upper secondary (high school diploma)",
+                "de": "Sekundarstufe II (Abitur/Fachhochschulreife)",
+                "ja": "中等教育後期（高校卒業）"
+              }
+            },
+            {
+              "value": "vocational",
+              "text": {
+                "default": "Vocational/technical education",
+                "de": "Berufsausbildung / Fachschule",
+                "ja": "専門学校・職業訓練"
+              }
+            },
+            {
+              "value": "bachelor",
+              "text": {
+                "default": "Bachelor's degree",
+                "de": "Bachelorabschluss",
+                "ja": "学士（Bachelor）"
+              }
+            },
+            {
+              "value": "master",
+              "text": {
+                "default": "Master's degree",
+                "de": "Masterabschluss",
+                "ja": "修士（Master）"
+              }
+            },
+            {
+              "value": "doctorate",
+              "text": {
+                "default": "Doctorate (PhD/MD/EdD)",
+                "de": "Promotion (Dr.)",
+                "ja": "博士（Doctor）"
+              }
+            },
+            {
+              "value": "other",
+              "text": {
+                "default": "Other / Prefer not to say",
+                "de": "Sonstiges / Keine Angabe",
+                "ja": "その他／無回答"
               }
             }
           ],
@@ -560,9 +790,9 @@ db.surveys.replaceOne({ "id": "1" },
             "ja": "1日あたりの利用可能時間"
           },
           "description": {
-            "default": "How much time is available to you daily?",
-            "de": "Wie viel Zeit steht Ihnen täglich zur Verfügung?",
-            "ja": "1日に利用できる時間を選択してください。"
+            "default": "How much free time is available to you daily?",
+            "de": "Wie viel Freizeit steht Ihnen täglich zur Verfügung?",
+            "ja": "1日に利用できる自由時間を選択してください。"
           },
           "choices": [
             {
@@ -754,8 +984,9 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "sus_q1",
           "title": {
             "default": "I think that I would like to use this system frequently.",
-            "de": "Ich denke, ich würde dieses System häufig nutzen wollen.",
-            "ja": "このシステムを頻繁に使用したいと思います。"
+            "de": "Ich denke, dass ich dieses Produkt häufig verwenden möchte.",
+            "ja": "私はこのシステムを頻繁に使いたいと思う。"
+
           },
           "minRateDescription": { 
             "default": "Strongly disagree", 
@@ -773,8 +1004,8 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "sus_q2",
           "title": {
             "default": "I found the system unnecessarily complex.",
-            "de": "Ich fand das System unnötig komplex.",
-            "ja": "このシステムは不必要に複雑だと思いました。"
+            "de": "Ich fand das Produkt unnötig komplex.",
+            "ja": "このシステムは不必要に複雑だと思う。"
           },
           "minRateDescription": { 
             "default": "Strongly disagree",
@@ -792,8 +1023,8 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "sus_q3",
           "title": {
             "default": "I thought the system was easy to use.",
-            "de": "Ich fand das System einfach zu benutzen.",
-            "ja": "このシステムは使いやすいと思いました。"
+            "de": "Ich dachte, das Produkt war einfach zu bedienen.",
+            "ja": "このシステムは使いやすいと感じる。"
           },
           "minRateDescription": { 
             "default": "Strongly disagree", 
@@ -811,8 +1042,8 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "sus_q4",
           "title": {
             "default": "I think that I would need the support of a technical person to be able to use this system.",
-            "de": "Ich denke, ich würde Unterstützung durch eine technisch versierte Person benötigen, um das System zu nutzen.",
-            "ja": "このシステムを使うには技術者の支援が必要だと思いました。"
+            "de": "Ich denke, dass ich die Unterstützung einer technischen Person brauche, um dieses Produkt nutzen zu können.",
+            "ja": "このシステムを使うには、専門的なサポートが必要だと思う。"
           },
           "minRateDescription": { 
             "default": "Strongly disagree", 
@@ -830,8 +1061,8 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "sus_q5",
           "title": {
             "default": "I found the various functions in this system were well integrated.",
-            "de": "Ich fand, die verschiedenen Funktionen im System waren gut integriert.",
-            "ja": "このシステムの様々な機能はうまく統合されていると感じました。"
+            "de": "Ich fand, die verschiedenen Funktionen in diesem Produkt waren gut integriert.",
+            "ja": "このシステムの機能はよく統合されていると感じる。"
           },
           "minRateDescription": { 
             "default": "Strongly disagree", 
@@ -849,8 +1080,8 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "sus_q6",
           "title": {
             "default": "I thought there was too much inconsistency in this system.",
-            "de": "Ich fand, es gab zu viele Inkonsistenzen im System.",
-            "ja": "このシステムには一貫性がないと感じました。"
+            "de": "Ich dachte, dass dieses Produkt nicht konsistent genug war.",
+            "ja": "このシステムには一貫性が欠けている部分があると思う。"
           },
           "minRateDescription": { 
             "default": "Strongly disagree", 
@@ -868,8 +1099,8 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "sus_q7",
           "title": {
             "default": "I would imagine that most people would learn to use this system very quickly.",
-            "de": "Ich kann mir vorstellen, dass die meisten Menschen das System sehr schnell lernen würden.",
-            "ja": "ほとんどの人がこのシステムの使い方をすぐに学べると思います。"
+            "de": "Ich würde mir vorstellen, dass die meisten Leute sehr schnell lernen würden, dieses Produkt zu benutzen.",
+            "ja": "多くの人はこのシステムをすぐに使えるようになると思う。"
           },
           "minRateDescription": { 
             "default": "Strongly disagree", 
@@ -887,8 +1118,8 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "sus_q8",
           "title": {
             "default": "I found the system very cumbersome to use.",
-            "de": "Ich fand das System sehr umständlich in der Nutzung.",
-            "ja": "このシステムはとても使いにくいと感じました。"
+            "de": "Ich fand dieses Produkt sehr umständlich zu benutzen.",
+            "ja": "このシステムを使う前に多くのことを学ぶ必要があると思う。"
           },
           "minRateDescription": { 
             "default": "Strongly disagree", 
@@ -906,8 +1137,8 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "sus_q9",
           "title": {
             "default": "I felt very confident using the system.",
-            "de": "Ich fühlte mich bei der Nutzung des Systems sehr sicher.",
-            "ja": "このシステムの使用に自信がありました。"
+            "de": "Ich habe mich sehr selbstsicher gefühlt, dieses Produkt zu verwenden.",
+            "ja": "このシステムを使っていると、自信を持って操作できる。"
           },
           "minRateDescription": { 
             "default": "Strongly disagree", 
@@ -925,8 +1156,8 @@ db.surveys.replaceOne({ "id": "1" },
           "name": "sus_q10",
           "title": {
             "default": "I needed to learn a lot of things before I could get going with this system.",
-            "de": "Ich musste viel lernen, bevor ich mit diesem System arbeiten konnte.",
-            "ja": "このシステムを使い始める前に多くのことを学ぶ必要がありました。"
+            "de": "Ich musste eine Menge Dinge lernen, bevor ich mit diesem Produkt loslegen konnte.",
+            "ja": "このシステムの利用にあたって、戸惑うことが多かった。"
           },
           "minRateDescription": { 
             "default": "Strongly disagree", 
@@ -961,13 +1192,13 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Annoying",
-            "de": "Nervig",
-            "ja": "不快"
+            "default": "annoying",
+            "de": "unerfreulich",
+            "ja": "楽しくない"
           },
           "maxRateDescription": {
-            "default": "Enjoyable",
-            "de": "Angenehm",
+            "default": "enjoyable",
+            "de": "erfreulich",
             "ja": "楽しい"
           }
         },
@@ -978,65 +1209,65 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Not understandable",
-            "de": "Unverständlich",
+            "default": "not understandable",
+            "de": "unverständlich",
             "ja": "わかりにくい"
           },
           "maxRateDescription": {
-            "default": "Understandable",
-            "de": "Verständlich",
+            "default": "understandable",
+            "de": "verständlich",
             "ja": "わかりやすい"
           }
         },
         {
           "type": "rating",
-          "name": "dull_creative",
+          "name": "creative_dull",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Dull",
-            "de": "Langweilig",
-            "ja": "退屈"
-          },
-          "maxRateDescription": {
-            "default": "Creative",
-            "de": "Kreativ",
+            "default": "creative",
+            "de": "kreativ",
             "ja": "創造的"
+          },
+          "maxRateDescription": {
+            "default": "dull",
+            "de": "phantasielos",
+            "ja": "創造的でない"
           }
         },
         {
           "type": "rating",
-          "name": "difficult_to_learn_easy_to_learn",
+          "name": "easy_to_learn_difficult_to_learn",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Difficult to learn",
-            "de": "Schwer zu lernen",
-            "ja": "学びにくい"
+            "default": "easy to learn",
+            "de": "leicht zu lernen",
+            "ja": "覚えやすい"
           },
           "maxRateDescription": {
-            "default": "Easy to learn",
-            "de": "Einfach zu lernen",
-            "ja": "学びやすい"
+            "default": "difficult to learn",
+            "de": "schwer zu lernen",
+            "ja": "覚えにくい"
           }
         },
         {
           "type": "rating",
-          "name": "inferior_valuable",
+          "name": "valuable_inferior",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Inferior",
-            "de": "Minderwertig",
-            "ja": "価値が低い"
-          },
-          "maxRateDescription": {
-            "default": "Valuable",
-            "de": "Wertvoll",
+            "default": "valuable",
+            "de": "wertvoll",
             "ja": "価値がある"
+          },
+          "maxRateDescription": {
+            "default": "inferior",
+            "de": "minderwertig",
+            "ja": "価値がない"
           }
         },
         {
@@ -1046,14 +1277,14 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Boring",
-            "de": "Langweilig",
-            "ja": "退屈"
+            "default": "boring",
+            "de": "langweilig",
+            "ja": "退屈だ"
           },
           "maxRateDescription": {
-            "default": "Exciting",
-            "de": "Spannend",
-            "ja": "興奮"
+            "default": "exciting",
+            "de": "spannend",
+            "ja": "エキサイティングだ"
           }
         },
         {
@@ -1063,14 +1294,14 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Not interesting",
-            "de": "Nicht interessant",
-            "ja": "面白くない"
+            "default": "not interesting",
+            "de": "uninteressant",
+            "ja": "おもしろくない"
           },
           "maxRateDescription": {
-            "default": "Interesting",
-            "de": "Interessant",
-            "ja": "面白い"
+            "default": "interesting",
+            "de": "interessant",
+            "ja": "おもしろい"
           }
         },
         {
@@ -1080,48 +1311,48 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Unpredictable",
-            "de": "Unvorhersehbar",
-            "ja": "予測不能"
+            "default": "unpredictable",
+            "de": "unberechenbar",
+            "ja": "予想がつかない"
           },
           "maxRateDescription": {
-            "default": "Predictable",
-            "de": "Vorhersehbar",
-            "ja": "予測可能"
+            "default": "predictable",
+            "de": "voraussagbar",
+            "ja": "予想がつきやすい"
           }
         },
         {
           "type": "rating",
-          "name": "slow_fast",
+          "name": "fast_slow",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Slow",
-            "de": "Langsam",
-            "ja": "遅い"
-          },
-          "maxRateDescription": {
-            "default": "Fast",
-            "de": "Schnell",
+            "default": "fast",
+            "de": "schnell",
             "ja": "速い"
+          },
+          "maxRateDescription": {
+            "default": "slow",
+            "de": "langsam",
+            "ja": "遅い"
           }
         },
         {
           "type": "rating",
-          "name": "conventional_inventive",
+          "name": "inventive_conventional",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Conventional",
-            "de": "Konventionell",
-            "ja": "慣習的"
+            "default": "inventive",
+            "de": "originell",
+            "ja": "独特だ"
           },
           "maxRateDescription": {
-            "default": "Inventive",
-            "de": "Erfinderisch",
-            "ja": "独創的"
+            "default": "conventional",
+            "de": "konventionell",
+            "ja": "従来どおり"
           }
         },
         {
@@ -1131,31 +1362,31 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Obstructive",
-            "de": "Hinderlich",
-            "ja": "妨げる"
+            "default": "obstructive",
+            "de": "behindernd",
+            "ja": "妨げになる"
           },
           "maxRateDescription": {
-            "default": "Supportive",
-            "de": "Unterstützend",
-            "ja": "支援的"
+            "default": "supportive",
+            "de": "unterstützend",
+            "ja": "助けられる"
           }
         },
         {
           "type": "rating",
-          "name": "bad_good",
+          "name": "good_bad",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Bad",
-            "de": "Schlecht",
-            "ja": "悪い"
+            "default": "good",
+            "de": "gut",
+            "ja": "良い"
           },
           "maxRateDescription": {
-            "default": "Good",
-            "de": "Gut",
-            "ja": "良い"
+            "default": "bad",
+            "de": "schlecht",
+            "ja": "悪い"
           }
         },
         {
@@ -1165,13 +1396,13 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Complicated",
-            "de": "Kompliziert",
+            "default": "complicated",
+            "de": "kompliziert",
             "ja": "複雑"
           },
           "maxRateDescription": {
-            "default": "Easy",
-            "de": "Einfach",
+            "default": "easy",
+            "de": "einfach",
             "ja": "簡単"
           }
         },
@@ -1182,14 +1413,14 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Unlikable",
-            "de": "Unsympathisch",
-            "ja": "好感が持てない"
+            "default": "unlikable",
+            "de": "abstoßend",
+            "ja": "嫌いだ"
           },
           "maxRateDescription": {
-            "default": "Pleasing",
-            "de": "Angenehm",
-            "ja": "好感が持てる"
+            "default": "pleasing",
+            "de": "anziehend",
+            "ja": "好きだ"
           }
         },
         {
@@ -1199,14 +1430,14 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Usual",
-            "de": "Gewöhnlich",
-            "ja": "一般的"
+            "default": "usual",
+            "de": "herkömmlich",
+            "ja": "普通"
           },
           "maxRateDescription": {
-            "default": "Leading edge",
-            "de": "Innovativ",
-            "ja": "最先端"
+            "default": "leading edge",
+            "de": "neuartig",
+            "ja": "斬新的"
           }
         },
         {
@@ -1216,65 +1447,65 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Unpleasant",
-            "de": "Unangenehm",
-            "ja": "不快"
+            "default": "unpleasant",
+            "de": "unangenehm",
+            "ja": "嬉しくない"
           },
           "maxRateDescription": {
-            "default": "Pleasant",
-            "de": "Angenehm",
-            "ja": "快適"
+            "default": "pleasant",
+            "de": "angenehm",
+            "ja": "嬉しい"
           }
         },
         {
           "type": "rating",
-          "name": "not_secure_secure",
+          "name": "secure_not_secure",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Not secure",
-            "de": "Unsicher",
-            "ja": "不安"
+            "default": "secure",
+            "de": "sicher",
+            "ja": "安全だ"
           },
           "maxRateDescription": {
-            "default": "Secure",
-            "de": "Sicher",
-            "ja": "安全"
+            "default": "not secure",
+            "de": "unsicher",
+            "ja": "安全でない"
           }
         },
         {
           "type": "rating",
-          "name": "demotivating_motivating",
+          "name": "motivating_demotivating",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Demotivating",
-            "de": "Demotivierend",
-            "ja": "やる気がなくなる"
+            "default": "motivating",
+            "de": "aktivierend",
+            "ja": "モチベーションを高める"
           },
           "maxRateDescription": {
-            "default": "Motivating",
-            "de": "Motivierend",
-            "ja": "やる気が出る"
+            "default": "demotivating",
+            "de": "einschläfernd",
+            "ja": "モチベーションを下げる"
           }
         },
         {
           "type": "rating",
-          "name": "does_not_meet_expectations_meets_expectations",
+          "name": "meets_expectations_does_not_meet_expectations",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Does not meet expectations",
-            "de": "Erwartungen nicht erfüllt",
-            "ja": "期待に応えない"
+            "default": "meets expectations",
+            "de": "erwartungskonform",
+            "ja": "期待に合う"
           },
           "maxRateDescription": {
-            "default": "Meets expectations",
-            "de": "Erwartungen erfüllt",
-            "ja": "期待に応える"
+            "default": "does not meet expectations",
+            "de": "nicht erwartungskonform",
+            "ja": "期待に合わない"
           }
         },
         {
@@ -1284,31 +1515,31 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Inefficient",
-            "de": "Ineffizient",
-            "ja": "非効率"
+            "default": "inefficient",
+            "de": "ineffizient",
+            "ja": "効率が悪い"
           },
           "maxRateDescription": {
-            "default": "Efficient",
-            "de": "Effizient",
-            "ja": "効率的"
+            "default": "efficient",
+            "de": "effizient",
+            "ja": "効率が良い"
           }
         },
         {
           "type": "rating",
-          "name": "confusing_clear",
+          "name": "clear_confusing",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Confusing",
-            "de": "Verwirrend",
-            "ja": "混乱"
+            "default": "clear",
+            "de": "übersichtlich",
+            "ja": "すっきりしている"
           },
           "maxRateDescription": {
-            "default": "Clear",
-            "de": "Klar",
-            "ja": "明確"
+            "default": "confusing",
+            "de": "verwirrend",
+            "ja": "ごちゃごちゃしている"
           }
         },
         {
@@ -1318,65 +1549,65 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Impractical",
-            "de": "Unpraktisch",
-            "ja": "非実用的"
+            "default": "impractical",
+            "de": "unpragmatisch",
+            "ja": "実用的でない"
           },
           "maxRateDescription": {
-            "default": "Practical",
-            "de": "Praktisch",
-            "ja": "実用的"
+            "default": "practical",
+            "de": "pragmatisch",
+            "ja": "実用的だ"
           }
         },
         {
           "type": "rating",
-          "name": "cluttered_organized",
+          "name": "organized_cluttered",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Cluttered",
-            "de": "Unübersichtlich",
-            "ja": "ごちゃごちゃ"
-          },
-          "maxRateDescription": {
-            "default": "Organized",
-            "de": "Organisiert",
+            "default": "organized",
+            "de": "aufgeräumt",
             "ja": "整理されている"
+          },
+          "maxRateDescription": {
+            "default": "cluttered",
+            "de": "überladen",
+            "ja": "整理されていない"
           }
         },
         {
           "type": "rating",
-          "name": "unattractive_attractive",
+          "name": "attractive_unattractive",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Unattractive",
-            "de": "Unattraktiv",
+            "default": "attractive",
+            "de": "attraktiv",
+            "ja": "魅力がある"
+          },
+          "maxRateDescription": {
+            "default": "unattractive",
+            "de": "unattraktiv",
             "ja": "魅力がない"
-          },
-          "maxRateDescription": {
-            "default": "Attractive",
-            "de": "Attraktiv",
-            "ja": "魅力的"
           }
         },
         {
           "type": "rating",
-          "name": "unfriendly_friendly",
+          "name": "friendly_unfriendly",
           "titleLocation": "hidden",
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Unfriendly",
-            "de": "Unfreundlich",
-            "ja": "冷たい"
+            "default": "friendly",
+            "de": "sympathisch",
+            "ja": "感じがいい"
           },
           "maxRateDescription": {
-            "default": "Friendly",
-            "de": "Freundlich",
-            "ja": "親しみやすい"
+            "default": "unfriendly",
+            "de": "unsympathisch",
+            "ja": "感じが悪い"
           }
         },
         {
@@ -1386,13 +1617,13 @@ db.surveys.replaceOne({ "id": "1" },
           "rateCount": 7,
           "rateMax": 7,
           "minRateDescription": {
-            "default": "Conservative",
-            "de": "Konservativ",
+            "default": "conservative",
+            "de": "konservativ",
             "ja": "保守的"
           },
           "maxRateDescription": {
-            "default": "Innovative",
-            "de": "Innovativ",
+            "default": "innovative",
+            "de": "innovativ",
             "ja": "革新的"
           }
         } 
@@ -1412,4 +1643,174 @@ db.survey_config.replaceOne({ "configId": "global_main" }, {
 },
 { upsert: true });
 
+console.log("Survey data inserted successfully. Survey count:", db.surveys.countDocuments());
+
 db.createCollection("results");
+console.log("Collection 'results' created.");
+db.results.insertMany([
+    {
+      id: 1,
+      postid: "1",
+      json: {
+        gender: "männlich",
+        country: "Germany",
+        education: "bachelor",
+        age: 28,
+        weight: "normalgewichtig",
+        employment_context: "angestellt-vollzeit",
+        working_hours: "flexible-arbeitszeiten",
+        commute_mode: "öffentliche-verkehrsmittel",
+        personal_context: "partnerschaft-mit-kind",
+        available_time: "1-2-stunden",
+        relationship_context: "gesundheitsbewusster-partner",
+        pet_influence: "regelmäßige-bewegung",
+        sus_q1: 4,
+        sus_q2: 2,
+        sus_q3: 4,
+        sus_q4: 2,
+        sus_q5: 4,
+        sus_q6: 1,
+        sus_q7: 4,
+        sus_q8: 1,
+        sus_q9: 4,
+        sus_q10: 2,
+        annoying_enjoyable: 6,
+        not_understandable_understandable: 5,
+        creative_dull: 4,
+        easy_to_learn_difficult_to_learn: 2,
+        valuable_inferior: 6,
+        boring_exciting: 5,
+        not_interesting_interesting: 5,
+        unpredictable_predictable: 4,
+        fast_slow: 5,
+        inventive_conventional: 4,
+        obstructive_supportive: 6,
+        good_bad: 6,
+        complicated_easy: 5,
+        unlikable_pleasing: 6,
+        usual_leading_edge: 4,
+        unpleasant_pleasant: 6,
+        secure_not_secure: 5,
+        motivating_demotivating: 5,
+        meets_expectations_does_not_meet_expectations: 5,
+        inefficient_efficient: 6,
+        clear_confusing: 5,
+        impractical_practical: 6,
+        organized_cluttered: 5,
+        attractive_unattractive: 6,
+        friendly_unfriendly: 6,
+        conservative_innovative: 4
+      }
+    },
+    {
+      id: 2,
+      postid: "1",
+      json: {
+        gender: "weiblich",
+        country: "Austria",
+        education: "master",
+        age: 35,
+        weight: "untergewichtig",
+        employment_context: "selbstständig",
+        working_hours: "flexible-arbeitszeiten",
+        commute_mode: "homeoffice",
+        personal_context: "single-ohne-kind",
+        available_time: "mehr-als-3-stunden",
+        relationship_context: "kein-partner",
+        pet_influence: "keine-haustiere",
+        sus_q1: 5,
+        sus_q2: 1,
+        sus_q3: 5,
+        sus_q4: 1,
+        sus_q5: 5,
+        sus_q6: 1,
+        sus_q7: 5,
+        sus_q8: 1,
+        sus_q9: 5,
+        sus_q10: 1,
+        annoying_enjoyable: 7,
+        not_understandable_understandable: 6,
+        creative_dull: 6,
+        easy_to_learn_difficult_to_learn: 1,
+        valuable_inferior: 7,
+        boring_exciting: 6,
+        not_interesting_interesting: 6,
+        unpredictable_predictable: 5,
+        fast_slow: 6,
+        inventive_conventional: 5,
+        obstructive_supportive: 7,
+        good_bad: 7,
+        complicated_easy: 6,
+        unlikable_pleasing: 7,
+        usual_leading_edge: 6,
+        unpleasant_pleasant: 7,
+        secure_not_secure: 6,
+        motivating_demotivating: 6,
+        meets_expectations_does_not_meet_expectations: 6,
+        inefficient_efficient: 7,
+        clear_confusing: 6,
+        impractical_practical: 7,
+        organized_cluttered: 6,
+        attractive_unattractive: 7,
+        friendly_unfriendly: 7,
+        conservative_innovative: 6
+      }
+    },
+    {
+      id: 3,
+      postid: "1",
+      json: {
+        gender: "divers",
+        country: "Switzerland",
+        education: "vocational",
+        age: 42,
+        weight: "übergewichtig",
+        employment_context: "angestellt-teilzeit",
+        working_hours: "wochenende-meistens-frei",
+        commute_mode: "fahrradfahrt",
+        personal_context: "alleinerziehend",
+        available_time: "0-5-1-stunde",
+        relationship_context: "unterstützender-partner",
+        pet_influence: "mehr-aktivität-im-alltag",
+        sus_q1: 3,
+        sus_q2: 3,
+        sus_q3: 3,
+        sus_q4: 3,
+        sus_q5: 3,
+        sus_q6: 3,
+        sus_q7: 3,
+        sus_q8: 3,
+        sus_q9: 3,
+        sus_q10: 3,
+        annoying_enjoyable: 4,
+        not_understandable_understandable: 4,
+        creative_dull: 3,
+        easy_to_learn_difficult_to_learn: 3,
+        valuable_inferior: 4,
+        boring_exciting: 3,
+        not_interesting_interesting: 4,
+        unpredictable_predictable: 3,
+        fast_slow: 4,
+        inventive_conventional: 3,
+        obstructive_supportive: 4,
+        good_bad: 4,
+        complicated_easy: 4,
+        unlikable_pleasing: 4,
+        usual_leading_edge: 3,
+        unpleasant_pleasant: 4,
+        secure_not_secure: 4,
+        motivating_demotivating: 3,
+        meets_expectations_does_not_meet_expectations: 4,
+        inefficient_efficient: 4,
+        clear_confusing: 4,
+        impractical_practical: 4,
+        organized_cluttered: 3,
+        attractive_unattractive: 4,
+        friendly_unfriendly: 4,
+        conservative_innovative: 3
+      }
+    }
+]);
+
+console.log("Results data inserted successfully. Results count:", db.results.countDocuments());
+console.log("Initialization complete!");
