@@ -61,9 +61,9 @@ class ExperimentalSetting {
     this.description = setting.closedDescription ? "closed" : "open";
     this.task = setting.closedTask ? "closed" : "open";
     if (this.isClosedTaskOpenDescription()) this.group = "Group1";
-    else if (this.isClosedTaskClosedDescription) this.group = "Group2";
-    else if (this.isOpenTaskClosedDescription) this.group = "Group3";
-    else if (this.isOpenTaskOpenDescription) this.group = "Group4";
+    else if (this.isClosedTaskClosedDescription()) this.group = "Group2";
+    else if (this.isOpenTaskClosedDescription()) this.group = "Group3";
+    else if (this.isOpenTaskOpenDescription()) this.group = "Group4";
   }
 
   isClosedTaskClosedDescription() {
@@ -201,11 +201,11 @@ class DbClient {
 
     // Create SPARQL query
     insertQuery = this.addExperimentalSetting(insertQuery, experimentalSetting);
-    insertQuery = this.addHabit(insertQuery, donation);
+    insertQuery = this.addHabit(insertQuery, donation, experimentalSetting);
     insertQuery = this.addDonor(insertQuery, donor, userId);
 
     if (donation.translation) {
-      insertQuery = this.addHabit(insertQuery, donation.translation);
+      insertQuery = this.addHabit(insertQuery, donation.translation, experimentalSetting);
     }
    
     if (donation.hasLabels()) {
@@ -249,13 +249,14 @@ class DbClient {
     `;
   }
 
-  addHabit(query, donation) {
+  addHabit(query, donation, experimentalSetting) {
     const behaviors = donation.labels
       .filter(label => label.type === "behavior");
     const behaviorStatement = ((behaviors && behaviors.length > 0) ? `hhh:hasBehavior ${behaviors.map(behavior => `hhh:Behavior-${behavior.id}`).join(", ")} ;` : "");
     return query += `
       hhh:Habit-${donation.id} rdf:type owl:NamedIndividual , hhh:Habit ;
         ${behaviorStatement}
+        hhh:partOf hhh:ExperimentalSetting-${experimentalSetting.id} ;
         hhh:habitStrength "${donation.habitStrength}"^^xsd:integer ;
         hhh:id "${donation.id}"^^xsd:token ;
         hhh:language "${donation.language}" ;

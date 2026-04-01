@@ -83,3 +83,43 @@ test('Insert closed data (integration)', async (t) => {
     }
   }
 });
+
+test('insertDonateData links habits to experimental setting and preserves all four groups', async () => {
+  const scenarios = [
+    { group: new ExperimentGroup(true, false), expected: 'Group1' },
+    { group: new ExperimentGroup(true, true), expected: 'Group2' },
+    { group: new ExperimentGroup(false, true), expected: 'Group3' },
+    { group: new ExperimentGroup(false, false), expected: 'Group4' },
+  ];
+
+  for (const { group, expected } of scenarios) {
+    const dbClient = new DbClient(sparqlClientTestConfig);
+    let capturedQuery = '';
+    dbClient.insertData = async (query) => {
+      capturedQuery = query;
+    };
+
+    await dbClient.insertDonateData(
+      {
+        language: 'en',
+        source: 'user',
+        inputValue: `habit for ${expected}`,
+        habitStrength: '3',
+        experimentGroup: group,
+        contexts: [],
+      },
+      `sparql-unit-${expected.toLowerCase()}`
+    );
+
+    assert.match(
+      capturedQuery,
+      new RegExp(`hhh:ExperimentalSetting-[^\\s]+ rdf:type owl:NamedIndividual ,\\s+hhh:${expected}\\.`),
+      `expected experimental setting to be typed as ${expected}`
+    );
+    assert.match(
+      capturedQuery,
+      /hhh:Habit-[^\s]+ rdf:type owl:NamedIndividual , hhh:Habit ;[\s\S]*?hhh:partOf hhh:ExperimentalSetting-[^\s]+ ;/,
+      'expected habit to link directly to its experimental setting'
+    );
+  }
+});
