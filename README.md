@@ -1,4 +1,4 @@
-# Habit Recommendation System
+# Habit Recommender System
 
 ## Project Overview
 

@@ -4,7 +4,7 @@
     style="justify-content:space-between; align-items:flex-start; margin-bottom:14px"
   >
     <div>
-      <div style="font-weight:950; font-size:28px">Habit Recommendation System</div>
+      <div style="font-weight:950; font-size:28px">Habit Recommender System</div>
       <!-- <div class="muted" style="font-size:13px; margin-top:4px">
         UI for HHH-service (8081)
       </div> -->
