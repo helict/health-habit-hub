@@ -507,6 +507,76 @@ class KbMilvusStore:
         except Exception:
             pass
 
+    def list_doc_ids(self, batch_size: int = 1000) -> Set[str]:
+        """
+        Return all distinct doc_id values that currently exist in Milvus.
+
+        Why this exists:
+        - stale cleanup must rely on the actual contents of Milvus, not only on _meta files
+        - orphan rows can remain in Milvus even when their cache json has already been deleted
+
+        Implementation notes:
+        - Prefer query_iterator() when available (more memory-safe on large collections)
+        - Fall back to paged query(offset/limit)
+        - Final fallback is a single query without paging
+        """
+        doc_ids: Set[str] = set()
+        expr = 'doc_id != ""'
+
+        # 1) Best effort: iterator API (available in newer pymilvus versions)
+        try:
+            iterator = self.collection.query_iterator(
+                batch_size=int(batch_size),
+                expr=expr,
+                output_fields=["doc_id"],
+            )
+            while True:
+                rows = iterator.next()
+                if not rows:
+                    break
+                for row in rows:
+                    doc_id = str((row or {}).get("doc_id") or "").strip()
+                    if doc_id:
+                        doc_ids.add(doc_id)
+            try:
+                iterator.close()
+            except Exception:
+                pass
+            return doc_ids
+        except Exception:
+            pass
+
+        # 2) Fallback: offset/limit paging
+        try:
+            offset = 0
+            while True:
+                rows = self.collection.query(
+                    expr=expr,
+                    output_fields=["doc_id"],
+                    limit=int(batch_size),
+                    offset=int(offset),
+                )
+                if not rows:
+                    break
+                for row in rows:
+                    doc_id = str((row or {}).get("doc_id") or "").strip()
+                    if doc_id:
+                        doc_ids.add(doc_id)
+                if len(rows) < int(batch_size):
+                    break
+                offset += int(batch_size)
+            return doc_ids
+        except Exception:
+            pass
+
+        # 3) Last resort: single query
+        rows = self.collection.query(expr=expr, output_fields=["doc_id"])
+        for row in rows:
+            doc_id = str((row or {}).get("doc_id") or "").strip()
+            if doc_id:
+                doc_ids.add(doc_id)
+        return doc_ids
+
     def upsert_chunks(
         self,
         doc_id: str,
@@ -932,21 +1002,44 @@ def sync_kb(
             if verbose:
                 print("[KB] ingest error:", pdf, repr(e))
 
-    # delete stale docs based on cache files
+    # delete stale docs based on the REAL doc_ids currently stored in Milvus,
+    # not only on cache files in _meta. This prevents orphaned Milvus rows from
+    # surviving forever after their cache json has been removed manually.
     stale = 0
+    try:
+        milvus_doc_ids = store.list_doc_ids()
+    except Exception as e:
+        milvus_doc_ids = set()
+        errors.append(f"list_doc_ids: {repr(e)}")
+        if verbose:
+            print("[KB] list_doc_ids error:", repr(e))
+
+    stale_doc_ids = sorted(doc_id for doc_id in milvus_doc_ids if doc_id not in alive_doc_ids)
+    for doc_id in stale_doc_ids:
+        try:
+            delete_doc(store, doc_id, remove_cache=True, verbose=verbose)
+            stale += 1
+        except Exception as e:
+            errors.append(f"delete {doc_id}: {repr(e)}")
+            if verbose:
+                print("[KB] delete error:", doc_id, repr(e))
+
+    # optional hygiene: remove orphan cache files that no longer correspond to any
+    # live pdf and are also not present in Milvus anymore.
     for cf in sorted(meta_dir.glob("*.json")):
-        # skip kb state or any internal/meta files
         if cf.name == "_kb_state.json" or cf.stem.startswith("_"):
             continue
         doc_id = cf.stem
-        if doc_id not in alive_doc_ids:
-            try:
-                delete_doc(store, doc_id, remove_cache=True, verbose=verbose)
-                stale += 1
-            except Exception as e:
-                errors.append(f"delete {doc_id}: {repr(e)}")
-                if verbose:
-                    print("[KB] delete error:", doc_id, repr(e))
+        if doc_id in alive_doc_ids or doc_id in milvus_doc_ids:
+            continue
+        try:
+            cf.unlink()
+            if verbose:
+                print("[KB] removed orphan cache file:", cf.name)
+        except Exception as e:
+            errors.append(f"remove cache {doc_id}: {repr(e)}")
+            if verbose:
+                print("[KB] remove cache error:", doc_id, repr(e))
 
     return {
         "ok": len(errors) == 0,
