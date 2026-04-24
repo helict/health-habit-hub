@@ -86,16 +86,13 @@ const basicJson = {
   description: "The Basic Health Profile is an author-developed questionnaire created for this prototype to collect additional self-reported information and enrich the user profile.",
   showQuestionNumbers: "off",
   elements: [
-    // --------------------
-    // Required
-    // --------------------
-    { type: "text", name: "age", title: "Age", isRequired: true, inputType: "number", min: 16, max: 120 },
+    { type: "text", name: "age", title: "Age", isRequired: false, inputType: "number", min: 16, max: 120 },
 
     {
       type: "dropdown",
       name: "sex",
       title: "Sex / Gender",
-      isRequired: true,
+      isRequired: false,
       choices: [
         { value: "female", text: "Female" },
         { value: "male", text: "Male" },
@@ -120,16 +117,16 @@ const basicJson = {
     // },
 
 
-    { type: "text", name: "height_cm", title: "Height (cm)", isRequired: true, inputType: "number", min: 100, max: 230 },
+    { type: "text", name: "height_cm", title: "Height (cm)", isRequired: false, inputType: "number", min: 100, max: 230 },
 
-    { type: "text", name: "weight_kg", title: "Weight (kg)", isRequired: true, inputType: "number", min: 30, max: 250 },
+    { type: "text", name: "weight_kg", title: "Weight (kg)", isRequired: false, inputType: "number", min: 30, max: 250 },
 
 
     {
       type: "dropdown",
       name: "limitations",
       title: "Physical limitations",
-      isRequired: true,
+      isRequired: false,
       choices: [
         { value: "none", text: "None" },
         { value: "knee", text: "Knee problems" },
@@ -143,7 +140,7 @@ const basicJson = {
       type: "text",
       name: "limitations_other",
       title: "If other, please specify",
-      isRequired: true,
+      isRequired: false,
       visibleIf: "{limitations} = 'other'",
       placeholder: "e.g., shoulder injury, asthma, etc.",
     },
@@ -152,7 +149,7 @@ const basicJson = {
       type: "dropdown",
       name: "time_budget",
       title: "Daily time budget for new behavior changes",
-      isRequired: true,
+      isRequired: false,
       choices: [
         { value: "lt5", text: "< 5 minutes" },
         { value: "5_10", text: "5–10 minutes" },
